@@ -3,7 +3,6 @@
  */
 package fr.alten.ambroiseJEE.controller.business;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,18 +57,8 @@ public class UserBusinessController {
 	 * @return an empty optional
 	 * @author Andy Chabalier
 	 */
-	public Optional<String> checkIfCredentialValid(String mail, String pswd) {
-		Optional<User> user = userEntityController.getUserByMail(mail);
-		if(user.isPresent() ? user.get().getPswd().equals(pswd) : false) {
-			//Si tout est bon
-			return Optional.of(user.get().getMail() + "|" + user.get().getRole());
-		}else {
-			return Optional.empty();
-		}		
+	public Optional<String> checkIfCredentialIsValid(String mail, String pswd) {	
+		Optional<User> optionalUser = userEntityController.getUserByCredentials(mail,pswd);	
+		return optionalUser.isPresent() ? Optional.of(optionalUser.get().getMail() + "|" + optionalUser.get().getRole()):Optional.empty();	
 	}
-
-	public List<User> getAll() {
-		return userEntityController.getAllUsers();
-	}
-	
 }
