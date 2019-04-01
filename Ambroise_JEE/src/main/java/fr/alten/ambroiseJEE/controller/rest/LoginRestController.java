@@ -7,7 +7,9 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -22,6 +24,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 
 /**
  * Rest controller for the login web service
+ * 
  * @author Andy Chabalier
  *
  */
@@ -30,38 +33,49 @@ public class LoginRestController {
 
 	@Autowired
 	private UserBusinessController userBusinessController;
-	
+
 	private final Gson gson;
 
 	public LoginRestController() {
 		GsonBuilder builder = new GsonBuilder();
 		this.gson = builder.create();
 	}
-	
+
 	/**
 	 * Authenticate user. HTTP Method : POST.
 	 * 
 	 * @param params JsonNode containing post parameters from http request : mail &
 	 *               password
-	 * @return 
+	 * @return
 	 * @return String containing the Json formatted JWToken
 	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 */
 	@PostMapping(value = "/login")
 	@ResponseBody
 	public String login(@RequestBody JsonNode params) throws Exception {
-		
+
 		String mail = params.get("mail").textValue();
 		String pswd = params.get("pswd").textValue();
 
-		Optional<String> subject = userBusinessController.checkIfCredentialValid(mail,pswd);
-		if(subject.isPresent()) {
-			//Si un sujet est present, alors l'utilisateur existe bien. On construit son token
+		Optional<String> subject = userBusinessController.checkIfCredentialValid(mail, pswd);
+		if (subject.isPresent()) {
+			// Si un sujet est present, alors l'utilisateur existe bien. On construit son
+			// token
 			Token jsonResponse = JWTokenUtility.buildJWT(subject.get());
 			return gson.toJson(jsonResponse);
 		}
 		throw new ForbiddenException();
 	}
-	
-	
+
+	/**
+	 * only for test
+	 * 
+	 * @deprecated
+	 */
+	@GetMapping(value = "/users")
+	@ResponseBody
+	public String getUsers(@RequestAttribute("mail") String mail, @RequestAttribute("role") int role) throws Exception {
+		return gson.toJson(userBusinessController.getAll());
+	}
+
 }

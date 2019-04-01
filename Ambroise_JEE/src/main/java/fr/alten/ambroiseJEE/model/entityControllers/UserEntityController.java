@@ -3,6 +3,7 @@
  */
 package fr.alten.ambroiseJEE.model.entityControllers;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +64,10 @@ public class UserEntityController {
 	 */
 	public Optional<User> getUserByMail(String mail) {
 		return userRepository.findByMail(mail);
+	}
+	
+	public List<User> getAllUsers() {
+		return userRepository.findAll();
 	}
 	
 	/**
