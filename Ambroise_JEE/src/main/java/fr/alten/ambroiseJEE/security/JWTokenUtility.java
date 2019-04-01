@@ -26,7 +26,6 @@ public class JWTokenUtility {
 	 */
 	public static Token buildJWT(String subject) {
 		RsaJsonWebKey rsaJsonWebKey = RsaKeyProducer.produce();
-		System.out.println("RSA hash code... " + rsaJsonWebKey.hashCode());
 
 		// création de la "charge utile" ou payload - la donnée Ã chiffrer, ici
 		// 'subject'
