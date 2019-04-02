@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import fr.alten.ambroiseJEE.controller.business.AgencyBusinessController;
+import fr.alten.ambroiseJEE.model.beans.Agency;
 import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.model.dao.UserRepository;
 import fr.alten.ambroiseJEE.security.Roles;
@@ -36,7 +38,7 @@ public class UserEntityController {
 	private UserRepository userRepository;
 	
 	@Autowired
-	private AgencyEntityController agencyEntityController;
+	private AgencyBusinessController agencyEntityController;
 
 	public static final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
 			Pattern.CASE_INSENSITIVE);
@@ -66,7 +68,11 @@ public class UserEntityController {
 		newUser.setName(jUser.get("name").textValue());
 		newUser.setPswd(jUser.get("pswd").textValue());
 		newUser.setRole(Roles.DEFAULT_USER_ROLE.getValue());
-		newUser.setAgency(agencyEntityController.getAgency(jUser.get("agency").textValue()));
+		
+		Optional<Agency> agency = agencyEntityController.getAgency(jUser.get("agency").textValue());
+		if(agency.isPresent()) {
+			newUser.setAgency(agency.get());
+		}
 
 		try {
 			userRepository.save(newUser);
@@ -96,12 +102,6 @@ public class UserEntityController {
 	 * @author Andy Chabalier
 	 */
 	public Optional<User> getUserByCredentials(String mail, String pswd) {
-//		userRepository.deleteAll();
-//		User user = new User();
-//		user.setMail(mail);
-//		user.setPswd(pswd);
-//		
-//		userRepository.save(user);
 		return userRepository.findByMailAndPswd(mail, pswd);
 	}
 
@@ -143,7 +143,10 @@ public class UserEntityController {
 			user.setName(jUser.get("name").textValue());
 			user.setPswd(jUser.get("pswd").textValue());
 			user.setRole(Roles.DEFAULT_USER_ROLE.getValue());
-			user.setAgency(agencyEntityController.getAgency(jUser.get("agency").textValue()));
+			Optional<Agency> agency = agencyEntityController.getAgency(jUser.get("agency").textValue());
+			if(agency.isPresent()) {
+				user.setAgency(agency.get());
+			}
 			userRepository.save(user);
 		}
 		else {
@@ -168,7 +171,7 @@ public class UserEntityController {
 			user.setName("");
 			user.setPswd("");
 			user.setRole(Roles.DESACTIVATED_USER_ROLE.getValue());
-			user.setAgency(agencyEntityController.getAgency(""));
+			user.setAgency(null);
 			userRepository.save(user);
 		}
 		else {
