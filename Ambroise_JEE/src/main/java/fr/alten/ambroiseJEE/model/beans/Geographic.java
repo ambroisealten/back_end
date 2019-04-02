@@ -9,5 +9,5 @@ package fr.alten.ambroiseJEE.model.beans;
  *
  */
 public abstract class Geographic {
-
+//TODO Make all controllers
 }
