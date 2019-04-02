@@ -3,9 +3,13 @@
  */
 package fr.alten.ambroiseJEE.model.entityControllers;
 
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.alten.ambroiseJEE.model.beans.Agency;
+import fr.alten.ambroiseJEE.model.dao.AgencyRepository;
 
 /**
  * @author MAQUINGHEN MAXIME
@@ -13,10 +17,12 @@ import fr.alten.ambroiseJEE.model.beans.Agency;
  */
 @Service
 public class AgencyEntityController {
+	
+	@Autowired
+	private AgencyRepository agencyRepository;
 
-	public Agency getAgency(String textValue) {
-		// TODO Auto-generated method stub
-		return null;
+	public Optional<Agency> getAgency(String name) {
+		return agencyRepository.findByName(name);
 	}
 
 }
