@@ -16,6 +16,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.model.dao.UserRepository;
 import fr.alten.ambroiseJEE.security.Roles;
+import fr.alten.ambroiseJEE.utils.MailCreator;
+import fr.alten.ambroiseJEE.utils.RandomString;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
@@ -34,7 +36,7 @@ public class UserEntityController {
 
 	@Autowired
 	private UserRepository userRepository;
-	
+
 	@Autowired
 	private AgencyEntityController agencyEntityController;
 
@@ -54,8 +56,8 @@ public class UserEntityController {
 	 */
 	public HttpException createUser(JsonNode jUser) {
 
-		//if the mail don't match with the mail pattern
-		if(!validateMail(jUser.get("mail").textValue())) {
+		// if the mail don't match with the mail pattern
+		if (!validateMail(jUser.get("mail").textValue())) {
 			return new UnprocessableEntityException();
 		}
 
@@ -101,6 +103,7 @@ public class UserEntityController {
 
 	/**
 	 * Method to validate if the mail math with the mail pattern
+	 * 
 	 * @param emailStr the string to validate
 	 * @return true if the string match with the mail pattern
 	 */
@@ -121,15 +124,16 @@ public class UserEntityController {
 	/**
 	 * 
 	 * @param jUser JsonNode with all user parameters (forname, mail, name,
-	 *              password) and the oldMail to perform the update even if the mail is changed
+	 *              password) and the oldMail to perform the update even if the mail
+	 *              is changed
 	 * @return the @see {@link HttpException} corresponding to the statut of the
-	 *         request ({@link RessourceNotFoundException} if the ressource is not found
-	 *         and {@link CreatedException} if the user is updated
+	 *         request ({@link RessourceNotFoundException} if the ressource is not
+	 *         found and {@link CreatedException} if the user is updated
 	 * @author MAQUINGHEN MAXIME
 	 */
 	public HttpException updateUser(JsonNode jUser) {
 		Optional<User> userOptionnal = userRepository.findByMail(jUser.get("oldMail").textValue());
-		
+
 		if (userOptionnal.isPresent()) {
 			User user = userOptionnal.get();
 			user.setForname(jUser.get("forname").textValue());
@@ -139,24 +143,23 @@ public class UserEntityController {
 			user.setRole(Roles.DEFAULT_USER_ROLE.getValue());
 			user.setAgency(agencyEntityController.getAgency(jUser.get("agency").textValue()));
 			userRepository.save(user);
-		}
-		else {
+		} else {
 			throw new RessourceNotFoundException();
-		}		
+		}
 		return new OkException();
 	}
 
 	/**
 	 * 
-	 * @param mail the user mail to fetch 
-	 * @return {@link HttpException} corresponding to the statut of the
-	 *         request ({@link RessourceNotFoundException} if the ressource is not found
-	 *         and {@link CreatedException} if the user is desactivated
+	 * @param mail the user mail to fetch
+	 * @return {@link HttpException} corresponding to the statut of the request
+	 *         ({@link RessourceNotFoundException} if the ressource is not found and
+	 *         {@link CreatedException} if the user is desactivated
 	 * @author MAQUINGHEN MAXIME
 	 */
 	public HttpException deleteUser(String mail) {
 		Optional<User> userOptionnal = userRepository.findByMail(mail);
-		
+
 		if (userOptionnal.isPresent()) {
 			User user = userOptionnal.get();
 			user.setForname("");
@@ -166,10 +169,38 @@ public class UserEntityController {
 			user.setRole(Roles.DESACTIVATED_USER_ROLE.getValue());
 			user.setAgency(agencyEntityController.getAgency(""));
 			userRepository.save(user);
-		}
-		else {
+		} else {
 			throw new RessourceNotFoundException();
-		}		
+		}
 		return new OkException();
+	}
+
+	/**
+	 * 
+	 * @param mail the mail concerned by the password changement
+	 * 
+	 * @return {@link HttpException} corresponding to the statut of the request
+	 *         ({@link RessourceNotFoundException} if the ressource is not found and
+	 *         {@link CreatedException} if the password is changed
+	 * @author MAQUINGHEN MAXIME
+	 */
+	public HttpException resetUserPassword(String mail) {
+		Optional<User> userOptionnal = userRepository.findByMail(mail);
+
+		if (userOptionnal.isPresent()) {
+			User user = userOptionnal.get();
+			String new_pass = RandomString.getAlphaNumericString(20);
+			user.setPswd(new_pass);
+			userRepository.save(user);
+			MailCreator.AdminUserResetPassword(new_pass); // TODO
+		} else {
+			throw new RessourceNotFoundException();
+		}
+		return new OkException();
+	}
+
+	public HttpException newPasswordUser(String token) {
+		// TODO creation de la partie de verification du token et url.
+		return null;
 	}
 }
