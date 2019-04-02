@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * Exception sent when the request has been succefully treated . HTTP
+ * Exception sent when the request has been successfully treated . HTTP
  * Status : 200.
  * 
  * @author MAQUINGHEN MAXIME

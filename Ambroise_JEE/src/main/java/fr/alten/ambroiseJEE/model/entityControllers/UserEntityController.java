@@ -96,12 +96,6 @@ public class UserEntityController {
 	 * @author Andy Chabalier
 	 */
 	public Optional<User> getUserByCredentials(String mail, String pswd) {
-//		userRepository.deleteAll();
-//		User user = new User();
-//		user.setMail(mail);
-//		user.setPswd(pswd);
-//		
-//		userRepository.save(user);
 		return userRepository.findByMailAndPswd(mail, pswd);
 	}
 
@@ -154,8 +148,10 @@ public class UserEntityController {
 
 	/**
 	 * 
-	 * @param mail
-	 * @return
+	 * @param mail the user mail to fetch 
+	 * @return {@link HttpException} corresponding to the statut of the
+	 *         request ({@link RessourceNotFoundException} if the ressource is not found
+	 *         and {@link CreatedException} if the user is desactivated
 	 * @author MAQUINGHEN MAXIME
 	 */
 	public HttpException deleteUser(String mail) {
