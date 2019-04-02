@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import fr.alten.ambroiseJEE.controller.business.GeographicBusinessController;
+import fr.alten.ambroiseJEE.controller.business.geographic.GeographicBusinessController;
 import fr.alten.ambroiseJEE.model.beans.Agency;
 import fr.alten.ambroiseJEE.model.beans.Geographic;
 import fr.alten.ambroiseJEE.model.dao.AgencyRepository;

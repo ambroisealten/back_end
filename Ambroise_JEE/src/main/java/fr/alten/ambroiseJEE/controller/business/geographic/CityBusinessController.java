@@ -1,7 +1,7 @@
 /**
  * 
  */
-package fr.alten.ambroiseJEE.controller.business;
+package fr.alten.ambroiseJEE.controller.business.geographic;
 
 import java.util.List;
 import java.util.Optional;

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package fr.alten.ambroiseJEE.controller.business;
+package fr.alten.ambroiseJEE.controller.business.geographic;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;

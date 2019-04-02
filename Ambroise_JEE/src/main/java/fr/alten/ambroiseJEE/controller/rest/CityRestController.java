@@ -17,7 +17,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import fr.alten.ambroiseJEE.controller.business.CityBusinessController;
+import fr.alten.ambroiseJEE.controller.business.geographic.CityBusinessController;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
