@@ -3,6 +3,7 @@
  */
 package fr.alten.ambroiseJEE.model.entityControllers;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,6 +19,8 @@ import fr.alten.ambroiseJEE.security.Roles;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
+import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
@@ -31,6 +34,9 @@ public class UserEntityController {
 
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private AgencyEntityController agencyEntityController;
 
 	public static final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
 			Pattern.CASE_INSENSITIVE);
@@ -60,9 +66,10 @@ public class UserEntityController {
 		newUser.setName(jUser.get("name").textValue());
 		newUser.setPswd(jUser.get("pswd").textValue());
 		newUser.setRole(Roles.DEFAULT_USER_ROLE.getValue());
+		newUser.setAgency(agencyEntityController.getAgency(jUser.get("agency").textValue()));
 
 		try {
-			userRepository.insert(newUser);
+			userRepository.save(newUser);
 		} catch (Exception e) {
 			return new ConflictException();
 		}
@@ -89,6 +96,12 @@ public class UserEntityController {
 	 * @author Andy Chabalier
 	 */
 	public Optional<User> getUserByCredentials(String mail, String pswd) {
+//		userRepository.deleteAll();
+//		User user = new User();
+//		user.setMail(mail);
+//		user.setPswd(pswd);
+//		
+//		userRepository.save(user);
 		return userRepository.findByMailAndPswd(mail, pswd);
 	}
 
@@ -100,5 +113,67 @@ public class UserEntityController {
 	private static boolean validateMail(String emailStr) {
 		Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
 		return matcher.find();
+	}
+
+	/**
+	 * 
+	 * @return the list of all user
+	 * @author MAQUINGHEN MAXIME
+	 */
+	public List<User> getUsers() {
+		return userRepository.findAll();
+	}
+
+	/**
+	 * 
+	 * @param jUser JsonNode with all user parameters (forname, mail, name,
+	 *              password) and the oldMail to perform the update even if the mail is changed
+	 * @return the @see {@link HttpException} corresponding to the statut of the
+	 *         request ({@link RessourceNotFoundException} if the ressource is not found
+	 *         and {@link CreatedException} if the user is updated
+	 * @author MAQUINGHEN MAXIME
+	 */
+	public HttpException updateUser(JsonNode jUser) {
+		Optional<User> userOptionnal = userRepository.findByMail(jUser.get("oldMail").textValue());
+		
+		if (userOptionnal.isPresent()) {
+			User user = userOptionnal.get();
+			user.setForname(jUser.get("forname").textValue());
+			user.setMail(jUser.get("mail").textValue());
+			user.setName(jUser.get("name").textValue());
+			user.setPswd(jUser.get("pswd").textValue());
+			user.setRole(Roles.DEFAULT_USER_ROLE.getValue());
+			user.setAgency(agencyEntityController.getAgency(jUser.get("agency").textValue()));
+			userRepository.save(user);
+		}
+		else {
+			throw new RessourceNotFoundException();
+		}		
+		return new OkException();
+	}
+
+	/**
+	 * 
+	 * @param mail
+	 * @return
+	 * @author MAQUINGHEN MAXIME
+	 */
+	public HttpException deleteUser(String mail) {
+		Optional<User> userOptionnal = userRepository.findByMail(mail);
+		
+		if (userOptionnal.isPresent()) {
+			User user = userOptionnal.get();
+			user.setForname("");
+			user.setMail("desactivated" + System.currentTimeMillis());
+			user.setName("");
+			user.setPswd("");
+			user.setRole(Roles.DESACTIVATED_USER_ROLE.getValue());
+			user.setAgency(agencyEntityController.getAgency(""));
+			userRepository.save(user);
+		}
+		else {
+			throw new RessourceNotFoundException();
+		}		
+		return new OkException();
 	}
 }

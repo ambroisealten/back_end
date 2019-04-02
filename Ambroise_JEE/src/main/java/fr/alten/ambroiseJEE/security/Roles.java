@@ -9,7 +9,10 @@ package fr.alten.ambroiseJEE.security;
  */
 public enum Roles {
 
-	DEFAULT_USER_ROLE(-1);
+	DESACTIVATED_USER_ROLE(-1),
+	DEFAULT_USER_ROLE(0),
+	ADMINISTRATOR_USER_ROLE(1);
+		
 	
 	private int value;
 	
