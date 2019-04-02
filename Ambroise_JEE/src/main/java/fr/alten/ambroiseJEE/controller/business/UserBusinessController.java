@@ -93,6 +93,15 @@ public class UserBusinessController {
 		return Roles.ADMINISTRATOR_USER_ROLE.getValue()== role ? userEntityController.updateUser(jUser) : new ForbiddenException();
 	}
 
+	/**
+	 * 
+	 * @param params the user mail to delete 
+	 * @param role the user role
+	 * @return @see {@link HttpException} corresponding to the statut of the
+	 *         request ({@link ForbiddenException} if the ressource is not found
+	 *         and {@link CreatedException} if the user is updated
+	 * @author MAQUINGHEN MAXIME
+	 */
 	public HttpException deleteUser(JsonNode params, int role) {
 		return Roles.ADMINISTRATOR_USER_ROLE.getValue()== role ? userEntityController.deleteUser(params.get("mail").textValue()) : new ForbiddenException();
 	}

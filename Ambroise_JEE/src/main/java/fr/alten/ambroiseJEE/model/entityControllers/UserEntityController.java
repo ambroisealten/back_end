@@ -157,8 +157,10 @@ public class UserEntityController {
 
 	/**
 	 * 
-	 * @param mail
-	 * @return
+	 * @param mail the user mail to fetch 
+	 * @return {@link HttpException} corresponding to the statut of the
+	 *         request ({@link RessourceNotFoundException} if the ressource is not found
+	 *         and {@link CreatedException} if the user is desactivated
 	 * @author MAQUINGHEN MAXIME
 	 */
 	public HttpException deleteUser(String mail) {
