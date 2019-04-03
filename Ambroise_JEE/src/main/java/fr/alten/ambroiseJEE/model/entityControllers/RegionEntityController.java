@@ -46,7 +46,8 @@ public class RegionEntityController {
 	public HttpException createRegion(JsonNode jRegion) {
 
 		Region newRegion = new Region();
-		newRegion.setName(jRegion.get("name").textValue());
+		newRegion.setName(jRegion.get("nom").textValue());
+		newRegion.setCode(jRegion.get("code").textValue());
 
 		try {
 			regionRepository.save(newRegion);

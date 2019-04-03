@@ -5,8 +5,6 @@ package fr.alten.ambroiseJEE.model.beans;
 
 import java.io.Serializable;
 
-import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -17,24 +15,16 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "departement")
 public class Departement extends Geographic implements Serializable {
 
-	private static final long serialVersionUID = 8285367427781453220L;
-
-	@Id
-	private transient ObjectId _id;
+	private static final long serialVersionUID = -9058008558311065461L;
 
 	@Indexed(unique = true)
+	private String code;
+
 	private String name;
+	private String codeRegion;
 
 	public Departement() {
 		super();
-	}
-
-	public ObjectId get_id() {
-		return _id;
-	}
-
-	public void set_id(ObjectId _id) {
-		this._id = _id;
 	}
 
 	public String getName() {
@@ -43,5 +33,21 @@ public class Departement extends Geographic implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getCodeRegion() {
+		return codeRegion;
+	}
+
+	public void setCodeRegion(String codeRegion) {
+		this.codeRegion = codeRegion;
 	}
 }

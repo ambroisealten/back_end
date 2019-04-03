@@ -46,7 +46,9 @@ public class DepartementEntityController {
 	public HttpException createDepartement(JsonNode jDepartement) {
 
 		Departement newDepartement = new Departement();
-		newDepartement.setName(jDepartement.get("name").textValue());
+		newDepartement.setName(jDepartement.get("nom").textValue());
+		newDepartement.setCode(jDepartement.get("code").textValue());
+		newDepartement.setCodeRegion(jDepartement.get("codeRegion").textValue());
 
 		try {
 			departementRepository.save(newDepartement);
