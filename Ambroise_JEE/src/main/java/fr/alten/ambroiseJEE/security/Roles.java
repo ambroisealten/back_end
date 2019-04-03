@@ -11,7 +11,7 @@ public enum Roles {
 
 	DESACTIVATED_USER_ROLE(-1),
 	DEFAULT_USER_ROLE(0),
-	ADMINISTRATOR_USER_ROLE(1);
+	ADMINISTRATOR_USER_ROLE(0);
 		
 	
 	private int value;

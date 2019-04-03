@@ -203,4 +203,8 @@ public class UserEntityController {
 		// TODO creation de la partie de verification du token et url.
 		return null;
 	}
+
+	public Optional<User> getUser(String usermail) {
+		return userRepository.findByMail(usermail);
+	}
 }

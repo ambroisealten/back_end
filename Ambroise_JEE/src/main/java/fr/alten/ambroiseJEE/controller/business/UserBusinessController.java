@@ -127,4 +127,9 @@ public class UserBusinessController {
 				: new ForbiddenException();
 	}
 
+	public Optional<User> getUser(String usermail, JsonNode jUser, int role) {
+		return Roles.ADMINISTRATOR_USER_ROLE.getValue() == role ? userEntityController.getUserByMail(usermail)
+				: Optional.empty();
+	}
+
 }

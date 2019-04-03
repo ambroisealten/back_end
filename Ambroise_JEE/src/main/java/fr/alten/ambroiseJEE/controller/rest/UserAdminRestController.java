@@ -31,14 +31,14 @@ import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
  *
  */
 @Controller
-public class AdminRestController {
+public class UserAdminRestController {
 
 	@Autowired
 	private UserBusinessController userBusinessController;
 
 	private final Gson gson;
 
-	public AdminRestController() {
+	public UserAdminRestController() {
 		GsonBuilder builder = new GsonBuilder();
 		this.gson = builder.create();
 	}
@@ -162,5 +162,11 @@ public class AdminRestController {
 		return params.get("mail") != null ? userBusinessController.newPasswordUser(token, params, role)
 				: new UnprocessableEntityException();
 	}
-
+	
+	
+	@GetMapping(value = "/admin/user/{mail}")
+	@ResponseBody
+	public String getUser(@PathVariable("mail") String usermail,@RequestAttribute("mail") String mail, @RequestAttribute("role") int role) {
+		return gson.toJson(userBusinessController.getUser(usermail, null, role));
+	}
 }
