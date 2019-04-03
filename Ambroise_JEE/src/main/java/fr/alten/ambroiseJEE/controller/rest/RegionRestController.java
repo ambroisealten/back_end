@@ -18,6 +18,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import fr.alten.ambroiseJEE.controller.business.geographic.RegionBusinessController;
+import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
@@ -40,6 +41,17 @@ public class RegionRestController {
 		this.gson = builder.create();
 	}
 
+	/**
+	 * 
+	 * @param params JsonNode containing post parameters from http request
+	 * @param mail the current logged user mail
+	 * @param role the current logged user role
+	 * @return {@link HttpException} corresponding to the statut of the
+	 *         request ({@link UnprocessableEntityException} if the ressource is not found
+	 *         and {@link CreatedException} if the user is created
+	 * @throws Exception @see ForbiddenException if wrong identifiers
+	 * @author Andy Chabalier
+	 */
 	@PostMapping(value = "/region")
 	@ResponseBody
 	public HttpException createRegion(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
@@ -48,12 +60,30 @@ public class RegionRestController {
 				: new UnprocessableEntityException();
 	}
 
+	/**
+	 * 
+	 * @param mail the current logged user mail
+	 * @param role the current logged user role
+	 * @return the list of all regions
+	 * @author Andy Chabalier
+	 */
 	@GetMapping(value = "/regions")
 	@ResponseBody
 	public String getRegions(@RequestAttribute("mail") String mail, @RequestAttribute("role") int role) {
 		return gson.toJson(regionBusinessController.getRegions(role));
 	}
 
+	/**
+	 * 
+	 * @param params JsonNode containing post parameters from http request
+	 * @param mail the current logged user mail
+	 * @param role the current logged user role
+	 * @return {@link HttpException} corresponding to the statut of the
+	 *         request ({@link UnprocessableEntityException} if the ressource is not found
+	 *         and {@link CreatedException} if the user is created
+	 * @throws Exception @see ForbiddenException if wrong identifiers
+	 * @author Andy Chabalier
+	 */
 	@PutMapping(value = "/region")
 	@ResponseBody
 	public HttpException updateRegion(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
@@ -62,6 +92,17 @@ public class RegionRestController {
 				: new UnprocessableEntityException();
 	}
 
+	/**
+	 * 
+	 * @param params JsonNode containing post parameters from http request
+	 * @param mail the current logged user mail
+	 * @param role the current logged user role
+	 * @return {@link HttpException} corresponding to the statut of the
+	 *         request ({@link UnprocessableEntityException} if the ressource is not found
+	 *         and {@link CreatedException} if the user is created
+	 * @throws Exception @see ForbiddenException if wrong identifiers
+	 * @author Andy Chabalier
+	 */
 	@DeleteMapping(value = "/region")
 	@ResponseBody
 	public HttpException deleteRegion(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,

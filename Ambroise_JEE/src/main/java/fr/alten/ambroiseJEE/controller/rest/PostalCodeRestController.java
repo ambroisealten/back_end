@@ -18,6 +18,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import fr.alten.ambroiseJEE.controller.business.geographic.PostalCodeBusinessController;
+import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
@@ -40,6 +41,17 @@ public class PostalCodeRestController {
 		this.gson = builder.create();
 	}
 
+	/**
+	 * 
+	 * @param params JsonNode containing post parameters from http request
+	 * @param mail the current logged user mail
+	 * @param role the current logged user role
+	 * @return {@link HttpException} corresponding to the statut of the
+	 *         request ({@link UnprocessableEntityException} if the ressource is not found
+	 *         and {@link CreatedException} if the user is created
+	 * @throws Exception @see ForbiddenException if wrong identifiers
+	 * @author Andy Chabalier
+	 */
 	@PostMapping(value = "/postalCode")
 	@ResponseBody
 	public HttpException createPostalCode(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
@@ -48,12 +60,30 @@ public class PostalCodeRestController {
 				: new UnprocessableEntityException();
 	}
 
+	/**
+	 * 
+	 * @param mail the current logged user mail
+	 * @param role the current logged user role
+	 * @return the list of all users
+	 * @author Andy Chabalier
+	 */
 	@GetMapping(value = "/postalCodes")
 	@ResponseBody
 	public String getPostalCodes(@RequestAttribute("mail") String mail, @RequestAttribute("role") int role) {
 		return gson.toJson(postalCodeBusinessController.getPostalCodes(role));
 	}
 
+	/**
+	 * 
+	 * @param params JsonNode containing post parameters from http request
+	 * @param mail the current logged user mail
+	 * @param role the current logged user role
+	 * @return {@link HttpException} corresponding to the statut of the
+	 *         request ({@link UnprocessableEntityException} if the ressource is not found
+	 *         and {@link CreatedException} if the user is created
+	 * @throws Exception @see ForbiddenException if wrong identifiers
+	 * @author Andy Chabalier
+	 */
 	@PutMapping(value = "/postalCode")
 	@ResponseBody
 	public HttpException updatePostalCode(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
@@ -62,6 +92,17 @@ public class PostalCodeRestController {
 				: new UnprocessableEntityException();
 	}
 
+	/**
+	 * 
+	 * @param params JsonNode containing post parameters from http request
+	 * @param mail the current logged user mail
+	 * @param role the current logged user role
+	 * @return {@link HttpException} corresponding to the statut of the
+	 *         request ({@link UnprocessableEntityException} if the ressource is not found
+	 *         and {@link CreatedException} if the user is created
+	 * @throws Exception @see ForbiddenException if wrong identifiers
+	 * @author Andy Chabalier
+	 */
 	@DeleteMapping(value = "/postalCode")
 	@ResponseBody
 	public HttpException deletePostalCode(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
