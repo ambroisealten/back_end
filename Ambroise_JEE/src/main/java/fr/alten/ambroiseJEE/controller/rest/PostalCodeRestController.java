@@ -56,7 +56,7 @@ public class PostalCodeRestController {
 	@ResponseBody
 	public HttpException createPostalCode(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") int role) throws Exception {
-		return params.get("mail") != null ? postalCodeBusinessController.createPostalCode(params, role)
+		return params.get("name") != null ? postalCodeBusinessController.createPostalCode(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -88,7 +88,7 @@ public class PostalCodeRestController {
 	@ResponseBody
 	public HttpException updatePostalCode(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") int role) throws Exception {
-		return params.get("mail") != null ? postalCodeBusinessController.createPostalCode(params, role)
+		return params.get("name") != null ? postalCodeBusinessController.createPostalCode(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -107,7 +107,7 @@ public class PostalCodeRestController {
 	@ResponseBody
 	public HttpException deletePostalCode(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") int role) throws Exception {
-		return params.get("mail") != null ? postalCodeBusinessController.deletePostalCode(params, role)
+		return params.get("name") != null ? postalCodeBusinessController.deletePostalCode(params, role)
 				: new UnprocessableEntityException();
 	}
 }

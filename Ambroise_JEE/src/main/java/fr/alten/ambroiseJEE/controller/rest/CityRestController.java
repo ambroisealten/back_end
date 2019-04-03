@@ -56,7 +56,7 @@ public class CityRestController {
 	@ResponseBody
 	public HttpException createCity(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") int role) throws Exception {
-		return params.get("mail") != null ? cityBusinessController.createCity(params, role)
+		return params.get("name") != null ? cityBusinessController.createCity(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -88,7 +88,7 @@ public class CityRestController {
 	@ResponseBody
 	public HttpException updateCity(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") int role) throws Exception {
-		return params.get("mail") != null ? cityBusinessController.createCity(params, role)
+		return params.get("name") != null ? cityBusinessController.createCity(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -107,7 +107,7 @@ public class CityRestController {
 	@ResponseBody
 	public HttpException deleteCity(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") int role) throws Exception {
-		return params.get("mail") != null ? cityBusinessController.deleteCity(params, role)
+		return params.get("name") != null ? cityBusinessController.deleteCity(params, role)
 				: new UnprocessableEntityException();
 	}
 }

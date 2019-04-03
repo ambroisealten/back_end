@@ -58,7 +58,7 @@ public class AdminRestController {
 	@ResponseBody
 	public HttpException createUser(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") int role) throws Exception {
-		return params.get("mail") != null ? userBusinessController.createUser(params, role)
+		return params.get("name") != null ? userBusinessController.createUser(params, role)
 				: new UnprocessableEntityException();
 	}
 

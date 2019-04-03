@@ -56,7 +56,7 @@ public class AgencyRestController {
 	@ResponseBody
 	public HttpException createAgency(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") int role) throws Exception {
-		return params.get("mail") != null ? agencyBusinessController.createAgency(params, role)
+		return params.get("name") != null ? agencyBusinessController.createAgency(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -88,7 +88,7 @@ public class AgencyRestController {
 	@ResponseBody
 	public HttpException updateAgency(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") int role) throws Exception {
-		return params.get("mail") != null ? agencyBusinessController.updateAgency(params, role)
+		return params.get("name") != null ? agencyBusinessController.updateAgency(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -107,7 +107,7 @@ public class AgencyRestController {
 	@ResponseBody
 	public HttpException deleteAgency(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") int role) throws Exception {
-		return params.get("mail") != null ? agencyBusinessController.deleteAgency(params, role)
+		return params.get("name") != null ? agencyBusinessController.deleteAgency(params, role)
 				: new UnprocessableEntityException();
 	}
 }
