@@ -36,7 +36,7 @@ public class UserEntityController {
 
 	@Autowired
 	private UserRepository userRepository;
-	
+
 	@Autowired
 	private AgencyBusinessController agencyEntityController;
 
@@ -56,8 +56,8 @@ public class UserEntityController {
 	 */
 	public HttpException createUser(JsonNode jUser) {
 
-		//if the mail don't match with the mail pattern
-		if(!validateMail(jUser.get("mail").textValue())) {
+		// if the mail don't match with the mail pattern
+		if (!validateMail(jUser.get("mail").textValue())) {
 			return new UnprocessableEntityException();
 		}
 
@@ -68,9 +68,9 @@ public class UserEntityController {
 		newUser.setName(jUser.get("name").textValue());
 		newUser.setPswd(jUser.get("pswd").textValue());
 		newUser.setRole(Roles.DEFAULT_USER_ROLE.getValue());
-		
+
 		Optional<Agency> agency = agencyEntityController.getAgency(jUser.get("agency").textValue());
-		if(agency.isPresent()) {
+		if (agency.isPresent()) {
 			newUser.setAgency(agency.get());
 		}
 
@@ -107,6 +107,7 @@ public class UserEntityController {
 
 	/**
 	 * Method to validate if the mail math with the mail pattern
+	 * 
 	 * @param emailStr the string to validate
 	 * @return true if the string match with the mail pattern
 	 */
@@ -127,15 +128,16 @@ public class UserEntityController {
 	/**
 	 * 
 	 * @param jUser JsonNode with all user parameters (forname, mail, name,
-	 *              password) and the oldMail to perform the update even if the mail is changed
+	 *              password) and the oldMail to perform the update even if the mail
+	 *              is changed
 	 * @return the @see {@link HttpException} corresponding to the statut of the
-	 *         request ({@link RessourceNotFoundException} if the ressource is not found
-	 *         and {@link CreatedException} if the user is updated
+	 *         request ({@link RessourceNotFoundException} if the ressource is not
+	 *         found and {@link CreatedException} if the user is updated
 	 * @author MAQUINGHEN MAXIME
 	 */
 	public HttpException updateUser(JsonNode jUser) {
 		Optional<User> userOptionnal = userRepository.findByMail(jUser.get("oldMail").textValue());
-		
+
 		if (userOptionnal.isPresent()) {
 			User user = userOptionnal.get();
 			user.setForname(jUser.get("forname").textValue());
@@ -144,28 +146,27 @@ public class UserEntityController {
 			user.setPswd(jUser.get("pswd").textValue());
 			user.setRole(Roles.DEFAULT_USER_ROLE.getValue());
 			Optional<Agency> agency = agencyEntityController.getAgency(jUser.get("agency").textValue());
-			if(agency.isPresent()) {
+			if (agency.isPresent()) {
 				user.setAgency(agency.get());
 			}
 			userRepository.save(user);
-		}
-		else {
+		} else {
 			throw new RessourceNotFoundException();
-		}		
+		}
 		return new OkException();
 	}
 
 	/**
 	 * 
-	 * @param mail the user mail to fetch 
-	 * @return {@link HttpException} corresponding to the statut of the
-	 *         request ({@link RessourceNotFoundException} if the ressource is not found
-	 *         and {@link CreatedException} if the user is desactivated
+	 * @param mail the user mail to fetch
+	 * @return {@link HttpException} corresponding to the statut of the request
+	 *         ({@link RessourceNotFoundException} if the ressource is not found and
+	 *         {@link CreatedException} if the user is desactivated
 	 * @author MAQUINGHEN MAXIME
 	 */
 	public HttpException deleteUser(String mail) {
 		Optional<User> userOptionnal = userRepository.findByMail(mail);
-		
+
 		if (userOptionnal.isPresent()) {
 			User user = userOptionnal.get();
 			user.setForname("");
@@ -175,10 +176,9 @@ public class UserEntityController {
 			user.setRole(Roles.DESACTIVATED_USER_ROLE.getValue());
 			user.setAgency(null);
 			userRepository.save(user);
-		}
-		else {
+		} else {
 			throw new RessourceNotFoundException();
-		}		
+		}
 		return new OkException();
 	}
 }

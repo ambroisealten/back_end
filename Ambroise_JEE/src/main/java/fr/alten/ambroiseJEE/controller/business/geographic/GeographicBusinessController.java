@@ -26,6 +26,7 @@ import fr.alten.ambroiseJEE.model.beans.Geographic;
 import fr.alten.ambroiseJEE.security.Roles;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.InternalServerErrorException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
 
@@ -47,9 +48,8 @@ public class GeographicBusinessController {
 
 	@Autowired
 	private PostalCodeBusinessController postalCodeBusinessController;
-	
-	private Gson gson = (new GsonBuilder()).create();
 
+	private Gson gson = (new GsonBuilder()).create();
 
 	/**
 	 * Get the wanted Geographic object. Depending of the placeType, we get the
@@ -97,35 +97,67 @@ public class GeographicBusinessController {
 		if (Roles.ADMINISTRATOR_USER_ROLE.getValue() == role) {
 			HashMap<String, ArrayList<LinkedTreeMap>> data = fetchData();
 
-			createRegion(data.get("region"),role);
-			createDepartement(data.get("departement"),role);
-			
+			createRegion(data.get("region"), role);
+			createDepartement(data.get("departement"), role);
+
+			createCities(data.get("departement"), role);
+
 			return new OkException();
 		}
 		throw new ForbiddenException();
 	}
 
 	/**
-	 * @param arrayList ArrayList of LinkedTreeMap with regions data
+	 * @param arrayList ArrayList of {@link LinkedTreeMap} departements data
+	 * @param role      the current logged user role
 	 * @author Andy Chabalier
 	 */
-	private void createRegion(ArrayList<LinkedTreeMap> regionData, int role) {
-		for(LinkedTreeMap region : regionData) {
+	private void createCities(ArrayList<LinkedTreeMap> departements, int role) {
+
+		RestTemplate restTemplate = new RestTemplate();
+		ArrayList<LinkedTreeMap> cities = new ArrayList<LinkedTreeMap>();
+		for (LinkedTreeMap departement : departements) {
 			try {
-				JsonNode jRegion = toJsonNode(gson.toJsonTree(region).getAsJsonObject());
-				regionBusinessController.createRegion(jRegion, role);
+				String code = (String) departement.get("code");
+				URI urlCities = new URI("https://geo.api.gouv.fr/departements/" + code + "/communes");
+				cities = gson.fromJson(restTemplate.getForObject(urlCities, String.class), ArrayList.class);
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+			}
+		}
+		for(LinkedTreeMap city : cities) {
+			try {
+				JsonNode jCity = toJsonNode(gson.toJsonTree(city).getAsJsonObject());
+				cityBusinessController.createCity(jCity, role);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 	}
-	
+
+	/**
+	 * @param arrayList ArrayList of LinkedTreeMap with regions data
+	 * @author Andy Chabalier
+	 * @return
+	 */
+	private HttpException createRegion(ArrayList<LinkedTreeMap> regionData, int role) {
+		for (LinkedTreeMap region : regionData) {
+			try {
+				JsonNode jRegion = toJsonNode(gson.toJsonTree(region).getAsJsonObject());
+				return regionBusinessController.createRegion(jRegion, role);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return new InternalServerErrorException();
+	}
+
 	/**
 	 * @param arrayList ArrayList of LinkedTreeMap with regions data
 	 * @author Andy Chabalier
 	 */
 	private void createDepartement(ArrayList<LinkedTreeMap> departementData, int role) {
-		for(LinkedTreeMap departement : departementData) {
+		for (LinkedTreeMap departement : departementData) {
 			try {
 				JsonNode jDepartement = toJsonNode(gson.toJsonTree(departement).getAsJsonObject());
 				departementBusinessController.createDepartement(jDepartement, role);
@@ -137,37 +169,36 @@ public class GeographicBusinessController {
 
 	private HashMap<String, ArrayList<LinkedTreeMap>> fetchData() {
 		HashMap<String, ArrayList<LinkedTreeMap>> data = new HashMap<String, ArrayList<LinkedTreeMap>>();
-		
+
 		Thread dataFetchingThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try {
-					
-					RestTemplate restTemplate = new RestTemplate();
-					
-					
-					URI urlDepartement = new URI("https://geo.api.gouv.fr/departements?fields=");
-					URI urlRegion = new URI("https://geo.api.gouv.fr/regions?fields=");	
 
-					data.put("region", gson.fromJson(restTemplate.getForObject(urlRegion, String.class), ArrayList.class));
-					
-					ArrayList<LinkedTreeMap> departementsFetched = gson.fromJson(restTemplate.getForObject(urlDepartement, String.class), ArrayList.class);
+					RestTemplate restTemplate = new RestTemplate();
+
+					URI urlDepartement = new URI("https://geo.api.gouv.fr/departements?fields=");
+					URI urlRegion = new URI("https://geo.api.gouv.fr/regions?fields=");
+
+					data.put("region",
+							gson.fromJson(restTemplate.getForObject(urlRegion, String.class), ArrayList.class));
+
+					ArrayList<LinkedTreeMap> departementsFetched = gson
+							.fromJson(restTemplate.getForObject(urlDepartement, String.class), ArrayList.class);
 					data.put("departement", departementsFetched);
-					
+
 				} catch (URISyntaxException e) {
 					e.printStackTrace();
 				}
 			}
 		});
-		
 		dataFetchingThread.run();
 
 		return data;
 	}
 
-	
 	private JsonNode toJsonNode(JsonObject jsonObj) throws IOException {
-	    ObjectMapper objectMapper = new ObjectMapper();
-	    return objectMapper.readTree(jsonObj.toString());
+		ObjectMapper objectMapper = new ObjectMapper();
+		return objectMapper.readTree(jsonObj.toString());
 	}
 }

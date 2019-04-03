@@ -5,8 +5,6 @@ package fr.alten.ambroiseJEE.model.beans;
 
 import java.io.Serializable;
 
-import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -18,24 +16,18 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "city")
 public class City extends Geographic implements Serializable {
 
-	private static final long serialVersionUID = 8285367427781453220L;
 
-	@Id
-	private transient ObjectId _id;
+	private static final long serialVersionUID = 7473150851064346366L;
 
 	@Indexed(unique = true)
+	private String code;
+	private String codeDepartement;
+	private String codeRegion;
+	private String codePostaux;
 	private String name;
 
 	public City() {
 		super();
-	}
-
-	public ObjectId get_id() {
-		return _id;
-	}
-
-	public void set_id(ObjectId _id) {
-		this._id = _id;
 	}
 
 	public String getName() {
@@ -44,5 +36,37 @@ public class City extends Geographic implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getCodeDepartement() {
+		return codeDepartement;
+	}
+
+	public void setCodeDepartement(String codeDepartement) {
+		this.codeDepartement = codeDepartement;
+	}
+
+	public String getCodeRegion() {
+		return codeRegion;
+	}
+
+	public void setCodeRegion(String codeRegion) {
+		this.codeRegion = codeRegion;
+	}
+
+	public String getCodePostaux() {
+		return codePostaux;
+	}
+
+	public void setCodePostaux(String codePostaux) {
+		this.codePostaux = codePostaux;
 	}
 }
