@@ -86,24 +86,28 @@ public class InitBaseWebService {
 		JsonNode userAdminJsonNode = toJsonNode(gson.toJsonTree(userAdmin).getAsJsonObject());
 		((ObjectNode) userAdminJsonNode).put("pswd", "pass");
 		((ObjectNode) userAdminJsonNode).put("role", "MANAGER_ADMIN");
+		((ObjectNode) userAdminJsonNode).put("agency", "");
 		JsonNode userManagerJsonNode = toJsonNode(gson.toJsonTree(userManager).getAsJsonObject());
 		((ObjectNode) userManagerJsonNode).put("pswd", "pass");
 		((ObjectNode) userManagerJsonNode).put("role", "MANAGER");
+		((ObjectNode) userManagerJsonNode).put("agency", "");
 		JsonNode userCDRJsonNode = toJsonNode(gson.toJsonTree(userCDR).getAsJsonObject());
 		((ObjectNode) userCDRJsonNode).put("pswd", "pass");
 		((ObjectNode) userCDRJsonNode).put("role", "CDR");
+		((ObjectNode) userCDRJsonNode).put("agency", "");
 		JsonNode userConsultantJsonNode = toJsonNode(gson.toJsonTree(userConsultant).getAsJsonObject());
 		((ObjectNode) userConsultantJsonNode).put("pswd", "pass");
 		((ObjectNode) userConsultantJsonNode).put("role", "CONSULTANT");
+		((ObjectNode) userConsultantJsonNode).put("agency", "");
 		JsonNode userDesactivatedJsonNode = toJsonNode(gson.toJsonTree(userDesactivated).getAsJsonObject());
 		((ObjectNode) userDesactivatedJsonNode).put("pswd", "pass");
 		((ObjectNode) userDesactivatedJsonNode).put("role", "DESACTIVATED");
+		((ObjectNode) userDesactivatedJsonNode).put("agency", "");
 
 		userBusinessController.createUser(userAdminJsonNode,UserRole.MANAGER_ADMIN);
 		userBusinessController.createUser(userManagerJsonNode,UserRole.MANAGER_ADMIN);
 		userBusinessController.createUser(userCDRJsonNode,UserRole.MANAGER_ADMIN);
 		userBusinessController.createUser(userConsultantJsonNode,UserRole.MANAGER_ADMIN);
-		
 		userBusinessController.createUser(userDesactivatedJsonNode,UserRole.MANAGER_ADMIN);
 		
 		//Remplissage d'une population de consultant
@@ -118,6 +122,7 @@ public class InitBaseWebService {
 			JsonNode useriJsonNode = toJsonNode(gson.toJsonTree(useri).getAsJsonObject());
 			((ObjectNode) useriJsonNode).put("pswd", "pass");
 			((ObjectNode) useriJsonNode).put("role", "DESACTIVATED");
+			((ObjectNode) useriJsonNode).put("agency", "");
 
 			userBusinessController.createUser(useriJsonNode,UserRole.MANAGER_ADMIN);		}
 		return new CreatedException();

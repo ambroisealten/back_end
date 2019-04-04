@@ -78,7 +78,9 @@ public class UserEntityController {
 		newUser.setRole(newRole);
 		Optional<Agency> agency = agencyEntityController.getAgency(jUser.get("agency").textValue());
 		if (agency.isPresent()) {
-			newUser.setAgency(agency.get());
+			newUser.setAgency(agency.get().getName());
+		}else {
+			newUser.setAgency("");
 		}
 
 		try {
@@ -160,7 +162,7 @@ public class UserEntityController {
 			}
 			Optional<Agency> agency = agencyEntityController.getAgency(jUser.get("agency").textValue());
 			if (agency.isPresent()) {
-				user.setAgency(agency.get());
+				user.setAgency(agency.get().getName());
 			}
 			userRepository.save(user);
 		} else {

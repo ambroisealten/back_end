@@ -5,12 +5,15 @@ package fr.alten.ambroiseJEE.controller.business;
 
 import java.util.Optional;
 
+import org.springframework.stereotype.Service;
+
 import fr.alten.ambroiseJEE.model.beans.Geographic;
 
 /**
  * @author Andy Chabalier
  *
  */
+@Service
 public class GeographicBusinessController {
 
 	/**
