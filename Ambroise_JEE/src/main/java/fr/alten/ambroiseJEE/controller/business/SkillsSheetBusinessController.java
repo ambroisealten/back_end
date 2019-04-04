@@ -6,57 +6,54 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.fasterxml.jackson.databind.JsonNode;
-
-import fr.alten.ambroiseJEE.model.beans.Person;
-import fr.alten.ambroiseJEE.model.entityControllers.PersonEntityController;
+import fr.alten.ambroiseJEE.model.beans.SkillsSheet;
+import fr.alten.ambroiseJEE.model.entityControllers.SkillsSheetEntityController;
 import fr.alten.ambroiseJEE.security.UserRole;
-import fr.alten.ambroiseJEE.utils.PersonRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 
 /**
- * Applicant controller for business rules.
+ * Skills sheet controller for business rules.
  * @author Lucas Royackkers
  *
  */
 @Service
-public class ApplicantBusinessController {
+public class SkillsSheetBusinessController {
+
 	@Autowired
-	private PersonEntityController personEntityController;
+	private SkillsSheetEntityController skillsSheetEntityController;
 	
-	public Optional<Person> getApplicant(String name){
-		return personEntityController.getApplicantByName(name);
+	public Optional<SkillsSheet> getSkillsSheet(String name){
+		return skillsSheetEntityController.getSkillsSheetByName(name);
 	}
 	
 	/**
-	 * Method to delegate applicant creation
-	 * @param jApplicant JsonNode with all applicant(person) parameters
+	 * Method to delegate skills sheet creation
+	 * @param jSkillsSheet JsonNode with all skills sheet parameters
 	 * @param role the user's role 
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ConflictException} if there is a conflict in the
-	 *         database and {@link CreatedException} if the person is created
+	 *         database and {@link CreatedException} if the skills sheet is created
 	 * @author Lucas Royackkers
 	 * @throws ParseException 
 	 */
-	public HttpException createApplicant(JsonNode jApplicant, UserRole role) throws ParseException {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role || UserRole.CDR == role) ? personEntityController.createPerson(jApplicant,PersonRole.APPLICANT) : new ForbiddenException();
+	public HttpException createSkillsSheet(JsonNode jSkillsSheet, UserRole role) {
+		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role || UserRole.CDR == role) ? skillsSheetEntityController.createSkillsSheet(jSkillsSheet) : new ForbiddenException();
 	}
-
 
 	/**
 	 * @param role the user's role
-	 * @return the list of all applicants
+	 * @return the list of all skills sheets
 	 * @author Lucas Royackkers
 	 */
-	public List<Person> getApplicants(UserRole role) {
+	public List<SkillsSheet> getSkillsSheets(UserRole role) {
 		if ((UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role)) {
-			return personEntityController.getPersonsByRole(PersonRole.APPLICANT);
+			return skillsSheetEntityController.getSkillsSheets();
 		}
 		throw new ForbiddenException();	
 	}
-	
+
 }

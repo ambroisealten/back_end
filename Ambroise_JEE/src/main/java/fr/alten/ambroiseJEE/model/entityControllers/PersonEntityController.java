@@ -146,7 +146,7 @@ public class PersonEntityController {
 	
 	
 	/**
-	 * Get a List of Moblity object given a String
+	 * Get a List of Mobility object given a String
 	 * 
 	 * @param mobilitiesString the String containing all possible mobilities for the person,
 	 * declared in this format : "place1//radius1//unit1 place2//radius2//unit2"
