@@ -17,7 +17,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import fr.alten.ambroiseJEE.controller.business.geographic.CityBusinessController;
+import fr.alten.ambroiseJEE.controller.business.CityBusinessController;
+import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
@@ -43,21 +44,21 @@ public class CityRestController {
 	@PostMapping(value = "/city")
 	@ResponseBody
 	public HttpException createCity(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") int role) throws Exception {
+			@RequestAttribute("role") UserRole role) throws Exception {
 		return params.get("mail") != null ? cityBusinessController.createCity(params, role)
 				: new UnprocessableEntityException();
 	}
 
 	@GetMapping(value = "/cities")
 	@ResponseBody
-	public String getCities(@RequestAttribute("mail") String mail, @RequestAttribute("role") int role) {
+	public String getCities(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
 		return gson.toJson(cityBusinessController.getCities(role));
 	}
 
 	@PutMapping(value = "/city")
 	@ResponseBody
 	public HttpException updateCity(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") int role) throws Exception {
+			@RequestAttribute("role") UserRole role) throws Exception {
 		return params.get("mail") != null ? cityBusinessController.createCity(params, role)
 				: new UnprocessableEntityException();
 	}
@@ -65,7 +66,7 @@ public class CityRestController {
 	@DeleteMapping(value = "/city")
 	@ResponseBody
 	public HttpException deleteCity(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") int role) throws Exception {
+			@RequestAttribute("role") UserRole role) throws Exception {
 		return params.get("mail") != null ? cityBusinessController.deleteCity(params, role)
 				: new UnprocessableEntityException();
 	}
