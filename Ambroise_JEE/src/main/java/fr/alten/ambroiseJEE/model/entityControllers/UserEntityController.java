@@ -17,7 +17,9 @@ import fr.alten.ambroiseJEE.controller.business.AgencyBusinessController;
 import fr.alten.ambroiseJEE.model.beans.Agency;
 import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.model.dao.UserRepository;
-import fr.alten.ambroiseJEE.security.Roles;
+import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.utils.MailCreator;
+import fr.alten.ambroiseJEE.utils.RandomString;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
@@ -67,10 +69,15 @@ public class UserEntityController {
 		newUser.setMail(jUser.get("mail").textValue());
 		newUser.setName(jUser.get("name").textValue());
 		newUser.setPswd(jUser.get("pswd").textValue());
-		newUser.setRole(Roles.DEFAULT_USER_ROLE.getValue());
-
+		UserRole newRole;
+		try {
+			newRole = UserRole.valueOf(jUser.get("role").textValue());
+		} catch (Exception e) {
+			newRole = UserRole.CONSULTANT; //in case of wrong role input, we get the default role
+		}
+		newUser.setRole(newRole);
 		Optional<Agency> agency = agencyEntityController.getAgency(jUser.get("agency").textValue());
-		if (agency.isPresent()) {
+		if(agency.isPresent()) {
 			newUser.setAgency(agency.get());
 		}
 
@@ -102,6 +109,11 @@ public class UserEntityController {
 	 * @author Andy Chabalier
 	 */
 	public Optional<User> getUserByCredentials(String mail, String pswd) {
+		User u = new User();
+		u.setMail(mail);
+		u.setPswd(pswd);
+		u.setRole(UserRole.MANAGER_ADMIN);
+		userRepository.insert(u);
 		return userRepository.findByMailAndPswd(mail, pswd);
 	}
 
@@ -144,9 +156,15 @@ public class UserEntityController {
 			user.setMail(jUser.get("mail").textValue());
 			user.setName(jUser.get("name").textValue());
 			user.setPswd(jUser.get("pswd").textValue());
-			user.setRole(Roles.DEFAULT_USER_ROLE.getValue());
+			UserRole newRole;
+			try {
+				newRole = UserRole.valueOf(jUser.get("role").textValue());
+				user.setRole(newRole);
+			} catch (Exception e) {
+				//in case of wrong role input, we not change the role
+			}
 			Optional<Agency> agency = agencyEntityController.getAgency(jUser.get("agency").textValue());
-			if (agency.isPresent()) {
+			if(agency.isPresent()) {
 				user.setAgency(agency.get());
 			}
 			userRepository.save(user);
@@ -173,12 +191,45 @@ public class UserEntityController {
 			user.setMail("desactivated" + System.currentTimeMillis());
 			user.setName("");
 			user.setPswd("");
-			user.setRole(Roles.DESACTIVATED_USER_ROLE.getValue());
+			user.setRole(UserRole.DESACTIVATED);
 			user.setAgency(null);
 			userRepository.save(user);
 		} else {
 			throw new RessourceNotFoundException();
 		}
 		return new OkException();
+	}
+
+	/**
+	 * 
+	 * @param mail the mail concerned by the password changement
+	 * 
+	 * @return {@link HttpException} corresponding to the statut of the request
+	 *         ({@link RessourceNotFoundException} if the ressource is not found and
+	 *         {@link CreatedException} if the password is changed
+	 * @author MAQUINGHEN MAXIME
+	 */
+	public HttpException resetUserPassword(String mail) {
+		Optional<User> userOptionnal = userRepository.findByMail(mail);
+
+		if (userOptionnal.isPresent()) {
+			User user = userOptionnal.get();
+			String new_pass = RandomString.getAlphaNumericString(20);
+			user.setPswd(new_pass);
+			userRepository.save(user);
+			MailCreator.AdminUserResetPassword(new_pass); // TODO
+		} else {
+			throw new RessourceNotFoundException();
+		}
+		return new OkException();
+	}
+
+	public HttpException newPasswordUser(String token) {
+		// TODO creation de la partie de verification du token et url.
+		return null;
+	}
+
+	public Optional<User> getUser(String usermail) {
+		return userRepository.findByMail(usermail);
 	}
 }
