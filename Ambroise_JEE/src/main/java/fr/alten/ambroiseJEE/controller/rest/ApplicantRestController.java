@@ -6,10 +6,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
 import fr.alten.ambroiseJEE.controller.business.ApplicantBusinessController;
+import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
@@ -46,7 +49,7 @@ public class ApplicantRestController {
 	@PostMapping(value = "/applicant")
 	@ResponseBody
 	public HttpException createApplicant(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") int role) throws Exception {
+			@RequestAttribute("role") UserRole role) throws Exception {
 		return params.get("mail") != null ? applicantBusinessController.createApplicant(params, role)
 				: new UnprocessableEntityException();
 	}
@@ -60,7 +63,7 @@ public class ApplicantRestController {
 	 */
 	@GetMapping(value = "/applicants")
 	@ResponseBody
-	public String getApplicants(@RequestAttribute("mail") String mail, @RequestAttribute("role") int role) {
+	public String getApplicants(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
 		return gson.toJson(applicantBusinessController.getApplicants(role));
 	}
 }

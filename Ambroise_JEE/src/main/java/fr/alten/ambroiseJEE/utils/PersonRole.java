@@ -1,4 +1,4 @@
-package fr.alten.ambroiseJEE.model;
+package fr.alten.ambroiseJEE.utils;
 
 
 /**
@@ -8,7 +8,6 @@ package fr.alten.ambroiseJEE.model;
  *
  */
 public enum PersonRole {
-
 	DEMISSIONAIRE,
 	APPLICANT,
 	CONSULTANT;

@@ -6,11 +6,13 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.fasterxml.jackson.databind.JsonNode;
-import fr.alten.ambroiseJEE.model.PersonRole;
+
 import fr.alten.ambroiseJEE.model.beans.Person;
 import fr.alten.ambroiseJEE.model.entityControllers.PersonEntityController;
-import fr.alten.ambroiseJEE.security.Roles;
+import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.utils.PersonRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
@@ -40,8 +42,8 @@ public class ApplicantBusinessController {
 	 * @author Lucas Royackkers
 	 * @throws ParseException 
 	 */
-	public HttpException createApplicant(JsonNode jApplicant, int role) throws ParseException {
-		return Roles.ADMINISTRATOR_USER_ROLE.getValue()== role ? personEntityController.createPerson(jApplicant,PersonRole.APPLICANT) : new ForbiddenException();
+	public HttpException createApplicant(JsonNode jApplicant, UserRole role) throws ParseException {
+		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role || UserRole.CDR == role) ? personEntityController.createPerson(jApplicant,PersonRole.APPLICANT) : new ForbiddenException();
 	}
 
 
@@ -50,8 +52,8 @@ public class ApplicantBusinessController {
 	 * @return the list of all applicants
 	 * @author Lucas Royackkers
 	 */
-	public List<Person> getApplicants(int role) {
-		if (Roles.ADMINISTRATOR_USER_ROLE.getValue()== role) {
+	public List<Person> getApplicants(UserRole role) {
+		if ((UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role)) {
 			return personEntityController.getPersonsByRole(PersonRole.APPLICANT);
 		}
 		throw new ForbiddenException();	

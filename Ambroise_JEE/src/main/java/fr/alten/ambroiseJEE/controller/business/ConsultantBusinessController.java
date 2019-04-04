@@ -9,10 +9,10 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import fr.alten.ambroiseJEE.model.PersonRole;
 import fr.alten.ambroiseJEE.model.beans.Person;
 import fr.alten.ambroiseJEE.model.entityControllers.PersonEntityController;
-import fr.alten.ambroiseJEE.security.Roles;
+import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.utils.PersonRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
@@ -42,8 +42,8 @@ public class ConsultantBusinessController {
 	 * @author Lucas Royackkers
 	 * @throws ParseException 
 	 */
-	public HttpException createConsultant(JsonNode jConsultant, int role) throws ParseException {
-		return Roles.ADMINISTRATOR_USER_ROLE.getValue()== role ? personEntityController.createPerson(jConsultant,PersonRole.CONSULTANT) : new ForbiddenException();
+	public HttpException createConsultant(JsonNode jConsultant, UserRole role) throws ParseException {
+		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role) ? personEntityController.createPerson(jConsultant,PersonRole.CONSULTANT) : new ForbiddenException();
 	}
 
 
@@ -52,8 +52,8 @@ public class ConsultantBusinessController {
 	 * @return the list of all consultants
 	 * @author Lucas Royackkers
 	 */
-	public List<Person> getConsultants(int role) {
-		if (Roles.ADMINISTRATOR_USER_ROLE.getValue()== role) {
+	public List<Person> getConsultants(UserRole role) {
+		if ((UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role)) {
 			return personEntityController.getPersonsByRole(PersonRole.CONSULTANT);
 		}
 		throw new ForbiddenException();	

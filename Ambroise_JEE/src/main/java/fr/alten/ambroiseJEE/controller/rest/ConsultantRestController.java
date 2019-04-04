@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
 import fr.alten.ambroiseJEE.controller.business.ConsultantBusinessController;
+import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
@@ -46,7 +48,7 @@ public class ConsultantRestController {
 	@PostMapping(value = "/consultant")
 	@ResponseBody
 	public HttpException createConsultant(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") int role) throws Exception {
+			@RequestAttribute("role") UserRole role) throws Exception {
 		return params.get("mail") != null ? consultantBusinessController.createConsultant(params, role)
 				: new UnprocessableEntityException();
 	}
@@ -61,7 +63,7 @@ public class ConsultantRestController {
 	 */
 	@GetMapping(value = "/consultants")
 	@ResponseBody
-	public String getConsultants(@RequestAttribute("mail") String mail, @RequestAttribute("role") int role) {
+	public String getConsultants(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
 		return gson.toJson(consultantBusinessController.getConsultants(role));
 	}
 }
