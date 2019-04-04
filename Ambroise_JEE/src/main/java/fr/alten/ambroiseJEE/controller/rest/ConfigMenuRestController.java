@@ -18,7 +18,6 @@ import fr.alten.ambroiseJEE.controller.business.ConfigMenuBusinessController;
 @Controller
 public class ConfigMenuRestController {
 
-	@Autowired
 	private ConfigMenuBusinessController configMenuBusinessController;
 	
 	public ConfigMenuRestController() {
@@ -34,7 +33,7 @@ public class ConfigMenuRestController {
 	 */
 	@GetMapping(value = "/configMenu")
 	@ResponseBody
-	public String getMenuItems(@RequestAttribute("role") int role) throws FileNotFoundException {
+	public String getMenuItems(@RequestAttribute("mail") String mail, @RequestAttribute("role") int role) throws FileNotFoundException {
 		return configMenuBusinessController.getItems(role);
 	}
 	

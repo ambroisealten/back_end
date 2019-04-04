@@ -2,11 +2,9 @@ package fr.alten.ambroiseJEE.controller.business;
 
 import java.io.FileNotFoundException;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import fr.alten.ambroiseJEE.security.Roles;
+import fr.alten.ambroiseJEE.utils.config.ParseConfigFile;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
-import utils.config.ParseConfigFile;
 
 /**
  * Business Controller for menu items configuration
@@ -25,7 +23,7 @@ public class ConfigMenuBusinessController {
 	 */
 	public String getItems(int role) throws FileNotFoundException {
 		if(Roles.ADMINISTRATOR_USER_ROLE.getValue() == role || Roles.DEFAULT_USER_ROLE.getValue() == role ) {
-			return ParseConfigFile.getJsonMenuItems();
+			return "";//ParseConfigFile.getJsonMenuItems(role);
 		}
 		throw new ForbiddenException();
 	}
