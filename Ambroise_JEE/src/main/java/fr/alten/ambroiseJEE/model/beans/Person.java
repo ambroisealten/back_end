@@ -8,6 +8,8 @@ import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import fr.alten.ambroiseJEE.model.PersonRole;
+
 /**
  * Defines what a person is in our app
  * 
@@ -25,7 +27,7 @@ public class Person implements Serializable{
 	private Employer employer;
 	private int monthlyWage;
 	private Date canStartsAt;
-	private int role;
+	private PersonRole role;
 	private String mail;
 	private User managerInCharge;
 	private Diploma highestDiploma;
@@ -65,11 +67,11 @@ public class Person implements Serializable{
 	public void setCanStartsAt(Date canStartsAt) {
 		this.canStartsAt = canStartsAt;
 	}
-	public int getRole() {
+	public PersonRole getRole() {
 		return role;
 	}
-	public void setRole(int role) {
-		this.role = role;
+	public void setRole(PersonRole type) {
+		this.role = type;
 	}
 	public String getMail() {
 		return mail;
