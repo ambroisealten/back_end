@@ -1,14 +1,18 @@
 {
 	"menuItems": [
 		{
+			"access": [
+				{
+					"ADMIN": "Missions Compétences Forum",
+					"MANAGER_ADMIN": "Missions Compétences Forum",
+					"CDR_ADMIN": "Missions Compétences Forum",
+					"MANAGER": "Missions Compétences Forum",
+					"CDR": "Missions Forum"
+				}
+			],
 			"modules": [
 				{
 					"label": "Missions",
-					"roles": [
-						"admin",
-						"cdr",
-						"manager"
-					],
 					"routerLink": "mission",
 					"menus": [
 						{
@@ -48,10 +52,6 @@
 				},
 				{
 					"label": "Compétences",
-					"roles": [
-						"admin",
-						"manager"
-					],
 					"routerLink": "competences",
 					"menus": [
 						{
@@ -91,11 +91,6 @@
 				},
 				{
 					"label": "Forum",
-					"roles": [
-						"admin",
-						"cdr",
-						"manager"
-					],
 					"routerLink": "forum",
 					"menus": [
 						{
