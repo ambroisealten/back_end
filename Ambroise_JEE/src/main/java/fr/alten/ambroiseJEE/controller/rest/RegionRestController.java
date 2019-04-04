@@ -18,6 +18,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import fr.alten.ambroiseJEE.controller.business.geographic.RegionBusinessController;
+import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
@@ -43,21 +44,21 @@ public class RegionRestController {
 	@PostMapping(value = "/region")
 	@ResponseBody
 	public HttpException createRegion(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") int role) throws Exception {
+			@RequestAttribute("role") UserRole role) throws Exception {
 		return params.get("mail") != null ? regionBusinessController.createRegion(params, role)
 				: new UnprocessableEntityException();
 	}
 
 	@GetMapping(value = "/regions")
 	@ResponseBody
-	public String getRegions(@RequestAttribute("mail") String mail, @RequestAttribute("role") int role) {
+	public String getRegions(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
 		return gson.toJson(regionBusinessController.getRegions(role));
 	}
 
 	@PutMapping(value = "/region")
 	@ResponseBody
 	public HttpException updateRegion(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") int role) throws Exception {
+			@RequestAttribute("role") UserRole role) throws Exception {
 		return params.get("mail") != null ? regionBusinessController.createRegion(params, role)
 				: new UnprocessableEntityException();
 	}
@@ -65,7 +66,7 @@ public class RegionRestController {
 	@DeleteMapping(value = "/region")
 	@ResponseBody
 	public HttpException deleteRegion(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") int role) throws Exception {
+			@RequestAttribute("role") UserRole role) throws Exception {
 		return params.get("mail") != null ? regionBusinessController.deleteRegion(params, role)
 				: new UnprocessableEntityException();
 	}
