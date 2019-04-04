@@ -2,6 +2,7 @@ package fr.alten.ambroiseJEE.controller.rest;
 
 import java.io.FileNotFoundException;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
@@ -18,6 +19,7 @@ import fr.alten.ambroiseJEE.security.UserRole;
 @Controller
 public class ConfigMenuRestController {
 
+	@Autowired
 	private ConfigMenuBusinessController configMenuBusinessController;
 	
 	public ConfigMenuRestController() {
