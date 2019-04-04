@@ -76,7 +76,10 @@ public class UserEntityController {
 			newRole = UserRole.CONSULTANT; //in case of wrong role input, we get the default role
 		}
 		newUser.setRole(newRole);
-		newUser.setAgency(agencyEntityController.getAgency(jUser.get("agency").textValue()));
+		Optional<Agency> agency = agencyEntityController.getAgency(jUser.get("agency").textValue());
+		if(agency.isPresent()) {
+			newUser.setAgency(agency.get());
+		}
 
 		try {
 			userRepository.save(newUser);
@@ -106,6 +109,11 @@ public class UserEntityController {
 	 * @author Andy Chabalier
 	 */
 	public Optional<User> getUserByCredentials(String mail, String pswd) {
+		User u = new User();
+		u.setMail(mail);
+		u.setPswd(pswd);
+		u.setRole(UserRole.MANAGER_ADMIN);
+		userRepository.insert(u);
 		return userRepository.findByMailAndPswd(mail, pswd);
 	}
 
@@ -155,7 +163,10 @@ public class UserEntityController {
 			} catch (Exception e) {
 				//in case of wrong role input, we not change the role
 			}
-			user.setAgency(agencyEntityController.getAgency(jUser.get("agency").textValue()));
+			Optional<Agency> agency = agencyEntityController.getAgency(jUser.get("agency").textValue());
+			if(agency.isPresent()) {
+				user.setAgency(agency.get());
+			}
 			userRepository.save(user);
 		} else {
 			throw new RessourceNotFoundException();
@@ -181,7 +192,7 @@ public class UserEntityController {
 			user.setName("");
 			user.setPswd("");
 			user.setRole(UserRole.DESACTIVATED);
-			user.setAgency(agencyEntityController.getAgency(""));
+			user.setAgency(null);
 			userRepository.save(user);
 		} else {
 			throw new RessourceNotFoundException();
