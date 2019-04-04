@@ -10,6 +10,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import fr.alten.ambroiseJEE.security.UserRole;
+
 /**
  * User bean object role and password fields are transient so that they don't
  * appear in the serialized object (json)
@@ -29,7 +31,7 @@ public class User implements Serializable {
 	private transient String pswd;
 	private String name;
 	private String forname;
-	private transient int role;
+	private transient UserRole role;
 	private Agency agency;
 
 	public User() {
@@ -76,11 +78,11 @@ public class User implements Serializable {
 		this.mail = mail;
 	}
 
-	public int getRole() {
+	public UserRole getRole() {
 		return role;
 	}
 
-	public void setRole(int role) {
+	public void setRole(UserRole role) {
 		this.role = role;
 	}
 
