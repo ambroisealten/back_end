@@ -74,7 +74,11 @@ public class UserEntityController {
 			newRole = UserRole.CONSULTANT; //in case of wrong role input, we get the default role
 		}
 		newUser.setRole(newRole);
-		newUser.setAgency(agencyEntityController.getAgency(jUser.get("agency").textValue()));
+		try{
+			newUser.setAgency(agencyEntityController.getAgency(jUser.get("agency").textValue()));
+		}catch(NullPointerException npe) {
+			//TODO verifier qu'il n'y a pas d'erreur sur les agences
+		}
 
 		try {
 			userRepository.save(newUser);
@@ -104,11 +108,6 @@ public class UserEntityController {
 	 * @author Andy Chabalier
 	 */
 	public Optional<User> getUserByCredentials(String mail, String pswd) {
-		User u = new User();
-		u.setMail(mail);
-		u.setPswd(pswd);
-		u.setRole(UserRole.MANAGER_ADMIN);
-		userRepository.insert(u);
 		return userRepository.findByMailAndPswd(mail, pswd);
 	}
 
