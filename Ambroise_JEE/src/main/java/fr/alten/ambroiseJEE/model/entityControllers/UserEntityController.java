@@ -106,11 +106,6 @@ public class UserEntityController {
 	 * @author Andy Chabalier
 	 */
 	public Optional<User> getUserByCredentials(String mail, String pswd) {
-		User u = new User();
-		u.setMail(mail);
-		u.setPswd(pswd);
-		u.setRole(UserRole.MANAGER_ADMIN);
-		userRepository.insert(u);
 		return userRepository.findByMailAndPswd(mail, pswd);
 	}
 
