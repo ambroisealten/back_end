@@ -3,9 +3,11 @@
 		{
 			"access": [
 				{
-					"1": "Missions Compétences Forum",
-					"2": "Missions Compétences Forum",
-					"3": "Missions Forum"
+					"ADMIN": "Missions Compétences Forum",
+					"MANAGER_ADMIN": "Missions Compétences Forum",
+					"CDR_ADMIN": "Missions Compétences Forum",
+					"MANAGER": "Missions Compétences Forum",
+					"CDR": "Missions Forum"
 				}
 			],
 			"modules": [
