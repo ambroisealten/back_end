@@ -14,6 +14,7 @@ import org.jose4j.jwt.consumer.InvalidJwtException;
 import org.springframework.http.HttpMethod;
 
 import fr.alten.ambroiseJEE.security.JWTokenUtility;
+import fr.alten.ambroiseJEE.security.UserRole;
 
 public class TokenFilter implements Filter {
 	
@@ -35,7 +36,7 @@ public class TokenFilter implements Filter {
 				//We try to validate the token. In our case, the subject is formed by mail|role
 				String[] tokenInfo = JWTokenUtility.validate(token).split("\\|");
 				String subject = tokenInfo[0];
-				int role = Integer.parseInt(tokenInfo[1]);
+				UserRole role = UserRole.valueOf(tokenInfo[1]);
 
 				//We put the decoded subject parameters in attribute to allow further use in the chain
 				httpRequest.setAttribute("mail", subject);
