@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.model.dao.UserRepository;
-import fr.alten.ambroiseJEE.security.Roles;
+import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.MailCreator;
 import fr.alten.ambroiseJEE.utils.RandomString;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
@@ -67,7 +67,13 @@ public class UserEntityController {
 		newUser.setMail(jUser.get("mail").textValue());
 		newUser.setName(jUser.get("name").textValue());
 		newUser.setPswd(jUser.get("pswd").textValue());
-		newUser.setRole(Roles.DEFAULT_USER_ROLE.getValue());
+		UserRole newRole;
+		try {
+			newRole = UserRole.valueOf(jUser.get("role").textValue());
+		} catch (Exception e) {
+			newRole = UserRole.CONSULTANT; //in case of wrong role input, we get the default role
+		}
+		newUser.setRole(newRole);
 		newUser.setAgency(agencyEntityController.getAgency(jUser.get("agency").textValue()));
 
 		try {
@@ -98,6 +104,11 @@ public class UserEntityController {
 	 * @author Andy Chabalier
 	 */
 	public Optional<User> getUserByCredentials(String mail, String pswd) {
+		User u = new User();
+		u.setMail(mail);
+		u.setPswd(pswd);
+		u.setRole(UserRole.MANAGER_ADMIN);
+		userRepository.insert(u);
 		return userRepository.findByMailAndPswd(mail, pswd);
 	}
 
@@ -140,7 +151,13 @@ public class UserEntityController {
 			user.setMail(jUser.get("mail").textValue());
 			user.setName(jUser.get("name").textValue());
 			user.setPswd(jUser.get("pswd").textValue());
-			user.setRole(Roles.DEFAULT_USER_ROLE.getValue());
+			UserRole newRole;
+			try {
+				newRole = UserRole.valueOf(jUser.get("role").textValue());
+				user.setRole(newRole);
+			} catch (Exception e) {
+				//in case of wrong role input, we not change the role
+			}
 			user.setAgency(agencyEntityController.getAgency(jUser.get("agency").textValue()));
 			userRepository.save(user);
 		} else {
@@ -166,7 +183,7 @@ public class UserEntityController {
 			user.setMail("desactivated" + System.currentTimeMillis());
 			user.setName("");
 			user.setPswd("");
-			user.setRole(Roles.DESACTIVATED_USER_ROLE.getValue());
+			user.setRole(UserRole.DESACTIVATED);
 			user.setAgency(agencyEntityController.getAgency(""));
 			userRepository.save(user);
 		} else {

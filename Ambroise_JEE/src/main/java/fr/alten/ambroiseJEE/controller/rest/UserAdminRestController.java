@@ -19,6 +19,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import fr.alten.ambroiseJEE.controller.business.UserBusinessController;
+import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
@@ -59,7 +60,7 @@ public class UserAdminRestController {
 	@PostMapping(value = "/admin/user")
 	@ResponseBody
 	public HttpException createUser(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") int role) throws Exception {
+			@RequestAttribute("role") UserRole role) throws Exception {
 		return params.get("mail") != null ? userBusinessController.createUser(params, role)
 				: new UnprocessableEntityException();
 	}
@@ -75,7 +76,7 @@ public class UserAdminRestController {
 	 */
 	@GetMapping(value = "/admin/users")
 	@ResponseBody
-	public String getUsers(@RequestAttribute("mail") String mail, @RequestAttribute("role") int role) {
+	public String getUsers(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
 		return gson.toJson(userBusinessController.getUsers(role));
 	}
 
@@ -95,7 +96,7 @@ public class UserAdminRestController {
 	@PutMapping(value = "/admin/user")
 	@ResponseBody
 	public HttpException updateUser(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") int role) throws Exception {
+			@RequestAttribute("role") UserRole role) throws Exception {
 		return params.get("mail") != null ? userBusinessController.updateUser(params, role)
 				: new UnprocessableEntityException();
 	}
@@ -115,7 +116,7 @@ public class UserAdminRestController {
 	@DeleteMapping(value = "/admin/user")
 	@ResponseBody
 	public HttpException deleteUser(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") int role) throws Exception {
+			@RequestAttribute("role") UserRole role) throws Exception {
 		return params.get("mail") != null ? userBusinessController.deleteUser(params, role)
 				: new UnprocessableEntityException();
 	}
@@ -136,7 +137,7 @@ public class UserAdminRestController {
 	@PutMapping(value = "/admin/user/{mail}")
 	@ResponseBody
 	public HttpException resetUserPassword(@PathVariable("mail") String resetPassMail, @RequestBody JsonNode params,
-			@RequestAttribute("mail") String mail, @RequestAttribute("role") int role) throws Exception {
+			@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) throws Exception {
 		return params.get("mail") != null ? userBusinessController.resetUserPassword(resetPassMail, params, role)
 				: new UnprocessableEntityException();
 	}
@@ -158,7 +159,7 @@ public class UserAdminRestController {
 	@PutMapping(value = "/admin/user/{token}")
 	@ResponseBody
 	public HttpException newPasswordUser(@PathVariable("token") String token, @RequestBody JsonNode params,
-			@RequestAttribute("mail") String mail, @RequestAttribute("role") int role) throws Exception {
+			@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) throws Exception {
 		return params.get("mail") != null ? userBusinessController.newPasswordUser(token, params, role)
 				: new UnprocessableEntityException();
 	}
@@ -166,7 +167,7 @@ public class UserAdminRestController {
 	
 	@GetMapping(value = "/admin/user/{mail}")
 	@ResponseBody
-	public String getUser(@PathVariable("mail") String usermail,@RequestAttribute("mail") String mail, @RequestAttribute("role") int role) {
+	public String getUser(@PathVariable("mail") String usermail,@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
 		return gson.toJson(userBusinessController.getUser(usermail, null, role));
 	}
 }
