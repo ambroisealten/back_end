@@ -50,4 +50,9 @@ public class Departement extends Geographic implements Serializable {
 	public void setCodeRegion(String codeRegion) {
 		this.codeRegion = codeRegion;
 	}
+
+	@Override
+	public String getIdentifier() {
+		return this.getCode();
+	}
 }

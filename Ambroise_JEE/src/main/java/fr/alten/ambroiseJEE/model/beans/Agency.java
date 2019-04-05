@@ -24,7 +24,8 @@ public class Agency implements Serializable {
 	
 	@Indexed(unique = true)
 	private String name;
-	private Geographic place;
+	private String place;
+	private String placeType;
 	
 	public Agency() {
 		super();
@@ -42,11 +43,19 @@ public class Agency implements Serializable {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public Geographic getPlace() {
+	public String getPlace() {
 		return place;
 	}
-	public void setPlace(Geographic place) {
+	public void setPlace(String place) {
 		this.place = place;
+	}
+
+	public String getPlaceType() {
+		return placeType;
+	}
+
+	public void setPlaceType(String placeType) {
+		this.placeType = placeType;
 	}
 	
 	

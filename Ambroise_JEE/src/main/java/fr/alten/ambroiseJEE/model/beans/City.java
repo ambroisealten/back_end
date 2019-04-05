@@ -69,4 +69,9 @@ public class City extends Geographic implements Serializable {
 	public void setCodePostaux(String codePostaux) {
 		this.codePostaux = codePostaux;
 	}
+
+	@Override
+	public String getIdentifier() {
+		return this.getCode();
+	}
 }

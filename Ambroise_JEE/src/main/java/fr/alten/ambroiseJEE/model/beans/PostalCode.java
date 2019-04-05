@@ -45,5 +45,10 @@ public class PostalCode extends Geographic implements Serializable {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	@Override
+	public String getIdentifier() {
+		return this.getName();
+	}
 }
 

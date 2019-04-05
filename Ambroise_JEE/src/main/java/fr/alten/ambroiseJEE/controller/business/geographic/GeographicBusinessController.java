@@ -16,14 +16,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
 import com.google.gson.internal.LinkedTreeMap;
 
 import fr.alten.ambroiseJEE.model.beans.Geographic;
 import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.utils.JsonUtils;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
@@ -122,7 +121,7 @@ public class GeographicBusinessController {
 				citiesByDepartement = gson.fromJson(restTemplate.getForObject(urlCities, String.class), ArrayList.class);
 				for (LinkedTreeMap city : citiesByDepartement) {
 					try {
-						JsonNode jCity = toJsonNode(gson.toJsonTree(city).getAsJsonObject());
+						JsonNode jCity = JsonUtils.toJsonNode(gson.toJsonTree(city).getAsJsonObject());
 						cityBusinessController.createCity(jCity, role);
 					} catch (IOException e) {
 						e.printStackTrace();
@@ -143,7 +142,7 @@ public class GeographicBusinessController {
 	private void createRegion(ArrayList<LinkedTreeMap> regionData, UserRole role) {
 		for (LinkedTreeMap region : regionData) {
 			try {
-				JsonNode jRegion = toJsonNode(gson.toJsonTree(region).getAsJsonObject());
+				JsonNode jRegion = JsonUtils.toJsonNode(gson.toJsonTree(region).getAsJsonObject());
 				regionBusinessController.createRegion(jRegion, role);
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -158,7 +157,7 @@ public class GeographicBusinessController {
 	private void createDepartement(ArrayList<LinkedTreeMap> departementData, UserRole role) {
 		for (LinkedTreeMap departement : departementData) {
 			try {
-				JsonNode jDepartement = toJsonNode(gson.toJsonTree(departement).getAsJsonObject());
+				JsonNode jDepartement = JsonUtils.toJsonNode(gson.toJsonTree(departement).getAsJsonObject());
 				departementBusinessController.createDepartement(jDepartement, role);
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -194,10 +193,5 @@ public class GeographicBusinessController {
 		dataFetchingThread.run();
 
 		return data;
-	}
-
-	private JsonNode toJsonNode(JsonObject jsonObj) throws IOException {
-		ObjectMapper objectMapper = new ObjectMapper();
-		return objectMapper.readTree(jsonObj.toString());
 	}
 }

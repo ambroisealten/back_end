@@ -43,4 +43,8 @@ public class Region extends Geographic implements Serializable {
 		this.code = code;
 	}
 
+	@Override
+	public String getIdentifier() {
+		return this.getCode();
+	}
 }
