@@ -18,6 +18,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import fr.alten.ambroiseJEE.controller.business.geographic.PostalCodeBusinessController;
+import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
@@ -55,7 +56,7 @@ public class PostalCodeRestController {
 	@PostMapping(value = "/postalCode")
 	@ResponseBody
 	public HttpException createPostalCode(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") int role) throws Exception {
+			@RequestAttribute("role") UserRole role) throws Exception {
 		return params.get("name") != null ? postalCodeBusinessController.createPostalCode(params, role)
 				: new UnprocessableEntityException();
 	}
@@ -69,7 +70,7 @@ public class PostalCodeRestController {
 	 */
 	@GetMapping(value = "/postalCodes")
 	@ResponseBody
-	public String getPostalCodes(@RequestAttribute("mail") String mail, @RequestAttribute("role") int role) {
+	public String getPostalCodes(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
 		return gson.toJson(postalCodeBusinessController.getPostalCodes(role));
 	}
 
@@ -87,7 +88,7 @@ public class PostalCodeRestController {
 	@PutMapping(value = "/postalCode")
 	@ResponseBody
 	public HttpException updatePostalCode(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") int role) throws Exception {
+			@RequestAttribute("role") UserRole role) throws Exception {
 		return params.get("name") != null ? postalCodeBusinessController.createPostalCode(params, role)
 				: new UnprocessableEntityException();
 	}
@@ -106,7 +107,7 @@ public class PostalCodeRestController {
 	@DeleteMapping(value = "/postalCode")
 	@ResponseBody
 	public HttpException deletePostalCode(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") int role) throws Exception {
+			@RequestAttribute("role") UserRole role) throws Exception {
 		return params.get("name") != null ? postalCodeBusinessController.deletePostalCode(params, role)
 				: new UnprocessableEntityException();
 	}

@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import fr.alten.ambroiseJEE.model.beans.City;
 import fr.alten.ambroiseJEE.model.entityControllers.CityEntityController;
-import fr.alten.ambroiseJEE.security.Roles;
+import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
@@ -45,8 +45,8 @@ public class CityBusinessController {
 	 *         database and {@link CreatedException} if the city is created
 	 * @author Andy Chabalier
 	 */
-	public HttpException createCity(JsonNode jCity, int role) {
-		return Roles.ADMINISTRATOR_USER_ROLE.getValue()== role ? cityEntityController.createCity(jCity) : new ForbiddenException();
+	public HttpException createCity(JsonNode jCity, UserRole role) {
+		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role ? cityEntityController.createCity(jCity) : new ForbiddenException();
 	}
 
 
@@ -55,8 +55,8 @@ public class CityBusinessController {
 	 * @return the list of all cities
 	 * @author Andy Chabalier
 	 */
-	public List<City> getCities(int role) {
-		if (Roles.ADMINISTRATOR_USER_ROLE.getValue()== role) {
+	public List<City> getCities(UserRole role) {
+		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
 			return cityEntityController.getCities();
 		}
 		throw new ForbiddenException();	
@@ -72,8 +72,8 @@ public class CityBusinessController {
 	 *         and {@link CreatedException} if the city is updated
 	 * @author Andy Chabalier
 	 */
-	public HttpException updateCity(JsonNode jCity, int role) {
-		return Roles.ADMINISTRATOR_USER_ROLE.getValue()== role ? cityEntityController.updateCity(jCity) : new ForbiddenException();
+	public HttpException updateCity(JsonNode jCity, UserRole role) {
+		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role ? cityEntityController.updateCity(jCity) : new ForbiddenException();
 	}
 
 
@@ -86,8 +86,8 @@ public class CityBusinessController {
 	 *         and {@link CreatedException} if the city is deleted
 	 * @author Andy Chabalier
 	 */
-	public HttpException deleteCity(JsonNode params, int role) {
-		return Roles.ADMINISTRATOR_USER_ROLE.getValue()== role ? cityEntityController.deleteCity(params.get("name").textValue()) : new ForbiddenException();
+	public HttpException deleteCity(JsonNode params, UserRole role) {
+		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role ? cityEntityController.deleteCity(params.get("name").textValue()) : new ForbiddenException();
 	}
 
 }

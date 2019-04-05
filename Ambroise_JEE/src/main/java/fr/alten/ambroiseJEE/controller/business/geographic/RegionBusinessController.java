@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import fr.alten.ambroiseJEE.model.beans.Region;
 import fr.alten.ambroiseJEE.model.entityControllers.RegionEntityController;
-import fr.alten.ambroiseJEE.security.Roles;
+import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
@@ -45,8 +45,8 @@ public class RegionBusinessController {
 	 *         database and {@link CreatedException} if the region is created
 	 * @author Andy Chabalier
 	 */
-	public HttpException createRegion(JsonNode jRegion, int role) {
-		return Roles.ADMINISTRATOR_USER_ROLE.getValue()== role ? regionEntityController.createRegion(jRegion) : new ForbiddenException();
+	public HttpException createRegion(JsonNode jRegion, UserRole role) {
+		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role ? regionEntityController.createRegion(jRegion) : new ForbiddenException();
 	}
 
 
@@ -55,8 +55,8 @@ public class RegionBusinessController {
 	 * @return the list of all regions
 	 * @author Andy Chabalier
 	 */
-	public List<Region> getRegions(int role) {
-		if (Roles.ADMINISTRATOR_USER_ROLE.getValue()== role) {
+	public List<Region> getRegions(UserRole role) {
+		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
 			return regionEntityController.getRegions();
 		}
 		throw new ForbiddenException();	
@@ -72,8 +72,8 @@ public class RegionBusinessController {
 	 *         and {@link CreatedException} if the region is updated
 	 * @author Andy Chabalier
 	 */
-	public HttpException updateRegion(JsonNode jRegion, int role) {
-		return Roles.ADMINISTRATOR_USER_ROLE.getValue()== role ? regionEntityController.updateRegion(jRegion) : new ForbiddenException();
+	public HttpException updateRegion(JsonNode jRegion, UserRole role) {
+		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role ? regionEntityController.updateRegion(jRegion) : new ForbiddenException();
 	}
 
 
@@ -86,8 +86,8 @@ public class RegionBusinessController {
 	 *         and {@link CreatedException} if the region is deleted
 	 * @author Andy Chabalier
 	 */
-	public HttpException deleteRegion(JsonNode params, int role) {
-		return Roles.ADMINISTRATOR_USER_ROLE.getValue()== role ? regionEntityController.deleteRegion(params.get("name").textValue()) : new ForbiddenException();
+	public HttpException deleteRegion(JsonNode params, UserRole role) {
+		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role ? regionEntityController.deleteRegion(params.get("name").textValue()) : new ForbiddenException();
 	}
 
 }

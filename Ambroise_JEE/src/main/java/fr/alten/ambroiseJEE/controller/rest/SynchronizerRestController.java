@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import fr.alten.ambroiseJEE.controller.business.geographic.GeographicBusinessController;
+import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.InternalServerErrorException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
@@ -38,7 +39,7 @@ public class SynchronizerRestController {
 	 */
 	@PostMapping(value = "/admin/synchronize/geographics")
 	@ResponseBody
-	public HttpException synchronise(@RequestAttribute("mail") String mail, @RequestAttribute("role") int role)
+	public HttpException synchronise(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role)
 			throws Exception {
 		return geographicBusinessController.synchronise(role);
 	}

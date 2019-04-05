@@ -18,6 +18,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import fr.alten.ambroiseJEE.controller.business.geographic.DepartementBusinessController;
+import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
@@ -55,7 +56,7 @@ public class DepartementRestController {
 	@PostMapping(value = "/departement")
 	@ResponseBody
 	public HttpException createDepartement(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") int role) throws Exception {
+			@RequestAttribute("role") UserRole role) throws Exception {
 		return params.get("name") != null ? departementBusinessController.createDepartement(params, role)
 				: new UnprocessableEntityException();
 	}
@@ -69,7 +70,7 @@ public class DepartementRestController {
 	 */
 	@GetMapping(value = "/departements")
 	@ResponseBody
-	public String getDepartements(@RequestAttribute("mail") String mail, @RequestAttribute("role") int role) {
+	public String getDepartements(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
 		return gson.toJson(departementBusinessController.getDepartements(role));
 	}
 	
@@ -87,7 +88,7 @@ public class DepartementRestController {
 	@PutMapping(value = "/departement")
 	@ResponseBody
 	public HttpException updateDepartement(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") int role) throws Exception {
+			@RequestAttribute("role") UserRole role) throws Exception {
 		return params.get("name") != null ? departementBusinessController.createDepartement(params, role)
 				: new UnprocessableEntityException();
 	}
@@ -106,7 +107,7 @@ public class DepartementRestController {
 	@DeleteMapping(value = "/departement")
 	@ResponseBody
 	public HttpException deleteDepartement(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") int role) throws Exception {
+			@RequestAttribute("role") UserRole role) throws Exception {
 		return params.get("name") != null ? departementBusinessController.deleteDepartement(params, role)
 				: new UnprocessableEntityException();
 	}

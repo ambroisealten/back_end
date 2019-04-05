@@ -23,7 +23,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.internal.LinkedTreeMap;
 
 import fr.alten.ambroiseJEE.model.beans.Geographic;
-import fr.alten.ambroiseJEE.security.Roles;
+import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.InternalServerErrorException;
@@ -93,8 +93,8 @@ public class GeographicBusinessController {
 	 * @return
 	 * @author Andy Chabalier
 	 */
-	public HttpException synchronise(int role) {
-		if (Roles.ADMINISTRATOR_USER_ROLE.getValue() == role) {
+	public HttpException synchronise(UserRole role) {
+		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
 			HashMap<String, ArrayList<LinkedTreeMap>> data = fetchData();
 
 			createRegion(data.get("region"), role);
@@ -112,7 +112,7 @@ public class GeographicBusinessController {
 	 * @param role      the current logged user role
 	 * @author Andy Chabalier
 	 */
-	private void createCities(ArrayList<LinkedTreeMap> departements, int role) {
+	private void createCities(ArrayList<LinkedTreeMap> departements, UserRole role) {
 
 		RestTemplate restTemplate = new RestTemplate();
 		ArrayList<LinkedTreeMap> cities = new ArrayList<LinkedTreeMap>();
@@ -140,7 +140,7 @@ public class GeographicBusinessController {
 	 * @author Andy Chabalier
 	 * @return
 	 */
-	private HttpException createRegion(ArrayList<LinkedTreeMap> regionData, int role) {
+	private HttpException createRegion(ArrayList<LinkedTreeMap> regionData, UserRole role) {
 		for (LinkedTreeMap region : regionData) {
 			try {
 				JsonNode jRegion = toJsonNode(gson.toJsonTree(region).getAsJsonObject());
@@ -156,7 +156,7 @@ public class GeographicBusinessController {
 	 * @param arrayList ArrayList of LinkedTreeMap with regions data
 	 * @author Andy Chabalier
 	 */
-	private void createDepartement(ArrayList<LinkedTreeMap> departementData, int role) {
+	private void createDepartement(ArrayList<LinkedTreeMap> departementData, UserRole role) {
 		for (LinkedTreeMap departement : departementData) {
 			try {
 				JsonNode jDepartement = toJsonNode(gson.toJsonTree(departement).getAsJsonObject());
