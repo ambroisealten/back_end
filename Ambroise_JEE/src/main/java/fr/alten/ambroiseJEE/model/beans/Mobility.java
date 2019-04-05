@@ -14,7 +14,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Mobility implements Serializable {
 
 	private static final long serialVersionUID = -2144367851428317559L;
-	private String place;
+	private Geographic place;
 	private int radius;
 	private String unit;
 	
@@ -22,11 +22,11 @@ public class Mobility implements Serializable {
 		super();
 	}
 
-	public String getPlace() {
+	public Geographic getPlace() {
 		return place;
 	}
 
-	public void setPlace(String place) {
+	public void setPlace(Geographic place) {
 		this.place = place;
 	}
 
@@ -45,6 +45,6 @@ public class Mobility implements Serializable {
 	public void setUnit(String unit) {
 		this.unit = unit;
 	}
-
+	
 	
 }

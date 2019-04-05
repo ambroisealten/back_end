@@ -31,7 +31,7 @@ public class Person implements Serializable{
 	private String mail;
 	private User managerInCharge;
 	private Diploma highestDiploma;
-	private List<Mobility> mobility;
+	private List<Mobility> mobilities;
 	private String grade;
 	private String commentary;
 
@@ -109,11 +109,11 @@ public class Person implements Serializable{
 	public Job getJob() {
 		return this.job;
 	}
-	public List<Mobility> getMobility() {
-		return mobility;
+	public List<Mobility> getMobilities() {
+		return mobilities;
 	}
-	public void setMobility(List<Mobility> mobility) {
-		this.mobility = mobility;
+	public void setMobilities(List<Mobility> mobilities) {
+		this.mobilities = mobilities;
 	}
 	public Employer getEmployer() {
 		return employer;
