@@ -1,5 +1,6 @@
 package fr.alten.ambroiseJEE.model.entityControllers;
 
+import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -10,6 +11,10 @@ import java.util.regex.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.reflect.TypeToken;
+
 import fr.alten.ambroiseJEE.model.beans.Diploma;
 import fr.alten.ambroiseJEE.model.beans.Employer;
 import fr.alten.ambroiseJEE.model.beans.Job;
@@ -46,6 +51,9 @@ public class PersonEntityController {
 	
 	@Autowired
 	private JobEntityController jobEntityController;
+	
+	@Autowired
+	private MobilityEntityController mobilityEntityController;
 
 	
 	public static final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
@@ -88,7 +96,7 @@ public class PersonEntityController {
 			newPerson.setHighestDiploma(highestDiploma.get());
 		}
 		
-		newPerson.setMobility(this.getAllMobilities(jPerson.get("mobilities").textValue()));
+		newPerson.setMobilities(this.getAllMobilities(jPerson.get("mobilities").asText()));
 		
 		Optional<Job> job = jobEntityController.getJob(jPerson.get("job").textValue());
 		if(job.isPresent()){
@@ -146,23 +154,23 @@ public class PersonEntityController {
 	
 	
 	/**
-	 * Get a List of Moblity object given a String
+	 * Get a List of Mobility object given a list of JsonNode
 	 * 
-	 * @param mobilitiesString the String containing all possible mobilities for the person,
-	 * declared in this format : "place1//radius1//unit1 place2//radius2//unit2"
+	 * @param jMobility the JsonNode corresponding to the mobility part of a Person
 	 * @return A List of Mobility
 	 * @author Lucas Royackkers
 	 */
-	private List<Mobility> getAllMobilities(String mobilitiesString) {
+	private List<Mobility> getAllMobilities(String jMobility) {
+		Type listType = new TypeToken<List<JsonNode>>() {}.getType();
+		List<JsonNode> mobilitiesList = new Gson().fromJson(jMobility, listType);
 		List<Mobility> allMobilities = new ArrayList<Mobility>();
-		String[] mobilitiesStringSplitted = mobilitiesString.split(" ");
-		for(int i = 0; i < mobilitiesStringSplitted.length; i++) {
-			String[] mobilityParams = mobilitiesStringSplitted[i].split("//");
-			Mobility newMobility = new Mobility();
-			newMobility.setPlace(mobilityParams[0]);
-			newMobility.setRadius(Integer.parseInt(mobilityParams[1]));
-			newMobility.setUnit(mobilityParams[2]);
-			allMobilities.add(newMobility);
+		
+		for(int i = 0; i < mobilitiesList.size() ;i++) {
+			mobilityEntityController.createMobility(mobilitiesList.get(i));
+			Optional<Mobility> mobility = mobilityEntityController.getMobility(mobilitiesList.get(i).get("place").textValue(),Integer.parseInt(mobilitiesList.get(i).get("radius").textValue()));
+			if(mobility.isPresent()) {
+				allMobilities.add(mobility.get());
+			}
 		}
 		return allMobilities;
 	}
