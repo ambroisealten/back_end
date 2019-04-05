@@ -26,7 +26,6 @@ import fr.alten.ambroiseJEE.model.beans.Geographic;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
-import fr.alten.ambroiseJEE.utils.httpStatus.InternalServerErrorException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
 
@@ -115,24 +114,25 @@ public class GeographicBusinessController {
 	private void createCities(ArrayList<LinkedTreeMap> departements, UserRole role) {
 
 		RestTemplate restTemplate = new RestTemplate();
-		ArrayList<LinkedTreeMap> cities = new ArrayList<LinkedTreeMap>();
 		for (LinkedTreeMap departement : departements) {
 			try {
+				ArrayList<LinkedTreeMap> citiesByDepartement = new ArrayList<LinkedTreeMap>();
 				String code = (String) departement.get("code");
 				URI urlCities = new URI("https://geo.api.gouv.fr/departements/" + code + "/communes");
-				cities = gson.fromJson(restTemplate.getForObject(urlCities, String.class), ArrayList.class);
+				citiesByDepartement = gson.fromJson(restTemplate.getForObject(urlCities, String.class), ArrayList.class);
+				for (LinkedTreeMap city : citiesByDepartement) {
+					try {
+						JsonNode jCity = toJsonNode(gson.toJsonTree(city).getAsJsonObject());
+						cityBusinessController.createCity(jCity, role);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
 			} catch (URISyntaxException e) {
 				e.printStackTrace();
 			}
 		}
-		for(LinkedTreeMap city : cities) {
-			try {
-				JsonNode jCity = toJsonNode(gson.toJsonTree(city).getAsJsonObject());
-				cityBusinessController.createCity(jCity, role);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+
 	}
 
 	/**
@@ -140,16 +140,15 @@ public class GeographicBusinessController {
 	 * @author Andy Chabalier
 	 * @return
 	 */
-	private HttpException createRegion(ArrayList<LinkedTreeMap> regionData, UserRole role) {
+	private void createRegion(ArrayList<LinkedTreeMap> regionData, UserRole role) {
 		for (LinkedTreeMap region : regionData) {
 			try {
 				JsonNode jRegion = toJsonNode(gson.toJsonTree(region).getAsJsonObject());
-				return regionBusinessController.createRegion(jRegion, role);
+				regionBusinessController.createRegion(jRegion, role);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
-		return new InternalServerErrorException();
 	}
 
 	/**
