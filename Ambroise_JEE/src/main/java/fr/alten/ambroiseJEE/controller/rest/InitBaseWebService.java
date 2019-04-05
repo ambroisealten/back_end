@@ -86,9 +86,84 @@ public class InitBaseWebService {
 		JsonNode agencyStrasbourgJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(agencyStrasbourg).getAsJsonObject());
 		((ObjectNode) agencyStrasbourgJsonNode).put("place", "Schiltigheim");
 		((ObjectNode) agencyStrasbourgJsonNode).put("placeType", "city");
-
-
 		AgencyBusinessController.createAgency(agencyStrasbourgJsonNode, UserRole.MANAGER_ADMIN);
+		
+		Agency agencyMulhouse = new Agency();
+		agencyMulhouse.setName("Mulhouse");
+		JsonNode agencyMulhouseJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(agencyMulhouse).getAsJsonObject());
+		((ObjectNode) agencyMulhouseJsonNode).put("place", "Mulhouse");
+		((ObjectNode) agencyMulhouseJsonNode).put("placeType", "city");
+		AgencyBusinessController.createAgency(agencyMulhouseJsonNode, UserRole.MANAGER_ADMIN);
+		
+		Agency agencyLille = new Agency();
+		agencyLille.setName("Lille");
+		JsonNode agencyLilleJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(agencyLille).getAsJsonObject());
+		((ObjectNode) agencyLilleJsonNode).put("place", "Villeneuve-d'Ascq");
+		((ObjectNode) agencyLilleJsonNode).put("placeType", "city");
+		AgencyBusinessController.createAgency(agencyLilleJsonNode, UserRole.MANAGER_ADMIN);
+		
+		Agency agencyParis = new Agency();
+		agencyParis.setName("Paris");
+		JsonNode agencyParisJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(agencyParis).getAsJsonObject());
+		((ObjectNode) agencyParisJsonNode).put("place", "Boulogne-Billancourt");
+		((ObjectNode) agencyParisJsonNode).put("placeType", "city");
+		AgencyBusinessController.createAgency(agencyParisJsonNode, UserRole.MANAGER_ADMIN);
+		
+		Agency agencyRennes = new Agency();
+		agencyRennes.setName("Rennes");
+		JsonNode agencyRennesJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(agencyRennes).getAsJsonObject());
+		((ObjectNode) agencyRennesJsonNode).put("place", "Rennes");
+		((ObjectNode) agencyRennesJsonNode).put("placeType", "city");
+		AgencyBusinessController.createAgency(agencyRennesJsonNode, UserRole.MANAGER_ADMIN);
+		
+		Agency agencyNantes = new Agency();
+		agencyNantes.setName("Nantes");
+		JsonNode agencyNantesJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(agencyNantes).getAsJsonObject());
+		((ObjectNode) agencyNantesJsonNode).put("place", "Saint-Herblain");
+		((ObjectNode) agencyNantesJsonNode).put("placeType", "city");
+		AgencyBusinessController.createAgency(agencyNantesJsonNode, UserRole.MANAGER_ADMIN);
+		
+		Agency agencyBordeaux = new Agency();
+		agencyBordeaux.setName("Bordeaux");
+		JsonNode agencyBordeauxJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(agencyBordeaux).getAsJsonObject());
+		((ObjectNode) agencyBordeauxJsonNode).put("place", "Merignac");
+		((ObjectNode) agencyBordeauxJsonNode).put("placeType", "city");
+		AgencyBusinessController.createAgency(agencyBordeauxJsonNode, UserRole.MANAGER_ADMIN);
+		
+		Agency agencyLyon = new Agency();
+		agencyLyon.setName("Lyon");
+		JsonNode agencyLyonJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(agencyLyon).getAsJsonObject());
+		((ObjectNode) agencyLyonJsonNode).put("place", "Villeurbanne");
+		((ObjectNode) agencyLyonJsonNode).put("placeType", "city");
+		AgencyBusinessController.createAgency(agencyLyonJsonNode, UserRole.MANAGER_ADMIN);
+		
+		Agency agencyGrenoble = new Agency();
+		agencyGrenoble.setName("Grenoble");
+		JsonNode agencyGrenobleJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(agencyGrenoble).getAsJsonObject());
+		((ObjectNode) agencyGrenobleJsonNode).put("place", "Grenoble");
+		((ObjectNode) agencyGrenobleJsonNode).put("placeType", "city");
+		AgencyBusinessController.createAgency(agencyGrenobleJsonNode, UserRole.MANAGER_ADMIN);
+		
+		Agency agencyToulouse = new Agency();
+		agencyToulouse.setName("Toulouse");
+		JsonNode agencyToulouseJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(agencyToulouse).getAsJsonObject());
+		((ObjectNode) agencyToulouseJsonNode).put("place", "Labège");
+		((ObjectNode) agencyToulouseJsonNode).put("placeType", "city");
+		AgencyBusinessController.createAgency(agencyToulouseJsonNode, UserRole.MANAGER_ADMIN);
+		
+		Agency agencyAixEnProvence = new Agency();
+		agencyAixEnProvence.setName("Aix-en-Provence");
+		JsonNode agencyAixEnProvenceJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(agencyAixEnProvence).getAsJsonObject());
+		((ObjectNode) agencyAixEnProvenceJsonNode).put("place", "Aix-en-Provence");
+		((ObjectNode) agencyAixEnProvenceJsonNode).put("placeType", "city");
+		AgencyBusinessController.createAgency(agencyAixEnProvenceJsonNode, UserRole.MANAGER_ADMIN);
+		
+		Agency agencyNice = new Agency();
+		agencyNice.setName("Nice");
+		JsonNode agencyNiceJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(agencyNice).getAsJsonObject());
+		((ObjectNode) agencyNiceJsonNode).put("place", "Valbonne");
+		((ObjectNode) agencyNiceJsonNode).put("placeType", "city");
+		AgencyBusinessController.createAgency(agencyNiceJsonNode, UserRole.MANAGER_ADMIN);
 
 	}
 
@@ -135,27 +210,27 @@ public class InitBaseWebService {
 		JsonNode userAdminManagerJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(userAdminManager).getAsJsonObject());
 		((ObjectNode) userAdminManagerJsonNode).put("pswd", "pass");
 		((ObjectNode) userAdminManagerJsonNode).put("role", "MANAGER_ADMIN");
-		((ObjectNode) userAdminManagerJsonNode).put("agency", "");
+		((ObjectNode) userAdminManagerJsonNode).put("agency", "Strasbourg");
 		JsonNode userAdminCDRJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(userAdminCDR).getAsJsonObject());
 		((ObjectNode) userAdminCDRJsonNode).put("pswd", "pass");
 		((ObjectNode) userAdminCDRJsonNode).put("role", "CDR_ADMIN");
-		((ObjectNode) userAdminCDRJsonNode).put("agency", "");
+		((ObjectNode) userAdminCDRJsonNode).put("agency", "Strasbourg");
 		JsonNode userManagerJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(userManager).getAsJsonObject());
 		((ObjectNode) userManagerJsonNode).put("pswd", "pass");
 		((ObjectNode) userManagerJsonNode).put("role", "MANAGER");
-		((ObjectNode) userManagerJsonNode).put("agency", "");
+		((ObjectNode) userManagerJsonNode).put("agency", "Strasbourg");
 		JsonNode userCDRJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(userCDR).getAsJsonObject());
 		((ObjectNode) userCDRJsonNode).put("pswd", "pass");
 		((ObjectNode) userCDRJsonNode).put("role", "CDR");
-		((ObjectNode) userCDRJsonNode).put("agency", "");
+		((ObjectNode) userCDRJsonNode).put("agency", "Strasbourg");
 		JsonNode userConsultantJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(userConsultant).getAsJsonObject());
 		((ObjectNode) userConsultantJsonNode).put("pswd", "pass");
 		((ObjectNode) userConsultantJsonNode).put("role", "CONSULTANT");
-		((ObjectNode) userConsultantJsonNode).put("agency", "");
+		((ObjectNode) userConsultantJsonNode).put("agency", "Strasbourg");
 		JsonNode userDesactivatedJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(userDesactivated).getAsJsonObject());
 		((ObjectNode) userDesactivatedJsonNode).put("pswd", "pass");
 		((ObjectNode) userDesactivatedJsonNode).put("role", "DESACTIVATED");
-		((ObjectNode) userDesactivatedJsonNode).put("agency", "");
+		((ObjectNode) userDesactivatedJsonNode).put("agency", "Strasbourg");
 
 		userBusinessController.createUser(userAdminManagerJsonNode, UserRole.MANAGER_ADMIN);
 		userBusinessController.createUser(userAdminCDRJsonNode, UserRole.MANAGER_ADMIN);
@@ -174,7 +249,7 @@ public class InitBaseWebService {
 			JsonNode useriJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(useri).getAsJsonObject());
 			((ObjectNode) useriJsonNode).put("pswd", "pass");
 			((ObjectNode) useriJsonNode).put("role", "CONSULTANT");
-			((ObjectNode) useriJsonNode).put("agency", "");
+			((ObjectNode) useriJsonNode).put("agency", "Strasbourg");
 
 			userBusinessController.createUser(useriJsonNode, UserRole.MANAGER_ADMIN);
 		}

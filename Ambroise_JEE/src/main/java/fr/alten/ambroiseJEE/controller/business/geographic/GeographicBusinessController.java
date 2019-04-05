@@ -80,7 +80,7 @@ public class GeographicBusinessController {
 				throw new RessourceNotFoundException();
 			}
 		} catch (NoSuchElementException nsee) {
-			throw new RessourceNotFoundException();
+			return Optional.empty();
 		}
 		return Optional.ofNullable(place);
 	}
