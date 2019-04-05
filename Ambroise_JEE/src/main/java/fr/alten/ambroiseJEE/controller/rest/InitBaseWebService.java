@@ -11,15 +11,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
 
 import fr.alten.ambroiseJEE.controller.business.UserBusinessController;
 import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.utils.JsonUtils;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 
@@ -81,23 +80,23 @@ public class InitBaseWebService {
 				userDesactivated.setMail("desactivated" + System.currentTimeMillis());
 				userDesactivated.setName("");
 
-				JsonNode userAdminJsonNode = toJsonNode(gson.toJsonTree(userAdmin).getAsJsonObject());
+				JsonNode userAdminJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(userAdmin).getAsJsonObject());
 				((ObjectNode) userAdminJsonNode).put("pswd", "pass");
 				((ObjectNode) userAdminJsonNode).put("role", "MANAGER_ADMIN");
 				((ObjectNode) userAdminJsonNode).put("agency", "");
-				JsonNode userManagerJsonNode = toJsonNode(gson.toJsonTree(userManager).getAsJsonObject());
+				JsonNode userManagerJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(userManager).getAsJsonObject());
 				((ObjectNode) userManagerJsonNode).put("pswd", "pass");
 				((ObjectNode) userManagerJsonNode).put("role", "MANAGER");
 				((ObjectNode) userManagerJsonNode).put("agency", "");
-				JsonNode userCDRJsonNode = toJsonNode(gson.toJsonTree(userCDR).getAsJsonObject());
+				JsonNode userCDRJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(userCDR).getAsJsonObject());
 				((ObjectNode) userCDRJsonNode).put("pswd", "pass");
 				((ObjectNode) userCDRJsonNode).put("role", "CDR");
 				((ObjectNode) userCDRJsonNode).put("agency", "");
-				JsonNode userConsultantJsonNode = toJsonNode(gson.toJsonTree(userConsultant).getAsJsonObject());
+				JsonNode userConsultantJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(userConsultant).getAsJsonObject());
 				((ObjectNode) userConsultantJsonNode).put("pswd", "pass");
 				((ObjectNode) userConsultantJsonNode).put("role", "CONSULTANT");
 				((ObjectNode) userConsultantJsonNode).put("agency", "");
-				JsonNode userDesactivatedJsonNode = toJsonNode(gson.toJsonTree(userDesactivated).getAsJsonObject());
+				JsonNode userDesactivatedJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(userDesactivated).getAsJsonObject());
 				((ObjectNode) userDesactivatedJsonNode).put("pswd", "pass");
 				((ObjectNode) userDesactivatedJsonNode).put("role", "DESACTIVATED");
 				((ObjectNode) userDesactivatedJsonNode).put("agency", "");
@@ -115,16 +114,12 @@ public class InitBaseWebService {
 					useri.setMail("tempUserconsultant" + i + "@mail.com");
 					useri.setName("tempUserAdminName");
 
-					JsonNode useriJsonNode = toJsonNode(gson.toJsonTree(useri).getAsJsonObject());
+					JsonNode useriJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(useri).getAsJsonObject());
 					((ObjectNode) useriJsonNode).put("pswd", "pass");
 					((ObjectNode) useriJsonNode).put("role", "CONSULTANT");
 					((ObjectNode) useriJsonNode).put("agency", "");
 
 					userBusinessController.createUser(useriJsonNode, UserRole.MANAGER_ADMIN);
 				}
-	}
-	private JsonNode toJsonNode(JsonObject jsonObj) throws IOException {
-		ObjectMapper objectMapper = new ObjectMapper();
-		return objectMapper.readTree(jsonObj.toString());
 	}
 }
