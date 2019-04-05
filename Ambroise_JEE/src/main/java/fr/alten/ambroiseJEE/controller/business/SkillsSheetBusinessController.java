@@ -26,8 +26,8 @@ public class SkillsSheetBusinessController {
 	@Autowired
 	private SkillsSheetEntityController skillsSheetEntityController;
 	
-	public Optional<SkillsSheet> getSkillsSheet(String name){
-		return skillsSheetEntityController.getSkillsSheetByName(name);
+	public Optional<List<SkillsSheet>> getSkillsSheet(String name){
+		return skillsSheetEntityController.getSkillsSheetsByName(name);
 	}
 	
 	/**
@@ -41,7 +41,7 @@ public class SkillsSheetBusinessController {
 	 * @throws ParseException 
 	 */
 	public HttpException createSkillsSheet(JsonNode jSkillsSheet, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role || UserRole.CDR == role) ? skillsSheetEntityController.createSkillsSheet(jSkillsSheet) : new ForbiddenException();
+		return (UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role) ? skillsSheetEntityController.createSkillsSheet(jSkillsSheet) : new ForbiddenException();
 	}
 
 	/**
@@ -50,7 +50,7 @@ public class SkillsSheetBusinessController {
 	 * @author Lucas Royackkers
 	 */
 	public List<SkillsSheet> getSkillsSheets(UserRole role) {
-		if ((UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role)) {
+		if ((UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role)) {
 			return skillsSheetEntityController.getSkillsSheets();
 		}
 		throw new ForbiddenException();	

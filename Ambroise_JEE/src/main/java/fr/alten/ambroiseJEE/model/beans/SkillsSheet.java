@@ -1,27 +1,35 @@
 package fr.alten.ambroiseJEE.model.beans;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.HashMap;
+import java.time.LocalDateTime;
 import java.util.List;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
- * Defines what a SkillS Sheet is in our app
+ * Defines what a Skills Sheet is in our app
  * 
  * @author Lucas Royackkers
  *
  */
-@Document(collection = "skillssheet")
+@Document(collection = "skillsSheet")
 public class SkillsSheet implements Serializable{
 
 	private static final long serialVersionUID = 4878950681041229894L;
+	private ObjectId _id;
 	private String name;
 	private Person personAttachedTo;
+	private User versionAuthor;
+	private LocalDateTime versionDate;
+	private long versionNumber;
 	private List<TechSkill> techSkillsList;
 	private List<SoftSkill> softSkillsList;
-	private HashMap<User,Date> allVersions;
+	
+	public SkillsSheet() {
+		super();
+	}
+	
 	public String getName() {
 		return name;
 	}
@@ -46,12 +54,37 @@ public class SkillsSheet implements Serializable{
 	public void setSoftSkillsList(List<SoftSkill> softSkillsList) {
 		this.softSkillsList = softSkillsList;
 	}
-	public HashMap<User, Date> getAllVersions() {
-		return allVersions;
+
+	public ObjectId get_id() {
+		return _id;
 	}
-	public void setAllVersions(HashMap<User, Date> allVersions) {
-		this.allVersions = allVersions;
+
+	public void set_id(ObjectId _id) {
+		this._id = _id;
 	}
-	
+
+	public User getVersionAuthor() {
+		return versionAuthor;
+	}
+
+	public void setVersionAuthor(User versionAuthor) {
+		this.versionAuthor = versionAuthor;
+	}
+
+	public LocalDateTime getVersionDate() {
+		return versionDate;
+	}
+
+	public void setVersionDate(LocalDateTime versionDate) {
+		this.versionDate = versionDate;
+	}
+
+	public long getVersionNumber() {
+		return versionNumber;
+	}
+
+	public void setVersionNumber(long versionNumber) {
+		this.versionNumber = versionNumber;
+	}
 	
 }
