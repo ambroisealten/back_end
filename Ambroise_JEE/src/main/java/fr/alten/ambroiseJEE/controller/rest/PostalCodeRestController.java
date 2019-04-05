@@ -17,27 +17,27 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import fr.alten.ambroiseJEE.controller.business.AgencyBusinessController;
+import fr.alten.ambroiseJEE.controller.business.geographic.PostalCodeBusinessController;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
- * Rest controller for the agency web service
+ * Rest controller for the postal code web service
  * 
  * @author Andy Chabalier
  *
  */
 @Controller
-public class AgencyRestController {
+public class PostalCodeRestController {
 
 	@Autowired
-	private AgencyBusinessController agencyBusinessController;
+	private PostalCodeBusinessController postalCodeBusinessController;
 
 	private final Gson gson;
 
-	public AgencyRestController() {
+	public PostalCodeRestController() {
 		GsonBuilder builder = new GsonBuilder();
 		this.gson = builder.create();
 	}
@@ -53,11 +53,11 @@ public class AgencyRestController {
 	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author Andy Chabalier
 	 */
-	@PostMapping(value = "/agency")
+	@PostMapping(value = "/postalCode")
 	@ResponseBody
-	public HttpException createAgency(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
+	public HttpException createPostalCode(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("name") != null ? agencyBusinessController.createAgency(params, role)
+		return params.get("name") != null ? postalCodeBusinessController.createPostalCode(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -65,13 +65,13 @@ public class AgencyRestController {
 	 * 
 	 * @param mail the current logged user mail
 	 * @param role the current logged user role
-	 * @return the list of all agencies
+	 * @return the list of all users
 	 * @author Andy Chabalier
 	 */
-	@GetMapping(value = "/agencies")
+	@GetMapping(value = "/postalCodes")
 	@ResponseBody
-	public String getAgencies(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
-		return gson.toJson(agencyBusinessController.getAgencies(role));
+	public String getPostalCodes(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
+		return gson.toJson(postalCodeBusinessController.getPostalCodes(role));
 	}
 
 	/**
@@ -85,11 +85,11 @@ public class AgencyRestController {
 	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author Andy Chabalier
 	 */
-	@PutMapping(value = "/agency")
+	@PutMapping(value = "/postalCode")
 	@ResponseBody
-	public HttpException updateAgency(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
+	public HttpException updatePostalCode(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("mail") != null ? agencyBusinessController.updateAgency(params, role)
+		return params.get("name") != null ? postalCodeBusinessController.createPostalCode(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -104,12 +104,13 @@ public class AgencyRestController {
 	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author Andy Chabalier
 	 */
-	@DeleteMapping(value = "/agency")
+	@DeleteMapping(value = "/postalCode")
 	@ResponseBody
-	public HttpException deleteAgency(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
+	public HttpException deletePostalCode(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("mail") != null ? agencyBusinessController.deleteAgency(params, role)
+		return params.get("name") != null ? postalCodeBusinessController.deletePostalCode(params, role)
 				: new UnprocessableEntityException();
 	}
 }
+
 

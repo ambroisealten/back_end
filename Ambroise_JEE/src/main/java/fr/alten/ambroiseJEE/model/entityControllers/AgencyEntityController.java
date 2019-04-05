@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import fr.alten.ambroiseJEE.controller.business.GeographicBusinessController;
+import fr.alten.ambroiseJEE.controller.business.geographic.GeographicBusinessController;
 import fr.alten.ambroiseJEE.model.beans.Agency;
 import fr.alten.ambroiseJEE.model.beans.Geographic;
 import fr.alten.ambroiseJEE.model.dao.AgencyRepository;
@@ -53,7 +53,7 @@ public class AgencyEntityController {
 		Agency newAgency = new Agency();
 		newAgency.setName(jAgency.get("name").textValue());
 		
-		Optional<Geographic> place = geographicBusinessController.getPlace(jAgency.get("place").textValue());
+		Optional<Geographic> place = geographicBusinessController.getPlace(jAgency.get("place").textValue(),jAgency.get("placeType").textValue());
 		if(place.isPresent()) {
 			newAgency.setPlace(place.get());
 		}
@@ -88,7 +88,7 @@ public class AgencyEntityController {
 		if (agencyOptionnal.isPresent()) {
 			Agency agency = agencyOptionnal.get();
 			agency.setName(jAgency.get("name").textValue());
-			Optional<Geographic> place = geographicBusinessController.getPlace(jAgency.get("place").textValue());
+			Optional<Geographic> place = geographicBusinessController.getPlace(jAgency.get("place").textValue(),jAgency.get("placeType").textValue());
 			if(place.isPresent()) {
 				agency.setPlace(place.get());
 			}

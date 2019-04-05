@@ -17,27 +17,27 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import fr.alten.ambroiseJEE.controller.business.AgencyBusinessController;
+import fr.alten.ambroiseJEE.controller.business.geographic.RegionBusinessController;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
- * Rest controller for the agency web service
- * 
- * @author Andy Chabalier
- *
- */
+* Rest controller for the Region web service
+* 
+* @author Andy Chabalier
+*
+*/
 @Controller
-public class AgencyRestController {
+public class RegionRestController {
 
 	@Autowired
-	private AgencyBusinessController agencyBusinessController;
+	private RegionBusinessController regionBusinessController;
 
 	private final Gson gson;
 
-	public AgencyRestController() {
+	public RegionRestController() {
 		GsonBuilder builder = new GsonBuilder();
 		this.gson = builder.create();
 	}
@@ -53,11 +53,11 @@ public class AgencyRestController {
 	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author Andy Chabalier
 	 */
-	@PostMapping(value = "/agency")
+	@PostMapping(value = "/region")
 	@ResponseBody
-	public HttpException createAgency(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
+	public HttpException createRegion(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("name") != null ? agencyBusinessController.createAgency(params, role)
+		return params.get("name") != null ? regionBusinessController.createRegion(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -65,13 +65,13 @@ public class AgencyRestController {
 	 * 
 	 * @param mail the current logged user mail
 	 * @param role the current logged user role
-	 * @return the list of all agencies
+	 * @return the list of all regions
 	 * @author Andy Chabalier
 	 */
-	@GetMapping(value = "/agencies")
+	@GetMapping(value = "/regions")
 	@ResponseBody
-	public String getAgencies(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
-		return gson.toJson(agencyBusinessController.getAgencies(role));
+	public String getRegions(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
+		return gson.toJson(regionBusinessController.getRegions(role));
 	}
 
 	/**
@@ -85,11 +85,11 @@ public class AgencyRestController {
 	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author Andy Chabalier
 	 */
-	@PutMapping(value = "/agency")
+	@PutMapping(value = "/region")
 	@ResponseBody
-	public HttpException updateAgency(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
+	public HttpException updateRegion(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("mail") != null ? agencyBusinessController.updateAgency(params, role)
+		return params.get("name") != null ? regionBusinessController.createRegion(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -104,12 +104,13 @@ public class AgencyRestController {
 	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author Andy Chabalier
 	 */
-	@DeleteMapping(value = "/agency")
+	@DeleteMapping(value = "/region")
 	@ResponseBody
-	public HttpException deleteAgency(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
+	public HttpException deleteRegion(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("mail") != null ? agencyBusinessController.deleteAgency(params, role)
+		return params.get("name") != null ? regionBusinessController.deleteRegion(params, role)
 				: new UnprocessableEntityException();
 	}
 }
+
 

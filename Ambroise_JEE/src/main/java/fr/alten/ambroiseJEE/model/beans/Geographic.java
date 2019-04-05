@@ -4,10 +4,9 @@
 package fr.alten.ambroiseJEE.model.beans;
 
 /**
- * Abstract class to define geograpic beans
+ * interface to define geographic beans
  * @author Andy Chabalier
  *
  */
 public abstract class Geographic {
-//TODO Make all controllers
 }

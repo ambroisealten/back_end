@@ -17,27 +17,27 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import fr.alten.ambroiseJEE.controller.business.AgencyBusinessController;
+import fr.alten.ambroiseJEE.controller.business.geographic.DepartementBusinessController;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
- * Rest controller for the agency web service
+ * Rest controller for the city web service
  * 
  * @author Andy Chabalier
  *
  */
 @Controller
-public class AgencyRestController {
+public class DepartementRestController {
 
 	@Autowired
-	private AgencyBusinessController agencyBusinessController;
+	private DepartementBusinessController departementBusinessController;
 
 	private final Gson gson;
 
-	public AgencyRestController() {
+	public DepartementRestController() {
 		GsonBuilder builder = new GsonBuilder();
 		this.gson = builder.create();
 	}
@@ -53,11 +53,11 @@ public class AgencyRestController {
 	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author Andy Chabalier
 	 */
-	@PostMapping(value = "/agency")
+	@PostMapping(value = "/departement")
 	@ResponseBody
-	public HttpException createAgency(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
+	public HttpException createDepartement(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("name") != null ? agencyBusinessController.createAgency(params, role)
+		return params.get("name") != null ? departementBusinessController.createDepartement(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -65,15 +65,15 @@ public class AgencyRestController {
 	 * 
 	 * @param mail the current logged user mail
 	 * @param role the current logged user role
-	 * @return the list of all agencies
+	 * @return the list of all departements
 	 * @author Andy Chabalier
 	 */
-	@GetMapping(value = "/agencies")
+	@GetMapping(value = "/departements")
 	@ResponseBody
-	public String getAgencies(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
-		return gson.toJson(agencyBusinessController.getAgencies(role));
+	public String getDepartements(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
+		return gson.toJson(departementBusinessController.getDepartements(role));
 	}
-
+	
 	/**
 	 * 
 	 * @param params JsonNode containing post parameters from http request
@@ -85,14 +85,14 @@ public class AgencyRestController {
 	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author Andy Chabalier
 	 */
-	@PutMapping(value = "/agency")
+	@PutMapping(value = "/departement")
 	@ResponseBody
-	public HttpException updateAgency(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
+	public HttpException updateDepartement(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("mail") != null ? agencyBusinessController.updateAgency(params, role)
+		return params.get("name") != null ? departementBusinessController.createDepartement(params, role)
 				: new UnprocessableEntityException();
 	}
-
+	
 	/**
 	 * 
 	 * @param params JsonNode containing post parameters from http request
@@ -104,12 +104,13 @@ public class AgencyRestController {
 	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author Andy Chabalier
 	 */
-	@DeleteMapping(value = "/agency")
+	@DeleteMapping(value = "/departement")
 	@ResponseBody
-	public HttpException deleteAgency(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
+	public HttpException deleteDepartement(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("mail") != null ? agencyBusinessController.deleteAgency(params, role)
+		return params.get("name") != null ? departementBusinessController.deleteDepartement(params, role)
 				: new UnprocessableEntityException();
 	}
 }
+
 
