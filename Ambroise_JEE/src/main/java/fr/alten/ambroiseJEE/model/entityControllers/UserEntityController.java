@@ -73,7 +73,7 @@ public class UserEntityController {
 		try {
 			newRole = UserRole.valueOf(jUser.get("role").textValue());
 		} catch (Exception e) {
-			newRole = UserRole.CONSULTANT; //in case of wrong role input, we get the default role
+			newRole = UserRole.CONSULTANT; // in case of wrong role input, we get the default role
 		}
 		newUser.setRole(newRole);
 		Optional<Agency> agency = agencyEntityController.getAgency(jUser.get("agency").textValue());
@@ -156,10 +156,10 @@ public class UserEntityController {
 				newRole = UserRole.valueOf(jUser.get("role").textValue());
 				user.setRole(newRole);
 			} catch (Exception e) {
-				//in case of wrong role input, we not change the role
+				// in case of wrong role input, we not change the role
 			}
 			Optional<Agency> agency = agencyEntityController.getAgency(jUser.get("agency").textValue());
-			if(agency.isPresent()) {
+			if (agency.isPresent()) {
 				user.setAgency(agency.get());
 			}
 			userRepository.save(user);

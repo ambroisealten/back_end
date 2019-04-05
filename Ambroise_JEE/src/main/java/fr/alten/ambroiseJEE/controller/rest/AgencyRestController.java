@@ -18,6 +18,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import fr.alten.ambroiseJEE.controller.business.AgencyBusinessController;
+import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
@@ -55,7 +56,7 @@ public class AgencyRestController {
 	@PostMapping(value = "/agency")
 	@ResponseBody
 	public HttpException createAgency(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") int role) throws Exception {
+			@RequestAttribute("role") UserRole role) throws Exception {
 		return params.get("name") != null ? agencyBusinessController.createAgency(params, role)
 				: new UnprocessableEntityException();
 	}
@@ -69,7 +70,7 @@ public class AgencyRestController {
 	 */
 	@GetMapping(value = "/agencies")
 	@ResponseBody
-	public String getAgencies(@RequestAttribute("mail") String mail, @RequestAttribute("role") int role) {
+	public String getAgencies(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
 		return gson.toJson(agencyBusinessController.getAgencies(role));
 	}
 
@@ -87,8 +88,8 @@ public class AgencyRestController {
 	@PutMapping(value = "/agency")
 	@ResponseBody
 	public HttpException updateAgency(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") int role) throws Exception {
-		return params.get("name") != null ? agencyBusinessController.updateAgency(params, role)
+			@RequestAttribute("role") UserRole role) throws Exception {
+		return params.get("mail") != null ? agencyBusinessController.updateAgency(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -106,8 +107,8 @@ public class AgencyRestController {
 	@DeleteMapping(value = "/agency")
 	@ResponseBody
 	public HttpException deleteAgency(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") int role) throws Exception {
-		return params.get("name") != null ? agencyBusinessController.deleteAgency(params, role)
+			@RequestAttribute("role") UserRole role) throws Exception {
+		return params.get("mail") != null ? agencyBusinessController.deleteAgency(params, role)
 				: new UnprocessableEntityException();
 	}
 }
