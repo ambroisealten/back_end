@@ -60,13 +60,8 @@ public class UserAdminRestController {
 	@PostMapping(value = "/admin/user")
 	@ResponseBody
 	public HttpException createUser(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-<<<<<<< HEAD:Ambroise_JEE/src/main/java/fr/alten/ambroiseJEE/controller/rest/AdminRestController.java
-			@RequestAttribute("role") int role) throws Exception {
-		return params.get("name") != null ? userBusinessController.createUser(params, role)
-=======
 			@RequestAttribute("role") UserRole role) throws Exception {
 		return params.get("mail") != null ? userBusinessController.createUser(params, role)
->>>>>>> dev:Ambroise_JEE/src/main/java/fr/alten/ambroiseJEE/controller/rest/UserAdminRestController.java
 				: new UnprocessableEntityException();
 	}
 
