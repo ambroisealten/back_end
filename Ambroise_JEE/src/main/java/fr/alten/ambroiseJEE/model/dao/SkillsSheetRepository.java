@@ -1,5 +1,6 @@
 package fr.alten.ambroiseJEE.model.dao;
 
+
 import java.util.List;
 import java.util.Optional;
 
@@ -22,4 +23,14 @@ public interface SkillsSheetRepository extends MongoRepository<SkillsSheet, Long
 	 * @author Lucas Royackkers
 	 */
 	public Optional<List<SkillsSheet>> findSkillsSheetsByName(String name);
+	
+	/**
+	 * Fetch skills sheet by name and version number
+	 * 
+	 * @param name
+	 * @param versionNumber the version number of the searched skills sheet
+	 * @return An Optional with the corresponding skills sheet or not. 
+	 * @author Lucas Royackkers
+	 */
+	public Optional<SkillsSheet> findSkillsSheetsByNameAndVersion(String name,long versionNumber);	
 }

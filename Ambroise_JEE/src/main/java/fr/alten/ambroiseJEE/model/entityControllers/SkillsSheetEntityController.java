@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -20,6 +19,8 @@ import fr.alten.ambroiseJEE.model.dao.SkillsSheetRepository;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
+import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
 
 public class SkillsSheetEntityController {
 	@Autowired
@@ -37,9 +38,18 @@ public class SkillsSheetEntityController {
 	@Autowired
 	private UserEntityController userEntityController;
 
+	/**
+	 * Try to fetch all skills sheets
+	 * 
+	 * @return A List with all skills sheets
+	 * @author Lucas Royackkers
+	 */
+	public List<SkillsSheet> getSkillsSheets() {
+		return skillsSheetRepository.findAll();
+	}
 	
 	/**
-	 * Try to fetch an skills sheet by its name
+	 * Try to fetch a skills sheet (or several) by a name
 	 * 
 	 * @param name the skills sheet's name to fetch
 	 * @return An Optional with the corresponding skills sheet or not.
@@ -47,6 +57,18 @@ public class SkillsSheetEntityController {
 	 */
 	public Optional<List<SkillsSheet>> getSkillsSheetsByName(String name) {
 		return skillsSheetRepository.findSkillsSheetsByName(name);
+	}
+	
+	/**
+	 * Try to fetch an skills sheet by its name and its versionNumber
+	 * 
+	 * @param name the skills sheet's name to fetch
+	 * @param versionNumber
+	 * @return An Optional with the corresponding skills sheet or not.
+	 * @author Lucas Royackkers
+	 */
+	public Optional<SkillsSheet> getSkillsSheetByNameAndVersion(String name, long versionNumber){
+		return skillsSheetRepository.findSkillsSheetsByNameAndVersion(name, versionNumber);
 	}
 	
 	
@@ -118,10 +140,15 @@ public class SkillsSheetEntityController {
 		List<SoftSkill> allSoftSkills = new ArrayList<SoftSkill>();
 		
 		for(int i = 0; i < softSkillsList.size(); i++) {
+			//Get a specific soft skill by its name in the JsonNode
 			Optional<SoftSkill> softSkill = softSkillEntityController.getSoftSkill(softSkillsList.get(i).get("name").textValue());
 			if(softSkill.isPresent()) {
+				//If the soft skill exists, we associate it with a grade
 				SoftSkill newSoftSkill = softSkill.get();
-				newSoftSkill.setGrade(Integer.parseInt(softSkillsList.get(i).get("grade").textValue()));
+				int softSkillGrade = Integer.parseInt(softSkillsList.get(i).get("grade").textValue());
+				if(softSkillGrade >= 1 && softSkillGrade <= 4) {
+					newSoftSkill.setGrade(softSkillGrade);
+				}
 				allSoftSkills.add(newSoftSkill);
 			}
 		}
@@ -146,15 +173,66 @@ public class SkillsSheetEntityController {
 			Optional<TechSkill> techSkill = techSkillEntityController.getTechSkill(techSkillsList.get(i).get("name").textValue());
 			if(techSkill.isPresent()) {
 				TechSkill newTechSkill = techSkill.get();
-				newTechSkill.setGrade(Integer.parseInt(techSkillsList.get(i).get("grade").textValue()));
+				int techSkillGrade = Integer.parseInt(techSkillsList.get(i).get("grade").textValue());
+				if(techSkillGrade >= 1 && techSkillGrade <= 4) {
+					newTechSkill.setGrade(techSkillGrade);
+				}
 				allTechSkills.add(newTechSkill);
 			}
 		}
 		return allTechSkills;
 	}
 
-	public List<SkillsSheet> getSkillsSheets() {
-		return skillsSheetRepository.findAll();
+	/**
+	 * 
+	 * @param jSkillsSheet JsonNode with all skills sheet parameters, including its name (which cannot be changed) to perform an update on the database
+	 * 
+	 * @return the @see {@link HttpException} corresponding to the status of the
+	 *         request ({@link RessourceNotFoundException} if the resource is not
+	 *         found and {@link CreatedException} if the skills sheet is updated
+	 * @author Lucas Royackkers
+	 */
+	public HttpException updateSkillsSheet(JsonNode jSkillsSheet) {
+		long oldVersionNumber = Long.parseLong(jSkillsSheet.get("versionNumber").textValue());
+		Optional<SkillsSheet> skillsSheetOptional = this.getSkillsSheetByNameAndVersion(jSkillsSheet.get("name").textValue(),oldVersionNumber);
+		if(skillsSheetOptional.isPresent()) {
+			SkillsSheet skillsSheet = skillsSheetOptional.get();
+			
+			Optional<Person> personAttachedTo;
+			String status = jSkillsSheet.get("role").textValue();
+			String personName = jSkillsSheet.get("person").textValue();
+			switch(status) {
+				case "consultant":
+					personAttachedTo = personEntityController.getConsultantByName(personName);
+					break;
+				default:
+					personAttachedTo = personEntityController.getApplicantByName(personName);
+					break;
+			}
+			if(personAttachedTo.isPresent()) {
+				skillsSheet.setPersonAttachedTo(personAttachedTo.get());
+			}
+			
+			skillsSheet.setSoftSkillsList(this.getAllSoftSkills(jSkillsSheet.get("softskills").asText()));
+			skillsSheet.setTechSkillsList(this.getAllTechSkills(jSkillsSheet.get("techskills").asText()));
+
+			skillsSheet.setVersionNumber(oldVersionNumber+1);
+			skillsSheet.set_id(new ObjectId());
+			
+			String authorMail = jSkillsSheet.get("authorMail").textValue();
+			Optional<User> userAuthor = userEntityController.getUserByMail(authorMail);
+			if(userAuthor.isPresent()) {
+				skillsSheet.setVersionAuthor(userAuthor.get());
+			}
+			
+			skillsSheet.setVersionDate(LocalDateTime.now());
+			
+			skillsSheetRepository.save(skillsSheet);
+		}
+		else {
+			return new RessourceNotFoundException();
+		}
+		return new OkException();
 	}
 
 }
