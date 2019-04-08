@@ -1,8 +1,13 @@
 package fr.alten.ambroiseJEE.controller.rest;
 
+import java.text.ParseException;
+
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -65,5 +70,56 @@ public class ApplicantRestController {
 	@ResponseBody
 	public String getApplicants(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
 		return gson.toJson(applicantBusinessController.getApplicants(role));
+	}
+	
+	/**	
+	 * 
+	 * @param applicantName the applicant's name
+	 * @param mail the user's mail
+	 * @param role the user's role
+	 * @return an applicant, given its name
+	 * @author Lucas Royackkers
+	 */
+	@GetMapping(value = "/applicant/{name}")
+	@ResponseBody
+	public String getApplicant(@PathVariable("name") String applicantName, @RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
+		return gson.toJson(applicantBusinessController.getApplicant(applicantName,role));
+	}
+	
+	/**
+	 * 
+	 * @param params JsonNode containing post parameters from http request
+	 * @param mail the user's mail
+	 * @param role the user's role
+	 * @return {@link HttpException} corresponding to the status of the
+	 *         request ({@link UnprocessableEntityException} if the resource is not found
+	 *         and {@link CreatedException} if the person(applicant) is updated
+	 * @author Lucas Royackkers
+	 * @throws ParseException 
+	 */
+	@PutMapping(value = "/applicant")
+	@ResponseBody
+	public HttpException updateApplicant(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
+			@RequestAttribute("role") UserRole role) throws ParseException {
+		return params.get("mail") != null ? applicantBusinessController.updateApplicant(params, role)
+				: new UnprocessableEntityException();
+	}
+	
+	/**
+	 * 
+	 * @param params JsonNode containing post parameters from http request
+	 * @param mail the user's mail
+	 * @param role the user's role
+	 * @return {@link HttpException} corresponding to the status of the
+	 *         request ({@link UnprocessableEntityException} if the resource is not found
+	 *         and {@link CreatedException} if the person(applicant) is deleted
+	 * @author Lucas Royackkers
+	 */
+	@DeleteMapping(value = "/applicant")
+	@ResponseBody
+	public HttpException deleteApplicant(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
+			@RequestAttribute("role") UserRole role) {
+		return params.get("mail") != null ? applicantBusinessController.deleteApplicant(params, role)
+				: new UnprocessableEntityException();
 	}
 }

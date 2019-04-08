@@ -1,10 +1,8 @@
 package fr.alten.ambroiseJEE.model.entityControllers;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -49,7 +47,7 @@ public class DiplomaEntityController {
 
 		Diploma newDiploma = new Diploma();
 		newDiploma.setName(jDiploma.get("name").textValue());
-		newDiploma.setDateOfResult(new SimpleDateFormat("dd/MM/yyyy").parse(jDiploma.get("dateOfResult").textValue()));
+		newDiploma.setYearOfResult(null);
 
 		try {
 			diplomaRepository.save(newDiploma);
@@ -74,7 +72,7 @@ public class DiplomaEntityController {
 		if (diplomaOptionnal.isPresent()) {
 			Diploma diploma = diplomaOptionnal.get();
 			diploma.setName(jDiploma.get("name").textValue());
-			diploma.setDateOfResult(new SimpleDateFormat("dd/MM/yyyy").parse(jDiploma.get("dateOfResult").textValue()));
+			diploma.setYearOfResult(null);
 			diplomaRepository.save(diploma);
 		}
 		else {
@@ -97,7 +95,7 @@ public class DiplomaEntityController {
 		if (diplomaOptionnal.isPresent()) {
 			Diploma diploma = diplomaOptionnal.get();
 			diploma.setName("desactivated" + System.currentTimeMillis());
-			diploma.setDateOfResult(null);
+			diploma.setYearOfResult(null);
 			diplomaRepository.save(diploma);
 		}
 		else {

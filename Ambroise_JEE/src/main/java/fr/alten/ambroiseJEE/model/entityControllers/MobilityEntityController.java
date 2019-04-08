@@ -1,15 +1,11 @@
 package fr.alten.ambroiseJEE.model.entityControllers;
 
 import java.util.Optional;
-
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import fr.alten.ambroiseJEE.model.beans.City;
 import fr.alten.ambroiseJEE.model.beans.Departement;
-import fr.alten.ambroiseJEE.model.beans.Geographic;
 import fr.alten.ambroiseJEE.model.beans.Mobility;
 import fr.alten.ambroiseJEE.model.beans.PostalCode;
 import fr.alten.ambroiseJEE.model.beans.Region;
