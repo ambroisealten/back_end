@@ -73,7 +73,7 @@ public class SkillsSheetEntityController {
 	
 	
 	/**
-	 * Method to create an skills sheet.
+	 * Method to create a skills sheet.
 	 * 
 	 * @param jUser JsonNode with all skills sheet parameters
 	 * @return the @see {@link HttpException} corresponding to the status of the
@@ -89,6 +89,7 @@ public class SkillsSheetEntityController {
 		Optional<Person> personAttachedTo;
 		String status = jSkillsSheet.get("role").textValue();
 		String personName = jSkillsSheet.get("person").textValue();
+		//Given the created person status
 		switch(status) {
 			case "consultant":
 				personAttachedTo = personEntityController.getConsultantByName(personName);
@@ -100,10 +101,11 @@ public class SkillsSheetEntityController {
 		if(personAttachedTo.isPresent()) {
 			newSkillsSheet.setPersonAttachedTo(personAttachedTo.get());
 		}
-		
+		//Get all skills given several lists of skills (tech and soft)
 		newSkillsSheet.setSoftSkillsList(this.getAllSoftSkills(jSkillsSheet.get("softskills").asText()));
 		newSkillsSheet.setTechSkillsList(this.getAllTechSkills(jSkillsSheet.get("techskills").asText()));
 		
+		//Set an Id and a Version Number on this skills sheet
 		newSkillsSheet.setVersionNumber(1);
 		newSkillsSheet.set_id(new ObjectId());
 		
@@ -141,16 +143,8 @@ public class SkillsSheetEntityController {
 		
 		for(int i = 0; i < softSkillsList.size(); i++) {
 			//Get a specific soft skill by its name in the JsonNode
-			Optional<SoftSkill> softSkill = softSkillEntityController.getSoftSkill(softSkillsList.get(i).get("name").textValue());
-			if(softSkill.isPresent()) {
-				//If the soft skill exists, we associate it with a grade
-				SoftSkill newSoftSkill = softSkill.get();
-				int softSkillGrade = Integer.parseInt(softSkillsList.get(i).get("grade").textValue());
-				if(softSkillGrade >= 1 && softSkillGrade <= 4) {
-					newSoftSkill.setGrade(softSkillGrade);
-				}
-				allSoftSkills.add(newSoftSkill);
-			}
+			SoftSkill newSoftSkill = softSkillEntityController.createSoftSkillAndGrade(softSkillsList.get(i).get("name").textValue(), Integer.parseInt(softSkillsList.get(i).get("grade").textValue())); 
+			allSoftSkills.add(newSoftSkill);
 		}
 		
 		return allSoftSkills;
@@ -170,31 +164,28 @@ public class SkillsSheetEntityController {
 		List<TechSkill> allTechSkills = new ArrayList<TechSkill>();
 		
 		for(int i = 0; i < allTechSkills.size(); i++) {
-			Optional<TechSkill> techSkill = techSkillEntityController.getTechSkill(techSkillsList.get(i).get("name").textValue());
-			if(techSkill.isPresent()) {
-				TechSkill newTechSkill = techSkill.get();
-				int techSkillGrade = Integer.parseInt(techSkillsList.get(i).get("grade").textValue());
-				if(techSkillGrade >= 1 && techSkillGrade <= 4) {
-					newTechSkill.setGrade(techSkillGrade);
-				}
-				allTechSkills.add(newTechSkill);
+			//Get a specific tech skill by its name in the JsonNode
+			TechSkill techSkill = techSkillEntityController.createTechSkillAndGrade(techSkillsList.get(i).get("name").textValue(), Integer.parseInt(techSkillsList.get(i).get("grade").textValue()));
+			allTechSkills.add(techSkill);
 			}
-		}
 		return allTechSkills;
 	}
 
 	/**
+	 * Method to update a Skills Sheet, the update save a new version of the skills sheet
 	 * 
 	 * @param jSkillsSheet JsonNode with all skills sheet parameters, including its name (which cannot be changed) to perform an update on the database
 	 * 
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link RessourceNotFoundException} if the resource is not
-	 *         found and {@link CreatedException} if the skills sheet is updated
+	 *         found and {@link OkException} if the skills sheet is updated
 	 * @author Lucas Royackkers
 	 */
 	public HttpException updateSkillsSheet(JsonNode jSkillsSheet) {
-		long oldVersionNumber = Long.parseLong(jSkillsSheet.get("versionNumber").textValue());
-		Optional<SkillsSheet> skillsSheetOptional = this.getSkillsSheetByNameAndVersion(jSkillsSheet.get("name").textValue(),oldVersionNumber);
+		//We retrieve the latest version number of the skills sheet, in order to increment it later
+		long latestVersionNumber = Long.parseLong(jSkillsSheet.get("versionNumber").textValue());
+		Optional<SkillsSheet> skillsSheetOptional = this.getSkillsSheetByNameAndVersion(jSkillsSheet.get("name").textValue(),latestVersionNumber);
+		//If we found the skills sheet, with its name and its version (the Front part will have to send the latest version number)
 		if(skillsSheetOptional.isPresent()) {
 			SkillsSheet skillsSheet = skillsSheetOptional.get();
 			
@@ -216,7 +207,7 @@ public class SkillsSheetEntityController {
 			skillsSheet.setSoftSkillsList(this.getAllSoftSkills(jSkillsSheet.get("softskills").asText()));
 			skillsSheet.setTechSkillsList(this.getAllTechSkills(jSkillsSheet.get("techskills").asText()));
 
-			skillsSheet.setVersionNumber(oldVersionNumber+1);
+			skillsSheet.setVersionNumber(latestVersionNumber+1);
 			skillsSheet.set_id(new ObjectId());
 			
 			String authorMail = jSkillsSheet.get("authorMail").textValue();

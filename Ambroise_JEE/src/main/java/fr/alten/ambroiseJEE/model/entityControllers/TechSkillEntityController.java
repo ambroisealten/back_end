@@ -28,5 +28,28 @@ public class TechSkillEntityController {
 	public Optional<TechSkill> getTechSkill(String name) {
 		return techSkillRepository.findTechSkillByName(name);
 	}
+	
+	/**
+	 * Method to create a couple between a grade and a TechSkill (for skills sheet)
+	 * 
+	 * @param name the tech skill's name
+	 * @param grade the tech skill's grade (int)
+	 * @return a TechSkill object if a corresponding name is found, null if not
+	 * @author Lucas Royackkers
+	 */
+	public TechSkill createTechSkillAndGrade(String name,int grade) {
+		Optional<TechSkill> optionalTechSkill = this.getTechSkill(name);
+		if(optionalTechSkill.isPresent()){
+			TechSkill techSkill = optionalTechSkill.get();
+			//The grade has to be between 1 and 4
+			if(grade >= 1 && grade <= 4) {
+				techSkill.setGrade(grade);
+			}
+			return techSkill;
+		}
+		else{
+			return null;
+		}
+	}
 
 }
