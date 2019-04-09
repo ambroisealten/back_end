@@ -26,8 +26,6 @@ public class AmbroiseJeeApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(AmbroiseJeeApplication.class, args);
-		CustomLogger.log("OSKOUR joke", LogLevel.JOKE);
-		CustomLogger.log("OSKOUR dev", LogLevel.DEV);
 	}
 	
 	/**
