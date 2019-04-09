@@ -2,6 +2,7 @@ package fr.alten.ambroiseJEE.controller.rest;
 
 import java.text.ParseException;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +29,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
  */
 @Controller
 public class ConsultantRestController {
+	@Autowired
 	private ConsultantBusinessController consultantBusinessController;
 	
 	private final Gson gson;
@@ -52,8 +54,7 @@ public class ConsultantRestController {
 	@ResponseBody
 	public HttpException createConsultant(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("mail") != null ? consultantBusinessController.createConsultant(params, role)
-				: new UnprocessableEntityException();
+		return consultantBusinessController.createConsultant(params, role);
 	}
 
 	
@@ -98,8 +99,7 @@ public class ConsultantRestController {
 	@ResponseBody
 	public HttpException updateConsultant(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws ParseException {
-		return params.get("mail") != null ? consultantBusinessController.updateConsultant(params, role)
-				: new UnprocessableEntityException();
+		return consultantBusinessController.updateConsultant(params, role);
 	}
 	
 	/**
@@ -116,8 +116,7 @@ public class ConsultantRestController {
 	@ResponseBody
 	public HttpException deleteConsultant(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) {
-		return params.get("mail") != null ? consultantBusinessController.deleteConsultant(params, role)
-				: new UnprocessableEntityException();
+		return consultantBusinessController.deleteConsultant(params, role);
 	}
 	
 }

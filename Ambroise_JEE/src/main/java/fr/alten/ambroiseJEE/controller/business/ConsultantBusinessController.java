@@ -49,9 +49,12 @@ public class ConsultantBusinessController {
 	 */
 	public HttpException createConsultant(JsonNode jConsultant, UserRole role) throws ParseException {
 		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role) {
-			personEntityController.createPerson(jConsultant,PersonRole.CONSULTANT);
+			return personEntityController.createPerson(jConsultant,PersonRole.CONSULTANT);
 		}
-		throw new ForbiddenException();
+		else {
+			throw new ForbiddenException();	
+		}
+		
 	}
 
 
