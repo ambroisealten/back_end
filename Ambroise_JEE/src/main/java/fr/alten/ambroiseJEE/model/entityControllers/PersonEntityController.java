@@ -259,8 +259,15 @@ public class PersonEntityController {
 	private List<String> getAllMobilities(JsonNode jMobilities) {
 		List<String> allMobilities = new ArrayList<String>();
 		for(JsonNode mobility : jMobilities) {
+			Mobility mobilityToFind = new Mobility();
+			mobilityToFind.setPlaceName(mobility.get("placeName").textValue());
+			mobilityToFind.setPlaceType(mobility.get("placeType").textValue());
+			mobilityToFind.setRadius(Integer.parseInt(mobility.get("radius").textValue()));
+			mobilityToFind.setUnit(mobility.get("unit").textValue());
 			
-			Optional<Mobility> optionalMobility = mobilityEntityController.getMobilityByName(mobility.get("name").textValue());
+			
+			//Optional<Mobility> optionalMobility = mobilityEntityController.getMobilityByName(mobility.get("placeName").textValue());
+			Optional<Mobility> optionalMobility = mobilityEntityController.getMobility(mobilityToFind);
 			if(optionalMobility.isPresent()) {
 				allMobilities.add(optionalMobility.get().get_id().toString());
 			}

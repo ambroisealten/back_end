@@ -96,4 +96,9 @@ public class MobilityEntityController {
 		return new CreatedException();
 	}
 
+	public Optional<Mobility> getMobility(Mobility mobilityToFind) {
+		// TODO Revoir le code pour optimiser les appels
+		return mobilityRepository.findByPlaceNameAndPlaceTypeAndRadiusAndUnit(mobilityToFind.getPlaceName(), mobilityToFind.getPlaceType(), mobilityToFind.getRadius(), mobilityToFind.getUnit());
+	}
+
 }
