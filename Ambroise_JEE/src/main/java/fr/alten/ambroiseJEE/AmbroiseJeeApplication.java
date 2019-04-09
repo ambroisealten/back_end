@@ -16,6 +16,8 @@ import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 
 import fr.alten.ambroiseJEE.filter.TokenFilter;
+import fr.alten.ambroiseJEE.utils.CustomLogger;
+import fr.alten.ambroiseJEE.utils.LogLevel;
 
 
 
@@ -24,6 +26,8 @@ public class AmbroiseJeeApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(AmbroiseJeeApplication.class, args);
+		CustomLogger.log("OSKOUR joke", LogLevel.JOKE);
+		CustomLogger.log("OSKOUR dev", LogLevel.DEV);
 	}
 	
 	/**
