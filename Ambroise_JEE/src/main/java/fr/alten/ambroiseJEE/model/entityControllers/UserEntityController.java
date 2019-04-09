@@ -78,7 +78,7 @@ public class UserEntityController {
 		newUser.setRole(newRole);
 		Optional<Agency> agency = agencyEntityController.getAgency(jUser.get("agency").textValue());
 		if(agency.isPresent()) {
-			newUser.setAgency(agency.get());
+			newUser.setAgency(agency.get().getName());
 		}
 
 		try {
@@ -109,11 +109,6 @@ public class UserEntityController {
 	 * @author Andy Chabalier
 	 */
 	public Optional<User> getUserByCredentials(String mail, String pswd) {
-		User u = new User();
-		u.setMail(mail);
-		u.setPswd(pswd);
-		u.setRole(UserRole.MANAGER_ADMIN);
-		userRepository.insert(u);
 		return userRepository.findByMailAndPswd(mail, pswd);
 	}
 
@@ -165,7 +160,7 @@ public class UserEntityController {
 			}
 			Optional<Agency> agency = agencyEntityController.getAgency(jUser.get("agency").textValue());
 			if(agency.isPresent()) {
-				user.setAgency(agency.get());
+				user.setAgency(agency.get().getName());
 			}
 			userRepository.save(user);
 		} else {
