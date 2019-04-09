@@ -1,7 +1,7 @@
 package fr.alten.ambroiseJEE.model.beans;
 
 import java.io.Serializable;
-import java.time.Year;
+
 import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
@@ -15,7 +15,7 @@ public class Diploma implements Serializable{
 
 	private static final long serialVersionUID = -6191997074025351479L;
 	private String name;
-	private Year yearOfResult;
+	private String yearOfResult;
 	
 	public Diploma() {
 		super();
@@ -29,11 +29,11 @@ public class Diploma implements Serializable{
 		this.name = name;
 	}
 
-	public Year getYearOfResult() {
+	public String getYearOfResult() {
 		return yearOfResult;
 	}
 
-	public void setYearOfResult(Year yearOfResult) {
+	public void setYearOfResult(String yearOfResult) {
 		this.yearOfResult = yearOfResult;
 	}
 	

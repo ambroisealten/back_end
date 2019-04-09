@@ -104,4 +104,8 @@ public class DiplomaEntityController {
 		return new OkException();
 	}
 
+	public Optional<Diploma> getDiplomaByNameAndYearOfResult(String name, String yearOfResult) {
+		return diplomaRepository.findByNameAndYearOfResult(name,yearOfResult);
+	}
+
 }

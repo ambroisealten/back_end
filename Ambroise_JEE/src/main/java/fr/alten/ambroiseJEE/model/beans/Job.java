@@ -2,6 +2,8 @@ package fr.alten.ambroiseJEE.model.beans;
 
 import java.io.Serializable;
 
+import org.springframework.data.mongodb.core.index.Indexed;
+
 /**
  * 
  * 
@@ -11,6 +13,7 @@ import java.io.Serializable;
 public class Job implements Serializable{
 
 	private static final long serialVersionUID = -8259196238254390780L;
+	@Indexed(unique = true)
 	private String title;
 	
 	public Job() {

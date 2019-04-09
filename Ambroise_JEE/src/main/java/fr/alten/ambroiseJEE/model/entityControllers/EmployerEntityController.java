@@ -1,6 +1,8 @@
 package fr.alten.ambroiseJEE.model.entityControllers;
 
 import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.JsonNode;
 import fr.alten.ambroiseJEE.model.beans.Employer;
@@ -19,6 +21,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
 @Service
 public class EmployerEntityController {
 
+	@Autowired
 	private EmployerRepository employerRepository;
 	
 	public Optional<Employer> getEmployer(String name) {

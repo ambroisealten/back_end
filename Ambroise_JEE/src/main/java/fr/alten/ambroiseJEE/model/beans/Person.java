@@ -23,17 +23,19 @@ public class Person implements Serializable{
 	@Id
 	private transient ObjectId _id;
 	private String name;
-	private Job job;
-	private Employer employer;
+	private String job;
+	private String employer;
 	private int monthlyWage;
 	private Date canStartsAt;
 	private PersonRole role;
 	private String mail;
-	private User managerInCharge;
-	private Diploma highestDiploma;
-	private List<Mobility> mobilities;
+	private String managerInCharge;
+	private String highestDiploma;
+	private List<String> mobilities;
 	private String grade;
 	private String commentary;
+	private List<String> urlDocs;
+	private boolean fromForum;
 
 	public Person() {
 		super();
@@ -79,16 +81,16 @@ public class Person implements Serializable{
 	public void setMail(String mail) {
 		this.mail = mail;
 	}
-	public User getManagerInCharge() {
+	public String getManagerInCharge() {
 		return managerInCharge;
 	}
-	public void setManagerInCharge(User managerInCharge) {
+	public void setManagerInCharge(String managerInCharge) {
 		this.managerInCharge = managerInCharge;
 	}
-	public Diploma getHighestDiploma() {
+	public String getHighestDiploma() {
 		return highestDiploma;
 	}
-	public void setHighestDiploma(Diploma highestDiploma) {
+	public void setHighestDiploma(String highestDiploma) {
 		this.highestDiploma = highestDiploma;
 	}
 	public String getGrade() {
@@ -103,23 +105,34 @@ public class Person implements Serializable{
 	public void setCommentary(String commentary) {
 		this.commentary = commentary;
 	}
-	public void setJob(Job job) {
+	public void setJob(String job) {
 		this.job = job;
 	}
-	public Job getJob() {
+	public String getJob() {
 		return this.job;
 	}
-	public List<Mobility> getMobilities() {
+	public List<String> getMobilities() {
 		return mobilities;
 	}
-	public void setMobilities(List<Mobility> mobilities) {
+	public void setMobilities(List<String> mobilities) {
 		this.mobilities = mobilities;
 	}
-	public Employer getEmployer() {
+	public String getEmployer() {
 		return employer;
 	}
-	public void setEmployer(Employer employer) {
+	public void setEmployer(String employer) {
 		this.employer = employer;
 	}
-	
+	public List<String> getUrlDocs() {
+		return urlDocs;
+	}
+	public void setUrlDocs(List<String> urlDocs) {
+		this.urlDocs = urlDocs;
+	}
+	public boolean isFromForum() {
+		return fromForum;
+	}
+	public void setFromForum(boolean fromForum) {
+		this.fromForum = fromForum;
+	}
 }

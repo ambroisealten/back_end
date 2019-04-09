@@ -2,6 +2,7 @@ package fr.alten.ambroiseJEE.controller.rest;
 
 import java.text.ParseException;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,6 +32,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 @Controller
 public class ApplicantRestController {
 	
+	@Autowired
 	private ApplicantBusinessController applicantBusinessController;
 	
 	private final Gson gson;
@@ -53,10 +55,9 @@ public class ApplicantRestController {
 	 */
 	@PostMapping(value = "/applicant")
 	@ResponseBody
-	public HttpException createApplicant(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
+	public HttpException createApplicant(@RequestBody JsonNode params,
 			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("mail") != null ? applicantBusinessController.createApplicant(params, role)
-				: new UnprocessableEntityException();
+		return applicantBusinessController.createApplicant(params, role);
 	}
 
 	/**

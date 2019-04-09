@@ -1,19 +1,18 @@
 package fr.alten.ambroiseJEE.model.entityControllers;
 
-import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+
 import fr.alten.ambroiseJEE.model.beans.Diploma;
 import fr.alten.ambroiseJEE.model.beans.Employer;
 import fr.alten.ambroiseJEE.model.beans.Job;
@@ -112,8 +111,8 @@ public class PersonEntityController {
 		if(optionalPerson.isPresent()) {
 			Person person = optionalPerson.get();
 			person.setName(jPerson.get("name").textValue());
-			person.setMonthlyWage(Integer.parseInt(jPerson.get("name").textValue()));
-			person.setCanStartsAt(new SimpleDateFormat("dd/MM/yyyy").parse(jPerson.get("name").textValue()));
+			person.setMonthlyWage(Integer.parseInt(jPerson.get("wage").textValue()));
+			person.setCanStartsAt(new SimpleDateFormat("dd/MM/yyyy").parse(jPerson.get("dateStarts").textValue()));
 			String type = jPerson.get("type").textValue();
 			if(role == PersonRole.APPLICANT) {
 				switch(type) {
@@ -131,26 +130,25 @@ public class PersonEntityController {
 			
 			Optional<User> managerInCharge = userEntityController.getUserByMail(jPerson.get("managerMail").textValue());
 			if(managerInCharge.isPresent()) {
-				person.setManagerInCharge(managerInCharge.get());
+				person.setManagerInCharge(managerInCharge.get().getMail());
 			}
 			
-			Optional<Diploma> highestDiploma = diplomaEntityController.getDiplomaByName(jPerson.get("diplomaName").textValue());
+			Optional<Diploma> highestDiploma = diplomaEntityController.getDiplomaByNameAndYearOfResult(jPerson.get("diplomaName").textValue(),jPerson.get("diplomaYear").textValue());
 			if(highestDiploma.isPresent()) {
 				Diploma newDiploma = highestDiploma.get();
-				newDiploma.setYearOfResult(Year.of((Integer.parseInt(jPerson.get("diplomaYear").textValue()))));
-				person.setHighestDiploma(highestDiploma.get());
+				person.setHighestDiploma(newDiploma.getName());
 			}
 			
-			person.setMobilities(this.getAllMobilities(jPerson.get("mobilities").asText()));
+			person.setMobilities(this.getAllMobilities(jPerson.get("mobilities")));
 			
 			Optional<Job> job = jobEntityController.getJob(jPerson.get("job").textValue());
 			if(job.isPresent()){
-				person.setJob(job.get());
+				person.setJob(job.get().getTitle());
 			}
 			
 			Optional<Employer> employer = employerEntityController.getEmployer(jPerson.get("employer").textValue());
 			if(employer.isPresent()) {
-				person.setEmployer(employer.get());
+				person.setEmployer(employer.get().getName());
 			}
 			
 			personRepository.save(person);
@@ -181,37 +179,43 @@ public class PersonEntityController {
 		
 		Person newPerson = new Person();
 		newPerson.setName(jPerson.get("name").textValue());
-		newPerson.setMonthlyWage(Integer.parseInt(jPerson.get("name").textValue()));
-		newPerson.setCanStartsAt(new SimpleDateFormat("dd/MM/yyyy").parse(jPerson.get("name").textValue()));
+		newPerson.setMonthlyWage(Integer.parseInt(jPerson.get("wage").textValue()));
+		newPerson.setCanStartsAt(new SimpleDateFormat("dd/MM/yyyy").parse(jPerson.get("dateStarts").textValue()));
 		newPerson.setRole(type);
 		newPerson.setMail(jPerson.get("mail").textValue());
 		newPerson.setGrade(jPerson.get("grade").textValue());
 		newPerson.setCommentary(jPerson.get("commentary").textValue());
+		newPerson.setFromForum(Boolean.getBoolean(jPerson.get("fromForum").textValue()));
+		List<String> docList= new ArrayList<String>();
+		JsonNode docNode = jPerson.get("docs");
+		for(JsonNode doc : docNode) {
+			docList.add(doc.get("url").textValue());
+		}
+		newPerson.setUrlDocs(docList);
 		
 		Optional<User> managerInCharge = userEntityController.getUserByMail(jPerson.get("managerMail").textValue());
 		if(managerInCharge.isPresent()) {
-			newPerson.setManagerInCharge(managerInCharge.get());
+			newPerson.setManagerInCharge(managerInCharge.get().getMail());
 		}
 		
-		Optional<Diploma> highestDiploma = diplomaEntityController.getDiplomaByName(jPerson.get("diplomaName").textValue());
+		Optional<Diploma> highestDiploma = diplomaEntityController.getDiplomaByNameAndYearOfResult(jPerson.get("diplomaName").textValue(),jPerson.get("diplomaYear").textValue());
 		if(highestDiploma.isPresent()) {
 			Diploma newDiploma = highestDiploma.get();
-			newDiploma.setYearOfResult(Year.of((Integer.parseInt(jPerson.get("diplomaYear").textValue()))));
-			newPerson.setHighestDiploma(highestDiploma.get());
+			newPerson.setHighestDiploma(newDiploma.getName());
 		}
 		
-		newPerson.setMobilities(this.getAllMobilities(jPerson.get("mobilities").asText()));
+		JsonNode test = jPerson.get("mobilities");
+		newPerson.setMobilities(this.getAllMobilities(test));
 		
 		Optional<Job> job = jobEntityController.getJob(jPerson.get("job").textValue());
 		if(job.isPresent()){
-			newPerson.setJob(job.get());
+			newPerson.setJob(job.get().getTitle());
 		}
 		
 		Optional<Employer> employer = employerEntityController.getEmployer(jPerson.get("employer").textValue());
 		if(employer.isPresent()) {
-			newPerson.setEmployer(employer.get());
-		}
-		
+			newPerson.setEmployer(employer.get().getName());
+		}	
 	
 		try {
 			personRepository.save(newPerson);
@@ -252,17 +256,15 @@ public class PersonEntityController {
 	 * @return A List of Mobility
 	 * @author Lucas Royackkers
 	 */
-	private List<Mobility> getAllMobilities(String jMobility) {
-		Type listType = new TypeToken<List<JsonNode>>() {}.getType();
-		List<JsonNode> mobilitiesList = new Gson().fromJson(jMobility, listType);
-		List<Mobility> allMobilities = new ArrayList<Mobility>();
-		
-		for(int i = 0; i < mobilitiesList.size() ;i++) {
-			mobilityEntityController.createMobility(mobilitiesList.get(i));
-			Optional<Mobility> mobility = mobilityEntityController.getMobility(mobilitiesList.get(i).get("place").textValue(),Integer.parseInt(mobilitiesList.get(i).get("radius").textValue()));
-			if(mobility.isPresent()) {
-				allMobilities.add(mobility.get());
+	private List<String> getAllMobilities(JsonNode jMobilities) {
+		List<String> allMobilities = new ArrayList<String>();
+		for(JsonNode mobility : jMobilities) {
+			
+			Optional<Mobility> optionalMobility = mobilityEntityController.getMobilityByName(mobility.get("name").textValue());
+			if(optionalMobility.isPresent()) {
+				allMobilities.add(optionalMobility.get().get_id().toString());
 			}
+			System.out.println("eee");
 		}
 		return allMobilities;
 	}

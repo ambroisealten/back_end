@@ -16,4 +16,6 @@ public interface DiplomaRepository extends MongoRepository<Diploma,Long>{
 	 */
 	Optional<Diploma> findByName(String name);
 
+	Optional<Diploma> findByNameAndYearOfResult(String name, String yearOfResult);
+
 }
