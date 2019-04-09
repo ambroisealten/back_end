@@ -70,7 +70,7 @@ public class PersonEntityController {
 	 * @author Lucas Royackkers
 	 */
 	public HttpException deletePerson(JsonNode jPerson,PersonRole role) {
-		Optional<Person> optionalPerson = personRepository.findByNameAndRole(jPerson.get("name").textValue(), role);
+		Optional<Person> optionalPerson = personRepository.findByMailAndRole(jPerson.get("mail").textValue(), role);
 		if(optionalPerson.isPresent()) {
 			Person person = optionalPerson.get();
 			switch(role) {
@@ -78,14 +78,20 @@ public class PersonEntityController {
 				person.setName("Desactivated");
 				break;
 			default:
-				person.setName("Démissionaire");
+				person.setName("Demissionaire");
 				break;
 			}
-			person.setMail("");
+			person.setMail("desactivated" + System.currentTimeMillis()+"@desactivated.com");
 			person.setEmployer(null);
-			person.setCommentary("");
+			person.setCommentary(null);
 			person.setGrade(null);
 			person.setCanStartsAt(null);
+			person.setUrlDocs(null);
+			person.setRole(null);
+			person.setFromForum(false);
+			person.setMonthlyWage(0);
+			person.setJob(null);
+			
 			personRepository.save(person);
 		}
 		else {
@@ -107,23 +113,16 @@ public class PersonEntityController {
 	 * @author Lucas Royackkers
 	 */
 	public HttpException updatePerson(JsonNode jPerson,PersonRole role) throws ParseException {
-		Optional<Person> optionalPerson = personRepository.findByNameAndRole(jPerson.get("name").textValue(), role);
+		Optional<Person> optionalPerson = personRepository.findByMailAndRole(jPerson.get("oldMail").textValue(), role);
 		if(optionalPerson.isPresent()) {
 			Person person = optionalPerson.get();
 			person.setName(jPerson.get("name").textValue());
 			person.setMonthlyWage(Integer.parseInt(jPerson.get("wage").textValue()));
 			person.setCanStartsAt(new SimpleDateFormat("dd/MM/yyyy").parse(jPerson.get("dateStarts").textValue()));
-			String type = jPerson.get("type").textValue();
-			if(role == PersonRole.APPLICANT) {
-				switch(type) {
-					case "consultant":
-						person.setRole(PersonRole.CONSULTANT);
-						break;
-					default:
-						break;
-				}
+			PersonRole oldRole = person.getRole();
+			if(role != oldRole) {
+				person.setRole(role);
 			}
-			
 			person.setMail(jPerson.get("mail").textValue());
 			person.setGrade(jPerson.get("grade").textValue());
 			person.setCommentary(jPerson.get("commentary").textValue());
@@ -235,7 +234,7 @@ public class PersonEntityController {
 	 * @author Lucas Royackkers
 	 */
 	public Optional<Person> getPersonByName(String name) {
-		return personRepository.findByName(name);
+		return personRepository.findByMail(name);
 	}
 
 	/**
@@ -246,7 +245,7 @@ public class PersonEntityController {
 	 * @author Lucas Royackkers
 	 */
 	public Optional<Person> getPersonByNameAndType(String name, PersonRole type){
-		return personRepository.findByNameAndRole(name, type);
+		return personRepository.findByMailAndRole(name, type);
 	}
 	
 	/**
@@ -265,13 +264,10 @@ public class PersonEntityController {
 			mobilityToFind.setRadius(Integer.parseInt(mobility.get("radius").textValue()));
 			mobilityToFind.setUnit(mobility.get("unit").textValue());
 			
-			
-			//Optional<Mobility> optionalMobility = mobilityEntityController.getMobilityByName(mobility.get("placeName").textValue());
 			Optional<Mobility> optionalMobility = mobilityEntityController.getMobility(mobilityToFind);
 			if(optionalMobility.isPresent()) {
 				allMobilities.add(optionalMobility.get().get_id().toString());
 			}
-			System.out.println("eee");
 		}
 		return allMobilities;
 	}

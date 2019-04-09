@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import fr.alten.ambroiseJEE.utils.PersonRole;
@@ -21,13 +22,14 @@ public class Person implements Serializable{
 
 	private static final long serialVersionUID = 5313704620913617832L;
 	@Id
-	private transient ObjectId _id;
+	private ObjectId _id;
 	private String name;
 	private String job;
 	private String employer;
 	private int monthlyWage;
 	private Date canStartsAt;
 	private PersonRole role;
+	@Indexed(unique = true)
 	private String mail;
 	private String managerInCharge;
 	private String highestDiploma;
@@ -40,14 +42,17 @@ public class Person implements Serializable{
 	public Person() {
 		super();
 	}
+	
 	public ObjectId get_id() {
 		return _id;
 	}
 
+
 	public void set_id(ObjectId _id) {
 		this._id = _id;
 	}
-	
+
+
 	public String getName() {
 		return name;
 	}
