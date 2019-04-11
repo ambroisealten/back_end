@@ -54,7 +54,7 @@ public class ApplicantForumEntityController {
 
 	@Autowired
 	private JobEntityController jobEntityController;
-	
+
 	@Autowired
 	private MobilityEntityController mobilityEntityController;
 
@@ -150,22 +150,22 @@ public class ApplicantForumEntityController {
 				applicant.setEmployer(employer.get().getName());
 			}
 
-			List<String> docList= new ArrayList<String>();
+			List<String> docList = new ArrayList<String>();
 			JsonNode docNode = jApplicant.get("docs");
 			for (JsonNode doc : docNode) {
 				docList.add(doc.get("url").textValue());
 			}
 			applicant.setUrlDocs(docList);
-			
+
 			applicant.setMobilities(getAllMobilities(jApplicant.get("mobilities")));
-			
+
 			applicant.setStartAt(jApplicant.get("canStartAt").textValue());
 			applicant.setGrade(jApplicant.get("grade").textValue());
 			applicant.setCommentary(jApplicant.get("commentary").textValue());
 			applicant.setContractType(jApplicant.get("contractType").textValue());
 			applicant.setContractDuration(jApplicant.get("contractDuration").textValue());
 
-			List<String> skills= new ArrayList<String>();
+			List<String> skills = new ArrayList<String>();
 			JsonNode skillNode = jApplicant.get("skills");
 			for (JsonNode skill : skillNode) {
 				Optional<Skill> SkillOptional = skillBusinessController.getSkill(skill.get("name").textValue());
@@ -173,8 +173,8 @@ public class ApplicantForumEntityController {
 					skills.add(SkillOptional.get().getName());
 				}
 			}
-			applicant.setSkills(skills);	
-			
+			applicant.setSkills(skills);
+
 			applicant.setVehicule(Boolean.getBoolean(jApplicant.get("hasVehicule").textValue()));
 			applicant.setPermis(Boolean.getBoolean(jApplicant.get("hasPermis").textValue()));
 			applicant.setNationality(Nationality.valueOf(jApplicant.get("nationality").textValue()));
@@ -201,7 +201,8 @@ public class ApplicantForumEntityController {
 	 */
 	public HttpException createApplicant(JsonNode jApplicant) throws ParseException {
 		// if the mail don't match with the mail pattern
-		if (!validateMail(jApplicant.get("mail").textValue())) {
+		String applicantMail = jApplicant.get("mail").textValue();
+		if (!validateMail(applicantMail)) {
 			return new UnprocessableEntityException();
 		}
 
@@ -209,7 +210,7 @@ public class ApplicantForumEntityController {
 		newApplicant.setName(jApplicant.get("name").textValue());
 		newApplicant.setSurname(jApplicant.get("surname").textValue());
 		newApplicant.setMonthlyWage(Integer.parseInt(jApplicant.get("wage").textValue()));
-		newApplicant.setMail(jApplicant.get("mail").textValue());
+		newApplicant.setMail(applicantMail);
 		List<String> docList = new ArrayList<String>();
 		JsonNode docNode = jApplicant.get("docs");
 		for (JsonNode doc : docNode) {
@@ -238,16 +239,15 @@ public class ApplicantForumEntityController {
 			newApplicant.setEmployer(employer.get().getName());
 		}
 
-		
 		newApplicant.setMobilities(getAllMobilities(jApplicant.get("mobilities")));
-		
+
 		newApplicant.setStartAt(jApplicant.get("canStartAt").textValue());
 		newApplicant.setGrade(jApplicant.get("grade").textValue());
 		newApplicant.setCommentary(jApplicant.get("commentary").textValue());
 		newApplicant.setContractType(jApplicant.get("contractType").textValue());
 		newApplicant.setContractDuration(jApplicant.get("contractDuration").textValue());
 
-		List<String> skills= new ArrayList<String>();
+		List<String> skills = new ArrayList<String>();
 		JsonNode skillNode = jApplicant.get("skills");
 		for (JsonNode skill : skillNode) {
 			Optional<Skill> SkillOptional = skillBusinessController.getSkill(skill.get("name").textValue());
@@ -255,12 +255,12 @@ public class ApplicantForumEntityController {
 				skills.add(SkillOptional.get().getName());
 			}
 		}
-		newApplicant.setSkills(skills);	
-		
+		newApplicant.setSkills(skills);
+
 		newApplicant.setVehicule(Boolean.getBoolean(jApplicant.get("hasVehicule").textValue()));
 		newApplicant.setPermis(Boolean.getBoolean(jApplicant.get("hasPermis").textValue()));
 		newApplicant.setNationality(Nationality.valueOf(jApplicant.get("nationality").textValue()));
- 
+
 		try {
 			applicantForumRepository.save(newApplicant);
 		} catch (Exception e) {
@@ -298,25 +298,27 @@ public class ApplicantForumEntityController {
 		Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
 		return matcher.find();
 	}
-	
+
 	/**
-	 * Get a List of Mobility object given a list of JsonNode(represented as a String)
+	 * Get a List of Mobility object given a list of JsonNode(represented as a
+	 * String)
 	 * 
-	 * @param jMobility the String corresponding to a JsonNode corresponding to the mobility part of a Person
+	 * @param jMobility the String corresponding to a JsonNode corresponding to the
+	 *                  mobility part of a applicant
 	 * @return A List of Mobility
 	 * @author Lucas Royackkers
 	 */
 	private List<String> getAllMobilities(JsonNode jMobilities) {
 		List<String> allMobilities = new ArrayList<String>();
-		for(JsonNode mobility : jMobilities) {
+		for (JsonNode mobility : jMobilities) {
 			Mobility mobilityToFind = new Mobility();
 			mobilityToFind.setPlaceName(mobility.get("placeName").textValue());
 			mobilityToFind.setPlaceType(mobility.get("placeType").textValue());
 			mobilityToFind.setRadius(Integer.parseInt(mobility.get("radius").textValue()));
 			mobilityToFind.setUnit(mobility.get("unit").textValue());
-			
+
 			Optional<Mobility> optionalMobility = mobilityEntityController.getMobility(mobilityToFind);
-			if(optionalMobility.isPresent()) {
+			if (optionalMobility.isPresent()) {
 				allMobilities.add(optionalMobility.get().get_id().toString());
 			}
 		}
