@@ -11,8 +11,8 @@ public class HttpException extends RuntimeException {
 
 	private static final long serialVersionUID = -7056137105462342131L;
 	
-	public HttpException() {
-		super();
+	public HttpException(String message) {
+		super(message);
 	}
 
 }

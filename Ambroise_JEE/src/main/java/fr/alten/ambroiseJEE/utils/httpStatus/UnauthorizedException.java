@@ -19,6 +19,14 @@ public class UnauthorizedException extends HttpException {
 	private static final long serialVersionUID = 900489820760681258L;
 
 	public UnauthorizedException() {
-		super();
+		super("Unauthorized");
+		StackTraceElement[] newStackTrace = {new StackTraceElement(this.getClass().getSimpleName(), HttpStatus.UNAUTHORIZED.name(), "", HttpStatus.UNAUTHORIZED.value())};
+		this.setStackTrace(newStackTrace);
+	}
+
+	
+	@Override
+	public String getLocalizedMessage() {
+		return "Accès refusé. Vous n'êtes pas connecté ou les identifiants sont incorrects";
 	}
 }

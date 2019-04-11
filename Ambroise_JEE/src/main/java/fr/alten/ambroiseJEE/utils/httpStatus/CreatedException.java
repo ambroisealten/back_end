@@ -19,6 +19,13 @@ public class CreatedException extends HttpException {
 	private static final long serialVersionUID = 1247315017130903282L;
 
 	public CreatedException() {
-		super();
+		super("Created");
+		StackTraceElement[] newStackTrace = {new StackTraceElement(this.getClass().getSimpleName(), HttpStatus.CREATED.name(), "", HttpStatus.CREATED.value())};
+		this.setStackTrace(newStackTrace);
+	}
+	
+	@Override
+	public String getLocalizedMessage() {
+		return "Entité créée";
 	}
 }

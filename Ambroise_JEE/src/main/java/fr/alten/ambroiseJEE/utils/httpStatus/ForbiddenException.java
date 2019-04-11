@@ -19,6 +19,14 @@ public class ForbiddenException extends HttpException {
 	private static final long serialVersionUID = 6861810970115266522L;
 
 	public ForbiddenException() {
-		super();
+		super("Forbidden");
+		StackTraceElement[] newStackTrace = {new StackTraceElement(this.getClass().getSimpleName(), HttpStatus.FORBIDDEN.name(), "", HttpStatus.FORBIDDEN.value())};
+		this.setStackTrace(newStackTrace);
+	}
+
+	
+	@Override
+	public String getLocalizedMessage() {
+		return "Requête refusée. Vous n'avez pas les privilèges requis";
 	}
 }

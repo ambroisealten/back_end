@@ -20,6 +20,14 @@ public class RessourceNotFoundException extends HttpException {
 	private static final long serialVersionUID = 6861810970115266522L;
 
 	public RessourceNotFoundException() {
-		super();
+		super("Not Found.");
+		StackTraceElement[] newStackTrace = {new StackTraceElement(this.getClass().getSimpleName(), HttpStatus.NOT_FOUND.name(), "", HttpStatus.NOT_FOUND.value())};
+		this.setStackTrace(newStackTrace);
+	}
+
+	
+	@Override
+	public String getLocalizedMessage() {
+		return "La ressource demandée n'a pas été trouvée";
 	}
 }
