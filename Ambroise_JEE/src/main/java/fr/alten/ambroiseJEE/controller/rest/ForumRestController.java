@@ -73,18 +73,25 @@ public class ForumRestController {
 	public String getForums(@RequestAttribute("role") UserRole role) {
 		return gson.toJson(forumBusinessController.getForums(role));
 	}
-	
+
+	/**
+	 * Get a forum by ID
+	 * 
+	 * @param id   the Forum unique ID
+	 * @param role the role of the user
+	 * @return
+	 * @author MAQUINGHEN MAXIME
+	 */
 	@GetMapping(value = "/forum")
 	@ResponseBody
-	public HttpException getForum () {
-		return null;
-		
+	public String getForum(@RequestAttribute("id") String id, @RequestAttribute("role") UserRole role) {
+		return gson.toJson(forumBusinessController.getForum(id, role));
 	}
 
-	
 	@PutMapping(value = "/forum/")
 	@ResponseBody
-	public HttpException updateForum(@RequestBody JsonNode params, @RequestAttribute("id") String id, @RequestAttribute("role") UserRole role) throws Exception {
+	public HttpException updateForum(@RequestBody JsonNode params, @RequestAttribute("id") String id,
+			@RequestAttribute("role") UserRole role) throws Exception {
 		return params.get("id") != null ? forumBusinessController.updateForum(params, role)
 				: new UnprocessableEntityException();
 	}

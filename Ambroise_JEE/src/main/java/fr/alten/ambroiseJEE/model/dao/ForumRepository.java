@@ -15,7 +15,13 @@ import fr.alten.ambroiseJEE.model.beans.Forum;
  */
 public interface ForumRepository extends MongoRepository<Forum, Long> {
 
+	/**
+	 * Fetch the forum by id
+	 * 
+	 * @param id
+	 * @return An Optional with the corresponding forum or not.
+	 * @author MAQUINGHEN MAXIME
+	 */
 	Optional<Forum> findById(String id);
-
 
 }

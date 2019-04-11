@@ -63,17 +63,6 @@ public class ForumEntityController {
 	}
 
 	/**
-	 * try to fetch a forum by is date
-	 * 
-	 * @param date la date du forum
-	 * @return an Optional with the corresponding forum or not.
-	 * @author MAQUINGHEN MAXIME
-	 */
-	public Optional<Forum> getForumByDate(String date) {
-		return forumRepository.findById(date);
-	}
-
-	/**
 	 * Desactivate a forum TO DO = Nothing happen now
 	 * 
 	 * @param id the id of the forum to fetch
@@ -98,6 +87,17 @@ public class ForumEntityController {
 		// Optional<Forum> forumOptional= forumRepository.findById();
 
 		return null;
+	}
+
+	/**
+	 * Get Forum by ID
+	 * 
+	 * @param id the unique Id of the forum
+	 * @return the forum
+	 * @author MAQUINGHEN MAXIME
+	 */
+	public Optional<Forum> getForumById(String id) {
+		return forumRepository.findById(id);
 	}
 
 }

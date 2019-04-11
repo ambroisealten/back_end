@@ -18,6 +18,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
 
 /**
  * Forum Controller for Business rules
@@ -47,14 +48,14 @@ public class ForumBusinessController {
 
 	/**
 	 * ask for fetch a forum by is date
-	 * @param date the date of the forum to fetch 
+	 * 
+	 * @param date the date of the forum to fetch
 	 * @return an Optional with the corresponding forum or not
 	 * @author MAQUINGHEN MAXIME
 	 */
-	public Optional<Forum> getForumByDate(String date, UserRole role) {
+	public Optional<Forum> getForumByDate(String id, UserRole role) {
 		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.CDR == role
-				|| UserRole.MANAGER == role) ? forumEntityController.getForumByDate(date)
-				: Optional.empty();
+				|| UserRole.MANAGER == role) ? forumEntityController.getForumById(id) : Optional.empty();
 	}
 
 	/**
@@ -73,36 +74,40 @@ public class ForumBusinessController {
 	}
 
 	/**
+	 * Update un forum
 	 * 
-	 * 
-	 * @return
+	 * @return the @see {@link HttpException} corresponding to the statut of the
+	 *         request ({@link RessourceNotFoundException} if the ressource is not
+	 *         found and {@link CreatedException} if the forum is updated
 	 * @author MAQUINGHEN MAXIME
-	 * @param role 
-	 * @param params 
+	 * @param role
+	 * @param params
 	 */
 	public HttpException updateForum(JsonNode params, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) ? forumEntityController.updateForum(params)
+		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)
+				? forumEntityController.updateForum(params)
 				: new ForbiddenException();
 	}
 
 	/**
-	 * Delete a forum 
+	 * Delete a forum
+	 * 
 	 * @return @see {@link HttpException} corresponding to the statut of the request
 	 *         ({@link ForbiddenException} if the ressource is not found and
 	 *         {@link CreatedException} if the forum is desactivated
 	 * @author MAQUINGHEN MAXIME
-	 * @param role 
-	 * @param params 
+	 * @param role
+	 * @param params
 	 */
 	public HttpException deleteForum(JsonNode params, UserRole role) {
 		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.CDR == role
-				|| UserRole.MANAGER == role)
-				? forumEntityController.deleteForum(params.get("id").textValue())
-				: new ForbiddenException();
+				|| UserRole.MANAGER == role) ? forumEntityController.deleteForum(params.get("id").textValue())
+						: new ForbiddenException();
 	}
 
-	public Optional<Forum> getForum() {
-		return null;
+	public Optional<Forum> getForum(String id, UserRole role) {
+		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.CDR == role
+				|| UserRole.MANAGER == role) ? forumEntityController.getForumById(id) : Optional.empty();
 	}
 
 }
