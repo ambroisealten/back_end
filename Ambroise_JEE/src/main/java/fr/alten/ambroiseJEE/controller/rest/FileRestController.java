@@ -3,7 +3,6 @@
  */
 package fr.alten.ambroiseJEE.controller.rest;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -107,7 +106,10 @@ public class FileRestController {
 		String contentType = null;
 		try {
 			contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
-		} catch (IOException ex) {
+			if(contentType==null) {
+				throw new NullPointerException();
+			}
+		} catch (Exception ex) {
 			// Set the default content type
 			contentType = "application/octet-stream";
 		}
