@@ -26,7 +26,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
  *
  */
 @Service
-public class SkillsBusinessController {
+public class SkillBusinessController {
 
 	@Autowired
 	private SkillEntityController skillEntityController;
