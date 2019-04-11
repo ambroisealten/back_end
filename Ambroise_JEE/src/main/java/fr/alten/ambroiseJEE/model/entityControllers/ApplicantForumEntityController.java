@@ -89,6 +89,7 @@ public class ApplicantForumEntityController {
 			applicant.setPersonInCharge(null);
 			applicant.setJob(null);
 			applicant.setMobilities(null);
+			applicant.setPhoneNumber(null);
 			applicant.setStartAt(null);
 			applicant.setGrade(null);
 			applicant.setCommentary(null);
@@ -158,6 +159,7 @@ public class ApplicantForumEntityController {
 			applicant.setUrlDocs(docList);
 
 			applicant.setMobilities(getAllMobilities(jApplicant.get("mobilities")));
+			applicant.setPhoneNumber(jApplicant.get("phoneNumber").textValue());
 
 			applicant.setStartAt(jApplicant.get("canStartAt").textValue());
 			applicant.setGrade(jApplicant.get("grade").textValue());
@@ -240,6 +242,7 @@ public class ApplicantForumEntityController {
 		}
 
 		newApplicant.setMobilities(getAllMobilities(jApplicant.get("mobilities")));
+		newApplicant.setPhoneNumber(jApplicant.get("phoneNumber").textValue());
 
 		newApplicant.setStartAt(jApplicant.get("canStartAt").textValue());
 		newApplicant.setGrade(jApplicant.get("grade").textValue());

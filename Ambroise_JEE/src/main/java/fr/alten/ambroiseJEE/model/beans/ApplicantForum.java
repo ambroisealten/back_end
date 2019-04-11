@@ -19,6 +19,7 @@ public class ApplicantForum extends Person {
 	private static final long serialVersionUID = -6269027301156154990L;
 
 	private List<String> mobilities;
+	private String phoneNumber;
 	private String startAt;
 	private String grade;
 	private String commentary;
@@ -35,6 +36,14 @@ public class ApplicantForum extends Person {
 
 	public void setMobilities(List<String> mobilities) {
 		this.mobilities = mobilities;
+	}
+
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
 	}
 
 	public String getStartAt() {
