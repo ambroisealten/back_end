@@ -16,7 +16,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class File {
 
 	@Id
-	private ObjectId _id;
+	private transient ObjectId _id;
 	@Indexed(unique = true)
 	private String uri;
 	private long dateOfAddition;
