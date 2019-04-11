@@ -47,7 +47,7 @@ public class DiplomaEntityController {
 
 		Diploma newDiploma = new Diploma();
 		newDiploma.setName(jDiploma.get("name").textValue());
-		newDiploma.setYearOfResult(null);
+		newDiploma.setYearOfResult(jDiploma.get("yearOfResult").textValue());
 
 		try {
 			diplomaRepository.save(newDiploma);
@@ -67,12 +67,12 @@ public class DiplomaEntityController {
 	 * @throws ParseException 
 	 */
 	public HttpException updateDiploma(JsonNode jDiploma) throws ParseException {
-		Optional<Diploma> diplomaOptionnal = diplomaRepository.findByName(jDiploma.get("oldName").textValue());
+		Optional<Diploma> diplomaOptionnal = diplomaRepository.findByNameAndYearOfResult(jDiploma.get("oldName").textValue(),jDiploma.get("oldYearOfResult").textValue());
 		
 		if (diplomaOptionnal.isPresent()) {
 			Diploma diploma = diplomaOptionnal.get();
 			diploma.setName(jDiploma.get("name").textValue());
-			diploma.setYearOfResult(null);
+			diploma.setYearOfResult(jDiploma.get("oldYearOfResult").textValue());
 			diplomaRepository.save(diploma);
 		}
 		else {

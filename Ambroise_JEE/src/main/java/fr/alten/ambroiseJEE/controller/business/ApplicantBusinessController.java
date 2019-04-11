@@ -42,7 +42,7 @@ public class ApplicantBusinessController {
 	
 	/**
 	 * Method to delegate applicant creation
-	 * @param jUser JsonNode with all applicant(person) parameters
+	 * @param jApplicant JsonNode with all applicant(person) parameters
 	 * @param role the user's role 
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ForbiddenException} if the current user hasn't the rights to perform this action
