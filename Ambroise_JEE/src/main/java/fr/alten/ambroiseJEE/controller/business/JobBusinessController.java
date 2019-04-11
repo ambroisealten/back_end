@@ -47,8 +47,8 @@ public class JobBusinessController {
 	 * @param params the JsonNode containing all Job parameters
 	 * @param role the user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link ConflictException} if there is a conflict in the
-	 *         database and {@link CreatedException} if the job is updated
+	 *         request ({@link ResourceNotFoundException} if the resource hasn't been found
+	 *         in the database and {@link OkException} if the job is updated
 	 * @author Lucas Royackkers
 	 */
 	public HttpException updateJob(JsonNode params, UserRole role) {
@@ -65,7 +65,7 @@ public class JobBusinessController {
 	 * @author Lucas Royackkers
 	 */
 	public List<Job> getJobs(UserRole role) {
-		if(UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
+		if(UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.CDR == role || UserRole.MANAGER == role) {
 			return jobEntityController.getJobs();
 		}
 		throw new ForbiddenException();
@@ -76,8 +76,8 @@ public class JobBusinessController {
 	 * @param params the JsonNode containing all Job parameters
 	 * @param role the user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link ConflictException} if there is a conflict in the
-	 *         database and {@link CreatedException} if the job is desactivated
+	 *         request ({@link ResourceNotFoundException} if the resource hasn't been found
+	 *         in the database and {@link OkException} if the job is desactivated
 	 * @author Lucas Royackkers
 	 */
 	public HttpException deleteJob(JsonNode params, UserRole role) {
