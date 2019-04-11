@@ -23,6 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import fr.alten.ambroiseJEE.controller.business.FileBusinessController;
 import fr.alten.ambroiseJEE.controller.business.FileStorageBusinessController;
 import fr.alten.ambroiseJEE.security.UserRole;
@@ -45,6 +48,13 @@ public class FileRestController {
 
 	@Autowired
 	private FileBusinessController fileBusinessController;
+	
+	private final Gson gson;
+
+	public FileRestController() {
+		GsonBuilder builder = new GsonBuilder();
+		this.gson = builder.create();
+	}
 
 	/**
 	 * upload a file. This delegate the stockage of file and his subscription in the
@@ -117,5 +127,17 @@ public class FileRestController {
 		return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType))
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
 				.body(resource);
+	}
+	
+	/**
+	 *  Fetch the list of documents
+	 * @param mail     the current logged user's mail
+	 * @param role     the current logged user's role
+	 * @return the list of documents
+	 * @author Andy Chabalier
+	 */
+	@GetMapping("/files")
+	public String getFiles(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
+		return gson.toJson(fileBusinessController.getFiles(role));
 	}
 }

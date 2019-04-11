@@ -75,7 +75,7 @@ public class FileStorageBusinessController {
 			Path targetLocation = this.fileStorageLocation.resolve(fileName);
 			Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
-			return fileName;
+			return "file/"+fileName;
 		} catch (IOException ex) {
 			throw new UnprocessableEntityException();
 		}

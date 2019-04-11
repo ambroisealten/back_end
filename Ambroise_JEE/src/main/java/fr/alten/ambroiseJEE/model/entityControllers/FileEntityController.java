@@ -3,6 +3,9 @@
  */
 package fr.alten.ambroiseJEE.model.entityControllers;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,16 +36,30 @@ public class FileEntityController {
 	 *         created
 	 * @author Andy Chabalier
 	 */
-	public HttpException createDocument(String fileDownloadUri) {
-		File newFile = new File();
-		newFile.setUri(fileDownloadUri);
-		newFile.setDateOfAddition(System.currentTimeMillis());
+	public HttpException pushDocument(String fileDownloadUri) {
+		Optional<File> fileOptional = fileRepository.findByUri(fileDownloadUri);
+		File file;
+		if(fileOptional.isPresent()) {
+			file = fileOptional.get();
+		}else {
+			file = new File();
+		}
+		file.setUri(fileDownloadUri);
+		file.setDateOfAddition(System.currentTimeMillis());
 		try {
-			fileRepository.save(newFile);
+			fileRepository.save(file);
 		} catch (Exception e) {
 			return new OkException();
 		}
 		return new CreatedException();
+	}
+
+	/**
+	 * @return
+	 * @author Andy Chabalier
+	 */
+	public List<File> getFiles() {
+		return fileRepository.findAll();
 	}
 
 }
