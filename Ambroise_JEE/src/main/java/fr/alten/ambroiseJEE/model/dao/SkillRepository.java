@@ -14,7 +14,7 @@ import fr.alten.ambroiseJEE.model.beans.Skill;
  * @author Thomas Decamp
  *
  */
-public interface SkillRepository {
+public interface SkillRepository extends MongoRepository<Skill,Long> {
 
 	/**
 	 * @param name the skill name
