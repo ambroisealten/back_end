@@ -46,7 +46,7 @@ public class RegionBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException createRegion(JsonNode jRegion, UserRole role) {
-		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role ? regionEntityController.createRegion(jRegion) : new ForbiddenException();
+		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) ? regionEntityController.createRegion(jRegion) : new ForbiddenException();
 	}
 
 
@@ -73,7 +73,7 @@ public class RegionBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException updateRegion(JsonNode jRegion, UserRole role) {
-		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role ? regionEntityController.updateRegion(jRegion) : new ForbiddenException();
+		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) ? regionEntityController.updateRegion(jRegion) : new ForbiddenException();
 	}
 
 
@@ -87,7 +87,7 @@ public class RegionBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException deleteRegion(JsonNode params, UserRole role) {
-		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role ? regionEntityController.deleteRegion(params.get("name").textValue()) : new ForbiddenException();
+		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) ? regionEntityController.deleteRegion(params.get("name").textValue()) : new ForbiddenException();
 	}
 
 }

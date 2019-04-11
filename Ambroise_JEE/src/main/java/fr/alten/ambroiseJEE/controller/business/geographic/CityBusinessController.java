@@ -46,7 +46,7 @@ public class CityBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException createCity(JsonNode jCity, UserRole role) {
-		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role ? cityEntityController.createCity(jCity) : new ForbiddenException();
+		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) ? cityEntityController.createCity(jCity) : new ForbiddenException();
 	}
 
 
@@ -73,7 +73,7 @@ public class CityBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException updateCity(JsonNode jCity, UserRole role) {
-		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role ? cityEntityController.updateCity(jCity) : new ForbiddenException();
+		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) ? cityEntityController.updateCity(jCity) : new ForbiddenException();
 	}
 
 
@@ -87,7 +87,7 @@ public class CityBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException deleteCity(JsonNode params, UserRole role) {
-		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role ? cityEntityController.deleteCity(params.get("name").textValue()) : new ForbiddenException();
+		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) ? cityEntityController.deleteCity(params.get("name").textValue()) : new ForbiddenException();
 	}
 
 }

@@ -19,7 +19,6 @@ import com.google.gson.GsonBuilder;
 
 import fr.alten.ambroiseJEE.controller.business.geographic.DepartementBusinessController;
 import fr.alten.ambroiseJEE.security.UserRole;
-import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
@@ -57,7 +56,7 @@ public class DepartementRestController {
 	@ResponseBody
 	public HttpException createDepartement(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("name") != null ? departementBusinessController.createDepartement(params, role)
+		return params.get("mail") != null ? departementBusinessController.createDepartement(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -89,7 +88,7 @@ public class DepartementRestController {
 	@ResponseBody
 	public HttpException updateDepartement(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("name") != null ? departementBusinessController.createDepartement(params, role)
+		return params.get("mail") != null ? departementBusinessController.createDepartement(params, role)
 				: new UnprocessableEntityException();
 	}
 	
@@ -108,7 +107,7 @@ public class DepartementRestController {
 	@ResponseBody
 	public HttpException deleteDepartement(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("name") != null ? departementBusinessController.deleteDepartement(params, role)
+		return params.get("mail") != null ? departementBusinessController.deleteDepartement(params, role)
 				: new UnprocessableEntityException();
 	}
 }
