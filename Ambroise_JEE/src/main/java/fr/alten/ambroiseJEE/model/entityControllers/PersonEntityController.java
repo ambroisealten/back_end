@@ -70,9 +70,11 @@ public class PersonEntityController {
 			Person person = optionalPerson.get();
 			switch(role) {
 			case APPLICANT:
+				person.setSurname("Desactivated");
 				person.setName("Desactivated");
 				break;
 			default:
+				person.setSurname("Demissionaire");
 				person.setName("Demissionaire");
 				break;
 			}
@@ -107,6 +109,7 @@ public class PersonEntityController {
 		Optional<Person> optionalPerson = personRepository.findByMailAndRole(jPerson.get("oldMail").textValue(), role);
 		if(optionalPerson.isPresent()) {
 			Person person = optionalPerson.get();
+			person.setSurname(jPerson.get("surname").textValue());
 			person.setName(jPerson.get("name").textValue());
 			person.setMonthlyWage(Integer.parseInt(jPerson.get("wage").textValue()));
 			
@@ -161,6 +164,7 @@ public class PersonEntityController {
 		}
 		
 		Person newPerson = new Person();
+		newPerson.setSurname(jPerson.get("surname").textValue());
 		newPerson.setName(jPerson.get("name").textValue());
 		newPerson.setMonthlyWage(Integer.parseInt(jPerson.get("wage").textValue()));
 		newPerson.setRole(type);
