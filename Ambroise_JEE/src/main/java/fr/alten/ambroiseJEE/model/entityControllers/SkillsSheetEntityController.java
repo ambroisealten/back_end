@@ -1,6 +1,5 @@
 package fr.alten.ambroiseJEE.model.entityControllers;
 
-import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,14 +7,13 @@ import java.util.Optional;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import fr.alten.ambroiseJEE.model.beans.Person;
 import fr.alten.ambroiseJEE.model.beans.SkillsSheet;
 import fr.alten.ambroiseJEE.model.beans.SoftSkill;
 import fr.alten.ambroiseJEE.model.beans.TechSkill;
 import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.model.dao.SkillsSheetRepository;
+import fr.alten.ambroiseJEE.utils.PersonRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
@@ -88,22 +86,22 @@ public class SkillsSheetEntityController {
 		
 		Optional<Person> personAttachedTo;
 		String status = jSkillsSheet.get("role").textValue();
-		String personName = jSkillsSheet.get("person").textValue();
+		String personMail = jSkillsSheet.get("personMail").textValue();
 		//Given the created person status
 		switch(status) {
 			case "consultant":
-				personAttachedTo = personEntityController.getConsultantByName(personName);
+				personAttachedTo = personEntityController.getPersonByMailAndType(personMail,PersonRole.CONSULTANT);
 				break;
 			default:
-				personAttachedTo = personEntityController.getApplicantByName(personName);
+				personAttachedTo = personEntityController.getPersonByMailAndType(personMail,PersonRole.APPLICANT);
 				break;
 		}
 		if(personAttachedTo.isPresent()) {
-			newSkillsSheet.setPersonAttachedTo(personAttachedTo.get());
+			newSkillsSheet.setMailPersonAttachedTo(personAttachedTo.get().getMail());
 		}
 		//Get all skills given several lists of skills (tech and soft)
-		newSkillsSheet.setSoftSkillsList(this.getAllSoftSkills(jSkillsSheet.get("softskills").asText()));
-		newSkillsSheet.setTechSkillsList(this.getAllTechSkills(jSkillsSheet.get("techskills").asText()));
+		newSkillsSheet.setSoftSkillsList(this.getAllSoftSkills(jSkillsSheet.get("softskills")));
+		newSkillsSheet.setTechSkillsList(this.getAllTechSkills(jSkillsSheet.get("techskills")));
 		
 		//Set an Id and a Version Number on this skills sheet
 		newSkillsSheet.setVersionNumber(1);
@@ -112,7 +110,7 @@ public class SkillsSheetEntityController {
 		String authorMail = jSkillsSheet.get("authorMail").textValue();
 		Optional<User> userAuthor = userEntityController.getUserByMail(authorMail);
 		if(userAuthor.isPresent()) {
-			newSkillsSheet.setVersionAuthor(userAuthor.get());
+			newSkillsSheet.setMailVersionAuthor(userAuthor.get().getMail());
 		}
 		
 		newSkillsSheet.setVersionDate(LocalDateTime.now());
@@ -128,46 +126,44 @@ public class SkillsSheetEntityController {
 	}
 	
 	/**
-	 * Get a List of SoftSkills object given a String (the original JsonNode containing a List of SoftSkills object as a String)
+	 * Get a List of SoftSkills object given a JsonNode containing a List of SoftSkills object 
 	 * 
-	 * @param softSkillsString the String containing all soft skills for this skill sheet
+	 * @param jSoftSkills the JsonNode containing all soft skills for this skill sheet
 	 * @return A List of SoftSkill
 	 * @author Lucas Royackkers
 	 */
-	public List<SoftSkill> getAllSoftSkills(String softSkillsString) {
-		//Cast the type of the list that the Gson function will give
-		Type listType = new TypeToken<List<JsonNode>>() {}.getType();
-		//Get a list of JsonNode (a JsonNode will contain a Soft Skill) from the parent node (given as a string in this function)
-		List<JsonNode> softSkillsList = new Gson().fromJson(softSkillsString, listType);
+	public List<SoftSkill> getAllSoftSkills(JsonNode jSoftSkills) {
 		List<SoftSkill> allSoftSkills = new ArrayList<SoftSkill>();
 		
-		for(int i = 0; i < softSkillsList.size(); i++) {
+		for(JsonNode softSkill : jSoftSkills) {
+			Optional<SoftSkill> newSoftSkill = softSkillEntityController.getSoftSkillByNameAndGrade(softSkill.get("name").textValue(),Float.parseFloat(softSkill.get("grade").textValue()));
 			//Get a specific soft skill by its name in the JsonNode
-			SoftSkill newSoftSkill = softSkillEntityController.createSoftSkillAndGrade(softSkillsList.get(i).get("name").textValue(), Integer.parseInt(softSkillsList.get(i).get("grade").textValue())); 
-			allSoftSkills.add(newSoftSkill);
+			if(newSoftSkill.isPresent()) {
+				allSoftSkills.add(newSoftSkill.get());
+			}
 		}
 		
 		return allSoftSkills;
 	}
 	
 	/**
-	 * Get a List of TechSkills object given a String (the original JsonNode containing a List of TechSkills object as a String)
+	 * Get a List of TechSkills object given a JsonNode containing a List of TechSkills object 
 	 * 
-	 * @param techSkillsString the String containing all tech skills for this skill sheet
+	 * @param jTechSkills the JsonNode containing all tech skills for this skill sheet
+	 * @return A List of TechSkill
 	 * @author Lucas Royackkers
 	 */
-	public List<TechSkill> getAllTechSkills(String techSkillsString) {
-		//Cast the type of the list that the Gson function will give
-		Type listType = new TypeToken<List<JsonNode>>() {}.getType();
-		//Get a list of JsonNode (a JsonNode will contain a Tech Skill) from the parent node (given as a string in this function)
-		List<JsonNode> techSkillsList = new Gson().fromJson(techSkillsString, listType);
+	public List<TechSkill> getAllTechSkills(JsonNode jTechSkills) {
 		List<TechSkill> allTechSkills = new ArrayList<TechSkill>();
 		
-		for(int i = 0; i < allTechSkills.size(); i++) {
-			//Get a specific tech skill by its name in the JsonNode
-			TechSkill techSkill = techSkillEntityController.createTechSkillAndGrade(techSkillsList.get(i).get("name").textValue(), Integer.parseInt(techSkillsList.get(i).get("grade").textValue()));
-			allTechSkills.add(techSkill);
+		for(JsonNode techSkill : jTechSkills) {
+			Optional<TechSkill> newTechSkill = techSkillEntityController.getTechSkillByNameAndGrade(techSkill.get("name").textValue(),Float.parseFloat(techSkill.get("grade").textValue()));
+			//Get a specific soft skill by its name in the JsonNode
+			if(newTechSkill.isPresent()) {
+				allTechSkills.add(newTechSkill.get());
 			}
+		}
+		
 		return allTechSkills;
 	}
 
@@ -191,21 +187,21 @@ public class SkillsSheetEntityController {
 			
 			Optional<Person> personAttachedTo;
 			String status = jSkillsSheet.get("role").textValue();
-			String personName = jSkillsSheet.get("person").textValue();
+			String personMail = jSkillsSheet.get("personMail").textValue();
 			switch(status) {
 				case "consultant":
-					personAttachedTo = personEntityController.getConsultantByName(personName);
+					personAttachedTo = personEntityController.getPersonByMailAndType(personMail,PersonRole.CONSULTANT);
 					break;
 				default:
-					personAttachedTo = personEntityController.getApplicantByName(personName);
+					personAttachedTo = personEntityController.getPersonByMailAndType(personMail,PersonRole.APPLICANT);
 					break;
 			}
 			if(personAttachedTo.isPresent()) {
-				skillsSheet.setPersonAttachedTo(personAttachedTo.get());
+				skillsSheet.setMailPersonAttachedTo(personAttachedTo.get().getMail());
 			}
 			
-			skillsSheet.setSoftSkillsList(this.getAllSoftSkills(jSkillsSheet.get("softskills").asText()));
-			skillsSheet.setTechSkillsList(this.getAllTechSkills(jSkillsSheet.get("techskills").asText()));
+			skillsSheet.setSoftSkillsList(this.getAllSoftSkills(jSkillsSheet.get("softskills")));
+			skillsSheet.setTechSkillsList(this.getAllTechSkills(jSkillsSheet.get("techskills")));
 
 			skillsSheet.setVersionNumber(latestVersionNumber+1);
 			skillsSheet.set_id(new ObjectId());
@@ -213,7 +209,7 @@ public class SkillsSheetEntityController {
 			String authorMail = jSkillsSheet.get("authorMail").textValue();
 			Optional<User> userAuthor = userEntityController.getUserByMail(authorMail);
 			if(userAuthor.isPresent()) {
-				skillsSheet.setVersionAuthor(userAuthor.get());
+				skillsSheet.setMailVersionAuthor(userAuthor.get().getMail());
 			}
 			
 			skillsSheet.setVersionDate(LocalDateTime.now());

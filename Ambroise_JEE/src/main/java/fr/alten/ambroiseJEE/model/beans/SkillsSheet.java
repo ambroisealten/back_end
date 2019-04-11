@@ -19,8 +19,8 @@ public class SkillsSheet implements Serializable{
 	private static final long serialVersionUID = 4878950681041229894L;
 	private ObjectId _id;
 	private String name;
-	private Person personAttachedTo;
-	private User versionAuthor;
+	private String mailPersonAttachedTo;
+	private String mailVersionAuthor;
 	private LocalDateTime versionDate;
 	private long versionNumber;
 	private List<TechSkill> techSkillsList;
@@ -28,31 +28,6 @@ public class SkillsSheet implements Serializable{
 	
 	public SkillsSheet() {
 		super();
-	}
-	
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public Person getPersonAttachedTo() {
-		return personAttachedTo;
-	}
-	public void setPersonAttachedTo(Person personAttachedTo) {
-		this.personAttachedTo = personAttachedTo;
-	}
-	public List<TechSkill> getTechSkillsList() {
-		return techSkillsList;
-	}
-	public void setTechSkillsList(List<TechSkill> techSkillsList) {
-		this.techSkillsList = techSkillsList;
-	}
-	public List<SoftSkill> getSoftSkillsList() {
-		return softSkillsList;
-	}
-	public void setSoftSkillsList(List<SoftSkill> softSkillsList) {
-		this.softSkillsList = softSkillsList;
 	}
 
 	public ObjectId get_id() {
@@ -63,12 +38,28 @@ public class SkillsSheet implements Serializable{
 		this._id = _id;
 	}
 
-	public User getVersionAuthor() {
-		return versionAuthor;
+	public String getName() {
+		return name;
 	}
 
-	public void setVersionAuthor(User versionAuthor) {
-		this.versionAuthor = versionAuthor;
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getMailPersonAttachedTo() {
+		return mailPersonAttachedTo;
+	}
+
+	public void setMailPersonAttachedTo(String mailPersonAttachedTo) {
+		this.mailPersonAttachedTo = mailPersonAttachedTo;
+	}
+
+	public String getMailVersionAuthor() {
+		return mailVersionAuthor;
+	}
+
+	public void setMailVersionAuthor(String mailVersionAuthor) {
+		this.mailVersionAuthor = mailVersionAuthor;
 	}
 
 	public LocalDateTime getVersionDate() {
@@ -85,6 +76,22 @@ public class SkillsSheet implements Serializable{
 
 	public void setVersionNumber(long versionNumber) {
 		this.versionNumber = versionNumber;
+	}
+
+	public List<TechSkill> getTechSkillsList() {
+		return techSkillsList;
+	}
+
+	public void setTechSkillsList(List<TechSkill> techSkillsList) {
+		this.techSkillsList = techSkillsList;
+	}
+
+	public List<SoftSkill> getSoftSkillsList() {
+		return softSkillsList;
+	}
+
+	public void setSoftSkillsList(List<SoftSkill> softSkillsList) {
+		this.softSkillsList = softSkillsList;
 	}
 	
 }

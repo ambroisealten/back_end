@@ -213,8 +213,8 @@ public class PersonEntityController {
 	 * @return An Optional with the corresponding person or not.
 	 * @author Lucas Royackkers
 	 */
-	public Optional<Person> getPersonByName(String name) {
-		return personRepository.findByMail(name);
+	public Optional<Person> getPersonByMail(String mail) {
+		return personRepository.findByMail(mail);
 	}
 
 	/**
@@ -224,8 +224,8 @@ public class PersonEntityController {
 	 * @return An Optional with the corresponding person (of type consultant) or not.
 	 * @author Lucas Royackkers
 	 */
-	public Optional<Person> getPersonByNameAndType(String name, PersonRole type){
-		return personRepository.findByMailAndRole(name, type);
+	public Optional<Person> getPersonByMailAndType(String mail, PersonRole type){
+		return personRepository.findByMailAndRole(mail, type);
 	}
 	
 	/**

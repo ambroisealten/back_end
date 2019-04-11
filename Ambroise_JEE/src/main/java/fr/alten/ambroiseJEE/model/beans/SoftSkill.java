@@ -18,17 +18,17 @@ public class SoftSkill implements Serializable{
 	 */
 	private static final long serialVersionUID = 5649453725610035070L;
 	private String name;
-	private int grade;
+	private float grade;
 	public String getName() {
 		return name;
 	}
 	public void setName(String name) {
 		this.name = name;
 	}
-	public int getGrade() {
+	public float getGrade() {
 		return grade;
 	}
-	public void setGrade(int grade) {
+	public void setGrade(float grade) {
 		this.grade = grade;
 	}
 	

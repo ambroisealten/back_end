@@ -25,8 +25,20 @@ public class TechSkillEntityController {
 	 * @return An Optional with the corresponding tech skill or not.
 	 * @author Lucas Royackkers
 	 */
-	public Optional<TechSkill> getTechSkill(String name) {
+	public Optional<TechSkill> getTechSkillByName(String name) {
 		return techSkillRepository.findTechSkillByName(name);
+	}
+	
+	/**
+	 * Try to fetch a tech skill by its name and grade
+	 * 
+	 * @param name the tech skill's name to fetch
+	 * @param grade the tech skill's grade to fetch
+	 * @return An Optional with the corresponding tech skill or not.
+	 * @author Lucas Royackkers
+	 */
+	public Optional<TechSkill> getTechSkillByNameAndGrade(String name,float grade) {
+		return techSkillRepository.findTechSkillByNameAndGrade(name,grade);
 	}
 	
 	/**
@@ -37,10 +49,11 @@ public class TechSkillEntityController {
 	 * @return a TechSkill object if a corresponding name is found, null if not
 	 * @author Lucas Royackkers
 	 */
-	public TechSkill createTechSkillAndGrade(String name,int grade) {
-		Optional<TechSkill> optionalTechSkill = this.getTechSkill(name);
-		if(optionalTechSkill.isPresent()){
-			TechSkill techSkill = optionalTechSkill.get();
+	public TechSkill createTechSkillAndGrade(String name,float grade) {
+		Optional<TechSkill> optionalTechSkill = this.getTechSkillByNameAndGrade(name,grade);
+		if(!optionalTechSkill.isPresent()){
+			TechSkill techSkill = new TechSkill();
+			techSkill.setName(name);
 			//The grade has to be between 1 and 4
 			if(grade >= 1 && grade <= 4) {
 				techSkill.setGrade(grade);
