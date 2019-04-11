@@ -1,5 +1,6 @@
 package fr.alten.ambroiseJEE.model.dao;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -19,7 +20,7 @@ public interface SoftSkillRepository extends MongoRepository<SoftSkill,Long>{
 	 * @return An Optional with the corresponding soft skill or not. 
 	 * @author Lucas Royackkers
 	 */
-	public Optional<SoftSkill> findSoftSkillByName(String name);
+	public Optional<List<SoftSkill>> findSoftSkillsByName(String name);
 	
 	/**
 	 * Fetch soft skill by name and grade

@@ -1,9 +1,12 @@
 package fr.alten.ambroiseJEE.model.entityControllers;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 import fr.alten.ambroiseJEE.model.beans.SoftSkill;
 import fr.alten.ambroiseJEE.model.dao.SoftSkillRepository;
@@ -26,8 +29,8 @@ public class SoftSkillEntityController {
 	 * @return An Optional with the corresponding soft skill or not.
 	 * @author Lucas Royackkers
 	 */
-	public Optional<SoftSkill> getSoftSkillByName(String name) {
-		return softSkillRepository.findSoftSkillByName(name);
+	public Optional<List<SoftSkill>> getSoftSkillByName(String name) {
+		return softSkillRepository.findSoftSkillsByName(name);
 	}
 	
 	/**
@@ -45,17 +48,17 @@ public class SoftSkillEntityController {
 	/**
 	 * Method to create a couple between a grade and a SoftSkill (for skills sheet)
 	 * 
-	 * @param name the soft skill's name
-	 * @param grade the soft skill's grade (int)
+	 * @param jSoftSkill the JsonNode containing all soft skill parameters
 	 * @return a SoftSkill object if a corresponding name is found, null if not
 	 * @author Lucas Royackkers
 	 */
-	public SoftSkill createSoftSkillAndGrade(String name,float grade) {
-		Optional<SoftSkill> optionalSoftSkill = this.getSoftSkillByNameAndGrade(name,grade);
+	public SoftSkill createSoftSkill(JsonNode jSoftSkill) {
+		Optional<SoftSkill> optionalSoftSkill = this.getSoftSkillByNameAndGrade(jSoftSkill.get("name").textValue(),Float.parseFloat(jSoftSkill.get("grade").textValue()));
 		if(!optionalSoftSkill.isPresent()){
 			SoftSkill softSkill = new SoftSkill();
-			softSkill.setName(name);
+			softSkill.setName(jSoftSkill.get("name").textValue());
 			//The grade has to be between 1 and 4
+			float grade = Float.parseFloat(jSoftSkill.get("grade").textValue());
 			if(grade >= 1 && grade <= 4) {
 				softSkill.setGrade(grade);
 			}
