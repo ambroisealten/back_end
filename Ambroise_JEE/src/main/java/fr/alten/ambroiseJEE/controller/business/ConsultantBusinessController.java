@@ -33,7 +33,7 @@ public class ConsultantBusinessController {
 	 */
 	public Optional<Person> getConsultant(String name, UserRole role){
 		if(UserRole.MANAGER == role || UserRole.MANAGER_ADMIN == role || UserRole.CDR_ADMIN == role || UserRole.CDR == role) {
-			return personEntityController.getPersonByNameAndType(name,PersonRole.CONSULTANT);
+			return personEntityController.getPersonByMailAndType(name,PersonRole.CONSULTANT);
 		}
 		throw new ForbiddenException();
 	}
