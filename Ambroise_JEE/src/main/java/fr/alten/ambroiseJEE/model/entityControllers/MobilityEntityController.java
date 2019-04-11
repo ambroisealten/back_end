@@ -1,15 +1,11 @@
 package fr.alten.ambroiseJEE.model.entityControllers;
 
 import java.util.Optional;
-
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import fr.alten.ambroiseJEE.model.beans.City;
 import fr.alten.ambroiseJEE.model.beans.Departement;
-import fr.alten.ambroiseJEE.model.beans.Geographic;
 import fr.alten.ambroiseJEE.model.beans.Mobility;
 import fr.alten.ambroiseJEE.model.beans.PostalCode;
 import fr.alten.ambroiseJEE.model.beans.Region;
@@ -40,7 +36,11 @@ public class MobilityEntityController {
 	private RegionEntityController regionEntityController;
 	
 	
-	public Optional<Mobility> getMobility(String placeName, int radius){
+	public Optional<Mobility> getMobilityByName(String placeName){
+		return mobilityRepository.findByPlaceName(placeName);
+	}
+	
+	public Optional<Mobility> getMobilityByNameAndRadius(String placeName, int radius){
 		return mobilityRepository.findByPlaceNameAndRadius(placeName, radius);
 	}
 	
@@ -60,25 +60,25 @@ public class MobilityEntityController {
 			case "city":
 				Optional<City> city = cityEntityController.getCity(jMobility.get("place").textValue());
 				if(city.isPresent()) {
-					newMobility.setPlace(city.get());
+					newMobility.setPlaceName(city.get().getName());
 				}
 				break;
 			case "departement":
 				Optional<Departement> departement = departementEntityController.getDepartement(jMobility.get("place").textValue());
 				if(departement.isPresent()) {
-					newMobility.setPlace(departement.get());
+					newMobility.setPlaceName(departement.get().getName());
 				}
 				break;
 			case "postalCode":
 				Optional<PostalCode> postalCode = postalCodeEntityController.getPostalCode(jMobility.get("place").textValue());
 				if(postalCode.isPresent()) {
-					newMobility.setPlace(postalCode.get());
+					newMobility.setPlaceName(postalCode.get().getName());
 				}
 				break;
 			case "region":
 				Optional<Region> region = regionEntityController.getRegion(jMobility.get("place").textValue());
 				if(region.isPresent()) {
-					newMobility.setPlace(region.get());
+					newMobility.setPlaceName(region.get().getName());
 				}
 				break;
 			default:
@@ -94,6 +94,11 @@ public class MobilityEntityController {
 			return new ConflictException();
 		}
 		return new CreatedException();
+	}
+
+	public Optional<Mobility> getMobility(Mobility mobilityToFind) {
+		// TODO Revoir le code pour optimiser les appels
+		return mobilityRepository.findByPlaceNameAndPlaceTypeAndRadiusAndUnit(mobilityToFind.getPlaceName(), mobilityToFind.getPlaceType(), mobilityToFind.getRadius(), mobilityToFind.getUnit());
 	}
 
 }

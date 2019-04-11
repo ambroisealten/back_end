@@ -15,5 +15,9 @@ public interface MobilityRepository extends MongoRepository<Mobility,Long>{
 	 * @return An Optional with the corresponding mobility or not. 
 	 * @author Lucas Royackkers
 	 */
-	Optional<Mobility> findByPlaceNameAndRadius(String name,int radius);
+	Optional<Mobility> findByPlaceNameAndRadius(String placeName,int radius);
+
+	Optional<Mobility> findByPlaceName(String placeName);
+	
+	Optional<Mobility> findByPlaceNameAndPlaceTypeAndRadiusAndUnit(String placeName, String placeType, int radius, String unit);
 }

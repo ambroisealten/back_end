@@ -1,8 +1,9 @@
 package fr.alten.ambroiseJEE.model.beans;
 
 import java.io.Serializable;
-import java.util.Date;
 
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
@@ -15,8 +16,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Diploma implements Serializable{
 
 	private static final long serialVersionUID = -6191997074025351479L;
+	@Id
+	private ObjectId _id;
 	private String name;
-	private Date dateOfResult;
+	private String yearOfResult;
 	
 	public Diploma() {
 		super();
@@ -30,11 +33,21 @@ public class Diploma implements Serializable{
 		this.name = name;
 	}
 
-	public Date getDateOfResult() {
-		return dateOfResult;
+	public String getYearOfResult() {
+		return yearOfResult;
 	}
 
-	public void setDateOfResult(Date dateOfResult) {
-		this.dateOfResult = dateOfResult;
+	public void setYearOfResult(String yearOfResult) {
+		this.yearOfResult = yearOfResult;
 	}
+
+	public ObjectId get_id() {
+		return _id;
+	}
+
+	public void set_id(ObjectId _id) {
+		this._id = _id;
+	}
+	
+	
 }

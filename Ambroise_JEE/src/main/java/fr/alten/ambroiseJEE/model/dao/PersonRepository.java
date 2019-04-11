@@ -15,19 +15,19 @@ import fr.alten.ambroiseJEE.utils.PersonRole;
 public interface PersonRepository extends MongoRepository<Person,Long>{
 	
 	/**
-	 * @param name the person's name
+	 * @param mail the person's mail
 	 * @return An Optional with the corresponding person or not. 
 	 * @author Royackkers Lucas
 	 */
-	Optional<Person> findByName(String name);
+	Optional<Person> findByMail(String mail);
 	
 	/**
-	 * @param name the person's name
+	 * @param mail the person's mail
 	 * @param role the person's role (applicant/consultant)
 	 * @return An Optional with the corresponding person or not. 
 	 * @author Royackkers Lucas
 	 */
-	Optional<Person> findByNameAndRole(String name,PersonRole role);
+	Optional<Person> findByMailAndRole(String mail,PersonRole role);
 	
 	/**
 	 * @param role the person's role

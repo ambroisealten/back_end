@@ -1,24 +1,20 @@
 package fr.alten.ambroiseJEE.model.entityControllers;
 
-import java.lang.reflect.Type;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.reflect.TypeToken;
 
 import fr.alten.ambroiseJEE.model.beans.Diploma;
 import fr.alten.ambroiseJEE.model.beans.Employer;
 import fr.alten.ambroiseJEE.model.beans.Job;
-import fr.alten.ambroiseJEE.model.beans.Mobility;
 import fr.alten.ambroiseJEE.model.beans.Person;
 import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.model.dao.PersonRepository;
@@ -51,13 +47,103 @@ public class PersonEntityController {
 	
 	@Autowired
 	private JobEntityController jobEntityController;
-	
-	@Autowired
-	private MobilityEntityController mobilityEntityController;
 
 	
 	public static final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
 			Pattern.CASE_INSENSITIVE);
+	
+	
+	/**
+	 * Method to delete a Person. Person type will be defined by business controllers
+	 * ahead of this object.
+	 * 
+	 * @param jPerson contains at least the person's name
+	 * @param role the role of person
+	 * @return the @see {@link HttpException} corresponding to the status of the
+	 *         request ({@link ResourceNotFoundException} if the resource isn't in the
+	 *         database and {@link OkException} if the person is deleted
+	 * @author Lucas Royackkers
+	 */
+	public HttpException deletePerson(JsonNode jPerson,PersonRole role) {
+		Optional<Person> optionalPerson = personRepository.findByMailAndRole(jPerson.get("mail").textValue(), role);
+		if(optionalPerson.isPresent()) {
+			Person person = optionalPerson.get();
+			switch(role) {
+			case APPLICANT:
+				person.setSurname("Desactivated");
+				person.setName("Desactivated");
+				break;
+			default:
+				person.setSurname("Demissionaire");
+				person.setName("Demissionaire");
+				break;
+			}
+			person.setMail("desactivated" + System.currentTimeMillis()+"@desactivated.com");
+			person.setEmployer(null);
+			person.setUrlDocs(null);
+			person.setRole(null);
+			person.setMonthlyWage(0);
+			person.setJob(null);
+			
+			personRepository.save(person);
+		}
+		else {
+			throw new RessourceNotFoundException();
+		}
+		return new OkException();
+	}
+	
+	/**
+	 * Method to update a Person. Person type will be defined by business controllers
+	 * ahead of this object.
+	 * 
+	 * @param jPerson JsonNode containing all parameters
+	 * @param role the role of the concerned person (if it's an applicant or a consultant)
+	 * @return the @see {@link HttpException} corresponding to the status of the
+	 *         request ({@link ResourceNotFoundException} if the resource isn't in the
+	 *         database and {@link OkException} if the person is updated
+	 * @throws ParseException
+	 * @author Lucas Royackkers
+	 */
+	public HttpException updatePerson(JsonNode jPerson,PersonRole role) throws ParseException {
+		Optional<Person> optionalPerson = personRepository.findByMailAndRole(jPerson.get("oldMail").textValue(), role);
+		if(optionalPerson.isPresent()) {
+			Person person = optionalPerson.get();
+			person.setSurname(jPerson.get("surname").textValue());
+			person.setName(jPerson.get("name").textValue());
+			person.setMonthlyWage(Integer.parseInt(jPerson.get("wage").textValue()));
+			
+			person.setRole(role);
+
+			person.setMail(jPerson.get("mail").textValue());
+			
+			Optional<User> personInCharge = userEntityController.getUserByMail(jPerson.get("managerMail").textValue());
+			if(personInCharge.isPresent()) {
+				person.setPersonInCharge(personInCharge.get().getMail());
+			}
+			
+			Optional<Diploma> diploma = diplomaEntityController.getDiplomaByNameAndYearOfResult(jPerson.get("diplomaName").textValue(),jPerson.get("diplomaYear").textValue());
+			if(diploma.isPresent()) {
+				person.setHighestDiploma(diploma.get().get_id().toString());
+			}
+						
+			Optional<Job> job = jobEntityController.getJob(jPerson.get("job").textValue());
+			if(job.isPresent()){
+				person.setJob(job.get().getTitle());
+			}
+			
+			Optional<Employer> employer = employerEntityController.getEmployer(jPerson.get("employer").textValue());
+			if(employer.isPresent()) {
+				person.setEmployer(employer.get().getName());
+			}
+			
+			personRepository.save(person);
+		}
+		else {
+			throw new RessourceNotFoundException();
+		}
+		return new OkException();
+	}
 	
 	/**
 	 * Method to create a Person. Person type will be defined by business controllers
@@ -78,36 +164,37 @@ public class PersonEntityController {
 		}
 		
 		Person newPerson = new Person();
+		newPerson.setSurname(jPerson.get("surname").textValue());
 		newPerson.setName(jPerson.get("name").textValue());
-		newPerson.setMonthlyWage(Integer.parseInt(jPerson.get("name").textValue()));
-		newPerson.setCanStartsAt(new SimpleDateFormat("dd/MM/yyyy").parse(jPerson.get("name").textValue()));
+		newPerson.setMonthlyWage(Integer.parseInt(jPerson.get("wage").textValue()));
 		newPerson.setRole(type);
 		newPerson.setMail(jPerson.get("mail").textValue());
-		newPerson.setGrade(jPerson.get("grade").textValue());
-		newPerson.setCommentary(jPerson.get("commentary").textValue());
+		List<String> docList= new ArrayList<String>();
+		JsonNode docNode = jPerson.get("docs");
+		for(JsonNode doc : docNode) {
+			docList.add(doc.get("url").textValue());
+		}
+		newPerson.setUrlDocs(docList);
 		
-		Optional<User> managerInCharge = userEntityController.getUserByMail(jPerson.get("managerMail").textValue());
-		if(managerInCharge.isPresent()) {
-			newPerson.setManagerInCharge(managerInCharge.get());
+		Optional<User> personInCharge = userEntityController.getUserByMail(jPerson.get("managerMail").textValue());
+		if(personInCharge.isPresent()) {
+			newPerson.setPersonInCharge(personInCharge.get().getMail());
 		}
 		
-		Optional<Diploma> highestDiploma = diplomaEntityController.getDiplomaByName(jPerson.get("diplomaName").textValue());
-		if(highestDiploma.isPresent()) {
-			newPerson.setHighestDiploma(highestDiploma.get());
+		Optional<Diploma> diploma = diplomaEntityController.getDiplomaByNameAndYearOfResult(jPerson.get("diplomaName").textValue(),jPerson.get("diplomaYear").textValue());
+		if(diploma.isPresent()) {
+			newPerson.setHighestDiploma(diploma.get().get_id().toString());
 		}
-		
-		newPerson.setMobilities(this.getAllMobilities(jPerson.get("mobilities").asText()));
 		
 		Optional<Job> job = jobEntityController.getJob(jPerson.get("job").textValue());
 		if(job.isPresent()){
-			newPerson.setJob(job.get());
+			newPerson.setJob(job.get().getTitle());
 		}
 		
 		Optional<Employer> employer = employerEntityController.getEmployer(jPerson.get("employer").textValue());
 		if(employer.isPresent()) {
-			newPerson.setEmployer(employer.get());
-		}
-		
+			newPerson.setEmployer(employer.get().getName());
+		}	
 	
 		try {
 			personRepository.save(newPerson);
@@ -127,52 +214,18 @@ public class PersonEntityController {
 	 * @author Lucas Royackkers
 	 */
 	public Optional<Person> getPersonByName(String name) {
-		return personRepository.findByName(name);
+		return personRepository.findByMail(name);
 	}
-	
+
 	/**
-	 * Try to fetch an applicant by its name
-	 * 
-	 * @param name the person's name to fetch
-	 * @return An Optional with the corresponding person (of type applicant) or not.
-	 * @author Lucas Royackkers
-	 */
-	public Optional<Person> getApplicantByName(String name){
-		return personRepository.findByNameAndRole(name, PersonRole.APPLICANT);
-	}
-	
-	/**
-	 * Try to fetch a consultant by its name
+	 * Try to fetch a person by its name and type
 	 * 
 	 * @param name the person's name to fetch
 	 * @return An Optional with the corresponding person (of type consultant) or not.
 	 * @author Lucas Royackkers
 	 */
-	public Optional<Person> getConsultantByName(String name){
-		return personRepository.findByNameAndRole(name, PersonRole.CONSULTANT);
-	}
-	
-	
-	/**
-	 * Get a List of Mobility object given a list of JsonNode
-	 * 
-	 * @param jMobility the JsonNode corresponding to the mobility part of a Person
-	 * @return A List of Mobility
-	 * @author Lucas Royackkers
-	 */
-	private List<Mobility> getAllMobilities(String jMobility) {
-		Type listType = new TypeToken<List<JsonNode>>() {}.getType();
-		List<JsonNode> mobilitiesList = new Gson().fromJson(jMobility, listType);
-		List<Mobility> allMobilities = new ArrayList<Mobility>();
-		
-		for(int i = 0; i < mobilitiesList.size() ;i++) {
-			mobilityEntityController.createMobility(mobilitiesList.get(i));
-			Optional<Mobility> mobility = mobilityEntityController.getMobility(mobilitiesList.get(i).get("place").textValue(),Integer.parseInt(mobilitiesList.get(i).get("radius").textValue()));
-			if(mobility.isPresent()) {
-				allMobilities.add(mobility.get());
-			}
-		}
-		return allMobilities;
+	public Optional<Person> getPersonByNameAndType(String name, PersonRole type){
+		return personRepository.findByMailAndRole(name, type);
 	}
 	
 	/**
@@ -194,6 +247,8 @@ public class PersonEntityController {
 		Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
 		return matcher.find();
 	}
+
+	
 	
 
 }
