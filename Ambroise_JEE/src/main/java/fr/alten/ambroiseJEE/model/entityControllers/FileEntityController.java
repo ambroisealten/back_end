@@ -36,7 +36,7 @@ public class FileEntityController {
 	 *         created
 	 * @author Andy Chabalier
 	 */
-	public HttpException pushDocument(String fileDownloadUri) {
+	public HttpException pushDocument(String fileDownloadUri, boolean isForForum) {
 		Optional<File> fileOptional = fileRepository.findByUri(fileDownloadUri);
 		File file;
 		if(fileOptional.isPresent()) {
@@ -46,6 +46,7 @@ public class FileEntityController {
 		}
 		file.setUri(fileDownloadUri);
 		file.setDateOfAddition(System.currentTimeMillis());
+		file.setForForum(isForForum);
 		try {
 			fileRepository.save(file);
 		} catch (Exception e) {
@@ -55,11 +56,19 @@ public class FileEntityController {
 	}
 
 	/**
-	 * @return
+	 * @return the list of files
 	 * @author Andy Chabalier
 	 */
 	public List<File> getFiles() {
 		return fileRepository.findAll();
+	}
+	
+	/**
+	 * @return the list of forum files
+	 * @author Andy Chabalier
+	 */
+	public List<File> getFilesForum(){
+		return fileRepository.findByIsForForum(true);
 	}
 
 }

@@ -72,11 +72,11 @@ public class FileRestController {
 	 * @author Andy Chabalier
 	 */
 	@PostMapping("/file")
-	public HttpException uploadFile(@RequestParam("file") MultipartFile file, @RequestAttribute("mail") String mail,
+	public HttpException uploadFile(@RequestParam("isForForum") String isForForum, @RequestParam("file") MultipartFile file, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) {
 		return file != null
 				? fileBusinessController.createDocument(ServletUriComponentsBuilder.fromCurrentContextPath()
-						.path(fileStorageBusinessController.storeFile(file)).toUriString(), role)
+						.path(fileStorageBusinessController.storeFile(file)).toUriString(), isForForum, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -92,9 +92,9 @@ public class FileRestController {
 	 * @author Andy Chabalier
 	 */
 	@PostMapping("/file/multiples")
-	public List<HttpException> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files,
+	public List<HttpException> uploadMultipleFiles(@RequestParam("isForForum") String isForForum, @RequestParam("files") MultipartFile[] files,
 			@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
-		return Arrays.asList(files).stream().map(file -> uploadFile(file, mail, role)).collect(Collectors.toList());
+		return Arrays.asList(files).stream().map(file -> uploadFile(isForForum, file, mail, role)).collect(Collectors.toList());
 	}
 
 	/**
@@ -139,5 +139,17 @@ public class FileRestController {
 	@GetMapping("/files")
 	public String getFiles(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
 		return gson.toJson(fileBusinessController.getFiles(role));
+	}
+	
+	/**
+	 *  Fetch the list of forum documents
+	 * @param mail     the current logged user's mail
+	 * @param role     the current logged user's role
+	 * @return the list of forum documents
+	 * @author Andy Chabalier
+	 */
+	@GetMapping("/files/forum")
+	public String getFilesForum(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
+		return gson.toJson(fileBusinessController.getFilesForum(role));
 	}
 }

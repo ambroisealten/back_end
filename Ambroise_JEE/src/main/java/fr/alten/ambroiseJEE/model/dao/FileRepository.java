@@ -3,6 +3,7 @@
  */
 package fr.alten.ambroiseJEE.model.dao;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -21,6 +22,13 @@ public interface FileRepository extends MongoRepository<File, Long> {
 	 * @author Andy Chabalier
 	 */
 	Optional<File> findByUri(String fileDownloadUri);
+
+	/**
+	 * @param isForforum true if we want the list of files of forum
+	 * @return the list of forum files
+	 * @author Andy Chabalier
+	 */
+	List<File> findByIsForForum(boolean isForforum);
 
 	
 }

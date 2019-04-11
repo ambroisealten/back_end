@@ -20,6 +20,7 @@ public class File {
 	@Indexed(unique = true)
 	private String uri;
 	private long dateOfAddition;
+	private boolean isForForum;
 
 	public ObjectId get_id() {
 		return _id;
@@ -43,6 +44,14 @@ public class File {
 
 	public void setDateOfAddition(long dateOfAddition) {
 		this.dateOfAddition = dateOfAddition;
+	}
+
+	public boolean isForForum() {
+		return isForForum;
+	}
+
+	public void setForForum(boolean isForForum) {
+		this.isForForum = isForForum;
 	}
 
 }
