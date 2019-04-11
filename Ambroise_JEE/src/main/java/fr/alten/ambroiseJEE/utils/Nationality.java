@@ -8,6 +8,7 @@ package fr.alten.ambroiseJEE.utils;
  *
  */
 public enum Nationality {
+	NONE,
 	FRANCAIS,
 	UE,
 	WORLD;

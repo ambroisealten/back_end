@@ -15,12 +15,16 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import fr.alten.ambroiseJEE.controller.business.SkillBusinessController;
 import fr.alten.ambroiseJEE.model.beans.ApplicantForum;
 import fr.alten.ambroiseJEE.model.beans.Diploma;
 import fr.alten.ambroiseJEE.model.beans.Employer;
 import fr.alten.ambroiseJEE.model.beans.Job;
+import fr.alten.ambroiseJEE.model.beans.Mobility;
+import fr.alten.ambroiseJEE.model.beans.Skill;
 import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.model.dao.ApplicantForumRepository;
+import fr.alten.ambroiseJEE.utils.Nationality;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
@@ -50,6 +54,12 @@ public class ApplicantForumEntityController {
 
 	@Autowired
 	private JobEntityController jobEntityController;
+	
+	@Autowired
+	private MobilityEntityController mobilityEntityController;
+
+	@Autowired
+	private SkillBusinessController skillBusinessController;
 
 	public static final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
 			Pattern.CASE_INSENSITIVE);
@@ -65,15 +75,29 @@ public class ApplicantForumEntityController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException deleteApplicant(JsonNode jApplicant) {
-		Optional<ApplicantForum> optionalApplicant = applicantForumRepository.findByMail(jApplicant.get("mail").textValue());
+		Optional<ApplicantForum> optionalApplicant = applicantForumRepository
+				.findByMail(jApplicant.get("mail").textValue());
 		if (optionalApplicant.isPresent()) {
 			ApplicantForum applicant = optionalApplicant.get();
 			applicant.setName("Demissionaire");
+			applicant.setSurname(null);
 			applicant.setMail("desactivated" + System.currentTimeMillis() + "@desactivated.com");
 			applicant.setEmployer(null);
 			applicant.setUrlDocs(null);
 			applicant.setMonthlyWage(Float.NaN);
+			applicant.setHighestDiploma(null);
+			applicant.setPersonInCharge(null);
 			applicant.setJob(null);
+			applicant.setMobilities(null);
+			applicant.setStartAt(null);
+			applicant.setGrade(null);
+			applicant.setCommentary(null);
+			applicant.setContractType(null);
+			applicant.setContractDuration(null);
+			applicant.setSkills(null);
+			applicant.setVehicule(false);
+			applicant.setPermis(false);
+			applicant.setNationality(Nationality.NONE);
 
 			applicantForumRepository.save(applicant);
 		} else {
@@ -99,12 +123,13 @@ public class ApplicantForumEntityController {
 		if (optionalApplicant.isPresent()) {
 			ApplicantForum applicant = optionalApplicant.get();
 			applicant.setName(jApplicant.get("name").textValue());
+			applicant.setSurname(jApplicant.get("surname").textValue());
 			applicant.setMonthlyWage(Integer.parseInt(jApplicant.get("wage").textValue()));
-
 
 			applicant.setMail(jApplicant.get("mail").textValue());
 
-			Optional<User> personInCharge = userEntityController.getUserByMail(jApplicant.get("managerMail").textValue());
+			Optional<User> personInCharge = userEntityController
+					.getUserByMail(jApplicant.get("managerMail").textValue());
 			if (personInCharge.isPresent()) {
 				applicant.setPersonInCharge(personInCharge.get().getMail());
 			}
@@ -125,6 +150,35 @@ public class ApplicantForumEntityController {
 				applicant.setEmployer(employer.get().getName());
 			}
 
+			List<String> docList= new ArrayList<String>();
+			JsonNode docNode = jApplicant.get("docs");
+			for (JsonNode doc : docNode) {
+				docList.add(doc.get("url").textValue());
+			}
+			applicant.setUrlDocs(docList);
+			
+			applicant.setMobilities(getAllMobilities(jApplicant.get("mobilities")));
+			
+			applicant.setStartAt(jApplicant.get("canStartAt").textValue());
+			applicant.setGrade(jApplicant.get("grade").textValue());
+			applicant.setCommentary(jApplicant.get("commentary").textValue());
+			applicant.setContractType(jApplicant.get("contractType").textValue());
+			applicant.setContractDuration(jApplicant.get("contractDuration").textValue());
+
+			List<String> skills= new ArrayList<String>();
+			JsonNode skillNode = jApplicant.get("skills");
+			for (JsonNode skill : skillNode) {
+				Optional<Skill> SkillOptional = skillBusinessController.getSkill(skill.get("name").textValue());
+				if (SkillOptional.isPresent()) {
+					skills.add(SkillOptional.get().getName());
+				}
+			}
+			applicant.setSkills(skills);	
+			
+			applicant.setVehicule(Boolean.getBoolean(jApplicant.get("hasVehicule").textValue()));
+			applicant.setPermis(Boolean.getBoolean(jApplicant.get("hasPermis").textValue()));
+			applicant.setNationality(Nationality.valueOf(jApplicant.get("nationality").textValue()));
+
 			applicantForumRepository.save(applicant);
 		} else {
 			throw new RessourceNotFoundException();
@@ -136,8 +190,8 @@ public class ApplicantForumEntityController {
 	 * Method to create a Applicant. Applicant type will be defined by business
 	 * controllers ahead of this object.
 	 * 
-	 * @param jApplicant JsonNode with all Applicant parameters, except its type (name,
-	 *                mail, job, monthlyWage, startDate)
+	 * @param jApplicant JsonNode with all Applicant parameters, except its type
+	 *                   (name, mail, job, monthlyWage, startDate)
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ConflictException} if there is a conflict in the
 	 *         database and {@link CreatedException} if the Applicant is created
@@ -153,6 +207,7 @@ public class ApplicantForumEntityController {
 
 		ApplicantForum newApplicant = new ApplicantForum();
 		newApplicant.setName(jApplicant.get("name").textValue());
+		newApplicant.setSurname(jApplicant.get("surname").textValue());
 		newApplicant.setMonthlyWage(Integer.parseInt(jApplicant.get("wage").textValue()));
 		newApplicant.setMail(jApplicant.get("mail").textValue());
 		List<String> docList = new ArrayList<String>();
@@ -183,6 +238,29 @@ public class ApplicantForumEntityController {
 			newApplicant.setEmployer(employer.get().getName());
 		}
 
+		
+		newApplicant.setMobilities(getAllMobilities(jApplicant.get("mobilities")));
+		
+		newApplicant.setStartAt(jApplicant.get("canStartAt").textValue());
+		newApplicant.setGrade(jApplicant.get("grade").textValue());
+		newApplicant.setCommentary(jApplicant.get("commentary").textValue());
+		newApplicant.setContractType(jApplicant.get("contractType").textValue());
+		newApplicant.setContractDuration(jApplicant.get("contractDuration").textValue());
+
+		List<String> skills= new ArrayList<String>();
+		JsonNode skillNode = jApplicant.get("skills");
+		for (JsonNode skill : skillNode) {
+			Optional<Skill> SkillOptional = skillBusinessController.getSkill(skill.get("name").textValue());
+			if (SkillOptional.isPresent()) {
+				skills.add(SkillOptional.get().getName());
+			}
+		}
+		newApplicant.setSkills(skills);	
+		
+		newApplicant.setVehicule(Boolean.getBoolean(jApplicant.get("hasVehicule").textValue()));
+		newApplicant.setPermis(Boolean.getBoolean(jApplicant.get("hasPermis").textValue()));
+		newApplicant.setNationality(Nationality.valueOf(jApplicant.get("nationality").textValue()));
+ 
 		try {
 			applicantForumRepository.save(newApplicant);
 		} catch (Exception e) {
@@ -199,7 +277,7 @@ public class ApplicantForumEntityController {
 	public List<ApplicantForum> getApplicants() {
 		return applicantForumRepository.findAll();
 	}
-	
+
 	/**
 	 * @param mail the applicant's mail to fetch
 	 * @return the optional with the applicant fetched
@@ -219,5 +297,29 @@ public class ApplicantForumEntityController {
 	private static boolean validateMail(String emailStr) {
 		Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
 		return matcher.find();
+	}
+	
+	/**
+	 * Get a List of Mobility object given a list of JsonNode(represented as a String)
+	 * 
+	 * @param jMobility the String corresponding to a JsonNode corresponding to the mobility part of a Person
+	 * @return A List of Mobility
+	 * @author Lucas Royackkers
+	 */
+	private List<String> getAllMobilities(JsonNode jMobilities) {
+		List<String> allMobilities = new ArrayList<String>();
+		for(JsonNode mobility : jMobilities) {
+			Mobility mobilityToFind = new Mobility();
+			mobilityToFind.setPlaceName(mobility.get("placeName").textValue());
+			mobilityToFind.setPlaceType(mobility.get("placeType").textValue());
+			mobilityToFind.setRadius(Integer.parseInt(mobility.get("radius").textValue()));
+			mobilityToFind.setUnit(mobility.get("unit").textValue());
+			
+			Optional<Mobility> optionalMobility = mobilityEntityController.getMobility(mobilityToFind);
+			if(optionalMobility.isPresent()) {
+				allMobilities.add(optionalMobility.get().get_id().toString());
+			}
+		}
+		return allMobilities;
 	}
 }
