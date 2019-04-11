@@ -38,7 +38,7 @@ public class CityEntityController {
 	 * Method to create a city.
 	 * 
 	 * @param jCity JsonNode with all city parameters
-	 * @return the @see {@link HttpException} corresponding to the statut of the
+	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ConflictException} if there is a conflict in the
 	 *         database and {@link CreatedException} if the city is created
 	 * @author Andy Chabalier
@@ -67,8 +67,8 @@ public class CityEntityController {
 	/**
 	 * 
 	 * @param jCity JsonNode with all city parameters and the old name to perform the update even if the name is changed
-	 * @return the @see {@link HttpException} corresponding to the statut of the
-	 *         request ({@link RessourceNotFoundException} if the ressource is not found
+	 * @return the @see {@link HttpException} corresponding to the status of the
+	 *         request ({@link RessourceNotFoundException} if the resource is not found
 	 *         and {@link CreatedException} if the city is updated
 	 * @author Andy Chabalier
 	 */
@@ -90,9 +90,9 @@ public class CityEntityController {
 	/**
 	 * 
 	 * @param name the city name to fetch 
-	 * @return {@link HttpException} corresponding to the statut of the
-	 *         request ({@link RessourceNotFoundException} if the ressource is not found
-	 *         and {@link OkException} if the city is desactivated
+	 * @return {@link HttpException} corresponding to the status of the
+	 *         request ({@link RessourceNotFoundException} if the resource is not found
+	 *         and {@link OkException} if the city is deactivated
 	 * @author Andy Chabalier
 	 */
 	public HttpException deleteCity(String name) {
@@ -100,7 +100,7 @@ public class CityEntityController {
 		
 		if (cityOptionnal.isPresent()) {
 			City city = cityOptionnal.get();
-			city.setName("desactivated" + System.currentTimeMillis());
+			city.setName("deactivated" + System.currentTimeMillis());
 			cityRepository.save(city);
 		}
 		else {

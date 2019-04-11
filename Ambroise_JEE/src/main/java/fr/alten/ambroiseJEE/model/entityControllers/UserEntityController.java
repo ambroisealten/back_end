@@ -51,7 +51,7 @@ public class UserEntityController {
 	 * 
 	 * @param jUser JsonNode with all user parameters (forname, mail, name,
 	 *              password)
-	 * @return the @see {@link HttpException} corresponding to the statut of the
+	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ConflictException} if there is a conflict in the
 	 *         database and {@link CreatedException} if the user is created
 	 * @author Andy Chabalier
@@ -137,8 +137,8 @@ public class UserEntityController {
 	 * @param jUser JsonNode with all user parameters (forname, mail, name,
 	 *              password) and the oldMail to perform the update even if the mail
 	 *              is changed
-	 * @return the @see {@link HttpException} corresponding to the statut of the
-	 *         request ({@link RessourceNotFoundException} if the ressource is not
+	 * @return the @see {@link HttpException} corresponding to the status of the
+	 *         request ({@link RessourceNotFoundException} if the resource is not
 	 *         found and {@link CreatedException} if the user is updated
 	 * @author MAQUINGHEN MAXIME
 	 */
@@ -172,9 +172,9 @@ public class UserEntityController {
 	/**
 	 * 
 	 * @param mail the user mail to fetch
-	 * @return {@link HttpException} corresponding to the statut of the request
-	 *         ({@link RessourceNotFoundException} if the ressource is not found and
-	 *         {@link CreatedException} if the user is desactivated
+	 * @return {@link HttpException} corresponding to the status of the request
+	 *         ({@link RessourceNotFoundException} if the resource is not found and
+	 *         {@link CreatedException} if the user is deactivated
 	 * @author MAQUINGHEN MAXIME
 	 */
 	public HttpException deleteUser(String mail) {
@@ -183,7 +183,7 @@ public class UserEntityController {
 		if (userOptionnal.isPresent()) {
 			User user = userOptionnal.get();
 			user.setForname("");
-			user.setMail("desactivated" + System.currentTimeMillis());
+			user.setMail("deactivated" + System.currentTimeMillis());
 			user.setName("");
 			user.setPswd("");
 			user.setRole(UserRole.DESACTIVATED);
@@ -199,8 +199,8 @@ public class UserEntityController {
 	 * 
 	 * @param mail the mail concerned by the password changement
 	 * 
-	 * @return {@link HttpException} corresponding to the statut of the request
-	 *         ({@link RessourceNotFoundException} if the ressource is not found and
+	 * @return {@link HttpException} corresponding to the status of the request
+	 *         ({@link RessourceNotFoundException} if the resource is not found and
 	 *         {@link CreatedException} if the password is changed
 	 * @author MAQUINGHEN MAXIME
 	 */
