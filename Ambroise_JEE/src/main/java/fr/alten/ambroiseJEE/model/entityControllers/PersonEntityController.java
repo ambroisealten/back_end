@@ -1,7 +1,6 @@
 package fr.alten.ambroiseJEE.model.entityControllers;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -16,7 +15,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import fr.alten.ambroiseJEE.model.beans.Diploma;
 import fr.alten.ambroiseJEE.model.beans.Employer;
 import fr.alten.ambroiseJEE.model.beans.Job;
-import fr.alten.ambroiseJEE.model.beans.Mobility;
 import fr.alten.ambroiseJEE.model.beans.Person;
 import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.model.dao.PersonRepository;
@@ -49,9 +47,6 @@ public class PersonEntityController {
 	
 	@Autowired
 	private JobEntityController jobEntityController;
-	
-	@Autowired
-	private MobilityEntityController mobilityEntityController;
 
 	
 	public static final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
@@ -83,12 +78,8 @@ public class PersonEntityController {
 			}
 			person.setMail("desactivated" + System.currentTimeMillis()+"@desactivated.com");
 			person.setEmployer(null);
-			person.setCommentary(null);
-			person.setGrade(null);
-			person.setCanStartsAt(null);
 			person.setUrlDocs(null);
 			person.setRole(null);
-			person.setFromForum(false);
 			person.setMonthlyWage(0);
 			person.setJob(null);
 			
@@ -118,28 +109,21 @@ public class PersonEntityController {
 			Person person = optionalPerson.get();
 			person.setName(jPerson.get("name").textValue());
 			person.setMonthlyWage(Integer.parseInt(jPerson.get("wage").textValue()));
-			person.setCanStartsAt(new SimpleDateFormat("dd/MM/yyyy").parse(jPerson.get("dateStarts").textValue()));
-			PersonRole oldRole = person.getRole();
-			if(role != oldRole) {
-				person.setRole(role);
-			}
+			
+			person.setRole(role);
+
 			person.setMail(jPerson.get("mail").textValue());
-			person.setGrade(jPerson.get("grade").textValue());
-			person.setCommentary(jPerson.get("commentary").textValue());
 			
-			Optional<User> managerInCharge = userEntityController.getUserByMail(jPerson.get("managerMail").textValue());
-			if(managerInCharge.isPresent()) {
-				person.setManagerInCharge(managerInCharge.get().getMail());
+			Optional<User> personInCharge = userEntityController.getUserByMail(jPerson.get("managerMail").textValue());
+			if(personInCharge.isPresent()) {
+				person.setPersonInCharge(personInCharge.get().getMail());
 			}
 			
-			Optional<Diploma> highestDiploma = diplomaEntityController.getDiplomaByNameAndYearOfResult(jPerson.get("diplomaName").textValue(),jPerson.get("diplomaYear").textValue());
-			if(highestDiploma.isPresent()) {
-				Diploma newDiploma = highestDiploma.get();
-				person.setHighestDiploma(newDiploma.getName());
+			Optional<Diploma> diploma = diplomaEntityController.getDiplomaByNameAndYearOfResult(jPerson.get("diplomaName").textValue(),jPerson.get("diplomaYear").textValue());
+			if(diploma.isPresent()) {
+				person.setHighestDiploma(diploma.get().get_id().toString());
 			}
-			
-			person.setMobilities(this.getAllMobilities(jPerson.get("mobilities")));
-			
+						
 			Optional<Job> job = jobEntityController.getJob(jPerson.get("job").textValue());
 			if(job.isPresent()){
 				person.setJob(job.get().getTitle());
@@ -179,12 +163,8 @@ public class PersonEntityController {
 		Person newPerson = new Person();
 		newPerson.setName(jPerson.get("name").textValue());
 		newPerson.setMonthlyWage(Integer.parseInt(jPerson.get("wage").textValue()));
-		newPerson.setCanStartsAt(new SimpleDateFormat("dd/MM/yyyy").parse(jPerson.get("dateStarts").textValue()));
 		newPerson.setRole(type);
 		newPerson.setMail(jPerson.get("mail").textValue());
-		newPerson.setGrade(jPerson.get("grade").textValue());
-		newPerson.setCommentary(jPerson.get("commentary").textValue());
-		newPerson.setFromForum(Boolean.getBoolean(jPerson.get("fromForum").textValue()));
 		List<String> docList= new ArrayList<String>();
 		JsonNode docNode = jPerson.get("docs");
 		for(JsonNode doc : docNode) {
@@ -192,19 +172,15 @@ public class PersonEntityController {
 		}
 		newPerson.setUrlDocs(docList);
 		
-		Optional<User> managerInCharge = userEntityController.getUserByMail(jPerson.get("managerMail").textValue());
-		if(managerInCharge.isPresent()) {
-			newPerson.setManagerInCharge(managerInCharge.get().getMail());
+		Optional<User> personInCharge = userEntityController.getUserByMail(jPerson.get("managerMail").textValue());
+		if(personInCharge.isPresent()) {
+			newPerson.setPersonInCharge(personInCharge.get().getMail());
 		}
 		
-		Optional<Diploma> highestDiploma = diplomaEntityController.getDiplomaByNameAndYearOfResult(jPerson.get("diplomaName").textValue(),jPerson.get("diplomaYear").textValue());
-		if(highestDiploma.isPresent()) {
-			Diploma newDiploma = highestDiploma.get();
-			newPerson.setHighestDiploma(newDiploma.getName());
+		Optional<Diploma> diploma = diplomaEntityController.getDiplomaByNameAndYearOfResult(jPerson.get("diplomaName").textValue(),jPerson.get("diplomaYear").textValue());
+		if(diploma.isPresent()) {
+			newPerson.setHighestDiploma(diploma.get().get_id().toString());
 		}
-		
-		JsonNode test = jPerson.get("mobilities");
-		newPerson.setMobilities(this.getAllMobilities(test));
 		
 		Optional<Job> job = jobEntityController.getJob(jPerson.get("job").textValue());
 		if(job.isPresent()){
@@ -246,30 +222,6 @@ public class PersonEntityController {
 	 */
 	public Optional<Person> getPersonByNameAndType(String name, PersonRole type){
 		return personRepository.findByMailAndRole(name, type);
-	}
-	
-	/**
-	 * Get a List of Mobility object given a list of JsonNode(represented as a String)
-	 * 
-	 * @param jMobility the String corresponding to a JsonNode corresponding to the mobility part of a Person
-	 * @return A List of Mobility
-	 * @author Lucas Royackkers
-	 */
-	private List<String> getAllMobilities(JsonNode jMobilities) {
-		List<String> allMobilities = new ArrayList<String>();
-		for(JsonNode mobility : jMobilities) {
-			Mobility mobilityToFind = new Mobility();
-			mobilityToFind.setPlaceName(mobility.get("placeName").textValue());
-			mobilityToFind.setPlaceType(mobility.get("placeType").textValue());
-			mobilityToFind.setRadius(Integer.parseInt(mobility.get("radius").textValue()));
-			mobilityToFind.setUnit(mobility.get("unit").textValue());
-			
-			Optional<Mobility> optionalMobility = mobilityEntityController.getMobility(mobilityToFind);
-			if(optionalMobility.isPresent()) {
-				allMobilities.add(optionalMobility.get().get_id().toString());
-			}
-		}
-		return allMobilities;
 	}
 	
 	/**
