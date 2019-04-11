@@ -63,8 +63,8 @@ public class JobEntityController {
 	/**
 	 * 
 	 * @param jJob JsonNode with all Job parameters and the old name to perform the update even if the name is changed
-	 * @return the @see {@link HttpException} corresponding to the statut of the
-	 *         request ({@link RessourceNotFoundException} if the ressource is not found
+	 * @return the @see {@link HttpException} corresponding to the status of the
+	 *         request ({@link RessourceNotFoundException} if the resource is not found
 	 *         and {@link CreatedException} if the Job is updated
 	 * @author Andy Chabalier
 	 */
@@ -88,7 +88,7 @@ public class JobEntityController {
 	 * @param name the Job name to fetch 
 	 * @return {@link HttpException} corresponding to the status of the
 	 *         request ({@link RessourceNotFoundException} if the resource is not found
-	 *         and {@link OkException} if the Job is desactivated
+	 *         and {@link OkException} if the Job is deactivated
 	 * @author Lucas Royackkers
 	 */
 	public HttpException deleteJob(String name) {
@@ -96,7 +96,7 @@ public class JobEntityController {
 		
 		if (JobOptionnal.isPresent()) {
 			Job job = JobOptionnal.get();
-			job.setTitle("desactivated" + System.currentTimeMillis());
+			job.setTitle("deactivated" + System.currentTimeMillis());
 			jobRepository.save(job);
 		}
 		else {

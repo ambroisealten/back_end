@@ -40,7 +40,7 @@ public class DepartementBusinessController {
 	/**
 	 * Method to delegate Departement creation
 	 * @param jUser JsonNode with all departement parameters
-	 * @return the @see {@link HttpException} corresponding to the statut of the
+	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ConflictException} if there is a conflict in the
 	 *         database and {@link CreatedException} if the departement is created
 	 * @author Andy Chabalier
@@ -67,8 +67,8 @@ public class DepartementBusinessController {
 	 * 
 	 * @param jDepartement JsonNode with all departement parameters and the old name to perform the update even if the name is changed
 	 * @param role user role
-	 * @return the @see {@link HttpException} corresponding to the statut of the
-	 *         request ({@link RessourceNotFoundException} if the ressource is not found
+	 * @return the @see {@link HttpException} corresponding to the status of the
+	 *         request ({@link RessourceNotFoundException} if the resource is not found
 	 *         and {@link CreatedException} if the departement is updated
 	 * @author Andy Chabalier
 	 */
@@ -81,8 +81,8 @@ public class DepartementBusinessController {
 	 * 
 	 * @param params the departement name to delete 
 	 * @param role the user role
-	 * @return @see {@link HttpException} corresponding to the statut of the
-	 *         request ({@link ForbiddenException} if the ressource is not found
+	 * @return @see {@link HttpException} corresponding to the status of the
+	 *         request ({@link ForbiddenException} if the resource is not found
 	 *         and {@link CreatedException} if the departement is deleted
 	 * @author Andy Chabalier
 	 */
