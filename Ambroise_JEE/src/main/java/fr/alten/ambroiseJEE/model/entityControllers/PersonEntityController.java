@@ -117,6 +117,13 @@ public class PersonEntityController {
 
 			person.setMail(jPerson.get("mail").textValue());
 			
+			List<String> docList= new ArrayList<String>();
+			JsonNode docNode = jPerson.get("docs");
+			for(JsonNode doc : docNode) {
+				docList.add(doc.get("url").textValue());
+			}
+			person.setUrlDocs(docList);
+			
 			Optional<User> personInCharge = userEntityController.getUserByMail(jPerson.get("managerMail").textValue());
 			if(personInCharge.isPresent()) {
 				person.setPersonInCharge(personInCharge.get().getMail());
@@ -207,25 +214,25 @@ public class PersonEntityController {
 	}
 	
 	/**
-	 * Try to fetch a person by its name
+	 * Try to fetch a person by its mail
 	 * 
-	 * @param name the person's name to fetch
+	 * @param mail the person's mail to fetch
 	 * @return An Optional with the corresponding person or not.
 	 * @author Lucas Royackkers
 	 */
-	public Optional<Person> getPersonByName(String name) {
-		return personRepository.findByMail(name);
+	public List<Person> getPersonByMail(String mail) {
+		return personRepository.findByMail(mail);
 	}
 
 	/**
-	 * Try to fetch a person by its name and type
+	 * Try to fetch a person by its mail and type
 	 * 
-	 * @param name the person's name to fetch
-	 * @return An Optional with the corresponding person (of type consultant) or not.
+	 * @param mail the person's mail to fetch
+	 * @return An Optional with the corresponding person (of the given type) or not.
 	 * @author Lucas Royackkers
 	 */
-	public Optional<Person> getPersonByNameAndType(String name, PersonRole type){
-		return personRepository.findByMailAndRole(name, type);
+	public Optional<Person> getPersonByMailAndType(String mail, PersonRole type){
+		return personRepository.findByMailAndRole(mail, type);
 	}
 	
 	/**
