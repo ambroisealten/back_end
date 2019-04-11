@@ -25,7 +25,7 @@ public class DiplomaEntityController {
 	@Autowired
 	private DiplomaRepository diplomaRepository;
 	
-	public Optional<Diploma> getDiplomaByName(String name){
+	public List<Diploma> getDiplomaByName(String name){
 		return diplomaRepository.findByName(name);
 	}
 	
@@ -36,7 +36,7 @@ public class DiplomaEntityController {
 	/**
 	 * Method to create a diploma
 	 * 
-	 * @param jCity JsonNode with all diploma parameters
+	 * @param jDiploma JsonNode with all diploma parameters
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ConflictException} if there is a conflict in the
 	 *         database and {@link CreatedException} if the diploma is created
@@ -72,7 +72,7 @@ public class DiplomaEntityController {
 		if (diplomaOptionnal.isPresent()) {
 			Diploma diploma = diplomaOptionnal.get();
 			diploma.setName(jDiploma.get("name").textValue());
-			diploma.setYearOfResult(jDiploma.get("oldYearOfResult").textValue());
+			diploma.setYearOfResult(jDiploma.get("yearOfResult").textValue());
 			diplomaRepository.save(diploma);
 		}
 		else {
@@ -83,14 +83,14 @@ public class DiplomaEntityController {
 
 	/**
 	 * 
-	 * @param name the diploma name to fetch 
+	 * @param jDiploma the JsonNode containing all diploma parameters
 	 * @return {@link HttpException} corresponding to the status of the
 	 *         request ({@link RessourceNotFoundException} if the resource is not found
 	 *         and {@link OkException} if the diploma is desactivated
 	 * @author Lucas Royackkers
 	 */
-	public HttpException deleteDiploma(String name) {
-		Optional<Diploma> diplomaOptionnal = diplomaRepository.findByName(name);
+	public HttpException deleteDiploma(JsonNode jDiploma) {
+		Optional<Diploma> diplomaOptionnal = diplomaRepository.findByNameAndYearOfResult(jDiploma.get("name").textValue(),jDiploma.get("yearOfResult").textValue());
 		
 		if (diplomaOptionnal.isPresent()) {
 			Diploma diploma = diplomaOptionnal.get();
