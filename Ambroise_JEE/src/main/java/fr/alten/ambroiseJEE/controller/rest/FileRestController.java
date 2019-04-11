@@ -29,6 +29,7 @@ import fr.alten.ambroiseJEE.controller.business.FileStorageBusinessController;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
@@ -41,7 +42,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 public class FileRestController {
 
 	@Autowired
-	private FileStorageBusinessController fileStorageService;
+	private FileStorageBusinessController fileStorageBusinessController;
 
 	@Autowired
 	private FileBusinessController fileBusinessController;
@@ -54,8 +55,11 @@ public class FileRestController {
 	 * @param mail the current logged user's mail
 	 * @param role the current logged user's role
 	 * @return {@link HttpException} corresponding to the statut of the request
-	 *         ({@link UnprocessableEntityException} if the ressource is not found
-	 *         and {@link CreatedException} if the file is stored and created
+	 *         ({@link UnprocessableEntityException} if the ressource is not found,
+	 *         ({@link OkException} if there is a conflict in the database (that
+	 *         mean file already exist and then it's an upload. But no change to
+	 *         make in base and {@link CreatedException} if the file is stored and
+	 *         created
 	 * @author Andy Chabalier
 	 */
 	@PostMapping("/file")
@@ -63,7 +67,7 @@ public class FileRestController {
 			@RequestAttribute("role") UserRole role) {
 		return file != null
 				? fileBusinessController.createDocument(ServletUriComponentsBuilder.fromCurrentContextPath()
-						.path(fileStorageService.storeFile(file)).toUriString(), role)
+						.path(fileStorageBusinessController.storeFile(file)).toUriString(), role)
 				: new UnprocessableEntityException();
 	}
 
@@ -97,7 +101,7 @@ public class FileRestController {
 	@GetMapping("/file/{fileName:.+}")
 	public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, HttpServletRequest request,
 			@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
-		Resource resource = fileStorageService.loadFileAsResource(fileName);
+		Resource resource = fileStorageBusinessController.loadFileAsResource(fileName);
 
 		// Try to determine file's content type
 		String contentType = null;

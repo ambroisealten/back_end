@@ -8,9 +8,9 @@ import org.springframework.stereotype.Service;
 
 import fr.alten.ambroiseJEE.model.beans.File;
 import fr.alten.ambroiseJEE.model.dao.FileRepository;
-import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 
 /**
  * @author Andy Chabalier
@@ -27,8 +27,10 @@ public class FileEntityController {
 	 * 
 	 * @param fileDownloadUri the uri of the document to create
 	 * @return the @see {@link HttpException} corresponding to the statut of the
-	 *         request ({@link ConflictException} if there is a conflict in the
-	 *         database and {@link CreatedException} if the document is created
+	 *         request ({@link OkException} if there is a conflict in the database
+	 *         (that mean file already exist and then it's an upload. But no change
+	 *         to make in base and {@link CreatedException} if the document is
+	 *         created
 	 * @author Andy Chabalier
 	 */
 	public HttpException createDocument(String fileDownloadUri) {
@@ -38,7 +40,7 @@ public class FileEntityController {
 		try {
 			fileRepository.save(newFile);
 		} catch (Exception e) {
-			return new ConflictException();
+			return new OkException();
 		}
 		return new CreatedException();
 	}
