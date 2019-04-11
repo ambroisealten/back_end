@@ -35,7 +35,7 @@ public class ApplicantBusinessController {
 	 */
 	public Optional<Person> getApplicant(String name, UserRole role){
 		if(UserRole.CDR == role || UserRole.MANAGER == role || UserRole.MANAGER_ADMIN == role || UserRole.CDR_ADMIN == role){
-			return personEntityController.getPersonByNameAndType(name,PersonRole.APPLICANT);
+			return personEntityController.getPersonByMailAndType(name,PersonRole.APPLICANT);
 		}
 		throw new ForbiddenException();
 	}
