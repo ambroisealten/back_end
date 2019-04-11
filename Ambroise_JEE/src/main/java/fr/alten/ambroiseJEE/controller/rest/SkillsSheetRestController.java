@@ -1,5 +1,6 @@
 package fr.alten.ambroiseJEE.controller.rest;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +26,8 @@ import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
  */
 @Controller
 public class SkillsSheetRestController {
+	
+	@Autowired
 	private SkillsSheetBusinessController skillsSheetBusinessController;
 	
 	private final Gson gson;
@@ -49,8 +52,7 @@ public class SkillsSheetRestController {
 	@ResponseBody
 	public HttpException createSkillsSheet(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("mail") != null ? skillsSheetBusinessController.createSkillsSheet(params, role)
-				: new UnprocessableEntityException();
+		return skillsSheetBusinessController.createSkillsSheet(params, role);
 	}
 	
 	
@@ -69,8 +71,7 @@ public class SkillsSheetRestController {
 	@ResponseBody
 	public HttpException updateSkillsSheet(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) {
-		return params.get("mail") != null ? skillsSheetBusinessController.updateSkillsSheet(params,role) : 
-			new UnprocessableEntityException();
+		return skillsSheetBusinessController.updateSkillsSheet(params,role);
 	}
 
 	/**

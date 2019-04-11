@@ -35,7 +35,7 @@ public class SkillsSheetBusinessController {
 	 * @author Lucas Royackkers
 	 */
 	public Optional<SkillsSheet> getSkillsSheet(String name, long versionNumber, UserRole role){
-		return (UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role) ? skillsSheetEntityController.getSkillsSheetByNameAndVersion(name, versionNumber)
+		return (UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role) ? skillsSheetEntityController.getSkillsSheetByNameAndVersionNumber(name, versionNumber)
 				: Optional.empty();
 	}
 	

@@ -207,10 +207,10 @@ public class PersonEntityController {
 	}
 	
 	/**
-	 * Try to fetch a person by its name
+	 * Try to fetch persons by its name
 	 * 
 	 * @param name the person's name to fetch
-	 * @return An Optional with the corresponding person or not.
+	 * @return An Optional with the corresponding persons or not.
 	 * @author Lucas Royackkers
 	 */
 	public Optional<Person> getPersonByMail(String mail) {

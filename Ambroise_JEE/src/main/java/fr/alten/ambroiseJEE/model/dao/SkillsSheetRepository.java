@@ -32,5 +32,5 @@ public interface SkillsSheetRepository extends MongoRepository<SkillsSheet, Long
 	 * @return An Optional with the corresponding skills sheet or not. 
 	 * @author Lucas Royackkers
 	 */
-	public Optional<SkillsSheet> findSkillsSheetsByNameAndVersion(String name,long versionNumber);	
+	public Optional<SkillsSheet> findSkillsSheetsByNameAndVersionNumber(String name,long versionNumber);	
 }
