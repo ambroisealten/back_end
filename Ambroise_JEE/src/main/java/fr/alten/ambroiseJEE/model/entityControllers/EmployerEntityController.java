@@ -1,5 +1,6 @@
 package fr.alten.ambroiseJEE.model.entityControllers;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,10 @@ public class EmployerEntityController {
 
 	@Autowired
 	private EmployerRepository employerRepository;
+	
+	public List<Employer> getEmployers(){
+		return employerRepository.findAll();
+	}
 	
 	public Optional<Employer> getEmployer(String name) {
 		return employerRepository.findByName(name);
@@ -52,10 +57,10 @@ public class EmployerEntityController {
 	
 	/**
 	 * 
-	 * @param jCity JsonNode with all employer parameters and the old name to perform the update even if the name is changed
+	 * @param jEmployer JsonNode with all employer parameters and the old name to perform the update even if the name is changed
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link RessourceNotFoundException} if the resource is not found
-	 *         and {@link CreatedException} if the employer is updated
+	 *         and {@link OkException} if the employer is updated
 	 * @author Lucas Royackkers
 	 */
 	public HttpException updateEmployer(JsonNode jEmployer) {
@@ -75,14 +80,14 @@ public class EmployerEntityController {
 
 	/**
 	 * 
-	 * @param name the employer name to fetch 
+	 * @param jEmployer JsonNode with all employer parameters
 	 * @return {@link HttpException} corresponding to the status of the
 	 *         request ({@link RessourceNotFoundException} if the resource is not found
 	 *         and {@link OkException} if the employer is desactivated
 	 * @author Lucas Royackkers
 	 */
-	public HttpException deleteEmployer(String name) {
-		Optional<Employer> employerOptionnal = employerRepository.findByName(name);
+	public HttpException deleteEmployer(JsonNode jEmployer) {
+		Optional<Employer> employerOptionnal = employerRepository.findByName(jEmployer.get("name").textValue());
 		
 		if (employerOptionnal.isPresent()) {
 			Employer employer = employerOptionnal.get();
