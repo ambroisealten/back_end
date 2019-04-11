@@ -25,7 +25,7 @@ public class DiplomaEntityController {
 	@Autowired
 	private DiplomaRepository diplomaRepository;
 	
-	public Optional<Diploma> getDiplomaByName(String name){
+	public List<Diploma> getDiplomaByName(String name){
 		return diplomaRepository.findByName(name);
 	}
 	
@@ -36,7 +36,7 @@ public class DiplomaEntityController {
 	/**
 	 * Method to create a diploma
 	 * 
-	 * @param jCity JsonNode with all diploma parameters
+	 * @param jDiploma JsonNode with all diploma parameters
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ConflictException} if there is a conflict in the
 	 *         database and {@link CreatedException} if the diploma is created

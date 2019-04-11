@@ -51,7 +51,7 @@ public class DiplomaBusinessController {
 	 * @author Lucas Royackkers
 	 */
 	public List<Diploma> getDiplomas(UserRole role) {
-		if(UserRole.MANAGER_ADMIN == role || UserRole.CDR_ADMIN == role) {
+		if(UserRole.MANAGER_ADMIN == role || UserRole.CDR_ADMIN == role || UserRole.CDR == role || UserRole.MANAGER == role) {
 			return diplomaEntityController.getDiplomas();
 		}
 		throw new ForbiddenException();
@@ -62,7 +62,7 @@ public class DiplomaBusinessController {
 	 * @param params the JsonNode containing all diploma parameters
 	 * @param role the user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link ConflictException} if there is a conflict in the
+	 *         request ({@link ResourceNotFoundException} if the resource hasn't been found in the
 	 *         database and {@link CreatedException} if the diploma is updated
 	 * @throws ParseException
 	 * @author Lucas Royackkers
@@ -79,7 +79,7 @@ public class DiplomaBusinessController {
 	 * @param params the JsonNode containing all diploma parameters
 	 * @param role the user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link ConflictException} if there is a conflict in the
+	 *         request ({@link ResourceNotFoundException} if the resource hasn't been found in the
 	 *         database and {@link CreatedException} if the diploma is desactivated
 	 * @author Lucas Royackkers
 	 */
