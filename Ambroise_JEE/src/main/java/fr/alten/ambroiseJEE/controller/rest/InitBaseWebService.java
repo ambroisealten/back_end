@@ -4,6 +4,7 @@
 package fr.alten.ambroiseJEE.controller.rest;
 
 import java.io.IOException;
+import java.text.ParseException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,6 +17,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import fr.alten.ambroiseJEE.controller.business.AgencyBusinessController;
+import fr.alten.ambroiseJEE.controller.business.DiplomaBusinessController;
 import fr.alten.ambroiseJEE.controller.business.UserBusinessController;
 import fr.alten.ambroiseJEE.controller.business.geographic.GeographicBusinessController;
 import fr.alten.ambroiseJEE.model.beans.Agency;
@@ -43,6 +45,9 @@ public class InitBaseWebService {
 	
 	@Autowired
 	private AgencyBusinessController AgencyBusinessController;
+	
+	@Autowired
+	private DiplomaBusinessController diplomaBusinessController;
 
 	private final Gson gson;
 
@@ -53,7 +58,7 @@ public class InitBaseWebService {
 
 	@PostMapping(value = "/admin/init")
 	@ResponseBody
-	public HttpException init() throws IOException {
+	public HttpException init() throws IOException, ParseException {
 
 		// peupler la base de données des diplômes
 		createDiplomas();
@@ -99,13 +104,14 @@ public class InitBaseWebService {
 	 * 
 	 * @author Lucas Royackkers
 	 * @throws IOException 
+	 * @throws ParseException 
 	 */
-	private void createDiplomas() throws IOException {
+	private void createDiplomas() throws IOException, ParseException {
 		Diploma diplomaEpitech = new Diploma();
 		diplomaEpitech.setName("EPITECH");
 		diplomaEpitech.setYearOfResult("2019");
 		JsonNode diplomaEpitechJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(diplomaEpitech).getAsJsonObject());
-		
+		diplomaBusinessController.createDiploma(diplomaEpitechJsonNode, UserRole.MANAGER_ADMIN);
 		
 	}
 

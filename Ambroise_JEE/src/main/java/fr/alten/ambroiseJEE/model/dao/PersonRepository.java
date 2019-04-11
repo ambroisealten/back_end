@@ -13,13 +13,7 @@ import fr.alten.ambroiseJEE.utils.PersonRole;
  *
  */
 public interface PersonRepository extends MongoRepository<Person,Long>{
-	
-	/**
-	 * @param mail the person's mail
-	 * @return An Optional with the corresponding persons or not. 
-	 * @author Royackkers Lucas
-	 */
-	List<Person> findByMail(String mail);
+
 	
 	/**
 	 * @param mail the person's mail

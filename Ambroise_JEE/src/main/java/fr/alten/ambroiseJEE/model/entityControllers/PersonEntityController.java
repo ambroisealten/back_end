@@ -213,16 +213,6 @@ public class PersonEntityController {
 		
 	}
 	
-	/**
-	 * Try to fetch persons by its name
-	 * 
-	 * @param name the person's name to fetch
-	 * @return An Optional with the corresponding persons or not.
-	 * @author Lucas Royackkers
-	 */
-	public Optional<Person> getPersonByMail(String mail) {
-		return personRepository.findByMail(mail);
-	}
 
 	/**
 	 * Try to fetch a person by its mail and type
