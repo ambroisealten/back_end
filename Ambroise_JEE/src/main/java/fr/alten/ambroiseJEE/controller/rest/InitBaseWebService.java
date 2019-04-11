@@ -19,6 +19,7 @@ import fr.alten.ambroiseJEE.controller.business.AgencyBusinessController;
 import fr.alten.ambroiseJEE.controller.business.UserBusinessController;
 import fr.alten.ambroiseJEE.controller.business.geographic.GeographicBusinessController;
 import fr.alten.ambroiseJEE.model.beans.Agency;
+import fr.alten.ambroiseJEE.model.beans.Diploma;
 import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.JsonUtils;
@@ -54,16 +55,58 @@ public class InitBaseWebService {
 	@ResponseBody
 	public HttpException init() throws IOException {
 
+		// peupler la base de données des diplômes
+		createDiplomas();
+		
+		// peupler la base de données des employeurs
+		createEmployers();
+		
+		// peupler la base de données des métiers consultants
+		createJobs();
+		
 		// peupler la base de données géographiques
-		createGeographics();
+		// createGeographics();
 
 		// peupler la base de données Géographiques
-		createAgencies();
+		// createAgencies();
+		
+		// peupler la base de données des personnes (identités consultants, candidats)
+		createPersons();
 
 		// peupler la base d'utilisateurs
-		createUsers();
+		// createUsers();
 
 		return new CreatedException();
+	}
+
+	private void createPersons() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void createJobs() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void createEmployers() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * 
+	 * 
+	 * @author Lucas Royackkers
+	 * @throws IOException 
+	 */
+	private void createDiplomas() throws IOException {
+		Diploma diplomaEpitech = new Diploma();
+		diplomaEpitech.setName("EPITECH");
+		diplomaEpitech.setYearOfResult("2019");
+		JsonNode diplomaEpitechJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(diplomaEpitech).getAsJsonObject());
+		
+		
 	}
 
 	/**
@@ -254,4 +297,7 @@ public class InitBaseWebService {
 			userBusinessController.createUser(useriJsonNode, UserRole.MANAGER_ADMIN);
 		}
 	}
+	
+	
+	
 }

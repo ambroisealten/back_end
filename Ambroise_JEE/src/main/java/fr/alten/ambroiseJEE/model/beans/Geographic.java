@@ -10,5 +10,5 @@ package fr.alten.ambroiseJEE.model.beans;
  */
 public abstract class Geographic {
 
-	public abstract String getName();
+	public abstract String getIdentifier();
 }
