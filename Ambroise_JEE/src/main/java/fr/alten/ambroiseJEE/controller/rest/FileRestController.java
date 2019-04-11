@@ -98,7 +98,7 @@ public class FileRestController {
 	 * @return the asked ressource wrapped in an ResponseEntity
 	 * @author Andy Chabalier
 	 */
-	@GetMapping("/file/{fileName:.+}")
+	@GetMapping("/file/{fileName}")
 	public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, HttpServletRequest request,
 			@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
 		Resource resource = fileStorageBusinessController.loadFileAsResource(fileName);
