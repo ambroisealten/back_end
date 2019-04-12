@@ -35,7 +35,10 @@ public class SoftSkillBusinessController {
 	public Optional<SoftSkill> getSoftSkill(String name) {
 		return softSkillEntityController.getSoftSkillByName(name);
 	}
-
+	
+	public Optional<SoftSkill> getSoftSkillByNameAndGrade(String name,float grade) {
+		return softSkillEntityController.getSoftSkillByNameAndGrade(name,grade);
+	}
 
 	/**
 	 * Method to delegate softSkill creation

@@ -1,11 +1,18 @@
 package fr.alten.ambroiseJEE.model.entityControllers;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.databind.JsonNode;
+
 import fr.alten.ambroiseJEE.model.beans.TechSkill;
 import fr.alten.ambroiseJEE.model.dao.TechSkillRepository;
+import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
+import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
+import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 
 /**
  * Tech skill controller for entity gestion rules
@@ -41,28 +48,38 @@ public class TechSkillEntityController {
 		return techSkillRepository.findTechSkillByNameAndGrade(name,grade);
 	}
 	
+
 	/**
-	 * Method to create a couple between a grade and a TechSkill (for skills sheet)
-	 * 
-	 * @param name the tech skill's name
-	 * @param grade the tech skill's grade (int)
-	 * @return a TechSkill object if a corresponding name is found, null if not
-	 * @author Lucas Royackkers
+	 * @return the list of all techSkills
+	 * @author Lucas Royackkers, Thomas Decamp
 	 */
-	public TechSkill createTechSkillAndGrade(String name,float grade) {
-		Optional<TechSkill> optionalTechSkill = this.getTechSkillByNameAndGrade(name,grade);
-		if(!optionalTechSkill.isPresent()){
-			TechSkill techSkill = new TechSkill();
-			techSkill.setName(name);
-			//The grade has to be between 1 and 4
-			if(grade >= 1 && grade <= 4) {
-				techSkill.setGrade(grade);
-			}
-			return techSkill;
+	public List<TechSkill> getTechSkills() {
+		return techSkillRepository.findAll();
+	}
+	
+	/**
+	 * Method to create a techSkill.
+	 * 
+	 * @param jTechSkill JsonNode with all techSkill parameters
+	 * @return the @see {@link HttpException} corresponding to the status of the
+	 *         request ({@link ConflictException} if there is a conflict in the
+	 *         database and {@link CreatedException} if the techSkill is created
+	 * @author Lucas Royackkers, Thomas Decamp
+	 */
+	public HttpException createTechSkillAndGrade(JsonNode jTechSkill) {
+
+		TechSkill newTechSkill = new TechSkill();
+		newTechSkill.setName(jTechSkill.get("name").textValue());
+		if(jTechSkill.get("grade").floatValue() >= 1 && jTechSkill.get("grade").floatValue() <= 4) {
+			newTechSkill.setGrade(jTechSkill.get("grade").floatValue());
 		}
-		else{
-			return null;
+
+		try {
+			techSkillRepository.save(newTechSkill);
+		} catch (Exception e) {
+			return new ConflictException();
 		}
+		return new CreatedException();
 	}
 
 }
