@@ -49,7 +49,9 @@ public class TechSkillBusinessController {
 	 *         database and {@link CreatedException} if the techSkill is created
 	 * @author Thomas Decamp
 	 */
-	public HttpException createTechSkillAndGrade(JsonNode jTechSkill, UserRole role) {
+	public HttpException createTechSkill(JsonNode jTechSkill, UserRole role) {
 		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) ? techSkillEntityController.createTechSkill(jTechSkill) : new ForbiddenException();
 	}
+
+
 }
