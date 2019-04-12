@@ -88,7 +88,7 @@ public class JobEntityController {
 	 * @param jJob JsonNode with all Job parameters 
 	 * @return {@link HttpException} corresponding to the status of the
 	 *         request ({@link RessourceNotFoundException} if the resource is not found
-	 *         and {@link OkException} if the Job is desactivated
+	 *         and {@link OkException} if the Job is deactivated
 	 * @author Lucas Royackkers
 	 */
 	public HttpException deleteJob(JsonNode jJob) {
@@ -96,7 +96,7 @@ public class JobEntityController {
 		
 		if (JobOptionnal.isPresent()) {
 			Job job = JobOptionnal.get();
-			job.setTitle("desactivated" + System.currentTimeMillis());
+			job.setTitle("deactivated" + System.currentTimeMillis());
 			jobRepository.save(job);
 		}
 		else {

@@ -10,6 +10,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import fr.alten.ambroiseJEE.model.beans.SoftSkill;
 import fr.alten.ambroiseJEE.model.dao.SoftSkillRepository;
+import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
+import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
+import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
+import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
 
 /**
  * Soft skill controller for entity gestion rules
@@ -42,32 +47,88 @@ public class SoftSkillEntityController {
 	 * @author Lucas Royackkers
 	 */
 	public Optional<SoftSkill> getSoftSkillByNameAndGrade(String name,float grade) {
-		return softSkillRepository.findSoftSkillByNameAndGrade(name,grade);
+		return softSkillRepository.findByNameAndGrade(name,grade);
+	}
+
+	/**
+	 * @return the list of all softSkills
+	 * @author Thomas Decamp
+	 */
+	public List<SoftSkill> getSoftSkills() {
+		return softSkillRepository.findAll();
 	}
 	
 	/**
-	 * Method to create a couple between a grade and a SoftSkill (for skills sheet)
+	 * Method to create a softSkill.
 	 * 
-	 * @param jSoftSkill the JsonNode containing all soft skill parameters
-	 * @return a SoftSkill object if a corresponding name is found, null if not
-	 * @author Lucas Royackkers
+	 * @param jSoftSkill JsonNode with all softSkill parameters
+	 * @return the @see {@link HttpException} corresponding to the status of the
+	 *         request ({@link ConflictException} if there is a conflict in the
+	 *         database and {@link CreatedException} if the softSkill is created
+	 * @author Lucas Royackkers, Thomas Decamp
 	 */
-	public SoftSkill createSoftSkill(JsonNode jSoftSkill) {
-		Optional<SoftSkill> optionalSoftSkill = this.getSoftSkillByNameAndGrade(jSoftSkill.get("name").textValue(),Float.parseFloat(jSoftSkill.get("grade").textValue()));
-		if(!optionalSoftSkill.isPresent()){
-			SoftSkill softSkill = new SoftSkill();
+	public HttpException createSoftSkillAndGrade(JsonNode jSoftSkill) {
+
+		SoftSkill newSoftSkill = new SoftSkill();
+		newSoftSkill.setName(jSoftSkill.get("name").textValue());
+		if(jSoftSkill.get("grade").floatValue() >= 1 && jSoftSkill.get("grade").floatValue() <= 4) {
+			newSoftSkill.setGrade(jSoftSkill.get("grade").floatValue());
+		} else {
+			return new ConflictException();
+		}
+
+		try {
+			softSkillRepository.save(newSoftSkill);
+		} catch (Exception e) {
+			return new ConflictException();
+		}
+		return new CreatedException();
+	}
+
+
+	/**
+	 * 
+	 * @param jSoftSkill JsonNode with all SoftSkill parameters and the old name to perform the update even if the name is changed
+	 * @return the @see {@link HttpException} corresponding to the status of the
+	 *         request ({@link RessourceNotFoundException} if the resource is not found
+	 *         and {@link CreatedException} if the SoftSkill is updated
+	 * @author Thomas Decamp
+	 */
+	public HttpException updateSoftSkill(JsonNode jSoftSkill) {
+		Optional<SoftSkill> SoftSkillOptionnal = softSkillRepository.findByName(jSoftSkill.get("oldName").textValue());
+		
+		if (SoftSkillOptionnal.isPresent()) {
+			SoftSkill softSkill = SoftSkillOptionnal.get();
 			softSkill.setName(jSoftSkill.get("name").textValue());
-			//The grade has to be between 1 and 4
-			float grade = Float.parseFloat(jSoftSkill.get("grade").textValue());
-			if(grade >= 1 && grade <= 4) {
-				softSkill.setGrade(grade);
-			}
-			return softSkill;
+			
+			softSkillRepository.save(softSkill);
 		}
-		else{
-			return null;
+		else {
+			throw new RessourceNotFoundException();
+		}		
+		return new OkException();
+	}
+
+	/**
+	 * 
+	 * @param name the SoftSkill name to fetch 
+	 * @return {@link HttpException} corresponding to the status of the
+	 *         request ({@link RessourceNotFoundException} if the resource is not found
+	 *         and {@link OkException} if the SoftSkill is deactivated
+	 * @author Thomas Decamp
+	 */
+	public HttpException deleteSoftSkill(String name) {
+		Optional<SoftSkill> SoftSkillOptionnal = softSkillRepository.findByName(name);
+		
+		if (SoftSkillOptionnal.isPresent()) {
+			SoftSkill softSkill = SoftSkillOptionnal.get();
+			softSkill.setName("deactivated" + System.currentTimeMillis());
+			softSkillRepository.save(softSkill);
 		}
+		else {
+			throw new RessourceNotFoundException();
+		}		
+		return new OkException();
 	}
 	
-
 }

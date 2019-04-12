@@ -30,6 +30,6 @@ public interface SoftSkillRepository extends MongoRepository<SoftSkill,Long>{
 	 * @return An Optional with the corresponding soft skill or not. 
 	 * @author Lucas Royackkers
 	 */
-	public Optional<SoftSkill> findSoftSkillByNameAndGrade(String name,float grade);
+	public Optional<SoftSkill> findByNameAndGrade(String name,float grade);
 
 }

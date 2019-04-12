@@ -70,15 +70,15 @@ public class PersonEntityController {
 			Person person = optionalPerson.get();
 			switch(role) {
 			case APPLICANT:
-				person.setSurname("Desactivated");
-				person.setName("Desactivated");
+				person.setSurname("Deactivated");
+				person.setName("Deactivated");
 				break;
 			default:
 				person.setSurname("Demissionaire");
 				person.setName("Demissionaire");
 				break;
 			}
-			person.setMail("desactivated" + System.currentTimeMillis()+"@desactivated.com");
+			person.setMail("deactivated" + System.currentTimeMillis()+"@deactivated.com");
 			person.setEmployer(null);
 			person.setUrlDocs(null);
 			person.setRole(PersonRole.DEMISSIONAIRE);

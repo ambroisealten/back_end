@@ -37,7 +37,7 @@ public class UserBusinessController {
 	 * 
 	 * @param jUser JsonNode with all user parameters (forname, mail, name, password
 	 *              and role)
-	 * @return the @see {@link HttpException} corresponding to the statut of the
+	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ConflictException} if there is a conflict in the
 	 *         database and {@link CreatedException} if the user is created
 	 * @author Andy Chabalier, Maxime Maquinghen
@@ -92,8 +92,8 @@ public class UserBusinessController {
 	 *              password) and the oldMail to perform the update even if the mail
 	 *              is changed
 	 * @param role  user role
-	 * @return the @see {@link HttpException} corresponding to the statut of the
-	 *         request ({@link RessourceNotFoundException} if the ressource is not
+	 * @return the @see {@link HttpException} corresponding to the status of the
+	 *         request ({@link RessourceNotFoundException} if the resource is not
 	 *         found and {@link CreatedException} if the user is updated
 	 * @author MAQUINGHEN MAXIME
 	 */
@@ -106,8 +106,8 @@ public class UserBusinessController {
 	 * 
 	 * @param params the user mail to delete
 	 * @param role   the user role
-	 * @return @see {@link HttpException} corresponding to the statut of the request
-	 *         ({@link ForbiddenException} if the ressource is not found and
+	 * @return @see {@link HttpException} corresponding to the status of the request
+	 *         ({@link ForbiddenException} if the resource is not found and
 	 *         {@link CreatedException} if the user is updated
 	 * @author MAQUINGHEN MAXIME
 	 */

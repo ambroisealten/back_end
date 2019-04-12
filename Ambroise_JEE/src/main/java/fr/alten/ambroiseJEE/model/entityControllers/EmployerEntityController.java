@@ -83,7 +83,7 @@ public class EmployerEntityController {
 	 * @param jEmployer JsonNode with all employer parameters
 	 * @return {@link HttpException} corresponding to the status of the
 	 *         request ({@link RessourceNotFoundException} if the resource is not found
-	 *         and {@link OkException} if the employer is desactivated
+	 *         and {@link OkException} if the employer is deactivated
 	 * @author Lucas Royackkers
 	 */
 	public HttpException deleteEmployer(JsonNode jEmployer) {
@@ -91,7 +91,7 @@ public class EmployerEntityController {
 		
 		if (employerOptionnal.isPresent()) {
 			Employer employer = employerOptionnal.get();
-			employer.setName("desactivated" + System.currentTimeMillis());
+			employer.setName("deactivated" + System.currentTimeMillis());
 			employerRepository.save(employer);
 		}
 		else {

@@ -29,6 +29,6 @@ public interface TechSkillRepository extends MongoRepository<TechSkill,Long>{
 	 * @return An Optional with the corresponding tech skill or not. 
 	 * @author Lucas Royackkers
 	 */
-	public Optional<TechSkill> findTechSkillByNameAndGrade(String name,float grade);
+	public Optional<TechSkill> findByNameAndGrade(String name,float grade);
 
 }
