@@ -74,6 +74,8 @@ public class TechSkillEntityController {
 		newTechSkill.setName(jTechSkill.get("name").textValue());
 		if(jTechSkill.get("grade").floatValue() >= 1 && jTechSkill.get("grade").floatValue() <= 4) {
 			newTechSkill.setGrade(jTechSkill.get("grade").floatValue());
+		} else {
+			return new ConflictException();
 		}
 
 		try {

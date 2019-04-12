@@ -73,6 +73,8 @@ public class SoftSkillEntityController {
 		newSoftSkill.setName(jSoftSkill.get("name").textValue());
 		if(jSoftSkill.get("grade").floatValue() >= 1 && jSoftSkill.get("grade").floatValue() <= 4) {
 			newSoftSkill.setGrade(jSoftSkill.get("grade").floatValue());
+		} else {
+			return new ConflictException();
 		}
 
 		try {
