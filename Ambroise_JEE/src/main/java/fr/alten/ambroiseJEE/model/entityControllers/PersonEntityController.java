@@ -118,7 +118,7 @@ public class PersonEntityController {
 			person.setMail(jPerson.get("mail").textValue());
 			
 			List<String> docList= new ArrayList<String>();
-			JsonNode docNode = jPerson.get("docs");
+			JsonNode docNode = jPerson.get("urlDocs");
 			for(JsonNode doc : docNode) {
 				docList.add(doc.get("url").textValue());
 			}
@@ -177,7 +177,7 @@ public class PersonEntityController {
 		newPerson.setRole(type);
 		newPerson.setMail(jPerson.get("mail").textValue());
 		List<String> docList= new ArrayList<String>();
-		JsonNode docNode = jPerson.get("docs");
+		JsonNode docNode = jPerson.get("urlDocs");
 		for(JsonNode doc : docNode) {
 			docList.add(doc.get("url").textValue());
 		}
