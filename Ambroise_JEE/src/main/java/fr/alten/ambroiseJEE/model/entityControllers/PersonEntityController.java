@@ -81,7 +81,7 @@ public class PersonEntityController {
 			person.setMail("desactivated" + System.currentTimeMillis()+"@desactivated.com");
 			person.setEmployer(null);
 			person.setUrlDocs(null);
-			person.setRole(null);
+			person.setRole(PersonRole.DEMISSIONAIRE);
 			person.setMonthlyWage(0);
 			person.setJob(null);
 			
