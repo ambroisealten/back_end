@@ -124,12 +124,12 @@ public class PersonEntityController {
 			}
 			person.setUrlDocs(docList);
 			
-			Optional<User> personInCharge = userEntityController.getUserByMail(jPerson.get("managerMail").textValue());
+			Optional<User> personInCharge = userEntityController.getUserByMail(jPerson.get("personInChargeMail").textValue());
 			if(personInCharge.isPresent()) {
-				person.setPersonInCharge(personInCharge.get().getMail());
+				person.setPersonInChargeMail(personInCharge.get().getMail());
 			}
 			
-			Optional<Diploma> diploma = diplomaEntityController.getDiplomaByNameAndYearOfResult(jPerson.get("diplomaName").textValue(),jPerson.get("diplomaYear").textValue());
+			Optional<Diploma> diploma = diplomaEntityController.getDiplomaByNameAndYearOfResult(jPerson.get("highestDiplomaName").textValue(),jPerson.get("highestDiplomaYear").textValue());
 			if(diploma.isPresent()) {
 				person.setHighestDiploma(diploma.get().get_id().toString());
 			}
@@ -184,12 +184,12 @@ public class PersonEntityController {
 		}
 		newPerson.setUrlDocs(docList);
 		
-		Optional<User> personInCharge = userEntityController.getUserByMail(jPerson.get("managerMail").textValue());
+		Optional<User> personInCharge = userEntityController.getUserByMail(jPerson.get("personInChargeMail").textValue());
 		if(personInCharge.isPresent()) {
-			newPerson.setPersonInCharge(personInCharge.get().getMail());
+			newPerson.setPersonInChargeMail(personInCharge.get().getMail());
 		}
 		
-		Optional<Diploma> diploma = diplomaEntityController.getDiplomaByNameAndYearOfResult(jPerson.get("diplomaName").textValue(),jPerson.get("diplomaYear").textValue());
+		Optional<Diploma> diploma = diplomaEntityController.getDiplomaByNameAndYearOfResult(jPerson.get("highestDiplomaName").textValue(),jPerson.get("highestDiplomaYear").textValue());
 		if(diploma.isPresent()) {
 			newPerson.setHighestDiploma(diploma.get().get_id().toString());
 		}
