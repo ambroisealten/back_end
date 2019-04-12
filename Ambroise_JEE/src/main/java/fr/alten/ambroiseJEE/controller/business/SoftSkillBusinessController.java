@@ -49,7 +49,7 @@ public class SoftSkillBusinessController {
 	 * @author Thomas Decamp
 	 */
 	public HttpException createSoftSkill(JsonNode jSoftSkill, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) ? softSkillEntityController.createSoftSkill(jSoftSkill) : new ForbiddenException();
+		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) ? softSkillEntityController.createSoftSkillAndGrade(jSoftSkill) : new ForbiddenException();
 	}
 
 
