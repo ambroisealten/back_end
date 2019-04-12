@@ -1,6 +1,7 @@
 package fr.alten.ambroiseJEE.model.entityControllers;
 
 import java.util.List;
+import java.util.Iterator;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,13 +96,15 @@ public class TechSkillEntityController {
 	 * @author Thomas Decamp
 	 */
 	public HttpException updateTechSkill(JsonNode jTechSkill) {
-		Optional<<List>TechSkills> TechSkillOptionnal = techSkillRepository.findTechSkillsByName(jTechSkill.get("oldName").textValue());
+		Optional<List<TechSkill>> TechSkillOptionnal = techSkillRepository.findTechSkillsByName(jTechSkill.get("oldName").textValue());
 		
 		if (TechSkillOptionnal.isPresent()) {
-			TechSkill techSkill = TechSkillOptionnal.get();
-			techSkill.setName(jTechSkill.get("name").textValue());
-			
-			techSkillRepository.save(techSkill);
+			//for (TechSkillOptionnal) {				
+				TechSkill techSkill = TechSkillOptionnal.get(0);
+				techSkill.setName(jTechSkill.get("name").textValue());
+				
+				techSkillRepository.save(techSkill);
+			//}
 		}
 		else {
 			throw new RessourceNotFoundException();
