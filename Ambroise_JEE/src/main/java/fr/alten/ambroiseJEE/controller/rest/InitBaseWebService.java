@@ -259,12 +259,10 @@ public class InitBaseWebService {
 		newCandidatMichel.setJob("Développeur full stack");
 		newCandidatMichel.setHighestDiploma("EiCESI");
 		newCandidatMichel.setPersonInCharge("tempUserAdminManager@mail.com");
-		List<String> newCandidatMichelDocs = new ArrayList<String>();
-		newCandidatMichelDocs.add("cv.pdf");
-		newCandidatMichelDocs.add("image.jpg");
-		newCandidatMichel.setUrlDocs(newCandidatMichelDocs);
+		
 		JsonNode newCandidatMichelJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(newCandidatMichel).getAsJsonObject());
 		((ObjectNode) newCandidatMichelJsonNode).put("monthlyWage", "2525");
+		((ObjectNode) newCandidatMichelJsonNode).putNull("urlDocs");
 		applicantBusinessController.createApplicant(newCandidatMichelJsonNode, UserRole.MANAGER_ADMIN);
 		
 		Person newCandidatPaul = new Person();
@@ -276,12 +274,10 @@ public class InitBaseWebService {
 		newCandidatPaul.setHighestDiploma("MASTER");
 		newCandidatPaul.setRole(PersonRole.APPLICANT);
 		newCandidatPaul.setPersonInCharge("tempUserAdminManager@mail.com");
-		List<String> newCandidatPaulDocs = new ArrayList<String>();
-		newCandidatPaulDocs.add("cv.pdf");
-		newCandidatPaulDocs.add("image.jpg");
-		newCandidatPaul.setUrlDocs(newCandidatPaulDocs);
+		
 		JsonNode newCandidatPaulJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(newCandidatPaul).getAsJsonObject());
 		((ObjectNode) newCandidatPaulJsonNode).put("monthlyWage", "2150");
+		((ObjectNode) newCandidatPaulJsonNode).putNull("urlDocs");
 		applicantBusinessController.createApplicant(newCandidatPaulJsonNode, UserRole.MANAGER_ADMIN);
 		
 		Person newCandidatCyprien = new Person();
@@ -293,12 +289,9 @@ public class InitBaseWebService {
 		newCandidatCyprien.setHighestDiploma("ENSISA");
 		newCandidatCyprien.setRole(PersonRole.CONSULTANT);
 		newCandidatCyprien.setPersonInCharge("tempUserAdminManager@mail.com");
-		List<String> newCandidatCyprienDocs = new ArrayList<String>();
-		newCandidatCyprienDocs.add("cv.pdf");
-		newCandidatCyprienDocs.add("image.jpg");
-		newCandidatCyprien.setUrlDocs(newCandidatMichelDocs);
+		
 		JsonNode newCandidatCyprienJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(newCandidatCyprien).getAsJsonObject());
-		((ObjectNode) newCandidatPaulJsonNode).put("monthlyWage", "4525");
+		((ObjectNode) newCandidatCyprienJsonNode).putNull("urlDocs");
 		consultantBusinessController.createConsultant(newCandidatCyprienJsonNode, UserRole.MANAGER_ADMIN);
 		
 		Person newCandidatJeanClaude = new Person();
@@ -310,12 +303,9 @@ public class InitBaseWebService {
 		newCandidatJeanClaude.setHighestDiploma("EPITECH");
 		newCandidatJeanClaude.setRole(PersonRole.CONSULTANT);
 		newCandidatJeanClaude.setPersonInCharge("tempUserAdminManager@mail.com");
-		List<String> newCandidatJeanClaudeDocs = new ArrayList<String>();
-		newCandidatJeanClaudeDocs.add("cv.pdf");
-		newCandidatJeanClaudeDocs.add("image.jpg");
-		newCandidatJeanClaude.setUrlDocs(newCandidatMichelDocs);
+		
 		JsonNode newCandidatJeanClaudeJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(newCandidatJeanClaude).getAsJsonObject());
-		((ObjectNode) newCandidatPaulJsonNode).put("monthlyWage", "3420");
+		((ObjectNode) newCandidatJeanClaudeJsonNode).putNull("urlDocs");
 		consultantBusinessController.createConsultant(newCandidatJeanClaudeJsonNode, UserRole.MANAGER_ADMIN);
 		
 	}

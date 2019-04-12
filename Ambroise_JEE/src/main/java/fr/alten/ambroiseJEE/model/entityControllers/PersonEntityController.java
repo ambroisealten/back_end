@@ -178,6 +178,7 @@ public class PersonEntityController {
 		newPerson.setMail(jPerson.get("mail").textValue());
 		List<String> docList= new ArrayList<String>();
 		JsonNode docNode = jPerson.get("urlDocs");
+		
 		for(JsonNode doc : docNode) {
 			docList.add(doc.get("url").textValue());
 		}
