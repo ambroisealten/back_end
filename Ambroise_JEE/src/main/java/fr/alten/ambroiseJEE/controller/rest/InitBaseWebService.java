@@ -294,6 +294,7 @@ public class InitBaseWebService {
 		newCandidatCyprien.setPersonInChargeMail("tempUserAdminManager@mail.com");
 		
 		JsonNode newCandidatCyprienJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(newCandidatCyprien).getAsJsonObject());
+		((ObjectNode) newCandidatCyprienJsonNode).put("monthlyWage","4525");
 		((ObjectNode) newCandidatCyprienJsonNode).putNull("urlDocs");
 		consultantBusinessController.createConsultant(newCandidatCyprienJsonNode, UserRole.MANAGER_ADMIN);
 		
@@ -309,6 +310,7 @@ public class InitBaseWebService {
 		newCandidatJeanClaude.setPersonInChargeMail("tempUserAdminManager@mail.com");
 		
 		JsonNode newCandidatJeanClaudeJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(newCandidatJeanClaude).getAsJsonObject());
+		((ObjectNode) newCandidatJeanClaudeJsonNode).put("monthlyWage","3215");
 		((ObjectNode) newCandidatJeanClaudeJsonNode).putNull("urlDocs");
 		consultantBusinessController.createConsultant(newCandidatJeanClaudeJsonNode, UserRole.MANAGER_ADMIN);
 		
