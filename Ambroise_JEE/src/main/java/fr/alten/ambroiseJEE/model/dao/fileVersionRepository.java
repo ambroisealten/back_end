@@ -9,7 +9,6 @@ import fr.alten.ambroiseJEE.model.beans.File;
  * @author MAQUINGHEN MAXIME
  *
  */
-public interface fileVersionRepository extends MongoRepository<File, Long> {
+public interface FileVersionRepository extends MongoRepository<File, Long> {
 
-	
 }
