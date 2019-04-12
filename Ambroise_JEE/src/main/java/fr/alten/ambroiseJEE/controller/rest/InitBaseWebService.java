@@ -5,6 +5,8 @@ package fr.alten.ambroiseJEE.controller.rest;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,14 +19,22 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import fr.alten.ambroiseJEE.controller.business.AgencyBusinessController;
+import fr.alten.ambroiseJEE.controller.business.ApplicantBusinessController;
+import fr.alten.ambroiseJEE.controller.business.ConsultantBusinessController;
 import fr.alten.ambroiseJEE.controller.business.DiplomaBusinessController;
+import fr.alten.ambroiseJEE.controller.business.EmployerBusinessController;
+import fr.alten.ambroiseJEE.controller.business.JobBusinessController;
 import fr.alten.ambroiseJEE.controller.business.UserBusinessController;
 import fr.alten.ambroiseJEE.controller.business.geographic.GeographicBusinessController;
 import fr.alten.ambroiseJEE.model.beans.Agency;
 import fr.alten.ambroiseJEE.model.beans.Diploma;
+import fr.alten.ambroiseJEE.model.beans.Employer;
+import fr.alten.ambroiseJEE.model.beans.Job;
+import fr.alten.ambroiseJEE.model.beans.Person;
 import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.JsonUtils;
+import fr.alten.ambroiseJEE.utils.PersonRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 
@@ -48,6 +58,18 @@ public class InitBaseWebService {
 	
 	@Autowired
 	private DiplomaBusinessController diplomaBusinessController;
+	
+	@Autowired
+	private EmployerBusinessController employerBusinessController;
+	
+	@Autowired
+	private JobBusinessController jobBusinessController;
+	
+	@Autowired
+	private ApplicantBusinessController applicantBusinessController;
+	
+	@Autowired
+	private ConsultantBusinessController consultantBusinessController;
 
 	private final Gson gson;
 
@@ -71,36 +93,30 @@ public class InitBaseWebService {
 		
 		// peupler la base de données géographiques
 		// createGeographics();
-
+		
+		// peupler la base de données des compétences techniques (TechSkill)
+		// createTechSkills();
+		
+		// peupler la base de données des compétences soft (SoftSkill)
+		// createSoftSkill();
+		
 		// peupler la base de données Géographiques
 		// createAgencies();
-		
-		// peupler la base de données des personnes (identités consultants, candidats)
-		createPersons();
 
 		// peupler la base d'utilisateurs
 		// createUsers();
+		
+		// peupler la base de données des personnes (identités consultants, candidats)
+		createPersons();
+		
+		// peupler la base de données des matrices de compétences
+		// createSkillsSheets();
 
 		return new CreatedException();
 	}
 
-	private void createPersons() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	private void createJobs() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	private void createEmployers() {
-		// TODO Auto-generated method stub
-		
-	}
-
 	/**
-	 * 
+	 * Create an populate Database with diplomas
 	 * 
 	 * @author Lucas Royackkers
 	 * @throws IOException 
@@ -112,6 +128,195 @@ public class InitBaseWebService {
 		diplomaEpitech.setYearOfResult("2019");
 		JsonNode diplomaEpitechJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(diplomaEpitech).getAsJsonObject());
 		diplomaBusinessController.createDiploma(diplomaEpitechJsonNode, UserRole.MANAGER_ADMIN);
+		
+		Diploma diplomaEnsisa = new Diploma();
+		diplomaEnsisa.setName("ENSISA");
+		diplomaEnsisa.setYearOfResult("2019");
+		JsonNode diplomaEnsisaJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(diplomaEnsisa).getAsJsonObject());
+		diplomaBusinessController.createDiploma(diplomaEnsisaJsonNode, UserRole.MANAGER_ADMIN);
+		
+		Diploma diplomaTelNancy = new Diploma();
+		diplomaTelNancy.setName("Telecom Nancy");
+		diplomaTelNancy.setYearOfResult("2019");
+		JsonNode diplomaTelNancyJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(diplomaTelNancy).getAsJsonObject());
+		diplomaBusinessController.createDiploma(diplomaTelNancyJsonNode, UserRole.MANAGER_ADMIN);
+			
+		Diploma diplomaEnsiie = new Diploma();
+		diplomaEnsiie.setName("ENSIIE");
+		diplomaEnsiie.setYearOfResult("2019");
+		JsonNode diplomaEnsiieJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(diplomaEnsiie).getAsJsonObject());
+		diplomaBusinessController.createDiploma(diplomaEnsiieJsonNode, UserRole.MANAGER_ADMIN);
+		
+		Diploma diplomaEiCesi = new Diploma();
+		diplomaEiCesi.setName("EiCESI");
+		diplomaEiCesi.setYearOfResult("2019");
+		JsonNode diplomaEiCesiJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(diplomaEiCesi).getAsJsonObject());
+		diplomaBusinessController.createDiploma(diplomaEiCesiJsonNode, UserRole.MANAGER_ADMIN);
+		
+		Diploma diplomaMaster= new Diploma();
+		diplomaMaster.setName("MASTER");
+		diplomaMaster.setYearOfResult("2019");
+		JsonNode diplomaMasterJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(diplomaMaster).getAsJsonObject());
+		diplomaBusinessController.createDiploma(diplomaMasterJsonNode, UserRole.MANAGER_ADMIN);
+	}
+	
+	/**
+	 * Create and populate Database with Employers
+	 * 
+	 * @author Lucas Royackkers
+	 * @throws IOException 
+	 */
+	private void createEmployers() throws IOException {
+		Employer bouygues = new Employer();
+		bouygues.setName("Bouygues");
+		JsonNode bouyguesJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(bouygues).getAsJsonObject());
+		employerBusinessController.createEmployer(bouyguesJsonNode, UserRole.MANAGER_ADMIN);
+		
+		Employer sopra = new Employer();
+		sopra.setName("Sopra");
+		JsonNode sopraJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(sopra).getAsJsonObject());
+		employerBusinessController.createEmployer(sopraJsonNode, UserRole.MANAGER_ADMIN);
+		
+		Employer alstom = new Employer();
+		alstom.setName("Alstom");
+		JsonNode alstomJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(alstom).getAsJsonObject());
+		employerBusinessController.createEmployer(alstomJsonNode, UserRole.MANAGER_ADMIN);
+		
+		Employer capgemini = new Employer();
+		capgemini.setName("Capgemini");
+		JsonNode capgeminiJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(capgemini).getAsJsonObject());
+		employerBusinessController.createEmployer(capgeminiJsonNode, UserRole.MANAGER_ADMIN);
+		
+		Employer ge = new Employer();
+		ge.setName("G.E.");
+		JsonNode geJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(ge).getAsJsonObject());
+		employerBusinessController.createEmployer(geJsonNode, UserRole.MANAGER_ADMIN);
+		
+		Employer alten = new Employer();
+		alten.setName("ALTEN");
+		JsonNode altenJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(alten).getAsJsonObject());
+		employerBusinessController.createEmployer(altenJsonNode, UserRole.MANAGER_ADMIN);
+		
+	}
+	
+	/**
+	 * Create and populate Database with Jobs
+	 * 
+	 * @author Lucas Royackkers
+	 * @throws IOException 
+	 */
+	private void createJobs() throws IOException {
+		Job ingenieurSystem = new Job();
+		ingenieurSystem.setTitle("Ingénieur système");
+		JsonNode ingenieurSystemJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(ingenieurSystem).getAsJsonObject());
+		jobBusinessController.createJob(ingenieurSystemJsonNode, UserRole.MANAGER_ADMIN);
+		
+		Job ingenieurWeb = new Job();
+		ingenieurWeb.setTitle("Ingénieur WEB");
+		JsonNode ingenieurWebJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(ingenieurWeb).getAsJsonObject());
+		jobBusinessController.createJob(ingenieurWebJsonNode, UserRole.MANAGER_ADMIN);
+		
+		Job ingenieurReseau = new Job();
+		ingenieurReseau.setTitle("Ingénieur réseau");
+		JsonNode ingenieurReseauJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(ingenieurReseau).getAsJsonObject());
+		jobBusinessController.createJob(ingenieurReseauJsonNode, UserRole.MANAGER_ADMIN);
+		
+		Job webDesigner = new Job();
+		webDesigner.setTitle("Web Designer");
+		JsonNode webDesignerJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(webDesigner).getAsJsonObject());
+		jobBusinessController.createJob(webDesignerJsonNode, UserRole.MANAGER_ADMIN);
+		
+		Job chefDeProjetIT = new Job();
+		chefDeProjetIT.setTitle("Chef de projet IT");
+		JsonNode chefDeProjetITJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(chefDeProjetIT).getAsJsonObject());
+		jobBusinessController.createJob(chefDeProjetITJsonNode, UserRole.MANAGER_ADMIN);
+		
+		Job devOps = new Job();
+		devOps.setTitle("DevOps");
+		JsonNode devOpsJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(devOps).getAsJsonObject());
+		jobBusinessController.createJob(devOpsJsonNode, UserRole.MANAGER_ADMIN);
+		
+		Job devFullStack = new Job();
+		devFullStack.setTitle("Développeur full stack");
+		JsonNode devFullStackJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(devFullStack).getAsJsonObject());
+		jobBusinessController.createJob(devFullStackJsonNode, UserRole.MANAGER_ADMIN);
+		
+	}
+	
+	/**
+	 * Create and populate Database with persons
+	 * 
+	 * @author Lucas Royackkers
+	 * @throws IOException 
+	 * @throws ParseException 
+	 */
+	private void createPersons() throws IOException, ParseException {
+		Person newCandidatMichel = new Person();
+		newCandidatMichel.setSurname("Michel");
+		newCandidatMichel.setName("Test");
+		newCandidatMichel.setMail("michel.test@gmail.com");
+		newCandidatMichel.setMonthlyWage(2525);
+		newCandidatMichel.setEmployer("Sopra");
+		newCandidatMichel.setJob("Développeur full stack");
+		newCandidatMichel.setHighestDiploma("EiCESI");
+		newCandidatMichel.setPersonInCharge("tempUserAdminManager@mail.com");
+		List<String> newCandidatMichelDocs = new ArrayList<String>();
+		newCandidatMichelDocs.add("cv.pdf");
+		newCandidatMichelDocs.add("image.jpg");
+		newCandidatMichel.setUrlDocs(newCandidatMichelDocs);
+		JsonNode newCandidatMichelJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(newCandidatMichel).getAsJsonObject());
+		applicantBusinessController.createApplicant(newCandidatMichelJsonNode, UserRole.MANAGER_ADMIN);
+		
+		Person newCandidatPaul = new Person();
+		newCandidatPaul.setSurname("Paul");
+		newCandidatPaul.setName("Test");
+		newCandidatPaul.setMail("paul.test@gmail.com");
+		newCandidatPaul.setMonthlyWage(2150);
+		newCandidatPaul.setEmployer("Alstom");
+		newCandidatPaul.setJob("Ingénieur système");
+		newCandidatPaul.setHighestDiploma("MASTER");
+		newCandidatPaul.setRole(PersonRole.APPLICANT);
+		newCandidatPaul.setPersonInCharge("tempUserAdminManager@mail.com");
+		List<String> newCandidatPaulDocs = new ArrayList<String>();
+		newCandidatPaulDocs.add("cv.pdf");
+		newCandidatPaulDocs.add("image.jpg");
+		newCandidatPaul.setUrlDocs(newCandidatPaulDocs);
+		JsonNode newCandidatPaulJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(newCandidatPaul).getAsJsonObject());
+		applicantBusinessController.createApplicant(newCandidatPaulJsonNode, UserRole.MANAGER_ADMIN);
+		
+		Person newCandidatCyprien = new Person();
+		newCandidatCyprien.setSurname("Cyprien");
+		newCandidatCyprien.setName("Test");
+		newCandidatCyprien.setMail("cyprien.test@gmail.com");
+		newCandidatCyprien.setMonthlyWage(4525);
+		newCandidatCyprien.setEmployer("ALTEN");
+		newCandidatCyprien.setJob("Chef de projet IT");
+		newCandidatCyprien.setHighestDiploma("ENSISA");
+		newCandidatCyprien.setRole(PersonRole.CONSULTANT);
+		newCandidatCyprien.setPersonInCharge("tempUserAdminManager@mail.com");
+		List<String> newCandidatCyprienDocs = new ArrayList<String>();
+		newCandidatCyprienDocs.add("cv.pdf");
+		newCandidatCyprienDocs.add("image.jpg");
+		newCandidatCyprien.setUrlDocs(newCandidatMichelDocs);
+		JsonNode newCandidatCyprienJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(newCandidatCyprien).getAsJsonObject());
+		consultantBusinessController.createConsultant(newCandidatCyprienJsonNode, UserRole.MANAGER_ADMIN);
+		
+		Person newCandidatJeanClaude = new Person();
+		newCandidatJeanClaude.setSurname("Jean-Claude");
+		newCandidatJeanClaude.setName("Test");
+		newCandidatJeanClaude.setMail("jc.test@gmail.com");
+		newCandidatJeanClaude.setMonthlyWage(3420);
+		newCandidatJeanClaude.setEmployer("ALTEN");
+		newCandidatJeanClaude.setJob("DevOps");
+		newCandidatJeanClaude.setHighestDiploma("EPITECH");
+		newCandidatJeanClaude.setRole(PersonRole.CONSULTANT);
+		newCandidatJeanClaude.setPersonInCharge("tempUserAdminManager@mail.com");
+		List<String> newCandidatJeanClaudeDocs = new ArrayList<String>();
+		newCandidatJeanClaudeDocs.add("cv.pdf");
+		newCandidatJeanClaudeDocs.add("image.jpg");
+		newCandidatJeanClaude.setUrlDocs(newCandidatMichelDocs);
+		JsonNode newCandidatJeanClaudeJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(newCandidatJeanClaude).getAsJsonObject());
+		consultantBusinessController.createConsultant(newCandidatJeanClaudeJsonNode, UserRole.MANAGER_ADMIN);
 		
 	}
 
