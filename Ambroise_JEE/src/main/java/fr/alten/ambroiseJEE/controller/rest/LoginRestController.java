@@ -49,7 +49,7 @@ public class LoginRestController {
 	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 */
 	//@PostMapping(value = "/login")
-	@PostMapping(value = "/async")
+	@PostMapping(value = "/login")
 	@ResponseBody
 	@CrossOrigin(origins = "http://localhost:4200")
 	public String login(@RequestBody JsonNode params) throws Exception {
