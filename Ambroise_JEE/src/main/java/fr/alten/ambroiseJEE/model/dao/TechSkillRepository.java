@@ -19,7 +19,7 @@ public interface TechSkillRepository extends MongoRepository<TechSkill,Long>{
 	 * @return An Optional with the corresponding tech skill or not. 
 	 * @author Lucas Royackkers
 	 */
-	public Optional<TechSkill> findByName(String name);
+	public Optional<<List>TechSkills> findTechSkillsByName(String name);
 	
 	/**
 	 * Fetch tech skill by name and grade
@@ -28,6 +28,6 @@ public interface TechSkillRepository extends MongoRepository<TechSkill,Long>{
 	 * @return An Optional with the corresponding tech skill or not. 
 	 * @author Lucas Royackkers
 	 */
-	public Optional<TechSkill> findByNameAndGrade(String name,float grade);
+	public Optional<TechSkill> findTechSkillsByNameAndGrade(String name,float grade);
 
 }

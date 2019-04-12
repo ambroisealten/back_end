@@ -95,7 +95,7 @@ public class TechSkillEntityController {
 	 * @author Thomas Decamp
 	 */
 	public HttpException updateTechSkill(JsonNode jTechSkill) {
-		Optional<TechSkill> TechSkillOptionnal = techSkillRepository.findByName(jTechSkill.get("oldName").textValue());
+		Optional<<List>TechSkills> TechSkillOptionnal = techSkillRepository.findTechSkillsByName(jTechSkill.get("oldName").textValue());
 		
 		if (TechSkillOptionnal.isPresent()) {
 			TechSkill techSkill = TechSkillOptionnal.get();
@@ -118,7 +118,7 @@ public class TechSkillEntityController {
 	 * @author Thomas Decamp
 	 */
 	public HttpException deleteTechSkill(String name) {
-		Optional<TechSkill> TechSkillOptionnal = techSkillRepository.findByName(name);
+		Optional<TechSkill> TechSkillOptionnal = techSkillRepository.findTechSkillsByName(name);
 		
 		if (TechSkillOptionnal.isPresent()) {
 			TechSkill techSkill = TechSkillOptionnal.get();
