@@ -129,7 +129,7 @@ public class PersonEntityController {
 				person.setPersonInChargeMail(personInCharge.get().getMail());
 			}
 			
-			Optional<Diploma> diploma = diplomaEntityController.getDiplomaByNameAndYearOfResult(jPerson.get("highestDiplomaName").textValue(),jPerson.get("highestDiplomaYear").textValue());
+			Optional<Diploma> diploma = diplomaEntityController.getDiplomaByNameAndYearOfResult(jPerson.get("highestDiploma").textValue(),jPerson.get("highestDiplomaYear").textValue());
 			if(diploma.isPresent()) {
 				person.setHighestDiploma(diploma.get().get_id().toString());
 			}
@@ -189,7 +189,7 @@ public class PersonEntityController {
 			newPerson.setPersonInChargeMail(personInCharge.get().getMail());
 		}
 		
-		Optional<Diploma> diploma = diplomaEntityController.getDiplomaByNameAndYearOfResult(jPerson.get("highestDiplomaName").textValue(),jPerson.get("highestDiplomaYear").textValue());
+		Optional<Diploma> diploma = diplomaEntityController.getDiplomaByNameAndYearOfResult(jPerson.get("highestDiploma").textValue(),jPerson.get("highestDiplomaYear").textValue());
 		if(diploma.isPresent()) {
 			newPerson.setHighestDiploma(diploma.get().get_id().toString());
 		}
