@@ -111,7 +111,7 @@ public class PersonEntityController {
 			Person person = optionalPerson.get();
 			person.setSurname(jPerson.get("surname").textValue());
 			person.setName(jPerson.get("name").textValue());
-			person.setMonthlyWage(Integer.parseInt(jPerson.get("monthlyWage").textValue()));
+			person.setMonthlyWage(Float.parseFloat((jPerson.get("monthlyWage").textValue())));
 			
 			person.setRole(role);
 
@@ -173,7 +173,7 @@ public class PersonEntityController {
 		Person newPerson = new Person();
 		newPerson.setSurname(jPerson.get("surname").textValue());
 		newPerson.setName(jPerson.get("name").textValue());
-		newPerson.setMonthlyWage(Integer.parseInt(jPerson.get("monthlyWage").textValue()));
+		newPerson.setMonthlyWage(Float.parseFloat(jPerson.get("monthlyWage").textValue()));
 		newPerson.setRole(type);
 		newPerson.setMail(jPerson.get("mail").textValue());
 		List<String> docList= new ArrayList<String>();
