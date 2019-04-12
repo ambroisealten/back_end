@@ -258,7 +258,8 @@ public class InitBaseWebService {
 		newCandidatMichel.setEmployer("Sopra");
 		newCandidatMichel.setJob("Développeur full stack");
 		newCandidatMichel.setHighestDiploma("EiCESI");
-		newCandidatMichel.setPersonInCharge("tempUserAdminManager@mail.com");
+		newCandidatMichel.setHighestDiplomaYear("2019");
+		newCandidatMichel.setPersonInChargeMail("tempUserAdminManager@mail.com");
 		
 		JsonNode newCandidatMichelJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(newCandidatMichel).getAsJsonObject());
 		((ObjectNode) newCandidatMichelJsonNode).put("monthlyWage", "2525");
@@ -272,8 +273,9 @@ public class InitBaseWebService {
 		newCandidatPaul.setEmployer("Alstom");
 		newCandidatPaul.setJob("Ingénieur système");
 		newCandidatPaul.setHighestDiploma("MASTER");
+		newCandidatPaul.setHighestDiplomaYear("2019");
 		newCandidatPaul.setRole(PersonRole.APPLICANT);
-		newCandidatPaul.setPersonInCharge("tempUserAdminManager@mail.com");
+		newCandidatPaul.setPersonInChargeMail("tempUserAdminManager@mail.com");
 		
 		JsonNode newCandidatPaulJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(newCandidatPaul).getAsJsonObject());
 		((ObjectNode) newCandidatPaulJsonNode).put("monthlyWage", "2150");
@@ -287,8 +289,9 @@ public class InitBaseWebService {
 		newCandidatCyprien.setEmployer("ALTEN");
 		newCandidatCyprien.setJob("Chef de projet IT");
 		newCandidatCyprien.setHighestDiploma("ENSISA");
+		newCandidatCyprien.setHighestDiplomaYear("2019");
 		newCandidatCyprien.setRole(PersonRole.CONSULTANT);
-		newCandidatCyprien.setPersonInCharge("tempUserAdminManager@mail.com");
+		newCandidatCyprien.setPersonInChargeMail("tempUserAdminManager@mail.com");
 		
 		JsonNode newCandidatCyprienJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(newCandidatCyprien).getAsJsonObject());
 		((ObjectNode) newCandidatCyprienJsonNode).putNull("urlDocs");
@@ -301,8 +304,9 @@ public class InitBaseWebService {
 		newCandidatJeanClaude.setEmployer("ALTEN");
 		newCandidatJeanClaude.setJob("DevOps");
 		newCandidatJeanClaude.setHighestDiploma("EPITECH");
+		newCandidatJeanClaude.setHighestDiplomaYear("2019");
 		newCandidatJeanClaude.setRole(PersonRole.CONSULTANT);
-		newCandidatJeanClaude.setPersonInCharge("tempUserAdminManager@mail.com");
+		newCandidatJeanClaude.setPersonInChargeMail("tempUserAdminManager@mail.com");
 		
 		JsonNode newCandidatJeanClaudeJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(newCandidatJeanClaude).getAsJsonObject());
 		((ObjectNode) newCandidatJeanClaudeJsonNode).putNull("urlDocs");
