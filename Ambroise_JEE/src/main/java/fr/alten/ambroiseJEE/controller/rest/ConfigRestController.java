@@ -15,6 +15,7 @@ import fr.alten.ambroiseJEE.security.UserRole;
 /**
  * Rest Controller for Menu items configuration
  * @author Camille Schnell
+ * @author Kylian Gehier
  *
  */
 @Controller
@@ -32,13 +33,26 @@ public class ConfigRestController {
 	 * @param role the user role
 	 * @return json reponse containing all menus and submenus items
 	 * @author Camille Schnell
+	 * @author Kylian Gehier
 	 * @throws FileNotFoundException 
 	 */
 	@GetMapping(value = "/configMenu")
 	@ResponseBody
-	@CrossOrigin(origins = "http://localhost:4200")
 	public String getMenuItems(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) throws FileNotFoundException {
-		return configMenuBusinessController.getItems(role);
+		return configMenuBusinessController.getMenuItems(role);
+	}
+	
+	/**
+	 *
+	 * @param role the user role
+	 * @return json reponse containing Routing list depending of user's role
+	 * @author Kylian Gehier
+	 * @throws FileNotFoundException 
+	 */
+	@GetMapping(value = "/configRouting")
+	@ResponseBody
+	public String getRoutingItems(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) throws FileNotFoundException {
+		return configMenuBusinessController.getRoutingItems(role);
 	}
 	
 }

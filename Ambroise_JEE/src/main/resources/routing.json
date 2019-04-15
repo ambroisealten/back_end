@@ -6,23 +6,31 @@
 				"content",
 				"skills",
 				"skillsSheet"
-			],
+			]
+		},
+		{
 			"role": "CDR_ADMIN",
 			"routes": [
 				"content",
 				"skills",
 				"skillsSheet"
-			],
+			]
+		},
+		{
 			"role": "MANAGER",
 			"routes": [
 				"content",
 				"skills",
 				"skillsSheet"
-			],
+			]
+		},
+		{
 			"role": "CDR",
 			"routes": [
 				"content",
 				"skills",
 				"skillsSheet"
 			]
+		}
+	]
 }
