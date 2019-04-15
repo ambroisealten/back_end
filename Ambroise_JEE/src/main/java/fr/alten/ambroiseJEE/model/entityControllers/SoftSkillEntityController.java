@@ -73,11 +73,11 @@ public class SoftSkillEntityController {
 		newSoftSkill.setName(jSoftSkill.get("name").textValue());
 		for(SoftSkillGrade softGrade : SoftSkillGrade.values()) {
 			newSoftSkill.setGrade(softGrade);
-		}
-		try {
-			softSkillRepository.save(newSoftSkill);
-		} catch (Exception e) {
-			return new ConflictException();
+			try {
+				softSkillRepository.save(newSoftSkill);
+			} catch (Exception e) {
+				return new ConflictException();
+			}
 		}
 		return new CreatedException();
 	}

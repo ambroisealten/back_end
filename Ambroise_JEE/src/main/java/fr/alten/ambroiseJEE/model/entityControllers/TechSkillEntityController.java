@@ -73,11 +73,11 @@ public class TechSkillEntityController {
 		newTechSkill.setName(jTechSkill.get("name").textValue());
 		for(TechSkillGrade techGrade : TechSkillGrade.values()) {
 			newTechSkill.setGrade(techGrade);
-		}
-		try {
-			techSkillRepository.save(newTechSkill);
-		} catch (Exception e) {
-			return new ConflictException();
+			try {
+				techSkillRepository.save(newTechSkill);
+			} catch (Exception e) {
+				return new ConflictException();
+			}
 		}
 		return new CreatedException();
 	}
