@@ -20,8 +20,10 @@ import com.google.gson.GsonBuilder;
 
 import fr.alten.ambroiseJEE.controller.business.ForumBusinessController;
 import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
+import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
@@ -65,8 +67,8 @@ public class ForumRestController {
 	/**
 	 * get the list of all forums
 	 * 
-	 * @param role role of the user
-	 * @return the list of all users
+	 * @param role the user role
+	 * @return the forum list
 	 * @author MAQUINGHEN MAXIME
 	 */
 	@GetMapping(value = "/forums")
@@ -76,19 +78,34 @@ public class ForumRestController {
 	}
 
 	/**
-	 * Get a forum by name, date, place
+	 * Get a forum
 	 * 
-	 * @param id   the Forum unique ID
-	 * @param role the role of the user
-	 * @return
+	 * @param name  the forum name
+	 * @param date  the forum data
+	 * @param place the forum place
+	 * @param role  the user role
+	 * @return the forum data
 	 * @author MAQUINGHEN MAXIME
 	 */
 	@GetMapping(value = "/forum/{name}/{date}/{place}")
 	@ResponseBody
-	public String getForum(@PathVariable String name, @PathVariable String date, @PathVariable String place, @RequestAttribute("role") UserRole role) {
-		return gson.toJson(forumBusinessController.getForum(name, date, place,role));
+	public String getForum(@PathVariable String name, @PathVariable String date, @PathVariable String place,
+			@RequestAttribute("role") UserRole role) {
+		return gson.toJson(forumBusinessController.getForum(name, date, place, role));
 	}
 
+	/**
+	 * Update a forum
+	 * 
+	 * @param params contain the forum name, date, place
+	 * @param role   the user role
+	 * @return the @see {@link HttpException} corresponding to the statut of the
+	 *         request ({@link UnprocessableEntityException}) when the forum cannot
+	 *         be found ({@link RessourceNotFoundException} if the ressource is not
+	 *         found and {@link CreatedException} if the forum is updated
+	 * @throws Exception
+	 * @author MAQUINGHEN MAXIME
+	 */
 	@PutMapping(value = "/forum")
 	@ResponseBody
 	public HttpException updateForum(@RequestBody JsonNode params, @RequestAttribute("role") UserRole role)
@@ -97,6 +114,18 @@ public class ForumRestController {
 				: new UnprocessableEntityException();
 	}
 
+	/**
+	 * Delete a forum
+	 * 
+	 * @param params contain the forum name, date, place
+	 * @param role   the user role
+	 * @return the @see {@link HttpException} corresponding to the statut of the
+	 *         request ({@link UnprocessableEntityException}) when the forum cannot
+	 *         be found ({@link RessourceNotFoundException} if the ressource is not
+	 *         found and {@link CreatedException} if the forum is deleted
+	 * @throws Exception
+	 * @author MAQUINGHEN MAXIME
+	 */
 	@DeleteMapping(value = "/forum")
 	@ResponseBody
 	public HttpException deleteForum(@RequestBody JsonNode params, @RequestAttribute("role") UserRole role)

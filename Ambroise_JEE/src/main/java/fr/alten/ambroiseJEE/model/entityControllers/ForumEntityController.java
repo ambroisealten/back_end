@@ -30,18 +30,22 @@ public class ForumEntityController {
 	private ForumRepository forumRepository;
 
 	/**
-	 * Method to create a Forum.
+	 * Create a Forum
 	 * 
-	 * @param jForum JsonNode with all forum parameters (Name, date, place)
-	 * @return
+	 * @param jForum contain the forum name, the date and the place to create
+	 * @return {@link HttpException} corresponding to the statut of the request
+	 *         ({@link ConflictException} if the ressource cannot be create
+	 *         {@link CreatedException} if the forum is create
 	 * @author MAQUINGHEN MAXIME
 	 */
 	public HttpException createForum(JsonNode jForum) {
-		Optional<Forum> forumOptional = forumRepository.findByNameAndDateAndPlace(jForum.get("name").textValue(), jForum.get("date").textValue(), jForum.get("place").textValue());
+		Optional<Forum> forumOptional = forumRepository.findByNameAndDateAndPlace(jForum.get("name").textValue(),
+				jForum.get("date").textValue(), jForum.get("place").textValue());
 
 		if (forumOptional.isPresent()) {
 			return new ConflictException();
 		}
+
 		Forum newForum = new Forum();
 
 		newForum.setName(jForum.get("name").textValue());
@@ -57,7 +61,7 @@ public class ForumEntityController {
 	}
 
 	/**
-	 * try to fetch all forums
+	 * Fetch all forums
 	 * 
 	 * @return the list of all forum
 	 * @author MAQUINGHEN MAXIME
@@ -67,16 +71,17 @@ public class ForumEntityController {
 	}
 
 	/**
-	 * Desactivate a forum TO DO = Nothing happen now
+	 * Delete a Forum
 	 * 
-	 * @param id the id of the forum to fetch
+	 * @param params contain the name, date and place of the forum to delete
 	 * @return {@link HttpException} corresponding to the statut of the request
-	 *         ({@link RessourceNotFoundException} if the ressource is not found and
-	 *         {@link CreatedException} if the forum is desactivated
+	 *         ({@link RessourceNotFoundException} if the ressource cannot be found
+	 *         {@link OkException} if the forum is deleted
 	 * @author MAQUINGHEN MAXIME
 	 */
 	public HttpException deleteForum(JsonNode params) {
-		Optional<Forum> forumOptional = forumRepository.findByNameAndDateAndPlace(params.get("name").textValue(), params.get("date").textValue(), params.get("place").textValue());
+		Optional<Forum> forumOptional = forumRepository.findByNameAndDateAndPlace(params.get("name").textValue(),
+				params.get("date").textValue(), params.get("place").textValue());
 
 		if (forumOptional.isPresent()) {
 			Forum forum = forumOptional.get();
@@ -87,8 +92,18 @@ public class ForumEntityController {
 		return new OkException();
 	}
 
+	/**
+	 * Update a forum data
+	 * 
+	 * @param params contain the forum oldname, olddate and oldplace to update
+	 * @return {@link HttpException} corresponding to the statut of the request
+	 *         ({@link RessourceNotFoundException} if the ressource cannot be found
+	 *         {@link OkException} if the forum is updated
+	 * @author MAQUINGHEN MAXIME
+	 */
 	public HttpException updateForum(JsonNode params) {
-		Optional<Forum> forumOptional = forumRepository.findByNameAndDateAndPlace(params.get("oldname").textValue(), params.get("olddate").textValue(), params.get("oldplace").textValue());
+		Optional<Forum> forumOptional = forumRepository.findByNameAndDateAndPlace(params.get("oldname").textValue(),
+				params.get("olddate").textValue(), params.get("oldplace").textValue());
 
 		if (forumOptional.isPresent()) {
 			Forum forum = forumOptional.get();
@@ -100,17 +115,16 @@ public class ForumEntityController {
 			throw new RessourceNotFoundException();
 		}
 		return new OkException();
-
 	}
 
 	/**
-	 * Get Forum by ID
+	 * Get a specific forum
 	 * 
-	 * @param id the unique Id of the forum
-	 * @return the forum
+	 * @param name  the name of the forum
+	 * @param date  the date of the forum
+	 * @param place the place of the forum
+	 * @return an Optional forum data
 	 * @author MAQUINGHEN MAXIME
-	 * @param place 
-	 * @param date 
 	 */
 	public Optional<Forum> getForum(String name, String date, String place) {
 		return forumRepository.findByNameAndDateAndPlace(name, date, place);

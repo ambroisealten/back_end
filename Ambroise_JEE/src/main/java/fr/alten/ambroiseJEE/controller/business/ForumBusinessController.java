@@ -47,10 +47,10 @@ public class ForumBusinessController {
 	}
 
 	/**
-	 * Method to delegate fetching of all users
+	 * Method to delegate fetching of all forums
 	 * 
 	 * @param role user role
-	 * @return the list of all Forum
+	 * @return the list of all Forums
 	 * @author MAQUINGHEN MAXIME
 	 */
 	public List<Forum> getForums(UserRole role) {
@@ -62,14 +62,13 @@ public class ForumBusinessController {
 	}
 
 	/**
-	 * Update un forum
 	 * 
+	 * @param params the forum name, date, place
+	 * @param role   the user role
 	 * @return the @see {@link HttpException} corresponding to the statut of the
 	 *         request ({@link RessourceNotFoundException} if the ressource is not
 	 *         found and {@link CreatedException} if the forum is updated
 	 * @author MAQUINGHEN MAXIME
-	 * @param role
-	 * @param params
 	 */
 	public HttpException updateForum(JsonNode params, UserRole role) {
 		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)
@@ -80,26 +79,36 @@ public class ForumBusinessController {
 	/**
 	 * Delete a forum
 	 * 
+	 * @param params the forum name, date, place
+	 * @param role   the users role
 	 * @return @see {@link HttpException} corresponding to the statut of the request
 	 *         ({@link ForbiddenException} if the ressource is not found and
 	 *         {@link CreatedException} if the forum is desactivated
 	 * @author MAQUINGHEN MAXIME
-	 * @param role
-	 * @param params
 	 */
 	public HttpException deleteForum(JsonNode params, UserRole role) {
 		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.CDR == role
-				|| UserRole.MANAGER == role) ? forumEntityController.deleteForum(params)
-						: new ForbiddenException();
+				|| UserRole.MANAGER == role) ? forumEntityController.deleteForum(params) : new ForbiddenException();
 	}
 
+	/**
+	 * Get a forum
+	 * 
+	 * @param name  the forum name
+	 * @param date  the forum date
+	 * @param place the forum place
+	 * @param role  the user role
+	 * @return An Optional with forum data or {@link ForbiddenException} for right
+	 *         problem
+	 * @author MAQUINGHEN MAXIME
+	 */
 	public Optional<Forum> getForum(String name, String date, String place, UserRole role) {
 		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.CDR == role
 				|| UserRole.MANAGER == role) {
 			return forumEntityController.getForum(name, date, place);
 		}
 		throw new ForbiddenException();
-		 
+
 	}
 
 }
