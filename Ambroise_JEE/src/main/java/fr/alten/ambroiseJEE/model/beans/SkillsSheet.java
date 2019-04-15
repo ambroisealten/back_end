@@ -1,10 +1,9 @@
 package fr.alten.ambroiseJEE.model.beans;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.List;
-
 import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
@@ -17,14 +16,15 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class SkillsSheet implements Serializable{
 
 	private static final long serialVersionUID = 4878950681041229894L;
+	@Id
 	private ObjectId _id;
 	private String name;
 	private String mailPersonAttachedTo;
 	private String mailVersionAuthor;
-	private LocalDateTime versionDate;
 	private long versionNumber;
 	private List<TechSkill> techSkillsList;
 	private List<SoftSkill> softSkillsList;
+	private String versionDate;
 	
 	public SkillsSheet() {
 		super();
@@ -62,14 +62,6 @@ public class SkillsSheet implements Serializable{
 		this.mailVersionAuthor = mailVersionAuthor;
 	}
 
-	public LocalDateTime getVersionDate() {
-		return versionDate;
-	}
-
-	public void setVersionDate(LocalDateTime versionDate) {
-		this.versionDate = versionDate;
-	}
-
 	public long getVersionNumber() {
 		return versionNumber;
 	}
@@ -92,6 +84,14 @@ public class SkillsSheet implements Serializable{
 
 	public void setSoftSkillsList(List<SoftSkill> softSkillsList) {
 		this.softSkillsList = softSkillsList;
+	}
+
+	public String getVersionDate() {
+		return versionDate;
+	}
+
+	public void setVersionDate(String versionDate) {
+		this.versionDate = versionDate;
 	}
 	
 }
