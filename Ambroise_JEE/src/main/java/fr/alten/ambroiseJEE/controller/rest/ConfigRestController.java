@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import fr.alten.ambroiseJEE.controller.business.ConfigMenuBusinessController;
+import fr.alten.ambroiseJEE.controller.business.ConfigBusinessController;
 import fr.alten.ambroiseJEE.security.UserRole;
 
 /**
@@ -18,12 +18,12 @@ import fr.alten.ambroiseJEE.security.UserRole;
  *
  */
 @Controller
-public class ConfigMenuRestController {
+public class ConfigRestController {
 
 	@Autowired
-	private ConfigMenuBusinessController configMenuBusinessController;
+	private ConfigBusinessController configMenuBusinessController;
 	
-	public ConfigMenuRestController() {
+	public ConfigRestController() {
 		
 	}
 	

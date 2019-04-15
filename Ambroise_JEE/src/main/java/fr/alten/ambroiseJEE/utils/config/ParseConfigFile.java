@@ -70,4 +70,44 @@ public class ParseConfigFile {
 		
 		return gson.toJson(resultJson);
 	}
+	
+	//TO-DO
+	public static String getJsonRoutingByRole(UserRole role) throws FileNotFoundException {
+		BufferedReader jsonFile = null;
+		try {
+			jsonFile = new BufferedReader(new InputStreamReader(new FileInputStream("src/main/resources/config.json"), "ISO-8859-1"));
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+		}
+		
+		JsonElement configElement = new JsonParser().parse(jsonFile);
+		JsonObject configObject = configElement.getAsJsonObject();
+		
+		// get menuItems info from json
+		JsonArray menuItemsArray = configObject.get("menuItems").getAsJsonArray();
+		JsonElement menuElement = menuItemsArray.get(0);
+		
+		// get access rights String for current UserRole
+		JsonArray accessRightsArray = (JsonArray) menuElement.getAsJsonObject().get("access");
+		String currentRoleRights = accessRightsArray.get(0).getAsJsonObject().get(role.toString()).toString();
+		
+		// get array containing menus for each module
+		JsonArray modulesArray = (JsonArray) menuElement.getAsJsonObject().get("modules");
+		
+		// create result Json
+		JsonObject resultJson = new JsonObject();
+		JsonArray resultModulesArray = new JsonArray();
+		
+		// put menus info into result Json
+		for(int i = 0; i < modulesArray.size(); i++) {
+			String moduleName = modulesArray.get(i).getAsJsonObject().get("label").toString();
+			if(currentRoleRights.contains(moduleName.subSequence(1, moduleName.length()-1)))
+				resultModulesArray.add(modulesArray.get(i));
+		}
+		
+		resultJson.add("modules", resultModulesArray);
+		
+		return gson.toJson(resultJson);
+ 	
+	}
 }

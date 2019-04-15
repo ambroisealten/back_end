@@ -14,7 +14,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
  *
  */
 @Service
-public class ConfigMenuBusinessController {	
+public class ConfigBusinessController {	
 	
 	/**
 	 * 
