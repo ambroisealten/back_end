@@ -22,6 +22,6 @@ public interface ForumRepository extends MongoRepository<Forum, Long> {
 	 * @return An Optional with the corresponding forum or not.
 	 * @author MAQUINGHEN MAXIME
 	 */
-	Optional<Forum> findById(String id);
+	Optional<Forum> findBy_id(String _id);
 
 }

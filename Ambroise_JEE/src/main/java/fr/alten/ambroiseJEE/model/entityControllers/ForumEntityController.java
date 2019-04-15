@@ -72,7 +72,7 @@ public class ForumEntityController {
 	 * @author MAQUINGHEN MAXIME
 	 */
 	public HttpException deleteForum(String id) {
-		Optional<Forum> forumOptional = forumRepository.findById(id);
+		Optional<Forum> forumOptional = forumRepository.findBy_id(id);
 
 		if (forumOptional.isPresent()) {
 			Forum forum = forumOptional.get();
@@ -97,7 +97,7 @@ public class ForumEntityController {
 	 * @author MAQUINGHEN MAXIME
 	 */
 	public Optional<Forum> getForumById(String id) {
-		return forumRepository.findById(id);
+		return forumRepository.findBy_id(id);
 	}
 
 }
