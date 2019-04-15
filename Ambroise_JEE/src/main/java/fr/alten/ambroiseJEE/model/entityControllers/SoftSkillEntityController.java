@@ -34,7 +34,7 @@ public class SoftSkillEntityController {
 	 * @return An Optional with the corresponding soft skill or not.
 	 * @author Lucas Royackkers
 	 */
-	public Optional<SoftSkill> getSoftSkillByName(String name) {
+	public List<SoftSkill> getSoftSkillByName(String name) {
 		return softSkillRepository.findByName(name);
 	}
 	
@@ -95,17 +95,15 @@ public class SoftSkillEntityController {
 	 * @author Thomas Decamp
 	 */
 	public HttpException updateSoftSkill(JsonNode jSoftSkill) {
-		Optional<SoftSkill> SoftSkillOptionnal = softSkillRepository.findByName(jSoftSkill.get("oldName").textValue());
-		
-		if (SoftSkillOptionnal.isPresent()) {
-			SoftSkill softSkill = SoftSkillOptionnal.get();
-			softSkill.setName(jSoftSkill.get("name").textValue());
-			
-			softSkillRepository.save(softSkill);
+		List<SoftSkill> softSkills = softSkillRepository.findByName(jSoftSkill.get("oldName").textValue());
+		if(softSkills.isEmpty()) {
+			return new RessourceNotFoundException();
 		}
-		else {
-			throw new RessourceNotFoundException();
-		}		
+		String newName = jSoftSkill.get("name").textValue();
+		for (SoftSkill softSkill : softSkills) {
+			softSkill.setName(newName);
+			softSkillRepository.save(softSkill);
+		}	
 		return new OkException();
 	}
 
@@ -117,16 +115,14 @@ public class SoftSkillEntityController {
 	 *         and {@link OkException} if the SoftSkill is deactivated
 	 * @author Thomas Decamp
 	 */
-	public HttpException deleteSoftSkill(String name) {
-		Optional<SoftSkill> SoftSkillOptionnal = softSkillRepository.findByName(name);
-		
-		if (SoftSkillOptionnal.isPresent()) {
-			SoftSkill softSkill = SoftSkillOptionnal.get();
+	public HttpException deleteSoftSkill(JsonNode jSoftSkill) {
+		List<SoftSkill> softSkills = softSkillRepository.findByName(jSoftSkill.get("name").textValue());
+		if(softSkills.isEmpty()) {
+			return new RessourceNotFoundException();
+		}
+		for (SoftSkill softSkill : softSkills) {
 			softSkill.setName("deactivated" + System.currentTimeMillis());
 			softSkillRepository.save(softSkill);
-		}
-		else {
-			throw new RessourceNotFoundException();
 		}		
 		return new OkException();
 	}

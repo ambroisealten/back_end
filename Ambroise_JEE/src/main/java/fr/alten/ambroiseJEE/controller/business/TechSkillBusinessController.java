@@ -32,7 +32,7 @@ public class TechSkillBusinessController {
 	private TechSkillEntityController techSkillEntityController;
 	
 
-	public Optional<TechSkill> getTechSkill(String name) {
+	public List<TechSkill> getTechSkill(String name) {
 		return techSkillEntityController.getTechSkillByName(name);
 	}
 
@@ -89,8 +89,8 @@ public class TechSkillBusinessController {
 	 *         and {@link CreatedException} if the techSkill is deleted
 	 * @author Thomas Decamp
 	 */
-	public HttpException deleteTechSkill(JsonNode params, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) ? techSkillEntityController.deleteTechSkill(params.get("name").textValue()) : new ForbiddenException();
+	public HttpException deleteTechSkill(JsonNode jTechSkill, UserRole role) {
+		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) ? techSkillEntityController.deleteTechSkill(jTechSkill) : new ForbiddenException();
 	}
 
 }
