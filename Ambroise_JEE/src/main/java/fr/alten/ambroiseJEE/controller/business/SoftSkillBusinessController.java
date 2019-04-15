@@ -32,7 +32,7 @@ public class SoftSkillBusinessController {
 	private SoftSkillEntityController softSkillEntityController;
 	
 
-	public Optional<SoftSkill> getSoftSkill(String name) {
+	public List<SoftSkill> getSoftSkill(String name) {
 		return softSkillEntityController.getSoftSkillByName(name);
 	}
 	
@@ -89,8 +89,8 @@ public class SoftSkillBusinessController {
 	 *         and {@link CreatedException} if the softSkill is deleted
 	 * @author Thomas Decamp
 	 */
-	public HttpException deleteSoftSkill(JsonNode params, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) ? softSkillEntityController.deleteSoftSkill(params.get("name").textValue()) : new ForbiddenException();
+	public HttpException deleteSoftSkill(JsonNode jSoftSkill, UserRole role) {
+		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) ? softSkillEntityController.deleteSoftSkill(jSoftSkill) : new ForbiddenException();
 	}
 
 }

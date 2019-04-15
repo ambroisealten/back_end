@@ -1,5 +1,6 @@
 package fr.alten.ambroiseJEE.model.dao;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -19,7 +20,7 @@ public interface TechSkillRepository extends MongoRepository<TechSkill,Long>{
 	 * @return An Optional with the corresponding tech skill or not. 
 	 * @author Lucas Royackkers
 	 */
-	public Optional<TechSkill> findByName(String name);
+	public List<TechSkill> findByName(String name);
 	
 	/**
 	 * Fetch tech skill by name and grade

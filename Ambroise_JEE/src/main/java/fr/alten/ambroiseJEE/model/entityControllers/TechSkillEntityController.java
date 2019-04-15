@@ -26,7 +26,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
 public class TechSkillEntityController {
 	@Autowired
 	private TechSkillRepository techSkillRepository;
-	
+
 	/**
 	 * Try to fetch a tech skill by its name
 	 * 
@@ -34,22 +34,21 @@ public class TechSkillEntityController {
 	 * @return An Optional with the corresponding tech skill or not.
 	 * @author Lucas Royackkers
 	 */
-	public Optional<TechSkill> getTechSkillByName(String name) {
+	public List<TechSkill> getTechSkillByName(String name) {
 		return techSkillRepository.findByName(name);
 	}
-	
+
 	/**
 	 * Try to fetch a tech skill by its name and grade
 	 * 
-	 * @param name the tech skill's name to fetch
+	 * @param name  the tech skill's name to fetch
 	 * @param grade the tech skill's grade to fetch
 	 * @return An Optional with the corresponding tech skill or not.
 	 * @author Lucas Royackkers
 	 */
-	public Optional<TechSkill> getTechSkillByNameAndGrade(String name,float grade) {
-		return techSkillRepository.findByNameAndGrade(name,grade);
+	public Optional<TechSkill> getTechSkillByNameAndGrade(String name, float grade) {
+		return techSkillRepository.findByNameAndGrade(name, grade);
 	}
-	
 
 	/**
 	 * @return the list of all techSkills
@@ -58,7 +57,7 @@ public class TechSkillEntityController {
 	public List<TechSkill> getTechSkills() {
 		return techSkillRepository.findAll();
 	}
-	
+
 	/**
 	 * Method to create a techSkill.
 	 * 
@@ -72,7 +71,7 @@ public class TechSkillEntityController {
 
 		TechSkill newTechSkill = new TechSkill();
 		newTechSkill.setName(jTechSkill.get("name").textValue());
-		if(jTechSkill.get("grade").floatValue() >= 1 && jTechSkill.get("grade").floatValue() <= 4) {
+		if (jTechSkill.get("grade").floatValue() >= 1 && jTechSkill.get("grade").floatValue() <= 4) {
 			newTechSkill.setGrade(jTechSkill.get("grade").floatValue());
 		} else {
 			return new ConflictException();
@@ -88,46 +87,44 @@ public class TechSkillEntityController {
 
 	/**
 	 * 
-	 * @param jTechSkill JsonNode with all TechSkill parameters and the old name to perform the update even if the name is changed
+	 * @param jTechSkill JsonNode with all TechSkill parameters and the old name to
+	 *                   perform the update even if the name is changed
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link RessourceNotFoundException} if the resource is not found
-	 *         and {@link CreatedException} if the TechSkill is updated
+	 *         request ({@link RessourceNotFoundException} if the resource is not
+	 *         found and {@link CreatedException} if the TechSkill is updated
 	 * @author Thomas Decamp
 	 */
 	public HttpException updateTechSkill(JsonNode jTechSkill) {
-		Optional<TechSkill> TechSkillOptionnal = techSkillRepository.findByName(jTechSkill.get("oldName").textValue());
-		
-		if (TechSkillOptionnal.isPresent()) {
-			TechSkill techSkill = TechSkillOptionnal.get();
-			techSkill.setName(jTechSkill.get("name").textValue());
-			
+		List<TechSkill> techSkills = techSkillRepository.findByName(jTechSkill.get("oldName").textValue());
+		if(techSkills.isEmpty()) {
+			return new RessourceNotFoundException();
+		}
+		String newName = jTechSkill.get("name").textValue();
+		for (TechSkill techSkill : techSkills) {
+			techSkill.setName(newName);
 			techSkillRepository.save(techSkill);
 		}
-		else {
-			throw new RessourceNotFoundException();
-		}		
 		return new OkException();
 	}
 
 	/**
 	 * 
-	 * @param name the TechSkill name to fetch 
-	 * @return {@link HttpException} corresponding to the status of the
-	 *         request ({@link RessourceNotFoundException} if the resource is not found
-	 *         and {@link OkException} if the TechSkill is deactivated
+	 * @param name the TechSkill name to fetch
+	 * @return {@link HttpException} corresponding to the status of the request
+	 *         ({@link RessourceNotFoundException} if the resource is not found and
+	 *         {@link OkException} if the TechSkill is deactivated
 	 * @author Thomas Decamp
 	 */
-	public HttpException deleteTechSkill(String name) {
-		Optional<TechSkill> TechSkillOptionnal = techSkillRepository.findByName(name);
-		
-		if (TechSkillOptionnal.isPresent()) {
-			TechSkill techSkill = TechSkillOptionnal.get();
+	public HttpException deleteTechSkill(JsonNode jTechSkill) {
+		List<TechSkill> techSkills = techSkillRepository.findByName(jTechSkill.get("name").textValue());
+		if(techSkills.isEmpty()) {
+			return new RessourceNotFoundException();
+		}
+		for (TechSkill techSkill : techSkills) {
 			techSkill.setName("deactivated" + System.currentTimeMillis());
 			techSkillRepository.save(techSkill);
 		}
-		else {
-			throw new RessourceNotFoundException();
-		}		
+
 		return new OkException();
 	}
 }
