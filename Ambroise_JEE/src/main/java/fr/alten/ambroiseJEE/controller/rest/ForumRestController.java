@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
@@ -52,7 +53,7 @@ public class ForumRestController {
 	 * @throws Exception
 	 * @author MAQUINGHEN MAXIME
 	 */
-	@PostMapping(value = "/forum/")
+	@PostMapping(value = "/forum")
 	@ResponseBody
 	public HttpException createForum(@RequestBody JsonNode params, @RequestAttribute("role") UserRole role)
 			throws Exception {
@@ -75,32 +76,32 @@ public class ForumRestController {
 	}
 
 	/**
-	 * Get a forum by ID
+	 * Get a forum by name, date, place
 	 * 
 	 * @param id   the Forum unique ID
 	 * @param role the role of the user
 	 * @return
 	 * @author MAQUINGHEN MAXIME
 	 */
-	@GetMapping(value = "/forum")
+	@GetMapping(value = "/forum/{name}/{date}/{place}")
 	@ResponseBody
-	public String getForum(@RequestAttribute("id") String id, @RequestAttribute("role") UserRole role) {
-		return gson.toJson(forumBusinessController.getForum(id, role));
+	public String getForum(@PathVariable String name, @PathVariable String date, @PathVariable String place, @RequestAttribute("role") UserRole role) {
+		return gson.toJson(forumBusinessController.getForum(name, date, place,role));
 	}
 
-	@PutMapping(value = "/forum/")
+	@PutMapping(value = "/forum")
 	@ResponseBody
-	public HttpException updateForum(@RequestBody JsonNode params, @RequestAttribute("id") String id,
-			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("id") != null ? forumBusinessController.updateForum(params, role)
+	public HttpException updateForum(@RequestBody JsonNode params, @RequestAttribute("role") UserRole role)
+			throws Exception {
+		return params.get("name") != null ? forumBusinessController.updateForum(params, role)
 				: new UnprocessableEntityException();
 	}
 
 	@DeleteMapping(value = "/forum")
 	@ResponseBody
-	public HttpException deleteForum(@RequestBody JsonNode params, @RequestAttribute("id") String id,
-			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("id") != null ? forumBusinessController.deleteForum(params, role)
+	public HttpException deleteForum(@RequestBody JsonNode params, @RequestAttribute("role") UserRole role)
+			throws Exception {
+		return params.get("name") != null ? forumBusinessController.deleteForum(params, role)
 				: new UnprocessableEntityException();
 	}
 }

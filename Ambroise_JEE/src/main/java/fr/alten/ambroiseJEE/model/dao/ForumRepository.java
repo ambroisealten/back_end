@@ -3,6 +3,7 @@
  */
 package fr.alten.ambroiseJEE.model.dao;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -23,5 +24,15 @@ public interface ForumRepository extends MongoRepository<Forum, Long> {
 	 * @author MAQUINGHEN MAXIME
 	 */
 	Optional<Forum> findBy_id(String _id);
+
+	Optional<Forum> findByNameAndDateAndPlace(String name, String date, String place);
+	/**
+	 * fetch forums by date
+	 * 
+	 * @param date the date pass in parameter
+	 * @return the list of forum
+	 * @author MAQUINGHEN MAXIME
+	 */
+	List<Forum> findByDate(String date);
 
 }

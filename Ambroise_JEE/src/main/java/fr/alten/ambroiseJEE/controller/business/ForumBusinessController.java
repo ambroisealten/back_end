@@ -47,18 +47,6 @@ public class ForumBusinessController {
 	}
 
 	/**
-	 * ask for fetch a forum by is date
-	 * 
-	 * @param date the date of the forum to fetch
-	 * @return an Optional with the corresponding forum or not
-	 * @author MAQUINGHEN MAXIME
-	 */
-	public Optional<Forum> getForumByDate(String id, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.CDR == role
-				|| UserRole.MANAGER == role) ? forumEntityController.getForumById(id) : Optional.empty();
-	}
-
-	/**
 	 * Method to delegate fetching of all users
 	 * 
 	 * @param role user role
@@ -101,13 +89,17 @@ public class ForumBusinessController {
 	 */
 	public HttpException deleteForum(JsonNode params, UserRole role) {
 		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.CDR == role
-				|| UserRole.MANAGER == role) ? forumEntityController.deleteForum(params.get("id").textValue())
+				|| UserRole.MANAGER == role) ? forumEntityController.deleteForum(params)
 						: new ForbiddenException();
 	}
 
-	public Optional<Forum> getForum(String id, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.CDR == role
-				|| UserRole.MANAGER == role) ? forumEntityController.getForumById(id) : Optional.empty();
+	public Optional<Forum> getForum(String name, String date, String place, UserRole role) {
+		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.CDR == role
+				|| UserRole.MANAGER == role) {
+			return forumEntityController.getForum(name, date, place);
+		}
+		throw new ForbiddenException();
+		 
 	}
 
 }

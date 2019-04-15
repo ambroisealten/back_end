@@ -37,7 +37,11 @@ public class ForumEntityController {
 	 * @author MAQUINGHEN MAXIME
 	 */
 	public HttpException createForum(JsonNode jForum) {
+		Optional<Forum> forumOptional = forumRepository.findByNameAndDateAndPlace(jForum.get("name").textValue(), jForum.get("date").textValue(), jForum.get("place").textValue());
 
+		if (forumOptional.isPresent()) {
+			return new ConflictException();
+		}
 		Forum newForum = new Forum();
 
 		newForum.setName(jForum.get("name").textValue());
@@ -71,12 +75,12 @@ public class ForumEntityController {
 	 *         {@link CreatedException} if the forum is desactivated
 	 * @author MAQUINGHEN MAXIME
 	 */
-	public HttpException deleteForum(String id) {
-		Optional<Forum> forumOptional = forumRepository.findBy_id(id);
+	public HttpException deleteForum(JsonNode params) {
+		Optional<Forum> forumOptional = forumRepository.findByNameAndDateAndPlace(params.get("name").textValue(), params.get("date").textValue(), params.get("place").textValue());
 
 		if (forumOptional.isPresent()) {
 			Forum forum = forumOptional.get();
-			forumRepository.save(forum);
+			forumRepository.delete(forum);
 		} else {
 			throw new RessourceNotFoundException();
 		}
@@ -84,9 +88,19 @@ public class ForumEntityController {
 	}
 
 	public HttpException updateForum(JsonNode params) {
-		// Optional<Forum> forumOptional= forumRepository.findById();
+		Optional<Forum> forumOptional = forumRepository.findByNameAndDateAndPlace(params.get("oldname").textValue(), params.get("olddate").textValue(), params.get("oldplace").textValue());
 
-		return null;
+		if (forumOptional.isPresent()) {
+			Forum forum = forumOptional.get();
+			forum.setName(params.get("name").textValue());
+			forum.setDate(params.get("date").textValue());
+			forum.setPlace(params.get("place").textValue());
+			forumRepository.save(forum);
+		} else {
+			throw new RessourceNotFoundException();
+		}
+		return new OkException();
+
 	}
 
 	/**
@@ -95,9 +109,11 @@ public class ForumEntityController {
 	 * @param id the unique Id of the forum
 	 * @return the forum
 	 * @author MAQUINGHEN MAXIME
+	 * @param place 
+	 * @param date 
 	 */
-	public Optional<Forum> getForumById(String id) {
-		return forumRepository.findBy_id(id);
+	public Optional<Forum> getForum(String name, String date, String place) {
+		return forumRepository.findByNameAndDateAndPlace(name, date, place);
 	}
 
 }
