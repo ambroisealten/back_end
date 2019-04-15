@@ -2,6 +2,8 @@ package fr.alten.ambroiseJEE.controller.business;
 
 import java.io.FileNotFoundException;
 
+import org.springframework.stereotype.Service;
+
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.config.ParseConfigFile;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
@@ -11,6 +13,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
  * @author Camille Schnell
  *
  */
+@Service
 public class ConfigMenuBusinessController {	
 	
 	/**

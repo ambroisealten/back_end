@@ -1,8 +1,12 @@
 package fr.alten.ambroiseJEE.utils.config;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -28,10 +32,15 @@ public class ParseConfigFile {
 	 * @throws FileNotFoundException
 	 * @author Camille Schnell
 	 */
-	public static String getJsonMenuItemsByRole(UserRole role) throws FileNotFoundException {		
+	public static String getJsonMenuItemsByRole(UserRole role) throws FileNotFoundException {	
 
 		// read json config file
-		BufferedReader jsonFile = new BufferedReader(new FileReader("src/main/resources/config.json"));
+		BufferedReader jsonFile = null;
+		try {
+			jsonFile = new BufferedReader(new InputStreamReader(new FileInputStream("src/main/resources/config.json"), "ISO-8859-1"));
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+		}
 		JsonElement configElement = new JsonParser().parse(jsonFile);
 		JsonObject configObject = configElement.getAsJsonObject();
 		
