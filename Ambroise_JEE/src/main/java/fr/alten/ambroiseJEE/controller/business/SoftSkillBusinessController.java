@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import fr.alten.ambroiseJEE.model.beans.SoftSkill;
 import fr.alten.ambroiseJEE.model.entityControllers.SoftSkillEntityController;
 import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.utils.SoftSkillGrade;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
@@ -36,7 +37,7 @@ public class SoftSkillBusinessController {
 		return softSkillEntityController.getSoftSkillByName(name);
 	}
 	
-	public Optional<SoftSkill> getSoftSkillByNameAndGrade(String name,float grade) {
+	public Optional<SoftSkill> getSoftSkillByNameAndGrade(String name,SoftSkillGrade grade) {
 		return softSkillEntityController.getSoftSkillByNameAndGrade(name,grade);
 	}
 

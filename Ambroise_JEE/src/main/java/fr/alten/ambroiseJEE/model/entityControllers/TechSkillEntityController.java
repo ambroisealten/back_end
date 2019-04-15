@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import fr.alten.ambroiseJEE.model.beans.TechSkill;
 import fr.alten.ambroiseJEE.model.dao.TechSkillRepository;
+import fr.alten.ambroiseJEE.utils.TechSkillGrade;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
@@ -71,12 +72,9 @@ public class TechSkillEntityController {
 
 		TechSkill newTechSkill = new TechSkill();
 		newTechSkill.setName(jTechSkill.get("name").textValue());
-		if (jTechSkill.get("grade").floatValue() >= 1 && jTechSkill.get("grade").floatValue() <= 4) {
-			newTechSkill.setGrade(jTechSkill.get("grade").floatValue());
-		} else {
-			return new ConflictException();
+		for(TechSkillGrade techGrade : TechSkillGrade.values()) {
+			newTechSkill.setGrade(techGrade);
 		}
-
 		try {
 			techSkillRepository.save(newTechSkill);
 		} catch (Exception e) {
