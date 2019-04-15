@@ -1,14 +1,10 @@
 package fr.alten.ambroiseJEE.utils.config;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-
-import org.bson.json.JsonParseException;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;

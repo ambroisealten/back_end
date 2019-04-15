@@ -1,0 +1,37 @@
+{
+  "routing": [
+    {
+      "role": "MANAGER_ADMIN",
+      "routes": [
+        {
+          "path": " ",
+          "redirectTo": "skills",
+          "pathMatch": "full"
+        },
+        {
+          "path": " skills",
+          "children": [
+            {
+              "path": " ",
+              "component": "PageSkillHomeComponent"
+            },
+            {
+              "path": "skillsSheet",
+              "component": "SkillFormComponent"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "role": "CDR",
+      "routes": [
+        {
+          "path": " ",
+          "redirectTo": "skills",
+          "pathMatch": "full"
+        }
+      ]
+    }
+  ]
+}

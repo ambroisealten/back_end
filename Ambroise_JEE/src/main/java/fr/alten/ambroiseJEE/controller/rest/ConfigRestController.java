@@ -6,11 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import fr.alten.ambroiseJEE.controller.business.ConfigBusinessController;
 import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.utils.routing.AngularModule;
 
 /**
  * Rest Controller for Menu items configuration
@@ -49,10 +51,10 @@ public class ConfigRestController {
 	 * @author Kylian Gehier
 	 * @throws FileNotFoundException 
 	 */
-	@GetMapping(value = "/configRouting")
+	@GetMapping(value = "/configRouting{angularModule}")
 	@ResponseBody
-	public String getRoutingItems(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) throws FileNotFoundException {
-		return configMenuBusinessController.getRoutingItems(role);
+	public String getRoutes(@PathVariable("angularModule") AngularModule module,@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) throws FileNotFoundException {
+		return configMenuBusinessController.getRoutes(role, module);
 	}
 	
 }

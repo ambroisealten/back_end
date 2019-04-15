@@ -22,4 +22,8 @@ public class RessourceNotFoundException extends HttpException {
 	public RessourceNotFoundException() {
 		super();
 	}
+	
+	public RessourceNotFoundException(String message) {
+		super(message);
+	}
 }

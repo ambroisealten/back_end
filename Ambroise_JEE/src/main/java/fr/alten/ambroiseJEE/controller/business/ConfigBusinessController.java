@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.config.ParseConfigFile;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
+import fr.alten.ambroiseJEE.utils.routing.AngularModule;
+import fr.alten.ambroiseJEE.utils.routing.ParseRoutingFile;
 
 /**
  * Business Controller for menu items configuration
@@ -40,9 +42,10 @@ public class ConfigBusinessController {
 	 * @throws FileNotFoundException
 	 *  {@link ForbiddenException} if the user isn't connected
 	 */
-	public String getRoutingItems(UserRole role) throws FileNotFoundException {
+	public String getRoutes(UserRole role, AngularModule module) throws FileNotFoundException {
 		if(!(UserRole.DESACTIVATED == role))
-			return ParseConfigFile.getJsonRoutingItemsByRole(role);
+			return ParseRoutingFile.getJsonRoutingItemsByRole(role, module);
 		throw new ForbiddenException();
 	}
+
 }
