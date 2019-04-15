@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Optional;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import fr.alten.ambroiseJEE.model.beans.Person;
 import fr.alten.ambroiseJEE.model.beans.SkillsSheet;
@@ -22,6 +24,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
 
+@Service
 public class SkillsSheetEntityController {
 	@Autowired
 	private SkillsSheetRepository skillsSheetRepository;
@@ -55,8 +58,8 @@ public class SkillsSheetEntityController {
 	 * @return An Optional with the corresponding skills sheet or not.
 	 * @author Lucas Royackkers
 	 */
-	public Optional<List<SkillsSheet>> getSkillsSheetsByName(String name) {
-		return skillsSheetRepository.findSkillsSheetsByName(name);
+	public List<SkillsSheet> getSkillsSheetsByName(String name) {
+		return skillsSheetRepository.findByName(name);
 	}
 	
 	/**
@@ -67,8 +70,8 @@ public class SkillsSheetEntityController {
 	 * @return An Optional with the corresponding skills sheet or not.
 	 * @author Lucas Royackkers
 	 */
-	public Optional<SkillsSheet> getSkillsSheetByNameAndVersion(String name, long versionNumber){
-		return skillsSheetRepository.findSkillsSheetsByNameAndVersion(name, versionNumber);
+	public Optional<SkillsSheet> getSkillsSheetByNameAndVersionNumber(String name, long versionNumber){
+		return skillsSheetRepository.findByNameAndVersionNumber(name, versionNumber);
 	}
 	
 	
@@ -115,7 +118,7 @@ public class SkillsSheetEntityController {
 			newSkillsSheet.setMailVersionAuthor(userAuthor.get().getMail());
 		}
 		
-		newSkillsSheet.setVersionDate(LocalDateTime.now());
+		newSkillsSheet.setVersionDate(LocalDateTime.now().toString());
 		
 		try {
 			skillsSheetRepository.save(newSkillsSheet);
@@ -182,7 +185,7 @@ public class SkillsSheetEntityController {
 	public HttpException updateSkillsSheet(JsonNode jSkillsSheet) {
 		//We retrieve the latest version number of the skills sheet, in order to increment it later
 		long latestVersionNumber = Long.parseLong(jSkillsSheet.get("versionNumber").textValue());
-		Optional<SkillsSheet> skillsSheetOptional = this.getSkillsSheetByNameAndVersion(jSkillsSheet.get("name").textValue(),latestVersionNumber);
+		Optional<SkillsSheet> skillsSheetOptional = this.getSkillsSheetByNameAndVersionNumber(jSkillsSheet.get("name").textValue(),latestVersionNumber);
 		//If we found the skills sheet, with its name and its version (the Front part will have to send the latest version number)
 		if(skillsSheetOptional.isPresent()) {
 			SkillsSheet skillsSheet = skillsSheetOptional.get();
@@ -214,7 +217,7 @@ public class SkillsSheetEntityController {
 				skillsSheet.setMailVersionAuthor(userAuthor.get().getMail());
 			}
 			
-			skillsSheet.setVersionDate(LocalDateTime.now());
+			skillsSheet.setVersionDate(LocalDateTime.now().toString());
 			
 			skillsSheetRepository.save(skillsSheet);
 		}
