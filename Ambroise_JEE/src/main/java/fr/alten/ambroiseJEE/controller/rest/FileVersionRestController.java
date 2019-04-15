@@ -65,4 +65,10 @@ public class FileVersionRestController {
 		return null;
 	}
 
+	@GetMapping("/version/")
+	@ResponseBody
+	public String getAppData(@RequestAttribute("role") UserRole role) {
+		return gson.toJson(fileVersionBusinessController.setAppVersion(role));
+	}
+
 }
