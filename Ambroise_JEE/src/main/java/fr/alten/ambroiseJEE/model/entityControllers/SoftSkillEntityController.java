@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import fr.alten.ambroiseJEE.model.beans.SoftSkill;
 import fr.alten.ambroiseJEE.model.dao.SoftSkillRepository;
+import fr.alten.ambroiseJEE.utils.SoftSkillGrade;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
@@ -46,7 +47,7 @@ public class SoftSkillEntityController {
 	 * @return An Optional with the corresponding soft skill or not.
 	 * @author Lucas Royackkers
 	 */
-	public Optional<SoftSkill> getSoftSkillByNameAndGrade(String name,float grade) {
+	public Optional<SoftSkill> getSoftSkillByNameAndGrade(String name, SoftSkillGrade grade) {
 		return softSkillRepository.findByNameAndGrade(name,grade);
 	}
 
@@ -68,15 +69,11 @@ public class SoftSkillEntityController {
 	 * @author Lucas Royackkers, Thomas Decamp
 	 */
 	public HttpException createSoftSkillAndGrade(JsonNode jSoftSkill) {
-
 		SoftSkill newSoftSkill = new SoftSkill();
 		newSoftSkill.setName(jSoftSkill.get("name").textValue());
-		if(jSoftSkill.get("grade").floatValue() >= 1 && jSoftSkill.get("grade").floatValue() <= 4) {
-			newSoftSkill.setGrade(jSoftSkill.get("grade").floatValue());
-		} else {
-			return new ConflictException();
+		for(SoftSkillGrade softGrade : SoftSkillGrade.values()) {
+			newSoftSkill.setGrade(softGrade);
 		}
-
 		try {
 			softSkillRepository.save(newSoftSkill);
 		} catch (Exception e) {

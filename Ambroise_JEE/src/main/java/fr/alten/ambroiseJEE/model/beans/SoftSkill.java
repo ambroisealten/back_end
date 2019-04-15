@@ -6,6 +6,8 @@ import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import fr.alten.ambroiseJEE.utils.SoftSkillGrade;
+
 
 /**
  * Defines what a Soft Skill is in our app
@@ -21,17 +23,17 @@ public class SoftSkill implements Serializable{
 	@Id
 	private ObjectId _id;
 	private String name;
-	private float grade;
+	private SoftSkillGrade grade;
 	public String getName() {
 		return name;
 	}
 	public void setName(String name) {
 		this.name = name;
 	}
-	public float getGrade() {
+	public SoftSkillGrade getGrade() {
 		return grade;
 	}
-	public void setGrade(float grade) {
+	public void setGrade(SoftSkillGrade grade) {
 		this.grade = grade;
 	}
 	public ObjectId get_id() {

@@ -6,6 +6,8 @@ import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import fr.alten.ambroiseJEE.utils.TechSkillGrade;
+
 /**
  * Defines what a Tech Skill is in our app
  * 
@@ -20,17 +22,17 @@ public class TechSkill implements Serializable{
 	@Id
 	private ObjectId _id;
 	private String name;
-	private float grade;
+	private TechSkillGrade grade;
 	public String getName() {
 		return name;
 	}
 	public void setName(String name) {
 		this.name = name;
 	}
-	public float getGrade() {
+	public TechSkillGrade getGrade() {
 		return grade;
 	}
-	public void setGrade(float grade) {
+	public void setGrade(TechSkillGrade grade) {
 		this.grade = grade;
 	}
 	public ObjectId get_id() {
@@ -39,7 +41,4 @@ public class TechSkill implements Serializable{
 	public void set_id(ObjectId _id) {
 		this._id = _id;
 	}
-	
-	
-
 }
