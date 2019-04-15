@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import fr.alten.ambroiseJEE.model.beans.TechSkill;
 import fr.alten.ambroiseJEE.model.entityControllers.TechSkillEntityController;
 import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.utils.TechSkillGrade;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
@@ -36,7 +37,7 @@ public class TechSkillBusinessController {
 		return techSkillEntityController.getTechSkillByName(name);
 	}
 
-	public Optional<TechSkill> getTechSkillByNameAndGrade(String name,float grade) {
+	public Optional<TechSkill> getTechSkillByNameAndGrade(String name,TechSkillGrade grade) {
 		return techSkillEntityController.getTechSkillByNameAndGrade(name,grade);
 	}
 

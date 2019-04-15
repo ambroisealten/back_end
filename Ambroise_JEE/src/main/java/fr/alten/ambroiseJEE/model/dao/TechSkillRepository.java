@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import fr.alten.ambroiseJEE.model.beans.TechSkill;
+import fr.alten.ambroiseJEE.utils.TechSkillGrade;
 
 /**
  * @author Lucas Royackkers
@@ -29,6 +30,6 @@ public interface TechSkillRepository extends MongoRepository<TechSkill,Long>{
 	 * @return An Optional with the corresponding tech skill or not. 
 	 * @author Lucas Royackkers
 	 */
-	public Optional<TechSkill> findByNameAndGrade(String name,float grade);
+	public Optional<TechSkill> findByNameAndGrade(String name,TechSkillGrade grade);
 
 }

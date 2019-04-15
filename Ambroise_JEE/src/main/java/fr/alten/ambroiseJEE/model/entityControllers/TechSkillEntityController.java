@@ -47,7 +47,7 @@ public class TechSkillEntityController {
 	 * @return An Optional with the corresponding tech skill or not.
 	 * @author Lucas Royackkers
 	 */
-	public Optional<TechSkill> getTechSkillByNameAndGrade(String name, float grade) {
+	public Optional<TechSkill> getTechSkillByNameAndGrade(String name, TechSkillGrade grade) {
 		return techSkillRepository.findByNameAndGrade(name, grade);
 	}
 
