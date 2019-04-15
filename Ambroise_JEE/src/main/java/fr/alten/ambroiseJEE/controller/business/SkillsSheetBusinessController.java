@@ -45,9 +45,11 @@ public class SkillsSheetBusinessController {
 	 * @return the list of all skills sheets given a name
 	 * @author Lucas Royackkers
 	 */
-	public Optional<List<SkillsSheet>> getSkillsSheets(String name,UserRole role){
-		return (UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role) ? skillsSheetEntityController.getSkillsSheetsByName(name)
-				: Optional.empty();
+	public List<SkillsSheet> getSkillsSheets(String name,UserRole role){
+		if(UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role) {
+			return skillsSheetEntityController.getSkillsSheetsByName(name);
+		}
+		throw new ForbiddenException();
 	}
 	
 	

@@ -56,8 +56,8 @@ public class SkillsSheetEntityController {
 	 * @return An Optional with the corresponding skills sheet or not.
 	 * @author Lucas Royackkers
 	 */
-	public Optional<List<SkillsSheet>> getSkillsSheetsByName(String name) {
-		return skillsSheetRepository.findSkillsSheetsByName(name);
+	public List<SkillsSheet> getSkillsSheetsByName(String name) {
+		return skillsSheetRepository.findByName(name);
 	}
 	
 	/**
@@ -69,7 +69,7 @@ public class SkillsSheetEntityController {
 	 * @author Lucas Royackkers
 	 */
 	public Optional<SkillsSheet> getSkillsSheetByNameAndVersionNumber(String name, long versionNumber){
-		return skillsSheetRepository.findSkillsSheetsByNameAndVersionNumber(name, versionNumber);
+		return skillsSheetRepository.findByNameAndVersionNumber(name, versionNumber);
 	}
 	
 	
