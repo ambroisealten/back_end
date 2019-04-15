@@ -23,16 +23,17 @@ public class FileVersionEntityController {
 
 	/**
 	 * 
-	 * @param appVersion App Document version 
-	 * @param serverVersion Server document version 
-	 * @return {@link OkException} if the data is the same or if the data is different  
+	 * @param appVersion    App Document version
+	 * @param serverVersion Server document version
+	 * @return {@link OkException} if the data is the same or if the data is
+	 *         different
 	 * @author MAQUINGHEN MAXIME
 	 */
 	public HttpException compareVersionData(String appVersion, String serverVersion) {
-		if (appVersion.compareTo(serverVersion) == 0)  {
+		if (appVersion.compareTo(serverVersion) == 0) {
 			return new OkException();
-		}else {
-			 return new OkException();
+		} else {
+			return new OkException();
 		}
 	}
 
@@ -41,6 +42,7 @@ public class FileVersionEntityController {
 	}
 
 	/**
+	 * Get all the document from the current version
 	 * 
 	 * @return the list of all the versionData
 	 * @author MAQUINGHEN MAXIME

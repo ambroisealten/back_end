@@ -3,6 +3,8 @@
  */
 package fr.alten.ambroiseJEE.controller.rest;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,9 +18,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import fr.alten.ambroiseJEE.controller.business.FileVersionBusinessController;
+import fr.alten.ambroiseJEE.model.beans.File;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
-import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
  * @author MAQUINGHEN MAXIME
@@ -46,10 +48,9 @@ public class FileVersionRestController {
 	 */
 	@PostMapping("/version")
 	@ResponseBody
-	public HttpException getAppStatut(@RequestParam("appVersion") String appVersion,
+	public List<File> getAppStatut(@RequestParam("appVersion") String appVersion,
 			@RequestAttribute("role") UserRole role) {
-		return appVersion != null ? fileVersionBusinessController.getAppVersion(appVersion)
-				: new UnprocessableEntityException();
+		return fileVersionBusinessController.getAppVersion(appVersion, role);
 	}
 
 	@GetMapping("/version")

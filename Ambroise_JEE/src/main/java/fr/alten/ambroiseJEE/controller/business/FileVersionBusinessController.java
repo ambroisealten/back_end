@@ -3,9 +3,12 @@
  */
 package fr.alten.ambroiseJEE.controller.business;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import fr.alten.ambroiseJEE.model.beans.File;
 import fr.alten.ambroiseJEE.model.entityControllers.FileVersionEntityController;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
@@ -33,8 +36,12 @@ public class FileVersionBusinessController {
 						: new ForbiddenException();
 	}
 
-	public HttpException getAppVersion(String appVersion) {
-		return null;
+	public List<File> getAppVersion(String appVersion, UserRole role) {
+		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role
+				|| UserRole.CDR == role) {
+			return fileVersionEntityController.getVersionData();
+		}
+		throw new ForbiddenException();
 	}
 
 	public HttpException setAppVersion() {
