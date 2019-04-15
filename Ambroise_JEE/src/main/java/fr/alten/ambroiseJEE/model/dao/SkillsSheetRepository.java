@@ -22,7 +22,7 @@ public interface SkillsSheetRepository extends MongoRepository<SkillsSheet, Long
 	 * @return An Optional with the corresponding skills sheet or not. 
 	 * @author Lucas Royackkers
 	 */
-	public Optional<List<SkillsSheet>> findSkillsSheetsByName(String name);
+	public List<SkillsSheet> findByName(String name);
 	
 	/**
 	 * Fetch skills sheet by name and version number
@@ -32,5 +32,5 @@ public interface SkillsSheetRepository extends MongoRepository<SkillsSheet, Long
 	 * @return An Optional with the corresponding skills sheet or not. 
 	 * @author Lucas Royackkers
 	 */
-	public Optional<SkillsSheet> findSkillsSheetsByNameAndVersionNumber(String name,long versionNumber);	
+	public Optional<SkillsSheet> findByNameAndVersionNumber(String name,long versionNumber);	
 }
