@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.utils.httpStatus;
 
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 /**
  * Exception sent when user isn't connected or gives bad identifiers. HTTP
  * Status : 422.
- * 
+ *
  * @author Andy Chabalier
  *
  */
@@ -19,6 +19,14 @@ public class UnprocessableEntityException extends HttpException {
 	private static final long serialVersionUID = 900489820760681258L;
 
 	public UnprocessableEntityException() {
-		super();
+		super("Unprocessable Entity.");
+		StackTraceElement[] newStackTrace = { new StackTraceElement(this.getClass().getSimpleName(),
+				HttpStatus.UNPROCESSABLE_ENTITY.name(), "", HttpStatus.UNPROCESSABLE_ENTITY.value()) };
+		this.setStackTrace(newStackTrace);
+	}
+
+	@Override
+	public String getLocalizedMessage() {
+		return "L’entité fournie avec la requête est incompréhensible ou incomplète.";
 	}
 }

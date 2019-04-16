@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.model.beans;
 
@@ -15,7 +15,7 @@ import fr.alten.ambroiseJEE.security.UserRole;
 /**
  * User bean object role and password fields are transient so that they don't
  * appear in the serialized object (json)
- * 
+ *
  * @author Andy Chabalier
  *
  */
@@ -32,7 +32,7 @@ public class User implements Serializable {
 	private String name;
 	private String forname;
 	private transient UserRole role;
-	private Agency agency;
+	private String agency;
 
 	public User() {
 		super();
@@ -42,55 +42,55 @@ public class User implements Serializable {
 		return _id;
 	}
 
-	public void set_id(ObjectId _id) {
-		this._id = _id;
-	}
-
-	public String getPswd() {
-		return pswd;
-	}
-
-	public void setPswd(String pswd) {
-		this.pswd = pswd;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
+	public String getAgency() {
+		return agency;
 	}
 
 	public String getForname() {
 		return forname;
 	}
 
-	public void setForname(String forname) {
-		this.forname = forname;
-	}
-
 	public String getMail() {
 		return mail;
 	}
 
-	public void setMail(String mail) {
-		this.mail = mail;
+	public String getName() {
+		return name;
+	}
+
+	public String getPswd() {
+		return pswd;
 	}
 
 	public UserRole getRole() {
 		return role;
 	}
 
+	public void set_id(ObjectId _id) {
+		this._id = _id;
+	}
+
+	public void setAgency(String agency) {
+		this.agency = agency;
+	}
+
+	public void setForname(String forname) {
+		this.forname = forname;
+	}
+
+	public void setMail(String mail) {
+		this.mail = mail;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setPswd(String pswd) {
+		this.pswd = pswd;
+	}
+
 	public void setRole(UserRole role) {
 		this.role = role;
-	}
-
-	public Agency getAgency() {
-		return agency;
-	}
-
-	public void setAgency(Agency agency) {
-		this.agency = agency;
 	}
 }
