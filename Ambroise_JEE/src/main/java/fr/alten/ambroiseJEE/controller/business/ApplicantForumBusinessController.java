@@ -15,8 +15,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import fr.alten.ambroiseJEE.model.beans.ApplicantForum;
 import fr.alten.ambroiseJEE.model.entityControllers.ApplicantForumEntityController;
 import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 
 /**
  * Applicant controller for business rules.
@@ -36,7 +38,8 @@ public class ApplicantForumBusinessController {
 	 * @param role  the user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ForbiddenException} if the current user hasn't the
-	 *         rights to perform this action
+	 *         rights to perform this action and {@link CreatedException} if the
+	 *         applicant is created
 	 * @author Andy Chabalier
 	 * @throws ParseException, ForbiddenException
 	 */
@@ -55,7 +58,8 @@ public class ApplicantForumBusinessController {
 	 * @param role   the user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ForbiddenException} if the current user hasn't the
-	 *         rights to perform this action
+	 *         rights to perform this action and {@link OkException} if the
+	 *         applicant is deleted
 	 * @author Andy Chabalier
 	 * @throws ForbiddenException
 	 */
@@ -105,7 +109,8 @@ public class ApplicantForumBusinessController {
 	 * @param role   the user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ForbiddenException} if the current user hasn't the
-	 *         rights to perform this action
+	 *         rights to perform this action and {@link OkException} if the
+	 *         applicant is updated
 	 * @author Andy Chabalier
 	 * @throws ParseException, ForbiddenException
 	 */

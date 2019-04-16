@@ -17,6 +17,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
 
 /**
@@ -32,6 +33,8 @@ public class SectorBusinessController {
 	private SectorEntityController sectorEntityController;
 
 	/**
+	 * Method to delegate sector creation
+	 * 
 	 * @param JSector JsonNode with all sector parameters
 	 * @param role    the current logged user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
@@ -46,11 +49,13 @@ public class SectorBusinessController {
 	}
 
 	/**
+	 * Method to delegate sector deletion
+	 * 
 	 * @param JSector JsonNode with sector's name parameter
 	 * @param role    the current logged user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link RessourceNotFoundException} if the ressource is not
-	 *         found and {@link CreatedException} if the sector is deleted
+	 *         found and {@link OkException} if the sector is deleted
 	 * @author Andy Chabalier
 	 */
 	public HttpException deleteSector(JsonNode JSector, UserRole role) {
@@ -60,6 +65,8 @@ public class SectorBusinessController {
 	}
 
 	/**
+	 * Get the list of all sectors
+	 * 
 	 * @param role the current logged user's role
 	 * @return the list of sectors
 	 * @author Andy Chabalier
@@ -72,11 +79,13 @@ public class SectorBusinessController {
 	}
 
 	/**
+	 * Method to delegate sector update
+	 * 
 	 * @param JSector JsonNode with all sector parameters
 	 * @param role    the current logged user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link RessourceNotFoundException} if the ressource is not
-	 *         found and {@link CreatedException} if the sector is updated
+	 *         found and {@link OkException} if the sector is updated
 	 * @author Andy Chabalier
 	 */
 	public HttpException updateSector(JsonNode JSector, UserRole role) {

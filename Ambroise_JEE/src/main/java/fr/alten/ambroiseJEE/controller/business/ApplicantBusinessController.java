@@ -13,8 +13,10 @@ import fr.alten.ambroiseJEE.model.beans.Person;
 import fr.alten.ambroiseJEE.model.entityControllers.PersonEntityController;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.PersonRole;
+import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 
 /**
  * Applicant controller for business rules.
@@ -34,7 +36,8 @@ public class ApplicantBusinessController {
 	 * @param role       the user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ForbiddenException} if the current user hasn't the
-	 *         rights to perform this action
+	 *         rights to perform this action and {@link CreatedException} if the
+	 *         applicant is sucessfully created
 	 * @author Lucas Royackkers
 	 * @throws ParseException, ForbiddenException
 	 */
@@ -53,7 +56,8 @@ public class ApplicantBusinessController {
 	 * @param role   the user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ForbiddenException} if the current user hasn't the
-	 *         rights to perform this action
+	 *         rights to perform this action and {@link OkException} if the
+	 *         applicant is deleted
 	 * @author Lucas Royackkers
 	 * @throws ForbiddenException
 	 */
@@ -103,7 +107,8 @@ public class ApplicantBusinessController {
 	 * @param role   the user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ForbiddenException} if the current user hasn't the
-	 *         rights to perform this action
+	 *         rights to perform this action and {@link OkException} if the
+	 *         applicant is updated
 	 * @author Lucas Royackkers
 	 * @throws ParseException, ForbiddenException
 	 */

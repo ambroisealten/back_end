@@ -50,6 +50,9 @@ public class GeographicBusinessController {
 	private Gson gson = (new GsonBuilder()).create();
 
 	/**
+	 * Create cities from a provided departement arrayList. This method will ask the
+	 * geo.api.gouv.fr API to fetch cities from each departements
+	 *
 	 * @param arrayList ArrayList of {@link LinkedTreeMap} departements data
 	 * @param role      the current logged user role
 	 * @author Andy Chabalier
@@ -80,7 +83,9 @@ public class GeographicBusinessController {
 	}
 
 	/**
-	 * @param arrayList ArrayList of LinkedTreeMap with regions data
+	 * Create departement from the provided departementData.
+	 *
+	 * @param arrayList ArrayList of {@link LinkedTreeMap} with departements data
 	 * @author Andy Chabalier
 	 */
 	private void createDepartement(ArrayList<LinkedTreeMap> departementData, UserRole role) {
@@ -95,7 +100,9 @@ public class GeographicBusinessController {
 	}
 
 	/**
-	 * @param arrayList ArrayList of LinkedTreeMap with regions data
+	 * Create regions from the provided regionData.
+	 *
+	 * @param arrayList ArrayList of {@link LinkedTreeMap} with regions data
 	 * @author Andy Chabalier
 	 * @return
 	 */
@@ -110,6 +117,16 @@ public class GeographicBusinessController {
 		}
 	}
 
+	/**
+	 * Fetch data from the geo.api.gouv.fr API. We fetch region and departement
+	 * data.
+	 *
+	 * @return an HashMap with 2 entry: Region with key "region" and Departements
+	 *         with key "departement". Theses key have an arrayList of
+	 *         {@link LinkedTreeMap}. these LinkedTreeMap contains the data of
+	 *         object (Region or departement)
+	 * @author Andy Chabalier
+	 */
 	private HashMap<String, ArrayList<LinkedTreeMap>> fetchData() {
 		HashMap<String, ArrayList<LinkedTreeMap>> data = new HashMap<String, ArrayList<LinkedTreeMap>>();
 
@@ -177,9 +194,14 @@ public class GeographicBusinessController {
 	}
 
 	/**
+	 * Method to delegate the synchronisation of the base with the geo.gouv.fr API.
+	 * This method make the creation of cities, region and departements
 	 *
 	 * @param role the current logged user role
-	 * @return
+	 * @return the @see {@link HttpException} corresponding to the status of the
+	 *         request ({@link ForbiddenException} if the role is not allowed to do
+	 *         synchronisation and {@link OkException} if the synchronisation is
+	 *         done
 	 * @author Andy Chabalier
 	 */
 	public HttpException synchronise(UserRole role) {
@@ -193,6 +215,6 @@ public class GeographicBusinessController {
 
 			return new OkException();
 		}
-		throw new ForbiddenException();
+		return new ForbiddenException();
 	}
 }

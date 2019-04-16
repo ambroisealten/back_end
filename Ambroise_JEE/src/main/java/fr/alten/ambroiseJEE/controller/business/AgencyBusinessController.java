@@ -18,6 +18,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
 
 /**
@@ -39,7 +40,7 @@ public class AgencyBusinessController {
 	 *              position)
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ConflictException} if there is a conflict in the
-	 *         database and {@link CreatedException} if the user is created
+	 *         database and {@link CreatedException} if the agency is created
 	 * @author Andy Chabalier
 	 */
 	public HttpException createAgency(JsonNode jAgency, UserRole role) {
@@ -49,12 +50,13 @@ public class AgencyBusinessController {
 	}
 
 	/**
+	 * Method to delegate agency deletion
 	 *
 	 * @param params the agency name to delete
 	 * @param role   the user role
 	 * @return @see {@link HttpException} corresponding to the status of the request
 	 *         ({@link ForbiddenException} if the resource is not found and
-	 *         {@link CreatedException} if the user is updated
+	 *         {@link OkException} if the agency is deleted
 	 * @author Andy Chabalier
 	 */
 	public HttpException deleteAgency(JsonNode params, UserRole role) {
@@ -64,6 +66,8 @@ public class AgencyBusinessController {
 	}
 
 	/**
+	 * Get the list of all agencies
+	 *
 	 * @param role the user role
 	 * @return the list of all agencies
 	 * @author Andy Chabalier
@@ -75,18 +79,28 @@ public class AgencyBusinessController {
 		throw new ForbiddenException();
 	}
 
+	/**
+	 * Fetch an agency
+	 *
+	 * @param name the agency's name to fetch
+	 * @return an optional with the fetched agency or empty if the agency is not
+	 *         foud
+	 * @author Andy Chabalier
+	 */
 	public Optional<Agency> getAgency(String name) {
 		return agencyEntityController.getAgency(name);
 	}
 
 	/**
+	 * Method to delegate agency update
 	 *
-	 * @param jAgency JsonNode with all user parameters (name, place) and the old
-	 *                name to perform the update even if the name is changed
+	 * @param jAgency JsonNode with all agency parameters (name, place and
+	 *                placeType) and the old name to perform the update even if the
+	 *                name is changed
 	 * @param role    user role
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link RessourceNotFoundException} if the resource is not
-	 *         found and {@link CreatedException} if the agency is updated
+	 *         found and {@link OkException} if the agency is updated
 	 * @author Andy Chabalier
 	 */
 	public HttpException updateAgency(JsonNode jAgency, UserRole role) {

@@ -18,6 +18,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
 
 /**
@@ -48,12 +49,13 @@ public class PostalCodeBusinessController {
 	}
 
 	/**
+	 * Method to delegate postal Code deletion
 	 *
 	 * @param params the postalCode name to delete
-	 * @param role   the user role
+	 * @param role   the current logged user role
 	 * @return @see {@link HttpException} corresponding to the status of the request
 	 *         ({@link ForbiddenException} if the resource is not found and
-	 *         {@link CreatedException} if the postalCode is deleted
+	 *         {@link OkException} if the postalCode is deleted
 	 * @author Andy Chabalier
 	 */
 	public HttpException deletePostalCode(JsonNode params, UserRole role) {
@@ -62,13 +64,22 @@ public class PostalCodeBusinessController {
 				: new ForbiddenException();
 	}
 
+	/**
+	 * Fetch a Postal code
+	 *
+	 * @param name the postal code name to fetch
+	 * @return an optional with the requested postal code or empty if not found
+	 * @author Andy Chabalier
+	 */
 	public Optional<PostalCode> getPostalCode(String name) {
 		return postalCodeEntityController.getPostalCode(name);
 	}
 
 	/**
-	 * @param role the user role
-	 * @return the list of all ppostalCodes
+	 * Get the list of all postal codes
+	 *
+	 * @param role the current logged user role
+	 * @return the list of allppostalCodes
 	 * @author Andy Chabalier
 	 */
 	public List<PostalCode> getPostalCodes(UserRole role) {
@@ -79,13 +90,14 @@ public class PostalCodeBusinessController {
 	}
 
 	/**
+	 * Method to delegate postal code update
 	 *
 	 * @param jPostalCode JsonNode with all postalCode parameters and the old name
 	 *                    to perform the update even if the name is changed
 	 * @param role        user role
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link RessourceNotFoundException} if the resource is not
-	 *         found and {@link CreatedException} if the postalCode is updated
+	 *         found and {@link OkException} if the postalCode is updated
 	 * @author Andy Chabalier
 	 */
 	public HttpException updatePostalCode(JsonNode jPostalCode, UserRole role) {
