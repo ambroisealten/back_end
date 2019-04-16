@@ -221,6 +221,13 @@ public class SkillsSheetEntityController {
 			skillsSheet.setTechSkillsList(this.getAllTechSkills(jSkillsSheet.get("techskills")));
 
 			skillsSheet.setVersionNumber(latestVersionNumber + 1);
+
+			Optional<SkillsSheet> newVersionSkillsSheet = this.getSkillsSheetByNameAndVersionNumber(
+					jSkillsSheet.get("name").textValue(), latestVersionNumber + 1);
+			if (newVersionSkillsSheet.isPresent()) {
+				return new ConflictException();
+			}
+
 			skillsSheet.set_id(new ObjectId());
 
 			String authorMail = jSkillsSheet.get("authorMail").textValue();

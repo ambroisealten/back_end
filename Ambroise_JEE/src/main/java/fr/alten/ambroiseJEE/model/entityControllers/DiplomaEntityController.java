@@ -39,11 +39,12 @@ public class DiplomaEntityController {
 	 * @throws ParseException
 	 */
 	public HttpException createDiploma(JsonNode jDiploma) throws ParseException {
-		Optional<Diploma> diplomaOptional = diplomaRepository.findByNameAndYearOfResult(jDiploma.get("name").textValue(), jDiploma.get("yearOfResult").textValue());
-		if(diplomaOptional.isPresent()) {
+		Optional<Diploma> diplomaOptional = diplomaRepository
+				.findByNameAndYearOfResult(jDiploma.get("name").textValue(), jDiploma.get("yearOfResult").textValue());
+		if (diplomaOptional.isPresent()) {
 			return new ConflictException();
 		}
-		
+
 		Diploma newDiploma = new Diploma();
 		newDiploma.setName(jDiploma.get("name").textValue());
 		newDiploma.setYearOfResult(jDiploma.get("yearOfResult").textValue());
@@ -74,7 +75,7 @@ public class DiplomaEntityController {
 			diploma.setYearOfResult(null);
 			diplomaRepository.save(diploma);
 		} else {
-			throw new RessourceNotFoundException();
+			return new RessourceNotFoundException();
 		}
 		return new OkException();
 	}
@@ -108,11 +109,19 @@ public class DiplomaEntityController {
 
 		if (diplomaOptionnal.isPresent()) {
 			Diploma diploma = diplomaOptionnal.get();
+
+			Optional<Diploma> newDiplomaOptional = diplomaRepository.findByNameAndYearOfResult(
+					jDiploma.get("name").textValue(), jDiploma.get("yearOfResult").textValue());
+			if (newDiplomaOptional.isPresent()) {
+				return new ConflictException();
+			}
+
 			diploma.setName(jDiploma.get("name").textValue());
 			diploma.setYearOfResult(jDiploma.get("yearOfResult").textValue());
+
 			diplomaRepository.save(diploma);
 		} else {
-			throw new RessourceNotFoundException();
+			return new RessourceNotFoundException();
 		}
 		return new OkException();
 	}

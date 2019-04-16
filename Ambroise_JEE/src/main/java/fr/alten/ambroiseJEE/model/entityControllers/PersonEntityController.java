@@ -104,7 +104,8 @@ public class PersonEntityController {
 		Optional<Diploma> diploma = diplomaEntityController.getDiplomaByNameAndYearOfResult(
 				jPerson.get("highestDiploma").textValue(), jPerson.get("highestDiplomaYear").textValue());
 		if (diploma.isPresent()) {
-			newPerson.setHighestDiploma(diploma.get().get_id().toString());
+			newPerson.setHighestDiploma(diploma.get().getName());
+			newPerson.setHighestDiplomaYear(diploma.get().getYearOfResult());
 		}
 
 		Optional<Job> job = jobEntityController.getJob(jPerson.get("job").textValue());
@@ -160,7 +161,7 @@ public class PersonEntityController {
 
 			personRepository.save(person);
 		} else {
-			throw new RessourceNotFoundException();
+			return new RessourceNotFoundException();
 		}
 		return new OkException();
 	}
@@ -249,10 +250,13 @@ public class PersonEntityController {
 			if (employer.isPresent()) {
 				person.setEmployer(employer.get().getName());
 			}
-
-			personRepository.save(person);
+			try {
+				personRepository.save(person);
+			} catch (Exception e) {
+				return new ConflictException();
+			}
 		} else {
-			throw new RessourceNotFoundException();
+			return new RessourceNotFoundException();
 		}
 		return new OkException();
 	}
