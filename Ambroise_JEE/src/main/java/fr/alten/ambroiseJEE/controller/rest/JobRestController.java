@@ -20,13 +20,12 @@ import com.google.gson.GsonBuilder;
 import fr.alten.ambroiseJEE.controller.business.JobBusinessController;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
-import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 
 /**
  * Rest controller for the job web service
  * 
- * @author Thomas Decamp
+ * @author Lucas Royackkers
  *
  */
 @Controller
@@ -34,41 +33,36 @@ public class JobRestController {
 
 	@Autowired
 	private JobBusinessController jobBusinessController;
-
+	
 	private final Gson gson;
-
+	
 	public JobRestController() {
 		GsonBuilder builder = new GsonBuilder();
 		this.gson = builder.create();
 	}
-
-	@PostMapping(value = "/job")
+	
+	@PostMapping("/job")
 	@ResponseBody
-	public HttpException createJob(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("mail") != null ? jobBusinessController.createJob(params, role)
-				: new UnprocessableEntityException();
+	public HttpException createJob(@RequestBody JsonNode params, @RequestAttribute("role") UserRole role) {
+		return jobBusinessController.createJob(params,role);
 	}
-
-	@GetMapping(value = "/jobs")
+	
+	@PutMapping("/job")
 	@ResponseBody
-	public String getJobs(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
+	public HttpException updateJob(@RequestBody JsonNode params, @RequestAttribute("role") UserRole role) {
+		return jobBusinessController.updateJob(params,role);
+	}
+	
+	
+	@GetMapping("/jobs")
+	@ResponseBody
+	public String getJobs(@RequestAttribute("role") UserRole role) {
 		return gson.toJson(jobBusinessController.getJobs(role));
 	}
-
-	@PutMapping(value = "/job")
+	
+	@DeleteMapping("/job")
 	@ResponseBody
-	public HttpException updateJob(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("mail") != null ? jobBusinessController.createJob(params, role)
-				: new UnprocessableEntityException();
-	}
-
-	@DeleteMapping(value = "/job")
-	@ResponseBody
-	public HttpException deleteJob(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("mail") != null ? jobBusinessController.deleteJob(params, role)
-				: new UnprocessableEntityException();
+	public HttpException deleteJob(@RequestBody JsonNode params, @RequestAttribute("role") UserRole role) {
+		return jobBusinessController.deleteJob(params,role);
 	}
 }

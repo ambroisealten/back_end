@@ -1,10 +1,6 @@
-/**
- * 
- */
 package fr.alten.ambroiseJEE.controller.business;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,11 +14,11 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
-import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
 
 /**
- * Job controller for business rules.
- * @author Thomas Decamp
+ * Job controller for business rules
+ * @author Lucas Royackkers
+>>>>>>> origin/JobWebService
  *
  */
 @Service
@@ -31,63 +27,65 @@ public class JobBusinessController {
 	@Autowired
 	private JobEntityController jobEntityController;
 	
-
-	public Optional<Job> getJob(String title) {
-		return jobEntityController.getJob(title);
-	}
-
-
 	/**
-	 * Method to delegate job creation
-	 * @param jUser JsonNode with all job parameters
+	 * Method to delegate Job creation
+	 * @param params the JsonNode containing all Job parameters
+	 * @param role the user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ConflictException} if there is a conflict in the
 	 *         database and {@link CreatedException} if the job is created
-	 * @author Thomas Decamp
+	 * @author Lucas Royackkers
 	 */
-	public HttpException createJob(JsonNode jJob, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) ? jobEntityController.createJob(jJob) : new ForbiddenException();
+	public HttpException createJob(JsonNode params, UserRole role) {
+		if(UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
+			return jobEntityController.createJob(params);
+		}
+		throw new ForbiddenException();
 	}
 
+	/**
+	 * Method to delegate Job update
+	 * @param params the JsonNode containing all Job parameters
+	 * @param role the user's role
+	 * @return the @see {@link HttpException} corresponding to the status of the
+	 *         request ({@link ResourceNotFoundException} if the resource hasn't been found
+	 *         in the database and {@link OkException} if the job is updated
+	 * @author Lucas Royackkers
+	 */
+	public HttpException updateJob(JsonNode params, UserRole role) {
+		if(UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
+			return jobEntityController.updateJob(params);
+		}
+		throw new ForbiddenException();
+	}
 
 	/**
-	 * @param role the user role
-	 * @return the list of all jobs
-	 * @author Thomas Decamp
+	 * 
+	 * @param role the user's role
+	 * @return a List of Job objects
+	 * @author Lucas Royackkers
 	 */
 	public List<Job> getJobs(UserRole role) {
-		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
+		if(UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.CDR == role || UserRole.MANAGER == role) {
 			return jobEntityController.getJobs();
 		}
-		throw new ForbiddenException();	
+		throw new ForbiddenException();
 	}
 
-
 	/**
-	 * 
-	 * @param jJob JsonNode with all job parameters and the old title to perform the update even if the title is changed
-	 * @param role user role
+	 * Method to delegate Job deletion
+	 * @param params the JsonNode containing all Job parameters
+	 * @param role the user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link RessourceNotFoundException} if the resource is not found
-	 *         and {@link CreatedException} if the job is updated
-	 * @author Thomas Decamp
-	 */
-	public HttpException updateJob(JsonNode jJob, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) ? jobEntityController.updateJob(jJob) : new ForbiddenException();
-	}
-
-
-	/**
-	 * 
-	 * @param params the job title to delete 
-	 * @param role the user role
-	 * @return @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link ForbiddenException} if the resource is not found
-	 *         and {@link CreatedException} if the job is deleted
-	 * @author Thomas Decamp
+	 *         request ({@link ResourceNotFoundException} if the resource hasn't been found
+	 *         in the database and {@link OkException} if the job is desactivated
+	 * @author Lucas Royackkers
 	 */
 	public HttpException deleteJob(JsonNode params, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) ? jobEntityController.deleteJob(params.get("title").textValue()) : new ForbiddenException();
+		if(UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
+			return jobEntityController.deleteJob(params);
+		}
+		throw new ForbiddenException();
 	}
 
 }
