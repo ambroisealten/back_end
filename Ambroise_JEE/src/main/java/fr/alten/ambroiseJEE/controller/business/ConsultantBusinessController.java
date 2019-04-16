@@ -25,15 +25,16 @@ public class ConsultantBusinessController {
 	
 	
 	/**
-	 * Try to fetch a consultant given its name
-	 * @param name the applicant's name
+	 * Try to fetch a consultant given its mail
+	 * @param mail the applicant's mail
 	 * 
-	 * @return
+	 * @return an Optional with the corresponding consultant (or not)
 	 * @author Lucas Royackkers
+	 * @throws ForbiddenException (if the user hasn't the right to do so)
 	 */
-	public Optional<Person> getConsultant(String name, UserRole role){
+	public Optional<Person> getConsultant(String mail, UserRole role){
 		if(UserRole.MANAGER == role || UserRole.MANAGER_ADMIN == role || UserRole.CDR_ADMIN == role || UserRole.CDR == role) {
-			return personEntityController.getPersonByMailAndType(name,PersonRole.CONSULTANT);
+			return personEntityController.getPersonByMailAndType(mail,PersonRole.CONSULTANT);
 		}
 		throw new ForbiddenException();
 	}

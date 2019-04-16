@@ -1,0 +1,134 @@
+{
+	"menuItems": [
+		{
+			"access": [
+				{
+					"ADMIN": "Missions Compétences Forum",
+					"MANAGER_ADMIN": "Missions Compétences Forum",
+					"CDR_ADMIN": "Missions Compétences Forum",
+					"MANAGER": "Missions Compétences Forum",
+					"CDR": "Missions Forum"
+				}
+			],
+			"modules": [
+				{
+					"label": "Missions",
+					"routerLink": "mission",
+					"menus": [
+						{
+							"label": "Menu Mission 1",
+							"submenus": [
+								{
+									"label": "submenu1"
+								},
+								{
+									"label": "submenu2"
+								}
+							]
+						},
+						{
+							"label": "Menu Mission 2",
+							"submenus": [
+								{
+									"label": "submenu1"
+								},
+								{
+									"label": "submenu2"
+								}
+							]
+						},
+						{
+							"label": "Menu Mission 3",
+							"submenus": [
+								{
+									"label": "submenu1"
+								},
+								{
+									"label": "submenu2"
+								}
+							]
+						}
+					]
+				},
+				{
+					"label": "Compétences",
+					"routerLink": "competences",
+					"menus": [
+						{
+							"label": "Menu Compétences 1",
+							"submenus": [
+								{
+									"label": "submenu1"
+								},
+								{
+									"label": "submenu2"
+								}
+							]
+						},
+						{
+							"label": "Menu Compétences 2",
+							"submenus": [
+								{
+									"label": "submenu1"
+								},
+								{
+									"label": "submenu2"
+								}
+							]
+						},
+						{
+							"label": "Menu Compétences 3",
+							"submenus": [
+								{
+									"label": "submenu1"
+								},
+								{
+									"label": "submenu2"
+								}
+							]
+						}
+					]
+				},
+				{
+					"label": "Forum",
+					"routerLink": "forum",
+					"menus": [
+						{
+							"label": "Menu Forum 1",
+							"submenus": [
+								{
+									"label": "submenu1"
+								},
+								{
+									"label": "submenu2"
+								}
+							]
+						},
+						{
+							"label": "Menu Forum 2",
+							"submenus": [
+								{
+									"label": "submenu1"
+								},
+								{
+									"label": "submenu2"
+								}
+							]
+						},
+						{
+							"label": "Menu Forum 3",
+							"submenus": [
+								{
+									"label": "submenu1"
+								},
+								{
+									"label": "submenu2"
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	]
+}

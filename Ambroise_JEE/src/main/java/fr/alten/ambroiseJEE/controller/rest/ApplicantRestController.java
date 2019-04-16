@@ -1,6 +1,7 @@
 package fr.alten.ambroiseJEE.controller.rest;
 
 import java.text.ParseException;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,9 +19,13 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import fr.alten.ambroiseJEE.controller.business.ApplicantBusinessController;
+import fr.alten.ambroiseJEE.model.beans.Person;
 import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
+import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
@@ -45,10 +50,9 @@ public class ApplicantRestController {
 	/**
 	 * 
 	 * @param params JsonNode containing post parameters from http request 
-	 * @param mail the user's mail
 	 * @param role the user's role
 	 * @return {@link HttpException} corresponding to the status of the
-	 *         request ({@link UnprocessableEntityException} if the resource is not found
+	 *         request ({@link ConflictException} if there is a conflict in the database
 	 *         and {@link CreatedException} if the person(applicant) is created
 	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author Lucas Royackkers
@@ -62,7 +66,7 @@ public class ApplicantRestController {
 
 	/**
 	 * 
-	 * @param mail the user's mail
+	 * @param mail the current logged user's mail
 	 * @param role the user's role
 	 * @return the list of all applicants
 	 * @author Lucas Royackkers
@@ -76,25 +80,29 @@ public class ApplicantRestController {
 	/**	
 	 * 
 	 * @param applicantName the applicant's name
-	 * @param mail the user's mail
+	 * @param mail the current logged user's mail
 	 * @param role the user's role
 	 * @return an applicant, given its name
 	 * @author Lucas Royackkers
 	 */
-	@GetMapping(value = "/applicant/{name}")
+	@GetMapping(value = "/applicant/{mail}")
 	@ResponseBody
-	public String getApplicant(@PathVariable("name") String applicantName, @RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
-		return gson.toJson(applicantBusinessController.getApplicant(applicantName,role));
+	public String getApplicant(@PathVariable("mail") String applicantMail, @RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
+		Optional<Person> personOptional = applicantBusinessController.getApplicant(applicantMail,role);
+		if(personOptional.isPresent()) {
+			return gson.toJson(personOptional.get());
+		}
+		throw new RessourceNotFoundException();
 	}
 	
 	/**
 	 * 
 	 * @param params JsonNode containing post parameters from http request
-	 * @param mail the user's mail
+	 * @param mail the current logged user's mail
 	 * @param role the user's role
 	 * @return {@link HttpException} corresponding to the status of the
-	 *         request ({@link UnprocessableEntityException} if the resource is not found
-	 *         and {@link CreatedException} if the person(applicant) is updated
+	 *         request ({@link ResourceNotFoundException} if the resource is not found
+	 *         and {@link OkException} if the person(applicant) is updated
 	 * @author Lucas Royackkers
 	 * @throws ParseException 
 	 */
@@ -109,11 +117,11 @@ public class ApplicantRestController {
 	/**
 	 * 
 	 * @param params JsonNode containing post parameters from http request
-	 * @param mail the user's mail
+	 * @param mail the current logged user's mail
 	 * @param role the user's role
 	 * @return {@link HttpException} corresponding to the status of the
-	 *         request ({@link UnprocessableEntityException} if the resource is not found
-	 *         and {@link CreatedException} if the person(applicant) is deleted
+	 *         request ({@link ResourceNotFoundException} if the resource is not found
+	 *         and {@link OkException} if the person(applicant) is deleted
 	 * @author Lucas Royackkers
 	 */
 	@DeleteMapping(value = "/applicant")

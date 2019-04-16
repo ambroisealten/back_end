@@ -20,7 +20,7 @@ public class Person implements Serializable{
 
 	private static final long serialVersionUID = 5313704620913617832L;
 	@Id
-	private ObjectId _id;
+	private transient ObjectId _id;
 	@Indexed(unique = true)
 	private String mail;
 	private String surname;
@@ -29,9 +29,10 @@ public class Person implements Serializable{
 	private String employer;
 	private float monthlyWage;
 	private PersonRole role;
-	private String personInCharge;
+	private String personInChargeMail;
 	private List<String> urlDocs;
 	private String highestDiploma;
+	private String highestDiplomaYear;
 
 	public Person() {
 		super();
@@ -101,14 +102,6 @@ public class Person implements Serializable{
 		this.role = role;
 	}
 
-	public String getPersonInCharge() {
-		return personInCharge;
-	}
-
-	public void setPersonInCharge(String personInCharge) {
-		this.personInCharge = personInCharge;
-	}
-
 	public List<String> getUrlDocs() {
 		return urlDocs;
 	}
@@ -124,7 +117,22 @@ public class Person implements Serializable{
 	public void setHighestDiploma(String highestDiploma) {
 		this.highestDiploma = highestDiploma;
 	}
-	
+
+	public String getPersonInChargeMail() {
+		return personInChargeMail;
+	}
+
+	public void setPersonInChargeMail(String personInChargeMail) {
+		this.personInChargeMail = personInChargeMail;
+	}
+
+	public String getHighestDiplomaYear() {
+		return highestDiplomaYear;
+	}
+
+	public void setHighestDiplomaYear(String highestDiplomaYear) {
+		this.highestDiplomaYear = highestDiplomaYear;
+	}
 	
 	
 }
