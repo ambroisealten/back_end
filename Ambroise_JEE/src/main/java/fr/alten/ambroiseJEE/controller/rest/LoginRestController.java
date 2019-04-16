@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.controller.rest;
 
@@ -23,7 +23,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 
 /**
  * Rest controller for the login web service
- * 
+ *
  * @author Andy Chabalier
  *
  */
@@ -42,13 +42,13 @@ public class LoginRestController {
 
 	/**
 	 * Authenticate user. HTTP Method : POST.
-	 * 
+	 *
 	 * @param params JsonNode containing post parameters from http request : mail &
 	 *               password
 	 * @return String containing the Json formatted JWToken
 	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 */
-	//@PostMapping(value = "/login")
+	// @PostMapping(value = "/login")
 	@PostMapping(value = "/login")
 	@ResponseBody
 	@CrossOrigin(origins = "http://localhost:4200")

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.controller.rest;
 
@@ -21,10 +21,9 @@ import fr.alten.ambroiseJEE.controller.business.SoftSkillBusinessController;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 
-
 /**
  * Rest controller for the softSkill web service
- * 
+ *
  * @author Thomas Decamp
  *
  */
@@ -45,8 +44,15 @@ public class SoftSkillRestController {
 	@ResponseBody
 	public HttpException createSoftSkill(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws Exception {
-		return  softSkillBusinessController.createSoftSkill(params, role);
-				
+		return softSkillBusinessController.createSoftSkill(params, role);
+
+	}
+
+	@DeleteMapping(value = "/softSkill")
+	@ResponseBody
+	public HttpException deleteSoftSkill(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
+			@RequestAttribute("role") UserRole role) throws Exception {
+		return softSkillBusinessController.deleteSoftSkill(params, role);
 	}
 
 	@GetMapping(value = "/softSkills")
@@ -59,13 +65,6 @@ public class SoftSkillRestController {
 	@ResponseBody
 	public HttpException updateSoftSkill(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws Exception {
-		return  softSkillBusinessController.updateSoftSkill(params, role);				
-	}
-
-	@DeleteMapping(value = "/softSkill")
-	@ResponseBody
-	public HttpException deleteSoftSkill(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) throws Exception {
-		return  softSkillBusinessController.deleteSoftSkill(params, role);
+		return softSkillBusinessController.updateSoftSkill(params, role);
 	}
 }

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.controller.rest;
 
@@ -25,7 +25,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
  * Rest controller for the postal code web service
- * 
+ *
  * @author Andy Chabalier
  *
  */
@@ -43,12 +43,12 @@ public class PostalCodeRestController {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param params JsonNode containing post parameters from http request
-	 * @param mail the current logged user mail
-	 * @param role the current logged user role
-	 * @return {@link HttpException} corresponding to the statut of the
-	 *         request ({@link UnprocessableEntityException} if the ressource is not found
+	 * @param mail   the current logged user mail
+	 * @param role   the current logged user role
+	 * @return {@link HttpException} corresponding to the statut of the request
+	 *         ({@link UnprocessableEntityException} if the ressource is not found
 	 *         and {@link CreatedException} if the user is created
 	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author Andy Chabalier
@@ -62,7 +62,26 @@ public class PostalCodeRestController {
 	}
 
 	/**
-	 * 
+	 *
+	 * @param params JsonNode containing post parameters from http request
+	 * @param mail   the current logged user mail
+	 * @param role   the current logged user role
+	 * @return {@link HttpException} corresponding to the statut of the request
+	 *         ({@link UnprocessableEntityException} if the ressource is not found
+	 *         and {@link CreatedException} if the user is created
+	 * @throws Exception @see ForbiddenException if wrong identifiers
+	 * @author Andy Chabalier
+	 */
+	@DeleteMapping(value = "/postalCode")
+	@ResponseBody
+	public HttpException deletePostalCode(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
+			@RequestAttribute("role") UserRole role) throws Exception {
+		return params.get("name") != null ? postalCodeBusinessController.deletePostalCode(params, role)
+				: new UnprocessableEntityException();
+	}
+
+	/**
+	 *
 	 * @param mail the current logged user mail
 	 * @param role the current logged user role
 	 * @return the list of all users
@@ -75,12 +94,12 @@ public class PostalCodeRestController {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param params JsonNode containing post parameters from http request
-	 * @param mail the current logged user mail
-	 * @param role the current logged user role
-	 * @return {@link HttpException} corresponding to the statut of the
-	 *         request ({@link UnprocessableEntityException} if the ressource is not found
+	 * @param mail   the current logged user mail
+	 * @param role   the current logged user role
+	 * @return {@link HttpException} corresponding to the statut of the request
+	 *         ({@link UnprocessableEntityException} if the ressource is not found
 	 *         and {@link CreatedException} if the user is created
 	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author Andy Chabalier
@@ -92,25 +111,4 @@ public class PostalCodeRestController {
 		return params.get("name") != null ? postalCodeBusinessController.createPostalCode(params, role)
 				: new UnprocessableEntityException();
 	}
-
-	/**
-	 * 
-	 * @param params JsonNode containing post parameters from http request
-	 * @param mail the current logged user mail
-	 * @param role the current logged user role
-	 * @return {@link HttpException} corresponding to the statut of the
-	 *         request ({@link UnprocessableEntityException} if the ressource is not found
-	 *         and {@link CreatedException} if the user is created
-	 * @throws Exception @see ForbiddenException if wrong identifiers
-	 * @author Andy Chabalier
-	 */
-	@DeleteMapping(value = "/postalCode")
-	@ResponseBody
-	public HttpException deletePostalCode(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("name") != null ? postalCodeBusinessController.deletePostalCode(params, role)
-				: new UnprocessableEntityException();
-	}
 }
-
-

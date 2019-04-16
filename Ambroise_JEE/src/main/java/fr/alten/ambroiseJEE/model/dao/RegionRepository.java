@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.model.dao;
 
@@ -17,9 +17,9 @@ public interface RegionRepository extends MongoRepository<Region, Long> {
 
 	/**
 	 * @param name the region name
-	 * @return An Optional with the corresponding region or not. 
+	 * @return An Optional with the corresponding region or not.
 	 * @author Andy Chabalier
 	 */
 	Optional<Region> findByName(String name);
-	
+
 }

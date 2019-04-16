@@ -1,8 +1,7 @@
 /**
- * 
- */ 
+ *
+ */
 package fr.alten.ambroiseJEE;
- 
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,10 +16,6 @@ import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 
 import fr.alten.ambroiseJEE.filter.LocalhostFilter;
 import fr.alten.ambroiseJEE.filter.TokenFilter;
-import fr.alten.ambroiseJEE.utils.CustomLogger;
-import fr.alten.ambroiseJEE.utils.LogLevel;
-
-
 
 @SpringBootApplication
 public class AmbroiseJeeApplication {
@@ -28,9 +23,43 @@ public class AmbroiseJeeApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(AmbroiseJeeApplication.class, args);
 	}
-	
+
 	/**
-	 * 
+	 * Registers token filter to filter chain
+	 *
+	 * @see TokenFilter
+	 * @return registration bean
+	 */
+	@Bean
+	public FilterRegistrationBean<TokenFilter> filterRegistrationBean() {
+		FilterRegistrationBean<TokenFilter> registrationBean = new FilterRegistrationBean<TokenFilter>();
+		TokenFilter tokenFilter = new TokenFilter();
+
+		registrationBean.setFilter(tokenFilter);
+		registrationBean.addUrlPatterns("/*");
+		registrationBean.setOrder(1); // set precedence
+		return registrationBean;
+	}
+
+	/**
+	 * Registers localhost filter to filter chain
+	 *
+	 * @see LocalhostFilter
+	 * @return registration bean
+	 */
+	@Bean
+	public FilterRegistrationBean<LocalhostFilter> filterRegistrationBeanLocalhost() {
+		FilterRegistrationBean<LocalhostFilter> registrationBean = new FilterRegistrationBean<LocalhostFilter>();
+		LocalhostFilter localhostFilter = new LocalhostFilter();
+
+		registrationBean.setFilter(localhostFilter);
+		registrationBean.addUrlPatterns("/admin/init");
+		registrationBean.setOrder(2); // set precedence
+		return registrationBean;
+	}
+
+	/**
+	 *
 	 * @param mongoDbFactory
 	 * @param context
 	 * @return mongo template
@@ -46,40 +75,6 @@ public class AmbroiseJeeApplication {
 
 		return mongoTemplate;
 
-	}
-	
-	/**
-	 * Registers token filter to filter chain
-	 * 
-	 * @see TokenFilter
-	 * @return registration bean
-	 */
-	@Bean
-	public FilterRegistrationBean<TokenFilter> filterRegistrationBean() {
-		FilterRegistrationBean<TokenFilter> registrationBean = new FilterRegistrationBean<TokenFilter>();
-		TokenFilter tokenFilter = new TokenFilter();
-
-		registrationBean.setFilter(tokenFilter);
-		registrationBean.addUrlPatterns("/*");
-		registrationBean.setOrder(1); // set precedence
-		return registrationBean;
-	}
-	
-	/**
-	 * Registers localhost filter to filter chain
-	 * 
-	 * @see LocalhostFilter
-	 * @return registration bean
-	 */
-	@Bean
-	public FilterRegistrationBean<LocalhostFilter> filterRegistrationBeanLocalhost() {
-		FilterRegistrationBean<LocalhostFilter> registrationBean = new FilterRegistrationBean<LocalhostFilter>();
-		LocalhostFilter localhostFilter = new LocalhostFilter();
-
-		registrationBean.setFilter(localhostFilter);
-		registrationBean.addUrlPatterns("/admin/init");
-		registrationBean.setOrder(2); // set precedence
-		return registrationBean;
 	}
 
 }

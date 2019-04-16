@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.controller.business;
 
@@ -26,7 +26,7 @@ public class FileBusinessController {
 
 	/**
 	 * Method to delegate document creation
-	 * 
+	 *
 	 * @param fileDownloadUri the Uri to store
 	 * @param role            the current logged user's role
 	 * @author Andy Chabalier

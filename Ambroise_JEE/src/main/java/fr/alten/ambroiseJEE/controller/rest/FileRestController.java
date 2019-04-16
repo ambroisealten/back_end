@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.controller.rest;
 
@@ -36,7 +36,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
  * Rest Controller for file process
- * 
+ *
  * @author Andy Chabalier
  *
  */
@@ -48,7 +48,7 @@ public class FileRestController {
 
 	@Autowired
 	private FileBusinessController fileBusinessController;
-	
+
 	private final Gson gson;
 
 	public FileRestController() {
@@ -57,49 +57,8 @@ public class FileRestController {
 	}
 
 	/**
-	 * upload a file. This delegate the stockage of file and his subscription in the
-	 * document's database collection HTTP Method : POST
-	 * 
-	 * @param file the file to store
-	 * @param mail the current logged user's mail
-	 * @param role the current logged user's role
-	 * @return {@link HttpException} corresponding to the statut of the request
-	 *         ({@link UnprocessableEntityException} if the ressource is not found,
-	 *         ({@link OkException} if there is a conflict in the database (that
-	 *         mean file already exist and then it's an upload. But no change to
-	 *         make in base and {@link CreatedException} if the file is stored and
-	 *         created
-	 * @author Andy Chabalier
-	 */
-	@PostMapping("/file")
-	public HttpException uploadFile(@RequestParam("isForForum") String isForForum, @RequestParam("file") MultipartFile file, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) {
-		return file != null
-				? fileBusinessController.createDocument(ServletUriComponentsBuilder.fromCurrentContextPath()
-						.path(fileStorageBusinessController.storeFile(file)).toUriString(), isForForum, role)
-				: new UnprocessableEntityException();
-	}
-
-	/**
-	 * Upload an list of files. That ask to {@link #uploadFile(MultipartFile)} to
-	 * store files one by one. HTTP Method : POST
-	 * 
-	 * @param files Array of files to store
-	 * @param mail  the current logged user's mail
-	 * @param role  the current logged user's role
-	 * @return The list of HTTP Exception that occur @See
-	 *         {@link #uploadFile(MultipartFile)}
-	 * @author Andy Chabalier
-	 */
-	@PostMapping("/file/multiples")
-	public List<HttpException> uploadMultipleFiles(@RequestParam("isForForum") String isForForum, @RequestParam("files") MultipartFile[] files,
-			@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
-		return Arrays.asList(files).stream().map(file -> uploadFile(isForForum, file, mail, role)).collect(Collectors.toList());
-	}
-
-	/**
 	 * Send the requested ressources. HTTP Method : GET
-	 * 
+	 *
 	 * @param fileName the file's name to fetch
 	 * @param mail     the current logged user's mail
 	 * @param role     the current logged user's role
@@ -116,7 +75,7 @@ public class FileRestController {
 		String contentType = null;
 		try {
 			contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
-			if(contentType==null) {
+			if (contentType == null) {
 				throw new NullPointerException();
 			}
 		} catch (Exception ex) {
@@ -128,11 +87,12 @@ public class FileRestController {
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
 				.body(resource);
 	}
-	
+
 	/**
-	 *  Fetch the list of documents
-	 * @param mail     the current logged user's mail
-	 * @param role     the current logged user's role
+	 * Fetch the list of documents
+	 * 
+	 * @param mail the current logged user's mail
+	 * @param role the current logged user's role
 	 * @return the list of documents
 	 * @author Andy Chabalier
 	 */
@@ -140,16 +100,61 @@ public class FileRestController {
 	public String getFiles(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
 		return gson.toJson(fileBusinessController.getFiles(role));
 	}
-	
+
 	/**
-	 *  Fetch the list of forum documents
-	 * @param mail     the current logged user's mail
-	 * @param role     the current logged user's role
+	 * Fetch the list of forum documents
+	 * 
+	 * @param mail the current logged user's mail
+	 * @param role the current logged user's role
 	 * @return the list of forum documents
 	 * @author Andy Chabalier
 	 */
 	@GetMapping("/files/forum")
 	public String getFilesForum(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
 		return gson.toJson(fileBusinessController.getFilesForum(role));
+	}
+
+	/**
+	 * upload a file. This delegate the stockage of file and his subscription in the
+	 * document's database collection HTTP Method : POST
+	 *
+	 * @param file the file to store
+	 * @param mail the current logged user's mail
+	 * @param role the current logged user's role
+	 * @return {@link HttpException} corresponding to the statut of the request
+	 *         ({@link UnprocessableEntityException} if the ressource is not found,
+	 *         ({@link OkException} if there is a conflict in the database (that
+	 *         mean file already exist and then it's an upload. But no change to
+	 *         make in base and {@link CreatedException} if the file is stored and
+	 *         created
+	 * @author Andy Chabalier
+	 */
+	@PostMapping("/file")
+	public HttpException uploadFile(@RequestParam("isForForum") String isForForum,
+			@RequestParam("file") MultipartFile file, @RequestAttribute("mail") String mail,
+			@RequestAttribute("role") UserRole role) {
+		return file != null
+				? fileBusinessController.createDocument(ServletUriComponentsBuilder.fromCurrentContextPath()
+						.path(fileStorageBusinessController.storeFile(file)).toUriString(), isForForum, role)
+				: new UnprocessableEntityException();
+	}
+
+	/**
+	 * Upload an list of files. That ask to {@link #uploadFile(MultipartFile)} to
+	 * store files one by one. HTTP Method : POST
+	 *
+	 * @param files Array of files to store
+	 * @param mail  the current logged user's mail
+	 * @param role  the current logged user's role
+	 * @return The list of HTTP Exception that occur @See
+	 *         {@link #uploadFile(MultipartFile)}
+	 * @author Andy Chabalier
+	 */
+	@PostMapping("/file/multiples")
+	public List<HttpException> uploadMultipleFiles(@RequestParam("isForForum") String isForForum,
+			@RequestParam("files") MultipartFile[] files, @RequestAttribute("mail") String mail,
+			@RequestAttribute("role") UserRole role) {
+		return Arrays.asList(files).stream().map(file -> uploadFile(isForForum, file, mail, role))
+				.collect(Collectors.toList());
 	}
 }

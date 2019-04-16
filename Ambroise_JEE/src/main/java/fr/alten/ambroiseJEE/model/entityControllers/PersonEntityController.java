@@ -32,6 +32,21 @@ import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
  */
 @Service
 public class PersonEntityController {
+	public static final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
+			Pattern.CASE_INSENSITIVE);
+
+	/**
+	 * Method to validate if the mail math with the mail pattern
+	 *
+	 * @param emailStr the string to validate
+	 * @return true if the string match with the mail pattern
+	 * @author Lucas Royackkers
+	 */
+	private static boolean validateMail(String emailStr) {
+		Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
+		return matcher.find();
+	}
+
 	@Autowired
 	private PersonRepository personRepository;
 
@@ -47,113 +62,10 @@ public class PersonEntityController {
 	@Autowired
 	private JobEntityController jobEntityController;
 
-	public static final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
-			Pattern.CASE_INSENSITIVE);
-
-	/**
-	 * Method to delete a Person. Person type will be defined by business
-	 * controllers ahead of this object.
-	 * 
-	 * @param jPerson contains at least the person's name
-	 * @param role    the role of person
-	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link ResourceNotFoundException} if the resource isn't in
-	 *         the database and {@link OkException} if the person is deleted
-	 * @author Lucas Royackkers
-	 */
-	public HttpException deletePerson(JsonNode jPerson, PersonRole role) {
-		Optional<Person> optionalPerson = personRepository.findByMailAndRole(jPerson.get("mail").textValue(), role);
-		if (optionalPerson.isPresent()) {
-			Person person = optionalPerson.get();
-			switch (role) {
-			case APPLICANT:
-				person.setSurname("Deactivated");
-				person.setName("Deactivated");
-				break;
-			default:
-				person.setSurname("Demissionaire");
-				person.setName("Demissionaire");
-				break;
-			}
-			person.setMail("deactivated" + System.currentTimeMillis()+"@deactivated.com");
-			person.setEmployer(null);
-			person.setUrlDocs(null);
-			person.setRole(PersonRole.DEMISSIONAIRE);
-			person.setMonthlyWage(0);
-			person.setJob(null);
-
-			personRepository.save(person);
-		} else {
-			throw new RessourceNotFoundException();
-		}
-		return new OkException();
-	}
-
-	/**
-	 * Method to update a Person. Person type will be defined by business
-	 * controllers ahead of this object.
-	 * 
-	 * @param jPerson JsonNode containing all parameters
-	 * @param role    the role of the concerned person (if it's an applicant or a
-	 *                consultant)
-	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link ResourceNotFoundException} if the resource isn't in
-	 *         the database and {@link OkException} if the person is updated
-	 * @throws ParseException
-	 * @author Lucas Royackkers
-	 */
-	public HttpException updatePerson(JsonNode jPerson, PersonRole role) throws ParseException {
-		Optional<Person> optionalPerson = personRepository.findByMailAndRole(jPerson.get("oldMail").textValue(), role);
-		if (optionalPerson.isPresent()) {
-			Person person = optionalPerson.get();
-			person.setSurname(jPerson.get("surname").textValue());
-			person.setName(jPerson.get("name").textValue());
-			person.setMonthlyWage(Float.parseFloat((jPerson.get("monthlyWage").textValue())));
-
-			person.setRole(role);
-
-			person.setMail(jPerson.get("mail").textValue());
-
-			List<String> docList = new ArrayList<String>();
-			JsonNode docNode = jPerson.get("urlDocs");
-			for (JsonNode doc : docNode) {
-				docList.add(doc.get("url").textValue());
-			}
-			person.setUrlDocs(docList);
-
-			Optional<User> personInCharge = userEntityController
-					.getUserByMail(jPerson.get("personInChargeMail").textValue());
-			if (personInCharge.isPresent()) {
-				person.setPersonInChargeMail(personInCharge.get().getMail());
-			}
-
-			Optional<Diploma> diploma = diplomaEntityController.getDiplomaByNameAndYearOfResult(
-					jPerson.get("highestDiploma").textValue(), jPerson.get("highestDiplomaYear").textValue());
-			if (diploma.isPresent()) {
-				person.setHighestDiploma(diploma.get().get_id().toString());
-			}
-
-			Optional<Job> job = jobEntityController.getJob(jPerson.get("job").textValue());
-			if (job.isPresent()) {
-				person.setJob(job.get().getTitle());
-			}
-
-			Optional<Employer> employer = employerEntityController.getEmployer(jPerson.get("employer").textValue());
-			if (employer.isPresent()) {
-				person.setEmployer(employer.get().getName());
-			}
-
-			personRepository.save(person);
-		} else {
-			throw new RessourceNotFoundException();
-		}
-		return new OkException();
-	}
-
 	/**
 	 * Method to create a Person. Person type will be defined by business
 	 * controllers ahead of this object.
-	 * 
+	 *
 	 * @param jPerson JsonNode with all Person parameters, except its type (name,
 	 *                mail, job, monthlyWage, startDate)
 	 * @param type    PersonEnum the type of the created Person
@@ -215,8 +127,47 @@ public class PersonEntityController {
 	}
 
 	/**
+	 * Method to delete a Person. Person type will be defined by business
+	 * controllers ahead of this object.
+	 *
+	 * @param jPerson contains at least the person's name
+	 * @param role    the role of person
+	 * @return the @see {@link HttpException} corresponding to the status of the
+	 *         request ({@link ResourceNotFoundException} if the resource isn't in
+	 *         the database and {@link OkException} if the person is deleted
+	 * @author Lucas Royackkers
+	 */
+	public HttpException deletePerson(JsonNode jPerson, PersonRole role) {
+		Optional<Person> optionalPerson = personRepository.findByMailAndRole(jPerson.get("mail").textValue(), role);
+		if (optionalPerson.isPresent()) {
+			Person person = optionalPerson.get();
+			switch (role) {
+			case APPLICANT:
+				person.setSurname("Deactivated");
+				person.setName("Deactivated");
+				break;
+			default:
+				person.setSurname("Demissionaire");
+				person.setName("Demissionaire");
+				break;
+			}
+			person.setMail("deactivated" + System.currentTimeMillis() + "@deactivated.com");
+			person.setEmployer(null);
+			person.setUrlDocs(null);
+			person.setRole(PersonRole.DEMISSIONAIRE);
+			person.setMonthlyWage(0);
+			person.setJob(null);
+
+			personRepository.save(person);
+		} else {
+			throw new RessourceNotFoundException();
+		}
+		return new OkException();
+	}
+
+	/**
 	 * Try to fetch a person by its mail
-	 * 
+	 *
 	 * @param mail the person's mail to fetch
 	 * @return An Optional with the corresponding person or not.
 	 * @author Lucas Royackkers
@@ -227,7 +178,7 @@ public class PersonEntityController {
 
 	/**
 	 * Try to fetch a person by its mail and type
-	 * 
+	 *
 	 * @param mail the person's mail to fetch
 	 * @return An Optional with the corresponding person (of the given type) or not.
 	 * @author Lucas Royackkers
@@ -246,15 +197,64 @@ public class PersonEntityController {
 	}
 
 	/**
-	 * Method to validate if the mail math with the mail pattern
-	 * 
-	 * @param emailStr the string to validate
-	 * @return true if the string match with the mail pattern
+	 * Method to update a Person. Person type will be defined by business
+	 * controllers ahead of this object.
+	 *
+	 * @param jPerson JsonNode containing all parameters
+	 * @param role    the role of the concerned person (if it's an applicant or a
+	 *                consultant)
+	 * @return the @see {@link HttpException} corresponding to the status of the
+	 *         request ({@link ResourceNotFoundException} if the resource isn't in
+	 *         the database and {@link OkException} if the person is updated
+	 * @throws ParseException
 	 * @author Lucas Royackkers
 	 */
-	private static boolean validateMail(String emailStr) {
-		Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
-		return matcher.find();
+	public HttpException updatePerson(JsonNode jPerson, PersonRole role) throws ParseException {
+		Optional<Person> optionalPerson = personRepository.findByMailAndRole(jPerson.get("oldMail").textValue(), role);
+		if (optionalPerson.isPresent()) {
+			Person person = optionalPerson.get();
+			person.setSurname(jPerson.get("surname").textValue());
+			person.setName(jPerson.get("name").textValue());
+			person.setMonthlyWage(Float.parseFloat((jPerson.get("monthlyWage").textValue())));
+
+			person.setRole(role);
+
+			person.setMail(jPerson.get("mail").textValue());
+
+			List<String> docList = new ArrayList<String>();
+			JsonNode docNode = jPerson.get("urlDocs");
+			for (JsonNode doc : docNode) {
+				docList.add(doc.get("url").textValue());
+			}
+			person.setUrlDocs(docList);
+
+			Optional<User> personInCharge = userEntityController
+					.getUserByMail(jPerson.get("personInChargeMail").textValue());
+			if (personInCharge.isPresent()) {
+				person.setPersonInChargeMail(personInCharge.get().getMail());
+			}
+
+			Optional<Diploma> diploma = diplomaEntityController.getDiplomaByNameAndYearOfResult(
+					jPerson.get("highestDiploma").textValue(), jPerson.get("highestDiplomaYear").textValue());
+			if (diploma.isPresent()) {
+				person.setHighestDiploma(diploma.get().get_id().toString());
+			}
+
+			Optional<Job> job = jobEntityController.getJob(jPerson.get("job").textValue());
+			if (job.isPresent()) {
+				person.setJob(job.get().getTitle());
+			}
+
+			Optional<Employer> employer = employerEntityController.getEmployer(jPerson.get("employer").textValue());
+			if (employer.isPresent()) {
+				person.setEmployer(employer.get().getName());
+			}
+
+			personRepository.save(person);
+		} else {
+			throw new RessourceNotFoundException();
+		}
+		return new OkException();
 	}
 
 }

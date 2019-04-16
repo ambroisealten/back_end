@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.model.dao;
 
@@ -17,9 +17,9 @@ public interface CityRepository extends MongoRepository<City, Long> {
 
 	/**
 	 * @param name the city name
-	 * @return An Optional with the corresponding city or not. 
+	 * @return An Optional with the corresponding city or not.
 	 * @author Andy Chabalier
 	 */
 	Optional<City> findByName(String name);
-	
+
 }

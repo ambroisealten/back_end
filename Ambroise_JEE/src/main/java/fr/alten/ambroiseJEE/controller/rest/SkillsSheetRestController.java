@@ -26,30 +26,30 @@ import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
  * Rest Controller for Skills Sheet
- * 
+ *
  * @author Lucas Royackkers
  *
  */
 @Controller
 public class SkillsSheetRestController {
-	
+
 	@Autowired
 	private SkillsSheetBusinessController skillsSheetBusinessController;
-	
+
 	private final Gson gson;
-	
+
 	public SkillsSheetRestController() {
 		GsonBuilder builder = new GsonBuilder();
 		this.gson = builder.create();
 	}
-	
+
 	/**
-	 * 
-	 * @param params JsonNode containing post parameters from http request 
-	 * @param mail the user's mail
-	 * @param role the user's role
-	 * @return {@link HttpException} corresponding to the status of the
-	 *         request ({@link UnprocessableEntityException} if the resource is not found
+	 *
+	 * @param params JsonNode containing post parameters from http request
+	 * @param mail   the user's mail
+	 * @param role   the user's role
+	 * @return {@link HttpException} corresponding to the status of the request
+	 *         ({@link UnprocessableEntityException} if the resource is not found
 	 *         and {@link CreatedException} if the skills sheet is created
 	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author Lucas Royackkers
@@ -60,28 +60,48 @@ public class SkillsSheetRestController {
 			@RequestAttribute("role") UserRole role) throws Exception {
 		return skillsSheetBusinessController.createSkillsSheet(params, role);
 	}
-	
-	
+
 	/**
-	 * 
-	 * @param params JsonNode containing post parameters from http request 
+	 *
 	 * @param mail the user's mail
 	 * @param role the user's role
-	 * @return {@link HttpException} corresponding to the status of the
-	 *         request ({@link UnprocessableEntityException} if the resource is not found
-	 *         and {@link CreatedException} if the skills sheet is updated
-	 * @throws Exception @see ForbiddenException if wrong identifiers        
+	 * @param name the name of the skills sheet
+	 * @return the list of all skills sheets given a name
 	 * @author Lucas Royackkers
 	 */
-	@PutMapping(value="/skillsheet")
+	@GetMapping(value = "/skillsheet/{name}")
 	@ResponseBody
-	public HttpException updateSkillsSheet(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
+	public String getSkillsSheetByName(@PathVariable("name") String sheetName, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) {
-		return skillsSheetBusinessController.updateSkillsSheet(params,role);
+		return gson.toJson(skillsSheetBusinessController.getSkillsSheets(sheetName, role));
 	}
 
 	/**
-	 * 
+	 *
+	 * @param sheetName     the name of the skills sheet
+	 * @param versionNumber the version number of the skills sheet
+	 * @param mail          the user's mail
+	 * @param role          the user's role
+	 * @return a skills sheet given its name and its versionNumber
+	 * @author Lucas Royackkers
+	 */
+	@GetMapping(value = "/skillsheet/{name}/{versionNumber}")
+	@ResponseBody
+	public String getSkillsSheetByNameAndVersion(@PathVariable("name") String sheetName,
+			@PathVariable("versionNumber") String versionNumber, @RequestAttribute("mail") String mail,
+			@RequestAttribute("role") UserRole role) {
+		Optional<SkillsSheet> optionalSkillSheet = skillsSheetBusinessController.getSkillsSheet(sheetName,
+				Long.parseLong(versionNumber), role);
+
+		if (optionalSkillSheet.isPresent()) {
+			return gson.toJson(optionalSkillSheet.get());
+		}
+		throw new RessourceNotFoundException();
+
+	}
+
+	/**
+	 *
 	 * @param mail the user's mail
 	 * @param role the user's role
 	 * @return the list of all skills sheets
@@ -92,44 +112,23 @@ public class SkillsSheetRestController {
 	public String getSkillsSheets(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
 		return gson.toJson(skillsSheetBusinessController.getAllSkillsSheets(role));
 	}
-	
-	
-	
+
 	/**
-	 * 
-	 * @param mail the user's mail
-	 * @param role the user's role
-	 * @param name the name of the skills sheet
-	 * @return the list of all skills sheets given a name
+	 *
+	 * @param params JsonNode containing post parameters from http request
+	 * @param mail   the user's mail
+	 * @param role   the user's role
+	 * @return {@link HttpException} corresponding to the status of the request
+	 *         ({@link UnprocessableEntityException} if the resource is not found
+	 *         and {@link CreatedException} if the skills sheet is updated
+	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author Lucas Royackkers
 	 */
-	@GetMapping(value = "/skillsheet/{name}")
+	@PutMapping(value = "/skillsheet")
 	@ResponseBody
-	public String getSkillsSheetByName(@PathVariable("name") String sheetName, @RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
-		return gson.toJson(skillsSheetBusinessController.getSkillsSheets(sheetName,role));
+	public HttpException updateSkillsSheet(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
+			@RequestAttribute("role") UserRole role) {
+		return skillsSheetBusinessController.updateSkillsSheet(params, role);
 	}
-	
-	
-	/**
-	 * 
-	 * @param sheetName the name of the skills sheet
-	 * @param versionNumber the version number of the skills sheet
-	 * @param mail the user's mail
-	 * @param role the user's role
-	 * @return a skills sheet given its name and its versionNumber
-	 * @author Lucas Royackkers
-	 */
-	@GetMapping(value = "/skillsheet/{name}/{versionNumber}")
-	@ResponseBody
-	public String getSkillsSheetByNameAndVersion(@PathVariable("name") String sheetName, @PathVariable("versionNumber") String versionNumber, @RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
-		Optional<SkillsSheet> optionalSkillSheet = skillsSheetBusinessController.getSkillsSheet(sheetName,Long.parseLong(versionNumber),role);
-		
-		if(optionalSkillSheet.isPresent()) {
-			return gson.toJson(optionalSkillSheet.get());
-		}
-		throw new RessourceNotFoundException();
-		
-	}
-	
 
 }

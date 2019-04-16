@@ -12,38 +12,39 @@ import fr.alten.ambroiseJEE.utils.routing.ParseRoutingFile;
 
 /**
  * Business Controller for menu items configuration
+ * 
  * @author Camille Schnell
  * @author Kylian Gehier
  *
  */
 @Service
-public class ConfigBusinessController {	
-	
+public class ConfigBusinessController {
+
 	/**
-	 * 
+	 *
 	 * @param role the user role
 	 * @return a json string containing every menu and submenu items
 	 * @author Camille Schnell
 	 * @author Kylian Gehier
-	 * @throws FileNotFoundException
-	 *  {@link ForbiddenException} if the user isn't connected
+	 * @throws FileNotFoundException {@link ForbiddenException} if the user isn't
+	 *                               connected
 	 */
 	public String getMenuItems(UserRole role) throws FileNotFoundException {
-		if(!(UserRole.DESACTIVATED == role))
+		if (!(UserRole.DESACTIVATED == role))
 			return ParseConfigFile.getJsonMenuItemsByRole(role);
 		throw new ForbiddenException();
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param role the user role
 	 * @return a json string containing Routing list depending of user's role
 	 * @author Kylian Gehier
-	 * @throws FileNotFoundException
-	 *  {@link ForbiddenException} if the user isn't connected
+	 * @throws FileNotFoundException {@link ForbiddenException} if the user isn't
+	 *                               connected
 	 */
 	public String getRoutes(UserRole role, AngularModule module) throws FileNotFoundException {
-		if(!(UserRole.DESACTIVATED == role))
+		if (!(UserRole.DESACTIVATED == role))
 			return ParseRoutingFile.getJsonRoutingItemsByRole(role, module);
 		throw new ForbiddenException();
 	}

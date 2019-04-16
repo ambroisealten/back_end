@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.utils.httpStatus;
 
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 /**
  * Exception sent when an entity is successfully created in database. HTTP
  * Status : 201.
- * 
+ *
  * @author Andy Chabalier
  *
  */
@@ -20,10 +20,11 @@ public class CreatedException extends HttpException {
 
 	public CreatedException() {
 		super("Created");
-		StackTraceElement[] newStackTrace = {new StackTraceElement(this.getClass().getSimpleName(), HttpStatus.CREATED.name(), "", HttpStatus.CREATED.value())};
+		StackTraceElement[] newStackTrace = { new StackTraceElement(this.getClass().getSimpleName(),
+				HttpStatus.CREATED.name(), "", HttpStatus.CREATED.value()) };
 		this.setStackTrace(newStackTrace);
 	}
-	
+
 	@Override
 	public String getLocalizedMessage() {
 		return "Entité créée";

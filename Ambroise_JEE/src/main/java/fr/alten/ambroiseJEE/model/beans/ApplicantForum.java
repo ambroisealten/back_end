@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.model.beans;
 
@@ -30,92 +30,92 @@ public class ApplicantForum extends Person {
 	private boolean permis;
 	private Nationality nationality;
 
-	public List<String> getMobilities() {
-		return mobilities;
-	}
-
-	public void setMobilities(List<String> mobilities) {
-		this.mobilities = mobilities;
-	}
-
-	public String getPhoneNumber() {
-		return phoneNumber;
-	}
-
-	public void setPhoneNumber(String phoneNumber) {
-		this.phoneNumber = phoneNumber;
-	}
-
-	public String getStartAt() {
-		return startAt;
-	}
-
-	public void setStartAt(String startAt) {
-		this.startAt = startAt;
-	}
-
-	public String getGrade() {
-		return grade;
-	}
-
-	public void setGrade(String grade) {
-		this.grade = grade;
-	}
-
 	public String getCommentary() {
 		return commentary;
-	}
-
-	public void setCommentary(String commentary) {
-		this.commentary = commentary;
-	}
-
-	public String getContractType() {
-		return contractType;
-	}
-
-	public void setContractType(String contractType) {
-		this.contractType = contractType;
 	}
 
 	public String getContractDuration() {
 		return contractDuration;
 	}
 
-	public void setContractDuration(String contractDuration) {
-		this.contractDuration = contractDuration;
+	public String getContractType() {
+		return contractType;
 	}
 
-	public List<String> getSkills() {
-		return skills;
+	public String getGrade() {
+		return grade;
 	}
 
-	public void setSkills(List<String> skills) {
-		this.skills = skills;
-	}
-
-	public boolean isVehicule() {
-		return vehicule;
-	}
-
-	public void setVehicule(boolean vehicule) {
-		this.vehicule = vehicule;
-	}
-
-	public boolean isPermis() {
-		return permis;
-	}
-
-	public void setPermis(boolean permis) {
-		this.permis = permis;
+	public List<String> getMobilities() {
+		return mobilities;
 	}
 
 	public Nationality getNationality() {
 		return nationality;
 	}
 
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public List<String> getSkills() {
+		return skills;
+	}
+
+	public String getStartAt() {
+		return startAt;
+	}
+
+	public boolean isPermis() {
+		return permis;
+	}
+
+	public boolean isVehicule() {
+		return vehicule;
+	}
+
+	public void setCommentary(String commentary) {
+		this.commentary = commentary;
+	}
+
+	public void setContractDuration(String contractDuration) {
+		this.contractDuration = contractDuration;
+	}
+
+	public void setContractType(String contractType) {
+		this.contractType = contractType;
+	}
+
+	public void setGrade(String grade) {
+		this.grade = grade;
+	}
+
+	public void setMobilities(List<String> mobilities) {
+		this.mobilities = mobilities;
+	}
+
 	public void setNationality(Nationality nationality) {
 		this.nationality = nationality;
+	}
+
+	public void setPermis(boolean permis) {
+		this.permis = permis;
+	}
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+
+	public void setSkills(List<String> skills) {
+		this.skills = skills;
+	}
+
+	public void setStartAt(String startAt) {
+		this.startAt = startAt;
+	}
+
+	public void setVehicule(boolean vehicule) {
+		this.vehicule = vehicule;
 	}
 
 }

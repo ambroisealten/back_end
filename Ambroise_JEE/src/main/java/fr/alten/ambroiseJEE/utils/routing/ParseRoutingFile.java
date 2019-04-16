@@ -16,7 +16,7 @@ import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 
 /**
- * 
+ *
  * @author Kylian Gehier
  *
  */
@@ -26,7 +26,7 @@ public class ParseRoutingFile {
 
 	/**
 	 * Create a json file containing menu items to display for a particular role
-	 * 
+	 *
 	 * @param role current UserRole
 	 * @return json containing routing list
 	 * @throws FileNotFoundException
@@ -46,23 +46,22 @@ public class ParseRoutingFile {
 
 		// gt Routingitems containing the list of couple (UserRole, Routes[])
 		JsonArray routingItems = configObject.get("routing").getAsJsonArray();
-		
-		for(JsonElement routing : routingItems) {
+
+		for (JsonElement routing : routingItems) {
 			// get the routes list of the current UserRole
-			if(UserRole.valueOf(((JsonObject) routing).get("role").getAsString()).equals(role)) {
+			if (UserRole.valueOf(((JsonObject) routing).get("role").getAsString()).equals(role)) {
 				JsonArray resultArray = (JsonArray) ((JsonObject) routing).get("routes");
 
 				// create result Json
 				JsonObject resultjson = new JsonObject();
 				resultjson.add("routes", resultArray);
-				
+
 				return gson.toJson(resultjson);
 			}
 		}
-		
+
 		throw new ForbiddenException();
 
-
 	}
-	
+
 }

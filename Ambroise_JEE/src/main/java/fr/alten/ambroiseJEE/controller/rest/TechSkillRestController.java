@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.controller.rest;
 
@@ -21,10 +21,9 @@ import fr.alten.ambroiseJEE.controller.business.TechSkillBusinessController;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 
-
 /**
  * Rest controller for the techSkill web service
- * 
+ *
  * @author Thomas Decamp
  *
  */
@@ -45,7 +44,14 @@ public class TechSkillRestController {
 	@ResponseBody
 	public HttpException createTechSkill(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws Exception {
-		return  techSkillBusinessController.createTechSkill(params, role);				
+		return techSkillBusinessController.createTechSkill(params, role);
+	}
+
+	@DeleteMapping(value = "/techSkill")
+	@ResponseBody
+	public HttpException deleteTechSkill(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
+			@RequestAttribute("role") UserRole role) throws Exception {
+		return techSkillBusinessController.deleteTechSkill(params, role);
 	}
 
 	@GetMapping(value = "/techSkills")
@@ -58,13 +64,6 @@ public class TechSkillRestController {
 	@ResponseBody
 	public HttpException updateTechSkill(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws Exception {
-		return  techSkillBusinessController.updateTechSkill(params, role);				
-	}
-
-	@DeleteMapping(value = "/techSkill")
-	@ResponseBody
-	public HttpException deleteTechSkill(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) throws Exception {
-		return  techSkillBusinessController.deleteTechSkill(params, role);				
+		return techSkillBusinessController.updateTechSkill(params, role);
 	}
 }

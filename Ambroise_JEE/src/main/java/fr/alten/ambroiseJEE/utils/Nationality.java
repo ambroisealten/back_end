@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.utils;
 
@@ -8,8 +8,5 @@ package fr.alten.ambroiseJEE.utils;
  *
  */
 public enum Nationality {
-	NONE,
-	FRANCAIS,
-	UE,
-	WORLD;
+	NONE, FRANCAIS, UE, WORLD;
 }

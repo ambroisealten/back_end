@@ -17,7 +17,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 
 /**
  * Parse information from config.json file
- * 
+ *
  * @author Camille Schnell
  *
  */
@@ -27,7 +27,7 @@ public class ParseConfigFile {
 
 	/**
 	 * Create a json file containing menu items to display for a particular role
-	 * 
+	 *
 	 * @param role current UserRole
 	 * @return json containing menu items
 	 * @throws FileNotFoundException
@@ -97,20 +97,18 @@ public class ParseConfigFile {
 
 				// get the routing list for current UserRole
 				JsonArray currentRoleRoutingArray = (JsonArray) currentRoleRoutingItem.getAsJsonObject().get("routes");
-				
+
 				// transforming the routing list JsonArray to a JsonObject
 				JsonObject resultJson = new JsonObject();
 				resultJson.add("routes", currentRoleRoutingArray);
-				
+
 				return gson.toJson(resultJson);
-				
-				
+
 			}
 		}
-		
+
 		// Exception in case UserRole doesn't exist in routing.json or UserRole
 		throw new ForbiddenException();
-		 
 
 	}
 

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.controller.business.geographic;
 
@@ -50,62 +50,6 @@ public class GeographicBusinessController {
 	private Gson gson = (new GsonBuilder()).create();
 
 	/**
-	 * Get the wanted Geographic object. Depending of the placeType, we get the
-	 * corresponding BusinessController if the object don't exist in base, we throw
-	 * the RessourceNotFoundException
-	 * 
-	 * @param placeName the place's name
-	 * @param placeType the place's type
-	 * @return the geographic corresponding to placeName and placeType
-	 * @throws RessourceNotFoundException()
-	 * @author Andy Chabalier
-	 */
-	public Optional<Geographic> getPlace(String placeName, String placeType) {
-		Geographic place;
-		try {
-			switch (placeType.toLowerCase()) {
-			case "city":
-				place = cityBusinessController.getCity(placeName).get();
-				break;
-			case "region":
-				place = regionBusinessController.getRegion(placeName).get();
-				break;
-			case "departement":
-				place = departementBusinessController.getDepartement(placeName).get();
-				break;
-			case "postalCode":
-				place = postalCodeBusinessController.getPostalCode(placeName).get();
-				break;
-			default:
-				throw new RessourceNotFoundException();
-			}
-		} catch (NoSuchElementException nsee) {
-			return Optional.empty();
-		}
-		return Optional.ofNullable(place);
-	}
-
-	/**
-	 * 
-	 * @param role the current logged user role
-	 * @return
-	 * @author Andy Chabalier
-	 */
-	public HttpException synchronise(UserRole role) {
-		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
-			HashMap<String, ArrayList<LinkedTreeMap>> data = fetchData();
-
-			createRegion(data.get("region"), role);
-			createDepartement(data.get("departement"), role);
-
-			createCities(data.get("departement"), role);
-
-			return new OkException();
-		}
-		throw new ForbiddenException();
-	}
-
-	/**
 	 * @param arrayList ArrayList of {@link LinkedTreeMap} departements data
 	 * @param role      the current logged user role
 	 * @author Andy Chabalier
@@ -118,7 +62,8 @@ public class GeographicBusinessController {
 				ArrayList<LinkedTreeMap> citiesByDepartement = new ArrayList<LinkedTreeMap>();
 				String code = (String) departement.get("code");
 				URI urlCities = new URI("https://geo.api.gouv.fr/departements/" + code + "/communes");
-				citiesByDepartement = gson.fromJson(restTemplate.getForObject(urlCities, String.class), ArrayList.class);
+				citiesByDepartement = gson.fromJson(restTemplate.getForObject(urlCities, String.class),
+						ArrayList.class);
 				for (LinkedTreeMap city : citiesByDepartement) {
 					try {
 						JsonNode jCity = JsonUtils.toJsonNode(gson.toJsonTree(city).getAsJsonObject());
@@ -137,13 +82,12 @@ public class GeographicBusinessController {
 	/**
 	 * @param arrayList ArrayList of LinkedTreeMap with regions data
 	 * @author Andy Chabalier
-	 * @return
 	 */
-	private void createRegion(ArrayList<LinkedTreeMap> regionData, UserRole role) {
-		for (LinkedTreeMap region : regionData) {
+	private void createDepartement(ArrayList<LinkedTreeMap> departementData, UserRole role) {
+		for (LinkedTreeMap departement : departementData) {
 			try {
-				JsonNode jRegion = JsonUtils.toJsonNode(gson.toJsonTree(region).getAsJsonObject());
-				regionBusinessController.createRegion(jRegion, role);
+				JsonNode jDepartement = JsonUtils.toJsonNode(gson.toJsonTree(departement).getAsJsonObject());
+				departementBusinessController.createDepartement(jDepartement, role);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -153,12 +97,13 @@ public class GeographicBusinessController {
 	/**
 	 * @param arrayList ArrayList of LinkedTreeMap with regions data
 	 * @author Andy Chabalier
+	 * @return
 	 */
-	private void createDepartement(ArrayList<LinkedTreeMap> departementData, UserRole role) {
-		for (LinkedTreeMap departement : departementData) {
+	private void createRegion(ArrayList<LinkedTreeMap> regionData, UserRole role) {
+		for (LinkedTreeMap region : regionData) {
 			try {
-				JsonNode jDepartement = JsonUtils.toJsonNode(gson.toJsonTree(departement).getAsJsonObject());
-				departementBusinessController.createDepartement(jDepartement, role);
+				JsonNode jRegion = JsonUtils.toJsonNode(gson.toJsonTree(region).getAsJsonObject());
+				regionBusinessController.createRegion(jRegion, role);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -193,5 +138,61 @@ public class GeographicBusinessController {
 		dataFetchingThread.run();
 
 		return data;
+	}
+
+	/**
+	 * Get the wanted Geographic object. Depending of the placeType, we get the
+	 * corresponding BusinessController if the object don't exist in base, we throw
+	 * the RessourceNotFoundException
+	 *
+	 * @param placeName the place's name
+	 * @param placeType the place's type
+	 * @return the geographic corresponding to placeName and placeType
+	 * @throws RessourceNotFoundException()
+	 * @author Andy Chabalier
+	 */
+	public Optional<Geographic> getPlace(String placeName, String placeType) {
+		Geographic place;
+		try {
+			switch (placeType.toLowerCase()) {
+			case "city":
+				place = cityBusinessController.getCity(placeName).get();
+				break;
+			case "region":
+				place = regionBusinessController.getRegion(placeName).get();
+				break;
+			case "departement":
+				place = departementBusinessController.getDepartement(placeName).get();
+				break;
+			case "postalCode":
+				place = postalCodeBusinessController.getPostalCode(placeName).get();
+				break;
+			default:
+				throw new RessourceNotFoundException();
+			}
+		} catch (NoSuchElementException nsee) {
+			return Optional.empty();
+		}
+		return Optional.ofNullable(place);
+	}
+
+	/**
+	 *
+	 * @param role the current logged user role
+	 * @return
+	 * @author Andy Chabalier
+	 */
+	public HttpException synchronise(UserRole role) {
+		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
+			HashMap<String, ArrayList<LinkedTreeMap>> data = fetchData();
+
+			createRegion(data.get("region"), role);
+			createDepartement(data.get("departement"), role);
+
+			createCities(data.get("departement"), role);
+
+			return new OkException();
+		}
+		throw new ForbiddenException();
 	}
 }

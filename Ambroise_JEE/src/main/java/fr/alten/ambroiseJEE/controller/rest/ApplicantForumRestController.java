@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.controller.rest;
 
@@ -32,37 +32,70 @@ import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
  */
 @Controller
 public class ApplicantForumRestController {
-	
+
 	@Autowired
 	private ApplicantForumBusinessController applicantForumBusinessController;
-	
+
 	private final Gson gson;
-	
+
 	public ApplicantForumRestController() {
 		GsonBuilder builder = new GsonBuilder();
 		this.gson = builder.create();
 	}
-	
+
 	/**
-	 * 
-	 * @param params JsonNode containing post parameters from http request 
-	 * @param mail the user's mail
-	 * @param role the user's role
-	 * @return {@link HttpException} corresponding to the status of the
-	 *         request ({@link UnprocessableEntityException} if the resource is not found
+	 *
+	 * @param params JsonNode containing post parameters from http request
+	 * @param mail   the user's mail
+	 * @param role   the user's role
+	 * @return {@link HttpException} corresponding to the status of the request
+	 *         ({@link UnprocessableEntityException} if the resource is not found
 	 *         and {@link CreatedException} if the applicant is created
 	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author Andy Chabalier
 	 */
 	@PostMapping(value = "/forum/applicant")
 	@ResponseBody
-	public HttpException createApplicant(@RequestBody JsonNode params,
-			@RequestAttribute("role") UserRole role) throws Exception {
+	public HttpException createApplicant(@RequestBody JsonNode params, @RequestAttribute("role") UserRole role)
+			throws Exception {
 		return applicantForumBusinessController.createApplicant(params, role);
 	}
 
 	/**
-	 * 
+	 *
+	 * @param params JsonNode containing post parameters from http request
+	 * @param mail   the user's mail
+	 * @param role   the user's role
+	 * @return {@link HttpException} corresponding to the status of the request
+	 *         ({@link UnprocessableEntityException} if the resource is not found
+	 *         and {@link CreatedException} if the person(applicant) is deleted
+	 * @author Andy Chabalier
+	 */
+	@DeleteMapping(value = "/forum/applicant")
+	@ResponseBody
+	public HttpException deleteApplicant(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
+			@RequestAttribute("role") UserRole role) {
+		return params.get("mail") != null ? applicantForumBusinessController.deleteApplicant(params, role)
+				: new UnprocessableEntityException();
+	}
+
+	/**
+	 *
+	 * @param applicantName the applicant's name
+	 * @param mail          the user's mail
+	 * @param role          the user's role
+	 * @return an applicant, given its name
+	 * @author Andy Chabalier
+	 */
+	@GetMapping(value = "/forum/applicant/{name}")
+	@ResponseBody
+	public String getApplicant(@PathVariable("name") String applicantName, @RequestAttribute("mail") String mail,
+			@RequestAttribute("role") UserRole role) {
+		return gson.toJson(applicantForumBusinessController.getApplicant(applicantName, role));
+	}
+
+	/**
+	 *
 	 * @param mail the user's mail
 	 * @param role the user's role
 	 * @return the list of all applicants
@@ -73,55 +106,23 @@ public class ApplicantForumRestController {
 	public String getApplicants(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
 		return gson.toJson(applicantForumBusinessController.getApplicants(role));
 	}
-	
-	/**	
-	 * 
-	 * @param applicantName the applicant's name
-	 * @param mail the user's mail
-	 * @param role the user's role
-	 * @return an applicant, given its name
-	 * @author Andy Chabalier
-	 */
-	@GetMapping(value = "/forum/applicant/{name}")
-	@ResponseBody
-	public String getApplicant(@PathVariable("name") String applicantName, @RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
-		return gson.toJson(applicantForumBusinessController.getApplicant(applicantName,role));
-	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param params JsonNode containing post parameters from http request
-	 * @param mail the user's mail
-	 * @param role the user's role
-	 * @return {@link HttpException} corresponding to the status of the
-	 *         request ({@link UnprocessableEntityException} if the resource is not found
+	 * @param mail   the user's mail
+	 * @param role   the user's role
+	 * @return {@link HttpException} corresponding to the status of the request
+	 *         ({@link UnprocessableEntityException} if the resource is not found
 	 *         and {@link CreatedException} if the applicant is updated
 	 * @author Andy Chabalier
-	 * @throws ParseException 
+	 * @throws ParseException
 	 */
 	@PutMapping(value = "/forum/applicant")
 	@ResponseBody
 	public HttpException updateApplicant(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws ParseException {
 		return params.get("mail") != null ? applicantForumBusinessController.updateApplicant(params, role)
-				: new UnprocessableEntityException();
-	}
-	
-	/**
-	 * 
-	 * @param params JsonNode containing post parameters from http request
-	 * @param mail the user's mail
-	 * @param role the user's role
-	 * @return {@link HttpException} corresponding to the status of the
-	 *         request ({@link UnprocessableEntityException} if the resource is not found
-	 *         and {@link CreatedException} if the person(applicant) is deleted
-	 * @author Andy Chabalier
-	 */
-	@DeleteMapping(value = "/forum/applicant")
-	@ResponseBody
-	public HttpException deleteApplicant(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) {
-		return params.get("mail") != null ? applicantForumBusinessController.deleteApplicant(params, role)
 				: new UnprocessableEntityException();
 	}
 }

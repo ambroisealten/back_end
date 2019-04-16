@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.utils;
 
@@ -12,7 +12,7 @@ public class MailCreator {
 	/**
 	 * TODO Envoyer le nouveau mot de passe temporaire/ et un lien pour modifier le
 	 * mot de passe directement ?
-	 * 
+	 *
 	 * @param new_pass
 	 * @author MAQUINGHEN MAXIME
 	 */

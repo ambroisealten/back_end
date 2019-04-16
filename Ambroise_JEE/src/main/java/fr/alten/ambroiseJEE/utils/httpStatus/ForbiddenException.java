@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.utils.httpStatus;
 
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 /**
  * Exception sent when user doesn't have the right rights to access a resource.
  * HTTP Status : 403.
- * 
+ *
  * @author Andy Chabalier
  *
  */
@@ -20,11 +20,11 @@ public class ForbiddenException extends HttpException {
 
 	public ForbiddenException() {
 		super("Forbidden");
-		StackTraceElement[] newStackTrace = {new StackTraceElement(this.getClass().getSimpleName(), HttpStatus.FORBIDDEN.name(), "", HttpStatus.FORBIDDEN.value())};
+		StackTraceElement[] newStackTrace = { new StackTraceElement(this.getClass().getSimpleName(),
+				HttpStatus.FORBIDDEN.name(), "", HttpStatus.FORBIDDEN.value()) };
 		this.setStackTrace(newStackTrace);
 	}
 
-	
 	@Override
 	public String getLocalizedMessage() {
 		return "Requête refusée. Vous n'avez pas les privilèges requis";

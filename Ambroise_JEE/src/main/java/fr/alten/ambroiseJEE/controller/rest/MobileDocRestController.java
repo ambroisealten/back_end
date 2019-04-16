@@ -20,9 +20,9 @@ import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
- * 
+ *
  * Rest controller for MobileDoc administration
- * 
+ *
  * @author Kylian Gehier, Lucas Royackkers
  *
  */
@@ -33,9 +33,9 @@ public class MobileDocRestController {
 	private FileRestController fileRestController;
 
 	/**
-	 * 
+	 *
 	 * @param mail the current logged user's mail
-	 * @param role	the user's role
+	 * @param role the user's role
 	 * @return the list of all Mobile Documents
 	 * @author Kylian Gehier, Lucas Royackkers
 	 */
@@ -44,49 +44,50 @@ public class MobileDocRestController {
 	public String getMobileDocs(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
 		return fileRestController.getFilesForum(mail, role);
 	}
-	
 
 	/**
-	 * Upload a file that refers to a mobile doc. This delegate the stocking of file and his subscription in the
-	 * document's database collection HTTP Method : POST
-	 * 
+	 * Upload a file that refers to a mobile doc. This delegate the stocking of file
+	 * and his subscription in the document's database collection HTTP Method : POST
+	 *
 	 * @param file the file to store
 	 * @param mail the current logged user's mail
 	 * @param role the user's role
 	 * @return {@link HttpException} corresponding to the status of the request
 	 *         ({@link UnprocessableEntityException} if the resource is not found,
 	 *         ({@link OkException} if there is a conflict in the database (that
-	 *         means the file already exists and then it's an upload, But no change to
-	 *         make in base) and {@link CreatedException} if the file is stored and
-	 *         created
+	 *         means the file already exists and then it's an upload, But no change
+	 *         to make in base) and {@link CreatedException} if the file is stored
+	 *         and created
 	 * @author Lucas Royackkers
 	 */
 	@PostMapping(value = "/uploadMobileDoc")
 	@ResponseBody
-	public HttpException uploadMobileDoc(@RequestParam("file") MultipartFile file, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) {
-		return file != null ?  fileRestController.uploadFile("true", file, mail, role) :
-		new UnprocessableEntityException();
+	public HttpException uploadMobileDoc(@RequestParam("file") MultipartFile file,
+			@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
+		return file != null ? fileRestController.uploadFile("true", file, mail, role)
+				: new UnprocessableEntityException();
 	}
-	
+
 	/**
-	 * Upload several files. Calls the uploadMobileDoc function each time it encounters a file in its List
-	 * 
+	 * Upload several files. Calls the uploadMobileDoc function each time it
+	 * encounters a file in its List
+	 *
 	 * @param files the files to store (as a List)
-	 * @param mail the current logged user's mail
-	 * @param role the user's role
-	 * @return an array of {@link HttpException} corresponding to the status of the request
-	 *         ({@link UnprocessableEntityException} if the resources aren't found,
-	 *         ({@link OkException} if there is/are a conflict in the database (that
-	 *         means the file already exists and then it's an upload, But no change to
-	 *         make in base) and {@link CreatedException} if the file is/are stored and
-	 *         created
+	 * @param mail  the current logged user's mail
+	 * @param role  the user's role
+	 * @return an array of {@link HttpException} corresponding to the status of the
+	 *         request ({@link UnprocessableEntityException} if the resources aren't
+	 *         found, ({@link OkException} if there is/are a conflict in the
+	 *         database (that means the file already exists and then it's an upload,
+	 *         But no change to make in base) and {@link CreatedException} if the
+	 *         file is/are stored and created
 	 * @author Lucas Royackkers
 	 */
 	@PostMapping(value = "/uploadMobileDocs")
 	public List<HttpException> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files,
 			@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
-		return Arrays.asList(files).stream().map(file -> uploadMobileDoc(file, mail, role)).collect(Collectors.toList());
+		return Arrays.asList(files).stream().map(file -> uploadMobileDoc(file, mail, role))
+				.collect(Collectors.toList());
 	}
-	
+
 }

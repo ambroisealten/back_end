@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.controller.business;
 
@@ -21,7 +21,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
 
 /**
  * Sector controller for business rules.
- * 
+ *
  * @author Andy Chabalier
  *
  */
@@ -46,18 +46,6 @@ public class SectorBusinessController {
 	}
 
 	/**
-	 * @param role the current logged user's role
-	 * @return the list of sectors
-	 * @author Andy Chabalier
-	 */
-	public List<Sector> getSectors(UserRole role) {
-		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
-			return sectorEntityController.getSectors();
-		}
-		throw new ForbiddenException();
-	}
-
-	/**
 	 * @param JSector JsonNode with sector's name parameter
 	 * @param role    the current logged user's role
 	 * @return the @see {@link HttpException} corresponding to the statut of the
@@ -69,6 +57,18 @@ public class SectorBusinessController {
 		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)
 				? sectorEntityController.deleteSector(JSector)
 				: new ForbiddenException();
+	}
+
+	/**
+	 * @param role the current logged user's role
+	 * @return the list of sectors
+	 * @author Andy Chabalier
+	 */
+	public List<Sector> getSectors(UserRole role) {
+		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
+			return sectorEntityController.getSectors();
+		}
+		throw new ForbiddenException();
 	}
 
 	/**

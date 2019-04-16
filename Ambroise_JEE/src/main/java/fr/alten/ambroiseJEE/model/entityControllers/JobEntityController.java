@@ -25,14 +25,10 @@ import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
 public class JobEntityController {
 	@Autowired
 	private JobRepository jobRepository;
-	
-	public Optional<Job> getJob(String title) {
-		return jobRepository.findByTitle(title);
-	}
 
 	/**
 	 * Method to create a job.
-	 * 
+	 *
 	 * @param jJob JsonNode with all job parameters
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ConflictException} if there is a conflict in the
@@ -42,10 +38,10 @@ public class JobEntityController {
 	public HttpException createJob(JsonNode jJob) {
 		Optional<Job> jobOptional = jobRepository.findByTitle(jJob.get("title").textValue());
 
-		if(jobOptional.isPresent()) {
+		if (jobOptional.isPresent()) {
 			return new ConflictException();
 		}
-		
+
 		Job newJob = new Job();
 		newJob.setTitle(jJob.get("title").textValue());
 
@@ -58,6 +54,31 @@ public class JobEntityController {
 	}
 
 	/**
+	 *
+	 * @param jJob JsonNode with all Job parameters
+	 * @return {@link HttpException} corresponding to the status of the request
+	 *         ({@link RessourceNotFoundException} if the resource is not found and
+	 *         {@link OkException} if the Job is deactivated
+	 * @author Lucas Royackkers
+	 */
+	public HttpException deleteJob(JsonNode jJob) {
+		Optional<Job> JobOptionnal = jobRepository.findByTitle(jJob.get("title").textValue());
+
+		if (JobOptionnal.isPresent()) {
+			Job job = JobOptionnal.get();
+			job.setTitle("deactivated" + System.currentTimeMillis());
+			jobRepository.save(job);
+		} else {
+			throw new RessourceNotFoundException();
+		}
+		return new OkException();
+	}
+
+	public Optional<Job> getJob(String title) {
+		return jobRepository.findByTitle(title);
+	}
+
+	/**
 	 * @return the list of all jobs
 	 * @author Lucas Royackkers
 	 */
@@ -66,47 +87,25 @@ public class JobEntityController {
 	}
 
 	/**
-	 * 
-	 * @param jJob JsonNode with all Job parameters and the old name to perform the update even if the name is changed
+	 *
+	 * @param jJob JsonNode with all Job parameters and the old name to perform the
+	 *             update even if the name is changed
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link RessourceNotFoundException} if the resource is not found
-	 *         and {@link OkException} if the Job is updated
+	 *         request ({@link RessourceNotFoundException} if the resource is not
+	 *         found and {@link OkException} if the Job is updated
 	 * @author Lucas Royackkers
 	 */
 	public HttpException updateJob(JsonNode jJob) {
 		Optional<Job> JobOptionnal = jobRepository.findByTitle(jJob.get("oldTitle").textValue());
-		
+
 		if (JobOptionnal.isPresent()) {
 			Job job = JobOptionnal.get();
 			job.setTitle(jJob.get("title").textValue());
-			
-			jobRepository.save(job);
-		}
-		else {
-			throw new RessourceNotFoundException();
-		}		
-		return new OkException();
-	}
 
-	/**
-	 * 
-	 * @param jJob JsonNode with all Job parameters 
-	 * @return {@link HttpException} corresponding to the status of the
-	 *         request ({@link RessourceNotFoundException} if the resource is not found
-	 *         and {@link OkException} if the Job is deactivated
-	 * @author Lucas Royackkers
-	 */
-	public HttpException deleteJob(JsonNode jJob) {
-		Optional<Job> JobOptionnal = jobRepository.findByTitle(jJob.get("title").textValue());
-		
-		if (JobOptionnal.isPresent()) {
-			Job job = JobOptionnal.get();
-			job.setTitle("deactivated" + System.currentTimeMillis());
 			jobRepository.save(job);
-		}
-		else {
+		} else {
 			throw new RessourceNotFoundException();
-		}		
+		}
 		return new OkException();
 	}
 }

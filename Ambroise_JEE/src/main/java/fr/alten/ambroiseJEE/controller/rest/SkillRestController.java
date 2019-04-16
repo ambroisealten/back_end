@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.controller.rest;
 
@@ -24,7 +24,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
  * Rest controller for the skill web service
- * 
+ *
  * @author Thomas Decamp
  *
  */
@@ -49,6 +49,14 @@ public class SkillRestController {
 				: new UnprocessableEntityException();
 	}
 
+	@DeleteMapping(value = "/skill")
+	@ResponseBody
+	public HttpException deleteSkill(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
+			@RequestAttribute("role") UserRole role) throws Exception {
+		return params.get("mail") != null ? skillBusinessController.deleteSkill(params, role)
+				: new UnprocessableEntityException();
+	}
+
 	@GetMapping(value = "/skills")
 	@ResponseBody
 	public String getSkills(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
@@ -62,13 +70,4 @@ public class SkillRestController {
 		return params.get("mail") != null ? skillBusinessController.createSkill(params, role)
 				: new UnprocessableEntityException();
 	}
-
-	@DeleteMapping(value = "/skill")
-	@ResponseBody
-	public HttpException deleteSkill(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("mail") != null ? skillBusinessController.deleteSkill(params, role)
-				: new UnprocessableEntityException();
-	}
 }
-

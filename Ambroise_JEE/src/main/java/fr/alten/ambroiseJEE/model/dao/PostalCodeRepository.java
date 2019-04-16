@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.model.dao;
 
@@ -17,9 +17,9 @@ public interface PostalCodeRepository extends MongoRepository<PostalCode, Long> 
 
 	/**
 	 * @param name the postalCode name
-	 * @return An Optional with the corresponding city or not. 
+	 * @return An Optional with the corresponding city or not.
 	 * @author Andy Chabalier
 	 */
 	Optional<PostalCode> findByName(String name);
-	
+
 }

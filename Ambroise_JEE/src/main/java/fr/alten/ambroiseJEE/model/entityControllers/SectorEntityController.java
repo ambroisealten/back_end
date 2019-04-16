@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.model.entityControllers;
 
@@ -21,7 +21,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
 
 /**
  * User controller for entity gestion rules
- * 
+ *
  * @author Andy Chabalier
  *
  */
@@ -33,7 +33,7 @@ public class SectorEntityController {
 
 	/**
 	 * Method to create an sector.
-	 * 
+	 *
 	 * @param jSector JsonNode with all sector parameters
 	 * @return the @see {@link HttpException} corresponding to the statut of the
 	 *         request ({@link ConflictException} if there is a conflict in the
@@ -73,7 +73,17 @@ public class SectorEntityController {
 	}
 
 	/**
+	 * fetch the list of sectors
 	 * 
+	 * @return the list of all sectors
+	 * @author Andy Chabalier
+	 */
+	public List<Sector> getSectors() {
+		return sectorRepository.findAll();
+	}
+
+	/**
+	 *
 	 * @param jSector JsonNode with all sector parameters and the oldName to perform
 	 *                the update even if the name is changed
 	 * @return the @see {@link HttpException} corresponding to the statut of the
@@ -91,14 +101,6 @@ public class SectorEntityController {
 			throw new RessourceNotFoundException();
 		}
 		return new OkException();
-	}
-
-	/** fetch the list of sectors
-	 * @return the list of all sectors
-	 * @author Andy Chabalier
-	 */
-	public List<Sector> getSectors() {
-		return sectorRepository.findAll();
 	}
 
 }

@@ -30,7 +30,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
  * Rest Controller for Applicant
- * 
+ *
  * @author Lucas Royackkers
  *
  */
@@ -48,12 +48,12 @@ public class ApplicantRestController {
 	}
 
 	/**
-	 * 
-	 * @param params JsonNode containing post parameters from http request 
-	 * @param role the user's role
-	 * @return {@link HttpException} corresponding to the status of the
-	 *         request ({@link ConflictException} if there is a conflict in the database
-	 *         and {@link CreatedException} if the person(applicant) is created
+	 *
+	 * @param params JsonNode containing post parameters from http request
+	 * @param role   the user's role
+	 * @return {@link HttpException} corresponding to the status of the request
+	 *         ({@link ConflictException} if there is a conflict in the database and
+	 *         {@link CreatedException} if the person(applicant) is created
 	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author Lucas Royackkers
 	 */
@@ -65,7 +65,44 @@ public class ApplicantRestController {
 	}
 
 	/**
-	 * 
+	 *
+	 * @param params JsonNode containing post parameters from http request
+	 * @param mail   the current logged user's mail
+	 * @param role   the user's role
+	 * @return {@link HttpException} corresponding to the status of the request
+	 *         ({@link ResourceNotFoundException} if the resource is not found and
+	 *         {@link OkException} if the person(applicant) is deleted
+	 * @author Lucas Royackkers
+	 */
+	@DeleteMapping(value = "/applicant")
+	@ResponseBody
+	public HttpException deleteApplicant(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
+			@RequestAttribute("role") UserRole role) {
+		return params.get("mail") != null ? applicantBusinessController.deleteApplicant(params, role)
+				: new UnprocessableEntityException();
+	}
+
+	/**
+	 *
+	 * @param applicantName the applicant's name
+	 * @param mail          the current logged user's mail
+	 * @param role          the user's role
+	 * @return an applicant, given its name
+	 * @author Lucas Royackkers
+	 */
+	@GetMapping(value = "/applicant/{mail}")
+	@ResponseBody
+	public String getApplicant(@PathVariable("mail") String applicantMail, @RequestAttribute("mail") String mail,
+			@RequestAttribute("role") UserRole role) {
+		Optional<Person> personOptional = applicantBusinessController.getApplicant(applicantMail, role);
+		if (personOptional.isPresent()) {
+			return gson.toJson(personOptional.get());
+		}
+		throw new RessourceNotFoundException();
+	}
+
+	/**
+	 *
 	 * @param mail the current logged user's mail
 	 * @param role the user's role
 	 * @return the list of all applicants
@@ -78,31 +115,13 @@ public class ApplicantRestController {
 	}
 
 	/**
-	 * 
-	 * @param applicantName the applicant's name
-	 * @param mail the current logged user's mail
-	 * @param role the user's role
-	 * @return an applicant, given its name
-	 * @author Lucas Royackkers
-	 */
-	@GetMapping(value = "/applicant/{mail}")
-	@ResponseBody
-	public String getApplicant(@PathVariable("mail") String applicantMail, @RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
-		Optional<Person> personOptional = applicantBusinessController.getApplicant(applicantMail,role);
-		if(personOptional.isPresent()) {
-			return gson.toJson(personOptional.get());
-		}
-		throw new RessourceNotFoundException();
-	}
-
-	/**
-	 * 
+	 *
 	 * @param params JsonNode containing post parameters from http request
-	 * @param mail the current logged user's mail
-	 * @param role the user's role
-	 * @return {@link HttpException} corresponding to the status of the
-	 *         request ({@link ResourceNotFoundException} if the resource is not found
-	 *         and {@link OkException} if the person(applicant) is updated
+	 * @param mail   the current logged user's mail
+	 * @param role   the user's role
+	 * @return {@link HttpException} corresponding to the status of the request
+	 *         ({@link ResourceNotFoundException} if the resource is not found and
+	 *         {@link OkException} if the person(applicant) is updated
 	 * @author Lucas Royackkers
 	 * @throws ParseException
 	 */
@@ -111,24 +130,6 @@ public class ApplicantRestController {
 	public HttpException updateApplicant(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws ParseException {
 		return params.get("mail") != null ? applicantBusinessController.updateApplicant(params, role)
-				: new UnprocessableEntityException();
-	}
-
-	/**
-	 * 
-	 * @param params JsonNode containing post parameters from http request
-	 * @param mail the current logged user's mail
-	 * @param role the user's role
-	 * @return {@link HttpException} corresponding to the status of the
-	 *         request ({@link ResourceNotFoundException} if the resource is not found
-	 *         and {@link OkException} if the person(applicant) is deleted
-	 * @author Lucas Royackkers
-	 */
-	@DeleteMapping(value = "/applicant")
-	@ResponseBody
-	public HttpException deleteApplicant(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) {
-		return params.get("mail") != null ? applicantBusinessController.deleteApplicant(params, role)
 				: new UnprocessableEntityException();
 	}
 }

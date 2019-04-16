@@ -15,6 +15,7 @@ import fr.alten.ambroiseJEE.utils.routing.AngularModule;
 
 /**
  * Rest Controller for Menu items configuration
+ * 
  * @author Camille Schnell
  * @author Kylian Gehier
  *
@@ -24,36 +25,38 @@ public class ConfigRestController {
 
 	@Autowired
 	private ConfigBusinessController configMenuBusinessController;
-	
+
 	public ConfigRestController() {
-		
+
 	}
-	
+
 	/**
 	 *
 	 * @param role the user role
 	 * @return json reponse containing all menus and submenus items
 	 * @author Camille Schnell
 	 * @author Kylian Gehier
-	 * @throws FileNotFoundException 
+	 * @throws FileNotFoundException
 	 */
 	@GetMapping(value = "/configMenu")
 	@ResponseBody
-	public String getMenuItems(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) throws FileNotFoundException {
+	public String getMenuItems(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role)
+			throws FileNotFoundException {
 		return configMenuBusinessController.getMenuItems(role);
 	}
-	
+
 	/**
 	 *
 	 * @param role the user role
 	 * @return json reponse containing Routing list depending of user's role
 	 * @author Kylian Gehier
-	 * @throws FileNotFoundException 
+	 * @throws FileNotFoundException
 	 */
 	@GetMapping(value = "/configRouting{angularModule}")
 	@ResponseBody
-	public String getRoutes(@PathVariable("angularModule") AngularModule module,@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) throws FileNotFoundException {
+	public String getRoutes(@PathVariable("angularModule") AngularModule module, @RequestAttribute("mail") String mail,
+			@RequestAttribute("role") UserRole role) throws FileNotFoundException {
 		return configMenuBusinessController.getRoutes(role, module);
 	}
-	
+
 }

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.controller.business;
 
@@ -26,7 +26,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
  * Business file controller to file storage
- * 
+ *
  * @author Andy Chabalier
  *
  */
@@ -40,7 +40,7 @@ public class FileStorageBusinessController {
 
 	/**
 	 * Initialise the controller with the application properties of file path
-	 * 
+	 *
 	 * @author Andy Chabalier
 	 */
 	@PostConstruct
@@ -55,8 +55,29 @@ public class FileStorageBusinessController {
 	}
 
 	/**
+	 * Load a file
+	 *
+	 * @param fileName file to load
+	 * @return the ressource fetched
+	 * @author Andy Chabalier
+	 */
+	public Resource loadFileAsResource(String fileName) {
+		try {
+			Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
+			Resource resource = new UrlResource(filePath.toUri());
+			if (resource.exists()) {
+				return resource;
+			} else {
+				throw new RessourceNotFoundException();
+			}
+		} catch (MalformedURLException ex) {
+			throw new RessourceNotFoundException();
+		}
+	}
+
+	/**
 	 * Store a file
-	 * 
+	 *
 	 * @param file file to store
 	 * @return the name of the stored file
 	 * @author Andy Chabalier
@@ -75,30 +96,9 @@ public class FileStorageBusinessController {
 			Path targetLocation = this.fileStorageLocation.resolve(fileName);
 			Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
-			return "file/"+fileName;
+			return "file/" + fileName;
 		} catch (IOException ex) {
 			throw new UnprocessableEntityException();
-		}
-	}
-
-	/**
-	 * Load a file
-	 * 
-	 * @param fileName file to load
-	 * @return the ressource fetched
-	 * @author Andy Chabalier
-	 */
-	public Resource loadFileAsResource(String fileName) {
-		try {
-			Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
-			Resource resource = new UrlResource(filePath.toUri());
-			if (resource.exists()) {
-				return resource;
-			} else {
-				throw new RessourceNotFoundException();
-			}
-		} catch (MalformedURLException ex) {
-			throw new RessourceNotFoundException();
 		}
 	}
 }

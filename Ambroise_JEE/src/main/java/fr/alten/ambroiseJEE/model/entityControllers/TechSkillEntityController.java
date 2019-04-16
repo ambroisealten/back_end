@@ -19,7 +19,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
 
 /**
  * Tech skill controller for entity gestion rules
- * 
+ *
  * @author Lucas Royackkers
  *
  */
@@ -29,8 +29,57 @@ public class TechSkillEntityController {
 	private TechSkillRepository techSkillRepository;
 
 	/**
+	 * Method to create a techSkill.
+	 *
+	 * @param jTechSkill JsonNode with all techSkill parameters
+	 * @return the @see {@link HttpException} corresponding to the status of the
+	 *         request ({@link ConflictException} if there is a conflict in the
+	 *         database and {@link CreatedException} if the techSkill is created
+	 * @author Lucas Royackkers, Thomas Decamp
+	 */
+	public HttpException createTechSkillAndGrade(JsonNode jTechSkill) {
+		List<TechSkill> techSkillOptional = techSkillRepository.findByName(jTechSkill.get("name").textValue());
+		if (techSkillOptional.size() > 0) {
+			return new ConflictException();
+		}
+
+		for (TechSkillGrade techGrade : TechSkillGrade.values()) {
+			TechSkill newTechSkill = new TechSkill();
+			newTechSkill.setName(jTechSkill.get("name").textValue());
+			newTechSkill.setGrade(techGrade);
+			try {
+				techSkillRepository.save(newTechSkill);
+			} catch (Exception e) {
+				return new ConflictException();
+			}
+		}
+		return new CreatedException();
+	}
+
+	/**
+	 *
+	 * @param name the TechSkill name to fetch
+	 * @return {@link HttpException} corresponding to the status of the request
+	 *         ({@link RessourceNotFoundException} if the resource is not found and
+	 *         {@link OkException} if the TechSkill is deactivated
+	 * @author Thomas Decamp
+	 */
+	public HttpException deleteTechSkill(JsonNode jTechSkill) {
+		List<TechSkill> techSkills = techSkillRepository.findByName(jTechSkill.get("name").textValue());
+		if (techSkills.isEmpty()) {
+			return new RessourceNotFoundException();
+		}
+		for (TechSkill techSkill : techSkills) {
+			techSkill.setName("deactivated" + System.currentTimeMillis());
+			techSkillRepository.save(techSkill);
+		}
+
+		return new OkException();
+	}
+
+	/**
 	 * Try to fetch a tech skill by its name
-	 * 
+	 *
 	 * @param name the tech skill's name to fetch
 	 * @return An Optional with the corresponding tech skill or not.
 	 * @author Lucas Royackkers
@@ -41,7 +90,7 @@ public class TechSkillEntityController {
 
 	/**
 	 * Try to fetch a tech skill by its name and grade
-	 * 
+	 *
 	 * @param name  the tech skill's name to fetch
 	 * @param grade the tech skill's grade to fetch
 	 * @return An Optional with the corresponding tech skill or not.
@@ -60,35 +109,7 @@ public class TechSkillEntityController {
 	}
 
 	/**
-	 * Method to create a techSkill.
-	 * 
-	 * @param jTechSkill JsonNode with all techSkill parameters
-	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link ConflictException} if there is a conflict in the
-	 *         database and {@link CreatedException} if the techSkill is created
-	 * @author Lucas Royackkers, Thomas Decamp
-	 */
-	public HttpException createTechSkillAndGrade(JsonNode jTechSkill) {
-		List<TechSkill> techSkillOptional = techSkillRepository.findByName(jTechSkill.get("name").textValue());
-		if(techSkillOptional.size() > 0) {
-			return new ConflictException();
-		}
-		
-		for(TechSkillGrade techGrade : TechSkillGrade.values()) {
-			TechSkill newTechSkill = new TechSkill();
-			newTechSkill.setName(jTechSkill.get("name").textValue());
-			newTechSkill.setGrade(techGrade);
-			try {
-				techSkillRepository.save(newTechSkill);
-			} catch (Exception e) {
-				return new ConflictException();
-			}
-		}
-		return new CreatedException();
-	}
-
-	/**
-	 * 
+	 *
 	 * @param jTechSkill JsonNode with all TechSkill parameters and the old name to
 	 *                   perform the update even if the name is changed
 	 * @return the @see {@link HttpException} corresponding to the status of the
@@ -98,7 +119,7 @@ public class TechSkillEntityController {
 	 */
 	public HttpException updateTechSkill(JsonNode jTechSkill) {
 		List<TechSkill> techSkills = techSkillRepository.findByName(jTechSkill.get("oldName").textValue());
-		if(techSkills.isEmpty()) {
+		if (techSkills.isEmpty()) {
 			return new RessourceNotFoundException();
 		}
 		String newName = jTechSkill.get("name").textValue();
@@ -106,27 +127,6 @@ public class TechSkillEntityController {
 			techSkill.setName(newName);
 			techSkillRepository.save(techSkill);
 		}
-		return new OkException();
-	}
-
-	/**
-	 * 
-	 * @param name the TechSkill name to fetch
-	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link RessourceNotFoundException} if the resource is not found and
-	 *         {@link OkException} if the TechSkill is deactivated
-	 * @author Thomas Decamp
-	 */
-	public HttpException deleteTechSkill(JsonNode jTechSkill) {
-		List<TechSkill> techSkills = techSkillRepository.findByName(jTechSkill.get("name").textValue());
-		if(techSkills.isEmpty()) {
-			return new RessourceNotFoundException();
-		}
-		for (TechSkill techSkill : techSkills) {
-			techSkill.setName("deactivated" + System.currentTimeMillis());
-			techSkillRepository.save(techSkill);
-		}
-
 		return new OkException();
 	}
 }

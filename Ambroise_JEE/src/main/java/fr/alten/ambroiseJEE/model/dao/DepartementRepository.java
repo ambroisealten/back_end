@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.model.dao;
 
@@ -13,9 +13,9 @@ public interface DepartementRepository extends MongoRepository<Departement, Long
 
 	/**
 	 * @param name the departement name
-	 * @return An Optional with the corresponding departement or not. 
+	 * @return An Optional with the corresponding departement or not.
 	 * @author Andy Chabalier
 	 */
 	Optional<Departement> findByName(String name);
-	
+
 }

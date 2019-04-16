@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.controller.rest;
 
@@ -21,10 +21,9 @@ import fr.alten.ambroiseJEE.controller.business.JobBusinessController;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 
-
 /**
  * Rest controller for the job web service
- * 
+ *
  * @author Lucas Royackkers
  *
  */
@@ -33,36 +32,35 @@ public class JobRestController {
 
 	@Autowired
 	private JobBusinessController jobBusinessController;
-	
+
 	private final Gson gson;
-	
+
 	public JobRestController() {
 		GsonBuilder builder = new GsonBuilder();
 		this.gson = builder.create();
 	}
-	
+
 	@PostMapping("/job")
 	@ResponseBody
 	public HttpException createJob(@RequestBody JsonNode params, @RequestAttribute("role") UserRole role) {
-		return jobBusinessController.createJob(params,role);
+		return jobBusinessController.createJob(params, role);
 	}
-	
-	@PutMapping("/job")
+
+	@DeleteMapping("/job")
 	@ResponseBody
-	public HttpException updateJob(@RequestBody JsonNode params, @RequestAttribute("role") UserRole role) {
-		return jobBusinessController.updateJob(params,role);
+	public HttpException deleteJob(@RequestBody JsonNode params, @RequestAttribute("role") UserRole role) {
+		return jobBusinessController.deleteJob(params, role);
 	}
-	
-	
+
 	@GetMapping("/jobs")
 	@ResponseBody
 	public String getJobs(@RequestAttribute("role") UserRole role) {
 		return gson.toJson(jobBusinessController.getJobs(role));
 	}
-	
-	@DeleteMapping("/job")
+
+	@PutMapping("/job")
 	@ResponseBody
-	public HttpException deleteJob(@RequestBody JsonNode params, @RequestAttribute("role") UserRole role) {
-		return jobBusinessController.deleteJob(params,role);
+	public HttpException updateJob(@RequestBody JsonNode params, @RequestAttribute("role") UserRole role) {
+		return jobBusinessController.updateJob(params, role);
 	}
 }

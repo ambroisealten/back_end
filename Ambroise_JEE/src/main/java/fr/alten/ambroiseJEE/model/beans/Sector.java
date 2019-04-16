@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.model.beans;
 
@@ -25,19 +25,19 @@ public class Sector implements Serializable {
 	@Indexed(unique = true)
 	private String name;
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
 	public ObjectId get_id() {
 		return _id;
 	}
 
+	public String getName() {
+		return name;
+	}
+
 	public void set_id(ObjectId _id) {
 		this._id = _id;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 }

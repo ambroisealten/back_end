@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.model.entityControllers;
 
@@ -26,8 +26,24 @@ public class FileEntityController {
 	private FileRepository fileRepository;
 
 	/**
+	 * @return the list of files
+	 * @author Andy Chabalier
+	 */
+	public List<File> getFiles() {
+		return fileRepository.findAll();
+	}
+
+	/**
+	 * @return the list of forum files
+	 * @author Andy Chabalier
+	 */
+	public List<File> getFilesForum() {
+		return fileRepository.findByIsForForum(true);
+	}
+
+	/**
 	 * Method to create a document
-	 * 
+	 *
 	 * @param fileDownloadUri the uri of the document to create
 	 * @return the @see {@link HttpException} corresponding to the statut of the
 	 *         request ({@link OkException} if there is a conflict in the database
@@ -39,9 +55,9 @@ public class FileEntityController {
 	public HttpException pushDocument(String fileDownloadUri, boolean isForForum) {
 		Optional<File> fileOptional = fileRepository.findByUri(fileDownloadUri);
 		File file;
-		if(fileOptional.isPresent()) {
+		if (fileOptional.isPresent()) {
 			file = fileOptional.get();
-		}else {
+		} else {
 			file = new File();
 		}
 		file.setUri(fileDownloadUri);
@@ -53,22 +69,6 @@ public class FileEntityController {
 			return new OkException();
 		}
 		return new CreatedException();
-	}
-
-	/**
-	 * @return the list of files
-	 * @author Andy Chabalier
-	 */
-	public List<File> getFiles() {
-		return fileRepository.findAll();
-	}
-	
-	/**
-	 * @return the list of forum files
-	 * @author Andy Chabalier
-	 */
-	public List<File> getFilesForum(){
-		return fileRepository.findByIsForForum(true);
 	}
 
 }

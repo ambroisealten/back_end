@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.controller.rest;
 
@@ -45,7 +45,7 @@ public class ForumRestController {
 
 	/**
 	 * Create a new forum
-	 * 
+	 *
 	 * @param params JsonNode containing put parameters from http request : name,
 	 *               date, place
 	 * @param role   the user role
@@ -65,21 +65,28 @@ public class ForumRestController {
 	}
 
 	/**
-	 * get the list of all forums
-	 * 
-	 * @param role the user role
-	 * @return the forum list
+	 * Delete a forum
+	 *
+	 * @param params contain the forum name, date, place
+	 * @param role   the user role
+	 * @return the @see {@link HttpException} corresponding to the statut of the
+	 *         request ({@link UnprocessableEntityException}) when the forum cannot
+	 *         be found ({@link RessourceNotFoundException} if the ressource is not
+	 *         found and {@link CreatedException} if the forum is deleted
+	 * @throws Exception
 	 * @author MAQUINGHEN MAXIME
 	 */
-	@GetMapping(value = "/forums")
+	@DeleteMapping(value = "/forum")
 	@ResponseBody
-	public String getForums(@RequestAttribute("role") UserRole role) {
-		return gson.toJson(forumBusinessController.getForums(role));
+	public HttpException deleteForum(@RequestBody JsonNode params, @RequestAttribute("role") UserRole role)
+			throws Exception {
+		return params.get("name") != null ? forumBusinessController.deleteForum(params, role)
+				: new UnprocessableEntityException();
 	}
 
 	/**
 	 * Get a forum
-	 * 
+	 *
 	 * @param name  the forum name
 	 * @param date  the forum data
 	 * @param place the forum place
@@ -95,8 +102,21 @@ public class ForumRestController {
 	}
 
 	/**
+	 * get the list of all forums
+	 *
+	 * @param role the user role
+	 * @return the forum list
+	 * @author MAQUINGHEN MAXIME
+	 */
+	@GetMapping(value = "/forums")
+	@ResponseBody
+	public String getForums(@RequestAttribute("role") UserRole role) {
+		return gson.toJson(forumBusinessController.getForums(role));
+	}
+
+	/**
 	 * Update a forum
-	 * 
+	 *
 	 * @param params contain the forum name, date, place
 	 * @param role   the user role
 	 * @return the @see {@link HttpException} corresponding to the statut of the
@@ -111,26 +131,6 @@ public class ForumRestController {
 	public HttpException updateForum(@RequestBody JsonNode params, @RequestAttribute("role") UserRole role)
 			throws Exception {
 		return params.get("name") != null ? forumBusinessController.updateForum(params, role)
-				: new UnprocessableEntityException();
-	}
-
-	/**
-	 * Delete a forum
-	 * 
-	 * @param params contain the forum name, date, place
-	 * @param role   the user role
-	 * @return the @see {@link HttpException} corresponding to the statut of the
-	 *         request ({@link UnprocessableEntityException}) when the forum cannot
-	 *         be found ({@link RessourceNotFoundException} if the ressource is not
-	 *         found and {@link CreatedException} if the forum is deleted
-	 * @throws Exception
-	 * @author MAQUINGHEN MAXIME
-	 */
-	@DeleteMapping(value = "/forum")
-	@ResponseBody
-	public HttpException deleteForum(@RequestBody JsonNode params, @RequestAttribute("role") UserRole role)
-			throws Exception {
-		return params.get("name") != null ? forumBusinessController.deleteForum(params, role)
 				: new UnprocessableEntityException();
 	}
 }

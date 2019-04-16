@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.controller.rest;
 
@@ -25,7 +25,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
  * Rest controller for the city web service
- * 
+ *
  * @author Andy Chabalier
  *
  */
@@ -43,7 +43,7 @@ public class DepartementRestController {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the current logged user mail
 	 * @param role   the current logged user role
@@ -62,7 +62,26 @@ public class DepartementRestController {
 	}
 
 	/**
-	 * 
+	 *
+	 * @param params JsonNode containing post parameters from http request
+	 * @param mail   the current logged user mail
+	 * @param role   the current logged user role
+	 * @return {@link HttpException} corresponding to the statut of the request
+	 *         ({@link UnprocessableEntityException} if the ressource is not found
+	 *         and {@link CreatedException} if the user is created
+	 * @throws Exception @see ForbiddenException if wrong identifiers
+	 * @author Andy Chabalier
+	 */
+	@DeleteMapping(value = "/departement")
+	@ResponseBody
+	public HttpException deleteDepartement(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
+			@RequestAttribute("role") UserRole role) throws Exception {
+		return params.get("name") != null ? departementBusinessController.deleteDepartement(params, role)
+				: new UnprocessableEntityException();
+	}
+
+	/**
+	 *
 	 * @param mail the current logged user mail
 	 * @param role the current logged user role
 	 * @return the list of all departements
@@ -75,12 +94,12 @@ public class DepartementRestController {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param params JsonNode containing post parameters from http request
-	 * @param mail the current logged user mail
-	 * @param role the current logged user role
-	 * @return {@link HttpException} corresponding to the statut of the
-	 *         request ({@link UnprocessableEntityException} if the ressource is not found
+	 * @param mail   the current logged user mail
+	 * @param role   the current logged user role
+	 * @return {@link HttpException} corresponding to the statut of the request
+	 *         ({@link UnprocessableEntityException} if the ressource is not found
 	 *         and {@link CreatedException} if the user is created
 	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author Andy Chabalier
@@ -90,25 +109,6 @@ public class DepartementRestController {
 	public HttpException updateDepartement(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws Exception {
 		return params.get("name") != null ? departementBusinessController.createDepartement(params, role)
-				: new UnprocessableEntityException();
-	}
-
-	/**
-	 * 
-	 * @param params JsonNode containing post parameters from http request
-	 * @param mail the current logged user mail
-	 * @param role the current logged user role
-	 * @return {@link HttpException} corresponding to the statut of the
-	 *         request ({@link UnprocessableEntityException} if the ressource is not found
-	 *         and {@link CreatedException} if the user is created
-	 * @throws Exception @see ForbiddenException if wrong identifiers
-	 * @author Andy Chabalier
-	 */
-	@DeleteMapping(value = "/departement")
-	@ResponseBody
-	public HttpException deleteDepartement(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("name") != null ? departementBusinessController.deleteDepartement(params, role)
 				: new UnprocessableEntityException();
 	}
 }

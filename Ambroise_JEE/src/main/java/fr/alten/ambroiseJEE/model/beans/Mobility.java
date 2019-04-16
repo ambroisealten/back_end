@@ -7,8 +7,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
- * 
- * 
+ *
+ *
  * @author Lucas Royackkers
  *
  */
@@ -22,7 +22,7 @@ public class Mobility implements Serializable {
 	private String placeType;
 	private int radius;
 	private String unit;
-	
+
 	public Mobility() {
 		super();
 	}
@@ -31,42 +31,40 @@ public class Mobility implements Serializable {
 		return _id;
 	}
 
-
-	public void set_id(ObjectId _id) {
-		this._id = _id;
-	}
-
-
 	public String getPlaceName() {
 		return placeName;
-	}
-
-	public void setPlaceName(String placeName) {
-		this.placeName = placeName;
-	}
-
-	public int getRadius() {
-		return radius;
-	}
-
-	public void setRadius(int radius) {
-		this.radius = radius;
-	}
-
-	public String getUnit() {
-		return unit;
-	}
-
-	public void setUnit(String unit) {
-		this.unit = unit;
 	}
 
 	public String getPlaceType() {
 		return placeType;
 	}
 
+	public int getRadius() {
+		return radius;
+	}
+
+	public String getUnit() {
+		return unit;
+	}
+
+	public void set_id(ObjectId _id) {
+		this._id = _id;
+	}
+
+	public void setPlaceName(String placeName) {
+		this.placeName = placeName;
+	}
+
 	public void setPlaceType(String placeType) {
 		this.placeType = placeType;
 	}
-	
+
+	public void setRadius(int radius) {
+		this.radius = radius;
+	}
+
+	public void setUnit(String unit) {
+		this.unit = unit;
+	}
+
 }

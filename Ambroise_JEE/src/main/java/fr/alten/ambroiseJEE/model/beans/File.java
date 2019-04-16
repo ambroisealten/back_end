@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.model.beans;
 
@@ -26,32 +26,32 @@ public class File {
 		return _id;
 	}
 
-	public void set_id(ObjectId _id) {
-		this._id = _id;
+	public long getDateOfAddition() {
+		return dateOfAddition;
 	}
 
 	public String getUri() {
 		return uri;
 	}
 
-	public void setUri(String uri) {
-		this.uri = uri;
+	public boolean isForForum() {
+		return isForForum;
 	}
 
-	public long getDateOfAddition() {
-		return dateOfAddition;
+	public void set_id(ObjectId _id) {
+		this._id = _id;
 	}
 
 	public void setDateOfAddition(long dateOfAddition) {
 		this.dateOfAddition = dateOfAddition;
 	}
 
-	public boolean isForForum() {
-		return isForForum;
-	}
-
 	public void setForForum(boolean isForForum) {
 		this.isForForum = isForForum;
+	}
+
+	public void setUri(String uri) {
+		this.uri = uri;
 	}
 
 }

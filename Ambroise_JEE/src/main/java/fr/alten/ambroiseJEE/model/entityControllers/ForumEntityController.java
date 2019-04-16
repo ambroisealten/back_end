@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.model.entityControllers;
 
@@ -31,7 +31,7 @@ public class ForumEntityController {
 
 	/**
 	 * Create a Forum
-	 * 
+	 *
 	 * @param jForum contain the forum name, the date and the place to create
 	 * @return {@link HttpException} corresponding to the statut of the request
 	 *         ({@link ConflictException} if the ressource cannot be create
@@ -61,18 +61,8 @@ public class ForumEntityController {
 	}
 
 	/**
-	 * Fetch all forums
-	 * 
-	 * @return the list of all forum
-	 * @author MAQUINGHEN MAXIME
-	 */
-	public List<Forum> getForums() {
-		return forumRepository.findAll();
-	}
-
-	/**
 	 * Delete a Forum
-	 * 
+	 *
 	 * @param params contain the name, date and place of the forum to delete
 	 * @return {@link HttpException} corresponding to the statut of the request
 	 *         ({@link RessourceNotFoundException} if the ressource cannot be found
@@ -93,8 +83,31 @@ public class ForumEntityController {
 	}
 
 	/**
+	 * Get a specific forum
+	 *
+	 * @param name  the name of the forum
+	 * @param date  the date of the forum
+	 * @param place the place of the forum
+	 * @return an Optional forum data
+	 * @author MAQUINGHEN MAXIME
+	 */
+	public Optional<Forum> getForum(String name, String date, String place) {
+		return forumRepository.findByNameAndDateAndPlace(name, date, place);
+	}
+
+	/**
+	 * Fetch all forums
+	 *
+	 * @return the list of all forum
+	 * @author MAQUINGHEN MAXIME
+	 */
+	public List<Forum> getForums() {
+		return forumRepository.findAll();
+	}
+
+	/**
 	 * Update a forum data
-	 * 
+	 *
 	 * @param params contain the forum oldname, olddate and oldplace to update
 	 * @return {@link HttpException} corresponding to the statut of the request
 	 *         ({@link RessourceNotFoundException} if the ressource cannot be found
@@ -115,19 +128,6 @@ public class ForumEntityController {
 			throw new RessourceNotFoundException();
 		}
 		return new OkException();
-	}
-
-	/**
-	 * Get a specific forum
-	 * 
-	 * @param name  the name of the forum
-	 * @param date  the date of the forum
-	 * @param place the place of the forum
-	 * @return an Optional forum data
-	 * @author MAQUINGHEN MAXIME
-	 */
-	public Optional<Forum> getForum(String name, String date, String place) {
-		return forumRepository.findByNameAndDateAndPlace(name, date, place);
 	}
 
 }

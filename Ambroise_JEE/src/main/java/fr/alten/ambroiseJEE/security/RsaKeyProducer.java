@@ -9,7 +9,7 @@ import org.jose4j.lang.JoseException;
 
 /**
  * Classe permettant la génération d'une clé RSA sur 2048 bits
- * 
+ *
  * @author Andy Chabalier
  */
 public class RsaKeyProducer {

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.model.entityControllers;
 
@@ -26,17 +26,13 @@ import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
 
 @Service
 public class DepartementEntityController {
-	
+
 	@Autowired
 	private DepartementRepository departementRepository;
 
-	public Optional<Departement> getDepartement(String name) {
-		return departementRepository.findByName(name);
-	}
-
 	/**
 	 * Method to create a departement.
-	 * 
+	 *
 	 * @param jDepartement JsonNode with all departement parameters
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ConflictException} if there is a conflict in the
@@ -59,6 +55,31 @@ public class DepartementEntityController {
 	}
 
 	/**
+	 *
+	 * @param name the departement name to fetch
+	 * @return {@link HttpException} corresponding to the status of the request
+	 *         ({@link RessourceNotFoundException} if the resource is not found and
+	 *         {@link OkException} if the departement is deactivated
+	 * @author Andy Chabalier
+	 */
+	public HttpException deleteDepartement(String name) {
+		Optional<Departement> departementOptionnal = departementRepository.findByName(name);
+
+		if (departementOptionnal.isPresent()) {
+			Departement departement = departementOptionnal.get();
+			departement.setName("deactivated" + System.currentTimeMillis());
+			departementRepository.save(departement);
+		} else {
+			throw new RessourceNotFoundException();
+		}
+		return new OkException();
+	}
+
+	public Optional<Departement> getDepartement(String name) {
+		return departementRepository.findByName(name);
+	}
+
+	/**
 	 * @return the list of all departements
 	 * @author Andy Chabalier
 	 */
@@ -67,50 +88,27 @@ public class DepartementEntityController {
 	}
 
 	/**
-	 * 
-	 * @param jDepartement JsonNode with all departement parameters and the old name to perform the update even if the name is changed
+	 *
+	 * @param jDepartement JsonNode with all departement parameters and the old name
+	 *                     to perform the update even if the name is changed
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link RessourceNotFoundException} if the resource is not found
-	 *         and {@link CreatedException} if the departement is updated
+	 *         request ({@link RessourceNotFoundException} if the resource is not
+	 *         found and {@link CreatedException} if the departement is updated
 	 * @author Andy Chabalier
 	 */
 	public HttpException updateDepartement(JsonNode jDepartement) {
-		Optional<Departement> departementOtionnal = departementRepository.findByName(jDepartement.get("oldName").textValue());
-		
+		Optional<Departement> departementOtionnal = departementRepository
+				.findByName(jDepartement.get("oldName").textValue());
+
 		if (departementOtionnal.isPresent()) {
 			Departement departement = departementOtionnal.get();
 			departement.setName(jDepartement.get("name").textValue());
-			
-			departementRepository.save(departement);
-		}
-		else {
-			throw new RessourceNotFoundException();
-		}		
-		return new OkException();
-	}
 
-	/**
-	 * 
-	 * @param name the departement name to fetch 
-	 * @return {@link HttpException} corresponding to the status of the
-	 *         request ({@link RessourceNotFoundException} if the resource is not found
-	 *         and {@link OkException} if the departement is deactivated
-	 * @author Andy Chabalier
-	 */
-	public HttpException deleteDepartement(String name) {
-		Optional<Departement> departementOptionnal = departementRepository.findByName(name);
-		
-		if (departementOptionnal.isPresent()) {
-			Departement departement = departementOptionnal.get();
-			departement.setName("deactivated" + System.currentTimeMillis());
 			departementRepository.save(departement);
-		}
-		else {
+		} else {
 			throw new RessourceNotFoundException();
-		}		
+		}
 		return new OkException();
 	}
 
 }
-
-

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.controller.business;
 
@@ -22,7 +22,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
 
 /**
  * Forum Controller for Business rules
- * 
+ *
  * @author MAQUINGHEN MAXIME
  */
 @Service
@@ -33,7 +33,7 @@ public class ForumBusinessController {
 
 	/**
 	 * Method to delegate forum creation
-	 * 
+	 *
 	 * @param jForum JsonNode with all user parameters (name, date, place)
 	 * @param role
 	 * @return the @see {@link HttpException} corresponding to the statut of the
@@ -47,38 +47,8 @@ public class ForumBusinessController {
 	}
 
 	/**
-	 * Method to delegate fetching of all forums
-	 * 
-	 * @param role user role
-	 * @return the list of all Forums
-	 * @author MAQUINGHEN MAXIME
-	 */
-	public List<Forum> getForums(UserRole role) {
-		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.CDR == role
-				|| UserRole.MANAGER == role) {
-			return forumEntityController.getForums();
-		}
-		throw new ForbiddenException();
-	}
-
-	/**
-	 * 
-	 * @param params the forum name, date, place
-	 * @param role   the user role
-	 * @return the @see {@link HttpException} corresponding to the statut of the
-	 *         request ({@link RessourceNotFoundException} if the ressource is not
-	 *         found and {@link CreatedException} if the forum is updated
-	 * @author MAQUINGHEN MAXIME
-	 */
-	public HttpException updateForum(JsonNode params, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)
-				? forumEntityController.updateForum(params)
-				: new ForbiddenException();
-	}
-
-	/**
 	 * Delete a forum
-	 * 
+	 *
 	 * @param params the forum name, date, place
 	 * @param role   the users role
 	 * @return @see {@link HttpException} corresponding to the statut of the request
@@ -93,7 +63,7 @@ public class ForumBusinessController {
 
 	/**
 	 * Get a forum
-	 * 
+	 *
 	 * @param name  the forum name
 	 * @param date  the forum date
 	 * @param place the forum place
@@ -109,6 +79,36 @@ public class ForumBusinessController {
 		}
 		throw new ForbiddenException();
 
+	}
+
+	/**
+	 * Method to delegate fetching of all forums
+	 *
+	 * @param role user role
+	 * @return the list of all Forums
+	 * @author MAQUINGHEN MAXIME
+	 */
+	public List<Forum> getForums(UserRole role) {
+		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.CDR == role
+				|| UserRole.MANAGER == role) {
+			return forumEntityController.getForums();
+		}
+		throw new ForbiddenException();
+	}
+
+	/**
+	 *
+	 * @param params the forum name, date, place
+	 * @param role   the user role
+	 * @return the @see {@link HttpException} corresponding to the statut of the
+	 *         request ({@link RessourceNotFoundException} if the ressource is not
+	 *         found and {@link CreatedException} if the forum is updated
+	 * @author MAQUINGHEN MAXIME
+	 */
+	public HttpException updateForum(JsonNode params, UserRole role) {
+		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)
+				? forumEntityController.updateForum(params)
+				: new ForbiddenException();
 	}
 
 }

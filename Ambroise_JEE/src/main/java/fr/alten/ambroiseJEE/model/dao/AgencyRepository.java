@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.model.dao;
 
@@ -17,11 +17,9 @@ public interface AgencyRepository extends MongoRepository<Agency, Long> {
 
 	/**
 	 * @param name the agency name
-	 * @return An Optional with the corresponding agency or not. 
+	 * @return An Optional with the corresponding agency or not.
 	 * @author Andy Chabalier
 	 */
 	Optional<Agency> findByName(String name);
-	
+
 }
-
-

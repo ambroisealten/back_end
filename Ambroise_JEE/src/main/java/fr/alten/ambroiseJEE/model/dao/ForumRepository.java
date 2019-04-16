@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.model.dao;
 
@@ -18,7 +18,7 @@ public interface ForumRepository extends MongoRepository<Forum, Long> {
 
 	/**
 	 * Fetch the forum by id
-	 * 
+	 *
 	 * @param id
 	 * @return An Optional with the corresponding forum
 	 * @author MAQUINGHEN MAXIME
@@ -26,8 +26,17 @@ public interface ForumRepository extends MongoRepository<Forum, Long> {
 	Optional<Forum> findBy_id(String _id);
 
 	/**
+	 * fetch forums by date
+	 *
+	 * @param date the date pass in parameter
+	 * @return the list of forum
+	 * @author MAQUINGHEN MAXIME
+	 */
+	List<Forum> findByDate(String date);
+
+	/**
 	 * Fetch the forum data
-	 * 
+	 *
 	 * @param name  the forum name
 	 * @param date  the forum date
 	 * @param place the forum place
@@ -35,14 +44,5 @@ public interface ForumRepository extends MongoRepository<Forum, Long> {
 	 * @author MAQUINGHEN MAXIME
 	 */
 	Optional<Forum> findByNameAndDateAndPlace(String name, String date, String place);
-
-	/**
-	 * fetch forums by date
-	 * 
-	 * @param date the date pass in parameter
-	 * @return the list of forum
-	 * @author MAQUINGHEN MAXIME
-	 */
-	List<Forum> findByDate(String date);
 
 }
