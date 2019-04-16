@@ -18,7 +18,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 
 /**
  * Diploma controller for business rules
- * 
+ *
  * @author Lucas Royackkers
  *
  */
@@ -30,7 +30,7 @@ public class DiplomaBusinessController {
 
 	/**
 	 * Method to delegate diploma creation
-	 * 
+	 *
 	 * @param params the JsonNode containing all diploma parameters
 	 * @param role   the user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
@@ -47,42 +47,8 @@ public class DiplomaBusinessController {
 	}
 
 	/**
-	 * Method to get all diplomas
-	 * 
-	 * @param role the user's role
-	 * @return a List of Diploma objects
-	 * @author Lucas Royackkers
-	 */
-	public List<Diploma> getDiplomas(UserRole role) {
-		if (UserRole.MANAGER_ADMIN == role || UserRole.CDR_ADMIN == role || UserRole.CDR == role
-				|| UserRole.MANAGER == role) {
-			return diplomaEntityController.getDiplomas();
-		}
-		throw new ForbiddenException();
-	}
-
-	/**
-	 * Method to delegate diploma update
-	 * 
-	 * @param params the JsonNode containing all diploma parameters
-	 * @param role   the user's role
-	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link ResourceNotFoundException} if the resource hasn't
-	 *         been found in the database and {@link CreatedException} if the
-	 *         diploma is updated
-	 * @throws ParseException
-	 * @author Lucas Royackkers
-	 */
-	public HttpException updateDiploma(JsonNode params, UserRole role) throws ParseException {
-		if (UserRole.MANAGER_ADMIN == role || UserRole.CDR_ADMIN == role) {
-			return diplomaEntityController.updateDiploma(params);
-		}
-		throw new ForbiddenException();
-	}
-
-	/**
 	 * Method to delegate diploma deletion
-	 * 
+	 *
 	 * @param params the JsonNode containing all diploma parameters
 	 * @param role   the user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
@@ -99,8 +65,23 @@ public class DiplomaBusinessController {
 	}
 
 	/**
+	 * Method to get all diplomas
+	 *
+	 * @param role the user's role
+	 * @return a List of Diploma objects
+	 * @author Lucas Royackkers
+	 */
+	public List<Diploma> getDiplomas(UserRole role) {
+		if (UserRole.MANAGER_ADMIN == role || UserRole.CDR_ADMIN == role || UserRole.CDR == role
+				|| UserRole.MANAGER == role) {
+			return diplomaEntityController.getDiplomas();
+		}
+		throw new ForbiddenException();
+	}
+
+	/**
 	 * Method to get a List of diplomas given their name
-	 * 
+	 *
 	 * @param name the name of the diploma
 	 * @param role the current logged user's role
 	 * @return a List of Diploma (empty or not)
@@ -109,6 +90,25 @@ public class DiplomaBusinessController {
 	public List<Diploma> getDiplomasByName(String name, UserRole role) {
 		return diplomaEntityController.getDiplomaByName(name);
 
+	}
+
+	/**
+	 * Method to delegate diploma update
+	 *
+	 * @param params the JsonNode containing all diploma parameters
+	 * @param role   the user's role
+	 * @return the @see {@link HttpException} corresponding to the status of the
+	 *         request ({@link ResourceNotFoundException} if the resource hasn't
+	 *         been found in the database and {@link CreatedException} if the
+	 *         diploma is updated
+	 * @throws ParseException
+	 * @author Lucas Royackkers
+	 */
+	public HttpException updateDiploma(JsonNode params, UserRole role) throws ParseException {
+		if (UserRole.MANAGER_ADMIN == role || UserRole.CDR_ADMIN == role) {
+			return diplomaEntityController.updateDiploma(params);
+		}
+		throw new ForbiddenException();
 	}
 
 }

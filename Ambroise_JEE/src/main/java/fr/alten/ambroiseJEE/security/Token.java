@@ -5,7 +5,7 @@ package fr.alten.ambroiseJEE.security;
 
 /**
  * Token wrapper
- * 
+ *
  * @author Andy Chabalier
  *
  */

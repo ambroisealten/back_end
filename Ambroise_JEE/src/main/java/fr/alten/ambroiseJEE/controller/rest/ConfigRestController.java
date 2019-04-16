@@ -15,7 +15,7 @@ import fr.alten.ambroiseJEE.utils.routing.AngularModule;
 
 /**
  * Rest Controller for Menu items configuration
- * 
+ *
  * @author Camille Schnell
  * @author Kylian Gehier
  *

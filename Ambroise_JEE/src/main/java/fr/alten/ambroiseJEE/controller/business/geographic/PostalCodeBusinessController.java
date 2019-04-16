@@ -22,7 +22,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
 
 /**
  * City controller for business rules.
- * 
+ *
  * @author Andy Chabalier
  *
  */
@@ -34,7 +34,7 @@ public class PostalCodeBusinessController {
 
 	/**
 	 * Method to delegate postalCode creation
-	 * 
+	 *
 	 * @param jUser JsonNode with all city parameters
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ConflictException} if there is a conflict in the

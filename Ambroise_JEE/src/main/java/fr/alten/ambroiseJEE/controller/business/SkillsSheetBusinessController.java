@@ -19,7 +19,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 
 /**
  * Skills sheet controller for business rules.
- * 
+ *
  * @author Lucas Royackkers
  *
  */
@@ -31,7 +31,7 @@ public class SkillsSheetBusinessController {
 
 	/**
 	 * Method to delegate skills sheet creation
-	 * 
+	 *
 	 * @param jSkillsSheet JsonNode with all skills sheet parameters
 	 * @param role         the user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
@@ -87,7 +87,7 @@ public class SkillsSheetBusinessController {
 
 	/**
 	 * Method to delegate skills sheet update
-	 * 
+	 *
 	 * @param jSkillsSheet JsonNode with all skills sheet parameters
 	 * @param role         the user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the

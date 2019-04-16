@@ -26,7 +26,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
  * Rest controller for sector service.
- * 
+ *
  * @author Andy Chabalier
  *
  */

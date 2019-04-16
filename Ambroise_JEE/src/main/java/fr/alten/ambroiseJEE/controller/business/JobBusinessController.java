@@ -18,7 +18,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 
 /**
  * Job controller for business rules
- * 
+ *
  * @author Lucas Royackkers >>>>>>> origin/JobWebService
  *
  */
@@ -30,7 +30,7 @@ public class JobBusinessController {
 
 	/**
 	 * Method to delegate Job creation
-	 * 
+	 *
 	 * @param params the JsonNode containing all Job parameters
 	 * @param role   the user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
@@ -47,7 +47,7 @@ public class JobBusinessController {
 
 	/**
 	 * Method to delegate Job deletion
-	 * 
+	 *
 	 * @param params the JsonNode containing all Job parameters
 	 * @param role   the user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
@@ -79,7 +79,7 @@ public class JobBusinessController {
 
 	/**
 	 * Method to delegate Job update
-	 * 
+	 *
 	 * @param params the JsonNode containing all Job parameters
 	 * @param role   the user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the

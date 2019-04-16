@@ -12,7 +12,7 @@ import fr.alten.ambroiseJEE.utils.routing.ParseRoutingFile;
 
 /**
  * Business Controller for menu items configuration
- * 
+ *
  * @author Camille Schnell
  * @author Kylian Gehier
  *

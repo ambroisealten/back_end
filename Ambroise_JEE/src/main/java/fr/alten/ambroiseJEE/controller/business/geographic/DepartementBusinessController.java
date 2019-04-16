@@ -22,7 +22,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
 
 /**
  * Departement controller for business rules.
- * 
+ *
  * @author Andy Chabalier
  *
  */
@@ -34,7 +34,7 @@ public class DepartementBusinessController {
 
 	/**
 	 * Method to delegate Departement creation
-	 * 
+	 *
 	 * @param jUser JsonNode with all departement parameters
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ConflictException} if there is a conflict in the

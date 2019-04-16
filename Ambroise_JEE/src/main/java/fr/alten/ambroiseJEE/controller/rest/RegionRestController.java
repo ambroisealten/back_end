@@ -25,7 +25,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
  * Rest controller for the Region web service
- * 
+ *
  * @author Andy Chabalier
  *
  */

@@ -18,7 +18,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 
 /**
  * Applicant controller for business rules.
- * 
+ *
  * @author Lucas Royackkers
  *
  */
@@ -29,7 +29,7 @@ public class ApplicantBusinessController {
 
 	/**
 	 * Method to delegate applicant creation
-	 * 
+	 *
 	 * @param jApplicant JsonNode with all applicant(person) parameters
 	 * @param role       the user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
@@ -48,7 +48,7 @@ public class ApplicantBusinessController {
 
 	/**
 	 * Method to delegate applicant's deletion
-	 * 
+	 *
 	 * @param params JsonNode containing all the parameters
 	 * @param role   the user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
@@ -66,7 +66,7 @@ public class ApplicantBusinessController {
 
 	/**
 	 * Try to fetch an applicant given its mail
-	 * 
+	 *
 	 * @param mail the applicant's mail
 	 * @param role the user's role
 	 * @return an Optional with the corresponding applicant (or not)
@@ -98,7 +98,7 @@ public class ApplicantBusinessController {
 
 	/**
 	 * Method to delegate applicant's update
-	 * 
+	 *
 	 * @param params JsonNode containing all the parameters
 	 * @param role   the user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the

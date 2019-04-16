@@ -26,7 +26,7 @@ public interface UserRepository extends MongoRepository<User, Long> {
 
 	/**
 	 * Fetch user by is credential
-	 * 
+	 *
 	 * @param mail the user's mail to fetch
 	 * @param pswd the user's password to fetch
 	 * @return An Optional with the corresponding user or not.

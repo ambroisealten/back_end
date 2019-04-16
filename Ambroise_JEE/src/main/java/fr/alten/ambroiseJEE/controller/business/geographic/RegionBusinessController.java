@@ -22,7 +22,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
 
 /**
  * Region controller for business rules.
- * 
+ *
  * @author Andy Chabalier
  *
  */
@@ -34,7 +34,7 @@ public class RegionBusinessController {
 
 	/**
 	 * Method to delegate region creation
-	 * 
+	 *
 	 * @param jRegion JsonNode with all region parameters
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ConflictException} if there is a conflict in the

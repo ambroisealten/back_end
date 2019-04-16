@@ -90,7 +90,7 @@ public class FileRestController {
 
 	/**
 	 * Fetch the list of documents
-	 * 
+	 *
 	 * @param mail the current logged user's mail
 	 * @param role the current logged user's role
 	 * @return the list of documents
@@ -103,7 +103,7 @@ public class FileRestController {
 
 	/**
 	 * Fetch the list of forum documents
-	 * 
+	 *
 	 * @param mail the current logged user's mail
 	 * @param role the current logged user's role
 	 * @return the list of forum documents

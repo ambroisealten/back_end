@@ -18,7 +18,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 
 /**
  * Consultant controller for business rules.
- * 
+ *
  * @author Lucas Royackkers
  *
  */
@@ -29,7 +29,7 @@ public class ConsultantBusinessController {
 
 	/**
 	 * Method to delegate consultant creation
-	 * 
+	 *
 	 * @param jUser JsonNode with all consultant(person) parameters
 	 * @param role  the user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
@@ -49,7 +49,7 @@ public class ConsultantBusinessController {
 
 	/**
 	 * Method to delegate consultant deletion
-	 * 
+	 *
 	 * @param params JsonNode with parameters (name)
 	 * @param role   the user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
@@ -66,7 +66,7 @@ public class ConsultantBusinessController {
 
 	/**
 	 * Try to fetch a consultant given its mail
-	 * 
+	 *
 	 * @param mail the applicant's mail
 	 *
 	 * @return an Optional with the corresponding consultant (or not)
@@ -95,7 +95,7 @@ public class ConsultantBusinessController {
 
 	/**
 	 * Method to delegate consultant update
-	 * 
+	 *
 	 * @param params JsonNode with all parameters
 	 * @param role   the user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the

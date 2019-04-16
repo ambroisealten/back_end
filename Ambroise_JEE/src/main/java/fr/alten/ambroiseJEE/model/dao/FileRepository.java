@@ -25,7 +25,7 @@ public interface FileRepository extends MongoRepository<File, Long> {
 
 	/**
 	 * fetch file by uri
-	 * 
+	 *
 	 * @param fileDownloadUri the uri to fetch
 	 * @author Andy Chabalier
 	 */

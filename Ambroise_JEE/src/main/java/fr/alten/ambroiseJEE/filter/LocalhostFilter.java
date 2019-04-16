@@ -14,7 +14,7 @@ import fr.alten.ambroiseJEE.AmbroiseJeeApplication;
 
 /**
  * This filter allow to lock request when it's not coming from an local adress
- * 
+ *
  * @see AmbroiseJeeApplication#filterRegistrationBeanLocalhost() for pattern
  *      concerned by this filter.
  * @author Andy Chabalier

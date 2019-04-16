@@ -22,7 +22,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
 
 /**
  * Agency controller for business rules.
- * 
+ *
  * @author Andy Chabalier
  *
  */
@@ -34,7 +34,7 @@ public class AgencyBusinessController {
 
 	/**
 	 * Method to delegate agency creation
-	 * 
+	 *
 	 * @param jUser JsonNode with all agency parameters (name and geographic
 	 *              position)
 	 * @return the @see {@link HttpException} corresponding to the status of the

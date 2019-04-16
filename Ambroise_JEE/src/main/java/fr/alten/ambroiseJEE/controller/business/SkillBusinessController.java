@@ -22,7 +22,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
 
 /**
  * Skill controller for business rules.
- * 
+ *
  * @author Thomas Decamp
  *
  */
@@ -34,7 +34,7 @@ public class SkillBusinessController {
 
 	/**
 	 * Method to delegate skill creation
-	 * 
+	 *
 	 * @param jUser JsonNode with all skill parameters
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ConflictException} if there is a conflict in the

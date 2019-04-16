@@ -23,7 +23,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
 
 /**
  * TechSkill controller for business rules.
- * 
+ *
  * @author Thomas Decamp
  *
  */
@@ -35,7 +35,7 @@ public class TechSkillBusinessController {
 
 	/**
 	 * Method to delegate techSkill creation
-	 * 
+	 *
 	 * @param jUser JsonNode with all techSkill parameters
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ConflictException} if there is a conflict in the

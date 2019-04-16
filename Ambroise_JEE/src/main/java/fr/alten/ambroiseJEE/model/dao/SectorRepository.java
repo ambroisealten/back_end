@@ -17,7 +17,7 @@ public interface SectorRepository extends MongoRepository<Sector, Long> {
 
 	/**
 	 * find a sector by is name
-	 * 
+	 *
 	 * @param name the name to fetch
 	 * @return the sector fetched
 	 * @author Andy Chabalier

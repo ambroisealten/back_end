@@ -5,7 +5,7 @@ package fr.alten.ambroiseJEE.model.beans;
 
 /**
  * interface to define geographic beans
- * 
+ *
  * @author Andy Chabalier
  *
  */

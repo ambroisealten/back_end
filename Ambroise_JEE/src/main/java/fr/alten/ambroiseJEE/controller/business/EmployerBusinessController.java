@@ -19,7 +19,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
 
 /**
  * Employer controller for business rules
- * 
+ *
  * @author Lucas Royackkers
  *
  */
@@ -31,7 +31,7 @@ public class EmployerBusinessController {
 
 	/**
 	 * Method to delegate the employer creation
-	 * 
+	 *
 	 * @param params the JsonNode containing all Employer parameters
 	 * @param role   the user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
@@ -48,7 +48,7 @@ public class EmployerBusinessController {
 
 	/**
 	 * Method to delegate the employer deletion
-	 * 
+	 *
 	 * @param params the Json containing all Employer parameters
 	 * @param role   the user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
@@ -65,7 +65,7 @@ public class EmployerBusinessController {
 
 	/**
 	 * Get all employers within the database
-	 * 
+	 *
 	 * @param role the user's role
 	 * @return a List of Employer objects
 	 * @author Lucas Royackkers
@@ -80,7 +80,7 @@ public class EmployerBusinessController {
 
 	/**
 	 * Method to delegate the employer update
-	 * 
+	 *
 	 * @param params the Json containing all Employer parameters
 	 * @param role   the user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the

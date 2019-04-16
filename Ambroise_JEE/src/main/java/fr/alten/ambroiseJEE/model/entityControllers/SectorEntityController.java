@@ -74,7 +74,7 @@ public class SectorEntityController {
 
 	/**
 	 * fetch the list of sectors
-	 * 
+	 *
 	 * @return the list of all sectors
 	 * @author Andy Chabalier
 	 */
