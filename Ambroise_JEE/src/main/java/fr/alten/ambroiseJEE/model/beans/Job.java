@@ -5,6 +5,7 @@ import java.io.Serializable;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
  *
@@ -12,6 +13,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
  * @author Lucas Royackkers
  *
  */
+@Document(collection = "job")
 public class Job implements Serializable {
 
 	private static final long serialVersionUID = -8259196238254390780L;

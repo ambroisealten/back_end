@@ -77,7 +77,7 @@ public class ForumEntityController {
 			Forum forum = forumOptional.get();
 			forumRepository.delete(forum);
 		} else {
-			throw new RessourceNotFoundException();
+			return new RessourceNotFoundException();
 		}
 		return new OkException();
 	}
@@ -120,12 +120,25 @@ public class ForumEntityController {
 
 		if (forumOptional.isPresent()) {
 			Forum forum = forumOptional.get();
+
+			Optional<Forum> newForumOptional = forumRepository.findByNameAndDateAndPlace(params.get("name").textValue(),
+					params.get("date").textValue(), params.get("place").textValue());
+			if (newForumOptional.isPresent()) {
+				return new ConflictException();
+			}
+
 			forum.setName(params.get("name").textValue());
 			forum.setDate(params.get("date").textValue());
 			forum.setPlace(params.get("place").textValue());
 			forumRepository.save(forum);
+
+			try {
+				forumRepository.save(forum);
+			} catch (Exception e) {
+				return new ConflictException();
+			}
 		} else {
-			throw new RessourceNotFoundException();
+			return new RessourceNotFoundException();
 		}
 		return new OkException();
 	}

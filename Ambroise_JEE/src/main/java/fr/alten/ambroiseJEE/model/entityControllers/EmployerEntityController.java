@@ -67,6 +67,7 @@ public class EmployerEntityController {
 		if (employerOptionnal.isPresent()) {
 			Employer employer = employerOptionnal.get();
 			employer.setName("deactivated" + System.currentTimeMillis());
+
 			employerRepository.save(employer);
 		} else {
 			throw new RessourceNotFoundException();
@@ -88,7 +89,8 @@ public class EmployerEntityController {
 	 *                  perform the update even if the name is changed
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link RessourceNotFoundException} if the resource is not
-	 *         found and {@link OkException} if the employer is updated
+	 *         found, {@link ConflictException} if there is a conflict in the
+	 *         database and {@link OkException} if the employer is updated
 	 * @author Lucas Royackkers
 	 */
 	public HttpException updateEmployer(JsonNode jEmployer) {
@@ -98,9 +100,13 @@ public class EmployerEntityController {
 			Employer employer = employerOptionnal.get();
 			employer.setName(jEmployer.get("name").textValue());
 
-			employerRepository.save(employer);
+			try {
+				employerRepository.save(employer);
+			} catch (Exception e) {
+				return new ConflictException();
+			}
 		} else {
-			throw new RessourceNotFoundException();
+			return new RessourceNotFoundException();
 		}
 		return new OkException();
 	}

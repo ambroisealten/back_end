@@ -69,7 +69,7 @@ public class JobEntityController {
 			job.setTitle("deactivated" + System.currentTimeMillis());
 			jobRepository.save(job);
 		} else {
-			throw new RessourceNotFoundException();
+			return new RessourceNotFoundException();
 		}
 		return new OkException();
 	}
@@ -102,9 +102,13 @@ public class JobEntityController {
 			Job job = JobOptionnal.get();
 			job.setTitle(jJob.get("title").textValue());
 
-			jobRepository.save(job);
+			try {
+				jobRepository.save(job);
+			} catch (Exception e) {
+				return new ConflictException();
+			}
 		} else {
-			throw new RessourceNotFoundException();
+			return new RessourceNotFoundException();
 		}
 		return new OkException();
 	}

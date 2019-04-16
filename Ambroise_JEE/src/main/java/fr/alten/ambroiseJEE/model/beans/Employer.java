@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
  *
@@ -11,11 +13,13 @@ import org.springframework.data.annotation.Id;
  * @author Lucas Royackkers
  *
  */
+@Document(collection = "employer")
 public class Employer implements Serializable {
 
 	private static final long serialVersionUID = 8056737534510849309L;
 	@Id
 	private transient ObjectId _id;
+	@Indexed(unique = true)
 	private String name;
 
 	public Employer() {
