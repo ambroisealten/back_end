@@ -46,7 +46,7 @@ public class PostalCodeBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException createPostalCode(JsonNode jPostalCode, UserRole role) {
-		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role ? postalCodeEntityController.createPostalCode(jPostalCode) : new ForbiddenException();
+		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) ? postalCodeEntityController.createPostalCode(jPostalCode) : new ForbiddenException();
 	}
 
 
@@ -73,7 +73,7 @@ public class PostalCodeBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException updatePostalCode(JsonNode jPostalCode, UserRole role) {
-		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role ? postalCodeEntityController.updatePostalCode(jPostalCode) : new ForbiddenException();
+		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) ? postalCodeEntityController.updatePostalCode(jPostalCode) : new ForbiddenException();
 	}
 
 
@@ -87,7 +87,7 @@ public class PostalCodeBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException deletePostalCode(JsonNode params, UserRole role) {
-		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role ? postalCodeEntityController.deletePostalCode(params.get("name").textValue()) : new ForbiddenException();
+		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) ? postalCodeEntityController.deletePostalCode(params.get("name").textValue()) : new ForbiddenException();
 	}
 
 }

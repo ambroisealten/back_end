@@ -46,7 +46,7 @@ public class DepartementBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException createDepartement(JsonNode jDepartement, UserRole role) {
-		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role ? departementEntityController.createDepartement(jDepartement) : new ForbiddenException();
+		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) ? departementEntityController.createDepartement(jDepartement) : new ForbiddenException();
 	}
 
 
@@ -73,7 +73,7 @@ public class DepartementBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException updateDepartement(JsonNode jDepartement, UserRole role) {
-		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role ? departementEntityController.updateDepartement(jDepartement) : new ForbiddenException();
+		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) ? departementEntityController.updateDepartement(jDepartement) : new ForbiddenException();
 	}
 
 
@@ -87,7 +87,7 @@ public class DepartementBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException deleteDepartement(JsonNode params, UserRole role) {
-		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role ? departementEntityController.deleteDepartement(params.get("name").textValue()) : new ForbiddenException();
+		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) ? departementEntityController.deleteDepartement(params.get("name").textValue()) : new ForbiddenException();
 	}
 
 }

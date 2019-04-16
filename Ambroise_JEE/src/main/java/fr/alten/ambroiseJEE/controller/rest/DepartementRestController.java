@@ -45,10 +45,10 @@ public class DepartementRestController {
 	/**
 	 * 
 	 * @param params JsonNode containing post parameters from http request
-	 * @param mail the current logged user mail
-	 * @param role the current logged user role
-	 * @return {@link HttpException} corresponding to the statut of the
-	 *         request ({@link UnprocessableEntityException} if the ressource is not found
+	 * @param mail   the current logged user mail
+	 * @param role   the current logged user role
+	 * @return {@link HttpException} corresponding to the statut of the request
+	 *         ({@link UnprocessableEntityException} if the ressource is not found
 	 *         and {@link CreatedException} if the user is created
 	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author Andy Chabalier
@@ -73,7 +73,7 @@ public class DepartementRestController {
 	public String getDepartements(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
 		return gson.toJson(departementBusinessController.getDepartements(role));
 	}
-	
+
 	/**
 	 * 
 	 * @param params JsonNode containing post parameters from http request
@@ -92,7 +92,7 @@ public class DepartementRestController {
 		return params.get("name") != null ? departementBusinessController.createDepartement(params, role)
 				: new UnprocessableEntityException();
 	}
-	
+
 	/**
 	 * 
 	 * @param params JsonNode containing post parameters from http request
@@ -112,5 +112,3 @@ public class DepartementRestController {
 				: new UnprocessableEntityException();
 	}
 }
-
-

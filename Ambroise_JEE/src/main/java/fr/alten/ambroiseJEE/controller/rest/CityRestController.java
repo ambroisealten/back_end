@@ -89,7 +89,7 @@ public class CityRestController {
 	@ResponseBody
 	public HttpException updateCity(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("name") != null ? cityBusinessController.createCity(params, role)
+		return params.get("name") != null ? cityBusinessController.updateCity(params, role)
 				: new UnprocessableEntityException();
 	}
 

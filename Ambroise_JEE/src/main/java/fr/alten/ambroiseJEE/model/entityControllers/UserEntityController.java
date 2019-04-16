@@ -73,7 +73,7 @@ public class UserEntityController {
 		try {
 			newRole = UserRole.valueOf(jUser.get("role").textValue());
 		} catch (Exception e) {
-			newRole = UserRole.CONSULTANT; // in case of wrong role input, we get the default role
+			newRole = UserRole.CONSULTANT; //in case of wrong role input, we get the default role
 		}
 		newUser.setRole(newRole);
 		Optional<Agency> agency = agencyEntityController.getAgency(jUser.get("agency").textValue());

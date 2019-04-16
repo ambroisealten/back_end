@@ -20,6 +20,6 @@ public class InternalServerErrorException extends HttpException {
 	private static final long serialVersionUID = 6695487880532171802L;
 
 	public InternalServerErrorException() {
-		super();
+		super("Internal Server Error");
 	}
 }
