@@ -122,6 +122,10 @@ public class SoftSkillEntityController {
 			return new RessourceNotFoundException();
 		}
 		String newName = jSoftSkill.get("name").textValue();
+		List<SoftSkill> newSoftSkills = softSkillRepository.findByName(newName);
+		if (newSoftSkills.size() > 0) {
+			return new ConflictException();
+		}
 		for (SoftSkill softSkill : softSkills) {
 			softSkill.setName(newName);
 			softSkillRepository.save(softSkill);

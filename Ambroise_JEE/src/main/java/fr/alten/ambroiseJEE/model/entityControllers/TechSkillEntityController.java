@@ -123,6 +123,10 @@ public class TechSkillEntityController {
 			return new RessourceNotFoundException();
 		}
 		String newName = jTechSkill.get("name").textValue();
+		List<TechSkill> newTechSkills = techSkillRepository.findByName(newName);
+		if (newTechSkills.size() > 0) {
+			return new ConflictException();
+		}
 		for (TechSkill techSkill : techSkills) {
 			techSkill.setName(newName);
 			techSkillRepository.save(techSkill);
