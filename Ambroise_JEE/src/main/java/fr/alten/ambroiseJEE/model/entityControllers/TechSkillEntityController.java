@@ -69,9 +69,14 @@ public class TechSkillEntityController {
 	 * @author Lucas Royackkers, Thomas Decamp
 	 */
 	public HttpException createTechSkillAndGrade(JsonNode jTechSkill) {
-		TechSkill newTechSkill = new TechSkill();
-		newTechSkill.setName(jTechSkill.get("name").textValue());
+		List<TechSkill> techSkillOptional = techSkillRepository.findByName(jTechSkill.get("name").textValue());
+		if(techSkillOptional.size() > 0) {
+			return new ConflictException();
+		}
+		
 		for(TechSkillGrade techGrade : TechSkillGrade.values()) {
+			TechSkill newTechSkill = new TechSkill();
+			newTechSkill.setName(jTechSkill.get("name").textValue());
 			newTechSkill.setGrade(techGrade);
 			try {
 				techSkillRepository.save(newTechSkill);

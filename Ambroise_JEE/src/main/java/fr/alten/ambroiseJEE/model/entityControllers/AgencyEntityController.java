@@ -55,7 +55,7 @@ public class AgencyEntityController {
 		
 		Optional<Geographic> place = geographicBusinessController.getPlace(jAgency.get("place").textValue(),jAgency.get("placeType").textValue());
 		if(place.isPresent()) {
-			newAgency.setPlace(place.get());
+			newAgency.setPlace(place.get().getName());
 		}
 
 		try {
@@ -90,7 +90,7 @@ public class AgencyEntityController {
 			agency.setName(jAgency.get("name").textValue());
 			Optional<Geographic> place = geographicBusinessController.getPlace(jAgency.get("place").textValue(),jAgency.get("placeType").textValue());
 			if(place.isPresent()) {
-				agency.setPlace(place.get());
+				agency.setPlace(place.get().getName());
 			}
 			agencyRepository.save(agency);
 		}

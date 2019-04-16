@@ -69,9 +69,14 @@ public class SoftSkillEntityController {
 	 * @author Lucas Royackkers, Thomas Decamp
 	 */
 	public HttpException createSoftSkillAndGrade(JsonNode jSoftSkill) {
-		SoftSkill newSoftSkill = new SoftSkill();
-		newSoftSkill.setName(jSoftSkill.get("name").textValue());
+		List<SoftSkill> softSkillOptional = softSkillRepository.findByName(jSoftSkill.get("name").textValue());
+		if(softSkillOptional.size() > 0) {
+			return new ConflictException();
+		}
+		
 		for(SoftSkillGrade softGrade : SoftSkillGrade.values()) {
+			SoftSkill newSoftSkill = new SoftSkill();
+			newSoftSkill.setName(jSoftSkill.get("name").textValue());
 			newSoftSkill.setGrade(softGrade);
 			try {
 				softSkillRepository.save(newSoftSkill);
