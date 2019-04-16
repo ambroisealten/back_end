@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import fr.alten.ambroiseJEE.controller.business.AgencyBusinessController;
+import fr.alten.ambroiseJEE.model.beans.Agency;
 import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.model.dao.UserRepository;
 import fr.alten.ambroiseJEE.security.UserRole;
@@ -38,7 +40,7 @@ public class UserEntityController {
 	private UserRepository userRepository;
 
 	@Autowired
-	private AgencyEntityController agencyEntityController;
+	private AgencyBusinessController agencyEntityController;
 
 	public static final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
 			Pattern.CASE_INSENSITIVE);
@@ -71,10 +73,15 @@ public class UserEntityController {
 		try {
 			newRole = UserRole.valueOf(jUser.get("role").textValue());
 		} catch (Exception e) {
-			newRole = UserRole.CONSULTANT; //in case of wrong role input, we get the default role
+			newRole = UserRole.CONSULTANT; // in case of wrong role input, we get the default role
 		}
 		newUser.setRole(newRole);
-		newUser.setAgency(agencyEntityController.getAgency(jUser.get("agency").textValue()));
+		Optional<Agency> agency = agencyEntityController.getAgency(jUser.get("agency").textValue());
+		if (agency.isPresent()) {
+			newUser.setAgency(agency.get().getName());
+		}else {
+			newUser.setAgency("");
+		}
 
 		try {
 			userRepository.save(newUser);
@@ -151,9 +158,12 @@ public class UserEntityController {
 				newRole = UserRole.valueOf(jUser.get("role").textValue());
 				user.setRole(newRole);
 			} catch (Exception e) {
-				//in case of wrong role input, we not change the role
+				// in case of wrong role input, we not change the role
 			}
-			user.setAgency(agencyEntityController.getAgency(jUser.get("agency").textValue()));
+			Optional<Agency> agency = agencyEntityController.getAgency(jUser.get("agency").textValue());
+			if (agency.isPresent()) {
+				user.setAgency(agency.get().getName());
+			}
 			userRepository.save(user);
 		} else {
 			throw new RessourceNotFoundException();
@@ -179,7 +189,7 @@ public class UserEntityController {
 			user.setName("");
 			user.setPswd("");
 			user.setRole(UserRole.DESACTIVATED);
-			user.setAgency(agencyEntityController.getAgency(""));
+			user.setAgency(null);
 			userRepository.save(user);
 		} else {
 			throw new RessourceNotFoundException();

@@ -15,6 +15,7 @@ import org.springframework.data.mongodb.core.convert.DefaultMongoTypeMapper;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 
+import fr.alten.ambroiseJEE.filter.LocalhostFilter;
 import fr.alten.ambroiseJEE.filter.TokenFilter;
 
 
@@ -59,6 +60,23 @@ public class AmbroiseJeeApplication {
 		registrationBean.setFilter(tokenFilter);
 		registrationBean.addUrlPatterns("/*");
 		registrationBean.setOrder(1); // set precedence
+		return registrationBean;
+	}
+	
+	/**
+	 * Registers localhost filter to filter chain
+	 * 
+	 * @see LocalhostFilter
+	 * @return registration bean
+	 */
+	@Bean
+	public FilterRegistrationBean<LocalhostFilter> filterRegistrationBeanLocalhost() {
+		FilterRegistrationBean<LocalhostFilter> registrationBean = new FilterRegistrationBean<LocalhostFilter>();
+		LocalhostFilter localhostFilter = new LocalhostFilter();
+
+		registrationBean.setFilter(localhostFilter);
+		registrationBean.addUrlPatterns("/admin/init");
+		registrationBean.setOrder(2); // set precedence
 		return registrationBean;
 	}
 
