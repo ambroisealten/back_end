@@ -90,4 +90,16 @@ public class DiplomaBusinessController {
 		throw new ForbiddenException();
 	}
 
+	/**
+	 * Method to get a List of diplomas given their name
+	 * @param name the name of the diploma
+	 * @param role the current logged user's role
+	 * @return a List of Diploma (empty or not)
+	 * @author Lucas Royackkers
+	 */
+	public List<Diploma> getDiplomasByName(String name, UserRole role) {
+		return diplomaEntityController.getDiplomaByName(name);
+		
+	}
+
 }

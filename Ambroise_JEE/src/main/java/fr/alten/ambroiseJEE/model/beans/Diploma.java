@@ -17,7 +17,7 @@ public class Diploma implements Serializable{
 
 	private static final long serialVersionUID = -6191997074025351479L;
 	@Id
-	private ObjectId _id;
+	private transient ObjectId _id;
 	private String name;
 	private String yearOfResult;
 	

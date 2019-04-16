@@ -1,20 +1,25 @@
 package fr.alten.ambroiseJEE.controller.rest;
 
 import java.text.ParseException;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
 import fr.alten.ambroiseJEE.controller.business.DiplomaBusinessController;
+import fr.alten.ambroiseJEE.model.beans.Diploma;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 
@@ -47,6 +52,13 @@ public class DiplomaRestController {
 	@ResponseBody
 	public String getDiplomas(@RequestAttribute("role") UserRole role) {
 		return gson.toJson(diplomaBusinessController.getDiplomas(role));
+	}
+	
+	@GetMapping("/diplomas/{name}")
+	@ResponseBody
+	public List<Diploma> getDiplomasByName(@RequestAttribute("role") UserRole role,@PathVariable("name") String name) {
+		return diplomaBusinessController.getDiplomasByName(name,role);
+		
 	}
 	
 	@PutMapping("/diploma")

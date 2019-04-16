@@ -44,7 +44,11 @@ public class DiplomaEntityController {
 	 * @throws ParseException 
 	 */
 	public HttpException createDiploma(JsonNode jDiploma) throws ParseException {
-
+		Optional<Diploma> diplomaOptional = diplomaRepository.findByNameAndYearOfResult(jDiploma.get("name").textValue(), jDiploma.get("yearOfResult").textValue());
+		if(diplomaOptional.isPresent()) {
+			return new ConflictException();
+		}
+		
 		Diploma newDiploma = new Diploma();
 		newDiploma.setName(jDiploma.get("name").textValue());
 		newDiploma.setYearOfResult(jDiploma.get("yearOfResult").textValue());
