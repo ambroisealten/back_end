@@ -47,24 +47,6 @@ public class DiplomaBusinessController {
 	}
 
 	/**
-	 * Method to delegate diploma deletion
-	 * 
-	 * @param params the JsonNode containing all diploma parameters
-	 * @param role   the user's role
-	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link ResourceNotFoundException} if the resource hasn't
-	 *         been found in the database and {@link CreatedException} if the
-	 *         diploma is desactivated
-	 * @author Lucas Royackkers
-	 */
-	public HttpException deleteDiploma(JsonNode params, UserRole role) {
-		if (UserRole.MANAGER_ADMIN == role || UserRole.CDR_ADMIN == role) {
-			return diplomaEntityController.deleteDiploma(params);
-		}
-		throw new ForbiddenException();
-	}
-
-	/**
 	 * Method to get all diplomas
 	 * 
 	 * @param role the user's role
@@ -96,6 +78,37 @@ public class DiplomaBusinessController {
 			return diplomaEntityController.updateDiploma(params);
 		}
 		throw new ForbiddenException();
+	}
+
+	/**
+	 * Method to delegate diploma deletion
+	 * 
+	 * @param params the JsonNode containing all diploma parameters
+	 * @param role   the user's role
+	 * @return the @see {@link HttpException} corresponding to the status of the
+	 *         request ({@link ResourceNotFoundException} if the resource hasn't
+	 *         been found in the database and {@link CreatedException} if the
+	 *         diploma is desactivated
+	 * @author Lucas Royackkers
+	 */
+	public HttpException deleteDiploma(JsonNode params, UserRole role) {
+		if (UserRole.MANAGER_ADMIN == role || UserRole.CDR_ADMIN == role) {
+			return diplomaEntityController.deleteDiploma(params);
+		}
+		throw new ForbiddenException();
+	}
+
+	/**
+	 * Method to get a List of diplomas given their name
+	 * 
+	 * @param name the name of the diploma
+	 * @param role the current logged user's role
+	 * @return a List of Diploma (empty or not)
+	 * @author Lucas Royackkers
+	 */
+	public List<Diploma> getDiplomasByName(String name, UserRole role) {
+		return diplomaEntityController.getDiplomaByName(name);
+
 	}
 
 }
