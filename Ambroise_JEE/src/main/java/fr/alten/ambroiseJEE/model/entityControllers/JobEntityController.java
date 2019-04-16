@@ -40,7 +40,12 @@ public class JobEntityController {
 	 * @author Lucas Royackkers
 	 */
 	public HttpException createJob(JsonNode jJob) {
+		Optional<Job> jobOptional = jobRepository.findByTitle(jJob.get("title").textValue());
 
+		if(jobOptional.isPresent()) {
+			return new ConflictException();
+		}
+		
 		Job newJob = new Job();
 		newJob.setTitle(jJob.get("title").textValue());
 
