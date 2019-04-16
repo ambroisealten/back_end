@@ -3,6 +3,8 @@
  */
 package fr.alten.ambroiseJEE.model.beans;
 
+import java.io.Serializable;
+
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -15,9 +17,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
  *
  */
 @Document(collection = "skill")
-public class Skill {
+public class Skill implements Serializable {
 
-	private static final long serialVersionUID = 8285367427781453220L;
+	private static final long serialVersionUID = -4597432921266925981L;
 
 	@Id
 	private transient ObjectId _id;
