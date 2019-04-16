@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import fr.alten.ambroiseJEE.model.beans.SoftSkill;
+import fr.alten.ambroiseJEE.utils.SoftSkillGrade;
 
 /**
  * @author Lucas Royackkers
@@ -20,7 +21,7 @@ public interface SoftSkillRepository extends MongoRepository<SoftSkill,Long>{
 	 * @return An Optional with the corresponding soft skill or not. 
 	 * @author Lucas Royackkers
 	 */
-	public Optional<List<SoftSkill>> findSoftSkillsByName(String name);
+	public List<SoftSkill> findByName(String name);
 	
 	/**
 	 * Fetch soft skill by name and grade
@@ -30,6 +31,6 @@ public interface SoftSkillRepository extends MongoRepository<SoftSkill,Long>{
 	 * @return An Optional with the corresponding soft skill or not. 
 	 * @author Lucas Royackkers
 	 */
-	public Optional<SoftSkill> findSoftSkillByNameAndGrade(String name,float grade);
+	public Optional<SoftSkill> findByNameAndGrade(String name,SoftSkillGrade grade);
 
 }

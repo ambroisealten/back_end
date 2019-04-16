@@ -40,7 +40,7 @@ public class AgencyBusinessController {
 	/**
 	 * Method to delegate agency creation
 	 * @param jUser JsonNode with all agency parameters (name and geographic position)
-	 * @return the @see {@link HttpException} corresponding to the statut of the
+	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ConflictException} if there is a conflict in the
 	 *         database and {@link CreatedException} if the user is created
 	 * @author Andy Chabalier
@@ -67,8 +67,8 @@ public class AgencyBusinessController {
 	 * 
 	 * @param jAgency JsonNode with all user parameters (name, place) and the old name to perform the update even if the name is changed
 	 * @param role user role
-	 * @return the @see {@link HttpException} corresponding to the statut of the
-	 *         request ({@link RessourceNotFoundException} if the ressource is not found
+	 * @return the @see {@link HttpException} corresponding to the status of the
+	 *         request ({@link RessourceNotFoundException} if the resource is not found
 	 *         and {@link CreatedException} if the agency is updated
 	 * @author Andy Chabalier
 	 */
@@ -81,8 +81,8 @@ public class AgencyBusinessController {
 	 * 
 	 * @param params the agency name to delete 
 	 * @param role the user role
-	 * @return @see {@link HttpException} corresponding to the statut of the
-	 *         request ({@link ForbiddenException} if the ressource is not found
+	 * @return @see {@link HttpException} corresponding to the status of the
+	 *         request ({@link ForbiddenException} if the resource is not found
 	 *         and {@link CreatedException} if the user is updated
 	 * @author Andy Chabalier
 	 */

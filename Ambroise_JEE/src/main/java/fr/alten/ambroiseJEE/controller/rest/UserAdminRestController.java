@@ -51,8 +51,8 @@ public class UserAdminRestController {
 	 *               password, name, forname, agency,
 	 * @param mail   the user mail
 	 * @param role   the user role
-	 * @return {@link HttpException} corresponding to the statut of the request
-	 *         ({@link UnprocessableEntityException} if the ressource is not found
+	 * @return {@link HttpException} corresponding to the status of the request
+	 *         ({@link UnprocessableEntityException} if the resource is not found
 	 *         and {@link CreatedException} if the user is created
 	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author MAQUINGHEN MAXIME
@@ -87,8 +87,8 @@ public class UserAdminRestController {
 	 *               password, name, forname, agency,
 	 * @param mail   the user mail
 	 * @param role   the user role
-	 * @return {@link HttpException} corresponding to the statut of the request
-	 *         ({@link UnprocessableEntityException} if the ressource is not found
+	 * @return {@link HttpException} corresponding to the status of the request
+	 *         ({@link UnprocessableEntityException} if the resource is not found
 	 *         and {@link OkException} if the user is updated successfully
 	 * @throws Exception
 	 * @author MAQUINGHEN MAXIME
@@ -104,11 +104,11 @@ public class UserAdminRestController {
 	/**
 	 * Desactivate a User. HTTP method DELETE
 	 * 
-	 * @param params contains the mail of the user to desactivated
+	 * @param params contains the mail of the user to deactivated
 	 * @param mail   the user mail
 	 * @param role   the user role
-	 * @return {@link HttpException} corresponding to the statut of the request
-	 *         ({@link UnprocessableEntityException} if the ressource is not found
+	 * @return {@link HttpException} corresponding to the status of the request
+	 *         ({@link UnprocessableEntityException} if the resource is not found
 	 *         and {@link OkException} if the user is updated successfully
 	 * @throws Exception
 	 * @author MAQUINGHEN MAXIME
@@ -128,8 +128,8 @@ public class UserAdminRestController {
 	 * @param params
 	 * @param mail          the user mail
 	 * @param role          the user role
-	 * @return {@link HttpException} corresponding to the statut of the request
-	 *         ({@link UnprocessableEntityException} if the ressource is not found
+	 * @return {@link HttpException} corresponding to the status of the request
+	 *         ({@link UnprocessableEntityException} if the resource is not found
 	 *         and {@link OkException} if the user is updated successfully
 	 * @throws Exception
 	 * @author MAQUINGHEN MAXIME
@@ -150,8 +150,8 @@ public class UserAdminRestController {
 	 * @param params TODO "pas de paramètre ?"
 	 * @param mail   the user mail
 	 * @param role   the user role
-	 * @return {@link HttpException} corresponding to the statut of the request
-	 *         ({@link UnprocessableEntityException} if the ressource is not found
+	 * @return {@link HttpException} corresponding to the status of the request
+	 *         ({@link UnprocessableEntityException} if the resource is not found
 	 *         and {@link OkException} if the user is updated successfully
 	 * @throws Exception
 	 * @author MAQUINGHEN MAXIME

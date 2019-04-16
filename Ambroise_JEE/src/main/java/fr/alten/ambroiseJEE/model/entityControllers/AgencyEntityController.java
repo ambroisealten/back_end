@@ -43,7 +43,7 @@ public class AgencyEntityController {
 	 * Method to create an agency.
 	 * 
 	 * @param jAgency JsonNode with all agency parameters (name and place parameter)
-	 * @return the @see {@link HttpException} corresponding to the statut of the
+	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ConflictException} if there is a conflict in the
 	 *         database and {@link CreatedException} if the user is created
 	 * @author Andy Chabalier
@@ -79,8 +79,8 @@ public class AgencyEntityController {
 	/**
 	 * 
 	 * @param jAgency JsonNode with all user parameters (name, place) and the old name to perform the update even if the name is changed
-	 * @return the @see {@link HttpException} corresponding to the statut of the
-	 *         request ({@link RessourceNotFoundException} if the ressource is not found
+	 * @return the @see {@link HttpException} corresponding to the status of the
+	 *         request ({@link RessourceNotFoundException} if the resource is not found
 	 *         and {@link CreatedException} if the agency is updated
 	 * @author Andy Chabalier
 	 */
@@ -107,9 +107,9 @@ public class AgencyEntityController {
 	/**
 	 * 
 	 * @param name the agency name to fetch 
-	 * @return {@link HttpException} corresponding to the statut of the
-	 *         request ({@link RessourceNotFoundException} if the ressource is not found
-	 *         and {@link OkException} if the agency is desactivated
+	 * @return {@link HttpException} corresponding to the status of the
+	 *         request ({@link RessourceNotFoundException} if the resource is not found
+	 *         and {@link OkException} if the agency is deactivated
 	 * @author MAQUINGHEN MAXIME
 	 */
 	public HttpException deleteAgency(String name) {
@@ -117,7 +117,7 @@ public class AgencyEntityController {
 		
 		if (agencyOptionnal.isPresent()) {
 			Agency agency = agencyOptionnal.get();
-			agency.setName("desactivated" + System.currentTimeMillis());
+			agency.setName("deactivated" + System.currentTimeMillis());
 			agency.setPlace(null);
 			agencyRepository.save(agency);
 		}

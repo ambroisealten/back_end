@@ -16,6 +16,8 @@ import fr.alten.ambroiseJEE.model.beans.TechSkill;
 import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.model.dao.SkillsSheetRepository;
 import fr.alten.ambroiseJEE.utils.PersonRole;
+import fr.alten.ambroiseJEE.utils.SoftSkillGrade;
+import fr.alten.ambroiseJEE.utils.TechSkillGrade;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
@@ -139,7 +141,7 @@ public class SkillsSheetEntityController {
 		List<SoftSkill> allSoftSkills = new ArrayList<SoftSkill>();
 		
 		for(JsonNode softSkill : jSoftSkills) {
-			Optional<SoftSkill> newSoftSkill = softSkillEntityController.getSoftSkillByNameAndGrade(softSkill.get("name").textValue(),Float.parseFloat(softSkill.get("grade").toString()));
+			Optional<SoftSkill> newSoftSkill = softSkillEntityController.getSoftSkillByNameAndGrade(softSkill.get("name").textValue(),SoftSkillGrade.valueOf(softSkill.get("grade").textValue()));
 			//Get a specific soft skill by its name in the JsonNode
 			if(newSoftSkill.isPresent()) {
 				allSoftSkills.add(newSoftSkill.get());
@@ -160,7 +162,7 @@ public class SkillsSheetEntityController {
 		List<TechSkill> allTechSkills = new ArrayList<TechSkill>();
 		
 		for(JsonNode techSkill : jTechSkills) {
-			Optional<TechSkill> newTechSkill = techSkillEntityController.getTechSkillByNameAndGrade(techSkill.get("name").textValue(),Float.parseFloat(techSkill.get("grade").toString()));
+			Optional<TechSkill> newTechSkill = techSkillEntityController.getTechSkillByNameAndGrade(techSkill.get("name").textValue(),TechSkillGrade.valueOf(techSkill.get("grade").textValue()));
 			//Get a specific soft skill by its name in the JsonNode
 			if(newTechSkill.isPresent()) {
 				allTechSkills.add(newTechSkill.get());

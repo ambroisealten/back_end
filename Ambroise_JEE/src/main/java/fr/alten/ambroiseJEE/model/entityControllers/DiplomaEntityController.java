@@ -86,7 +86,7 @@ public class DiplomaEntityController {
 	 * @param name the diploma name to fetch 
 	 * @return {@link HttpException} corresponding to the status of the
 	 *         request ({@link RessourceNotFoundException} if the resource is not found
-	 *         and {@link OkException} if the diploma is desactivated
+	 *         and {@link OkException} if the diploma is deactivated
 	 * @author Lucas Royackkers
 	 */
 	public HttpException deleteDiploma(String name) {
@@ -94,7 +94,7 @@ public class DiplomaEntityController {
 		
 		if (diplomaOptionnal.isPresent()) {
 			Diploma diploma = diplomaOptionnal.get();
-			diploma.setName("desactivated" + System.currentTimeMillis());
+			diploma.setName("deactivated" + System.currentTimeMillis());
 			diploma.setYearOfResult(null);
 			diplomaRepository.save(diploma);
 		}
