@@ -30,4 +30,8 @@ public class RessourceNotFoundException extends HttpException {
 	public String getLocalizedMessage() {
 		return "La ressource demandée n'a pas été trouvée";
 	}
+	
+	public RessourceNotFoundException(String message) {
+		super(message);
+	}
 }
