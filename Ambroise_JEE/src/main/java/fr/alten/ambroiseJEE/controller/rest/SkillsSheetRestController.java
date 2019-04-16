@@ -1,5 +1,7 @@
 package fr.alten.ambroiseJEE.controller.rest;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,13 +11,17 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
 import fr.alten.ambroiseJEE.controller.business.SkillsSheetBusinessController;
+import fr.alten.ambroiseJEE.model.beans.SkillsSheet;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
@@ -116,7 +122,13 @@ public class SkillsSheetRestController {
 	@GetMapping(value = "/skillsheet/{name}/{versionNumber}")
 	@ResponseBody
 	public String getSkillsSheetByNameAndVersion(@PathVariable("name") String sheetName, @PathVariable("versionNumber") String versionNumber, @RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
-		return gson.toJson(skillsSheetBusinessController.getSkillsSheet(sheetName,Long.parseLong(versionNumber), role));
+		Optional<SkillsSheet> optionalSkillSheet = skillsSheetBusinessController.getSkillsSheet(sheetName,Long.parseLong(versionNumber),role);
+		
+		if(optionalSkillSheet.isPresent()) {
+			return gson.toJson(optionalSkillSheet.get());
+		}
+		throw new RessourceNotFoundException();
+		
 	}
 	
 
