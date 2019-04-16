@@ -44,6 +44,11 @@ public class EmployerEntityController {
 	 */
 	public HttpException createEmployer(JsonNode jEmployer) {
 
+		Optional<Employer> employerOptional = employerRepository.findByName(jEmployer.get("name").textValue());
+		if(employerOptional.isPresent()) {
+			return new ConflictException();
+		}
+		
 		Employer newEmployer = new Employer();
 		newEmployer.setName(jEmployer.get("name").textValue());
 
