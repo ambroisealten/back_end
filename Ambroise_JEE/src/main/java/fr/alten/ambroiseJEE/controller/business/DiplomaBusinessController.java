@@ -88,7 +88,7 @@ public class DiplomaBusinessController {
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ResourceNotFoundException} if the resource hasn't
 	 *         been found in the database and {@link CreatedException} if the
-	 *         diploma is desactivated
+	 *         diploma is deactivated
 	 * @author Lucas Royackkers
 	 */
 	public HttpException deleteDiploma(JsonNode params, UserRole role) {

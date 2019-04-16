@@ -47,7 +47,7 @@ public class PostalCodeRestController {
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the current logged user mail
 	 * @param role   the current logged user role
-	 * @return {@link HttpException} corresponding to the statut of the request
+	 * @return {@link HttpException} corresponding to the status of the request
 	 *         ({@link UnprocessableEntityException} if the ressource is not found
 	 *         and {@link CreatedException} if the user is created
 	 * @throws Exception @see ForbiddenException if wrong identifiers
@@ -66,7 +66,7 @@ public class PostalCodeRestController {
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the current logged user mail
 	 * @param role   the current logged user role
-	 * @return {@link HttpException} corresponding to the statut of the request
+	 * @return {@link HttpException} corresponding to the status of the request
 	 *         ({@link UnprocessableEntityException} if the ressource is not found
 	 *         and {@link CreatedException} if the user is created
 	 * @throws Exception @see ForbiddenException if wrong identifiers
@@ -98,7 +98,7 @@ public class PostalCodeRestController {
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the current logged user mail
 	 * @param role   the current logged user role
-	 * @return {@link HttpException} corresponding to the statut of the request
+	 * @return {@link HttpException} corresponding to the status of the request
 	 *         ({@link UnprocessableEntityException} if the ressource is not found
 	 *         and {@link CreatedException} if the user is created
 	 * @throws Exception @see ForbiddenException if wrong identifiers

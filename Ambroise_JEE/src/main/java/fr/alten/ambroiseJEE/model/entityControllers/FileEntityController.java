@@ -45,7 +45,7 @@ public class FileEntityController {
 	 * Method to create a document
 	 *
 	 * @param fileDownloadUri the uri of the document to create
-	 * @return the @see {@link HttpException} corresponding to the statut of the
+	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link OkException} if there is a conflict in the database
 	 *         (that mean file already exist and then it's an upload. But no change
 	 *         to make in base and {@link CreatedException} if the document is

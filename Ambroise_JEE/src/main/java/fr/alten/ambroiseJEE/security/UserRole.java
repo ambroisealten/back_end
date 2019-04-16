@@ -8,5 +8,5 @@ package fr.alten.ambroiseJEE.security;
  *
  */
 public enum UserRole {
-	DESACTIVATED, CONSULTANT, CDR, MANAGER, CDR_ADMIN, MANAGER_ADMIN;
+	DEACTIVATED, CONSULTANT, CDR, MANAGER, CDR_ADMIN, MANAGER_ADMIN;
 }

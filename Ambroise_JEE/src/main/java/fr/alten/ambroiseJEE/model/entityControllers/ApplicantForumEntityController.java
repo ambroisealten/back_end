@@ -178,7 +178,7 @@ public class ApplicantForumEntityController {
 			ApplicantForum applicant = optionalApplicant.get();
 			applicant.setName("Demissionaire");
 			applicant.setSurname(null);
-			applicant.setMail("desactivated" + System.currentTimeMillis() + "@desactivated.com");
+			applicant.setMail("deactivated" + System.currentTimeMillis() + "@deactivated.com");
 			applicant.setEmployer(null);
 			applicant.setUrlDocs(null);
 			applicant.setMonthlyWage(Float.NaN);

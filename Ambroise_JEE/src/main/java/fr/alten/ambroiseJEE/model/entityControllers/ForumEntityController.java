@@ -33,7 +33,7 @@ public class ForumEntityController {
 	 * Create a Forum
 	 *
 	 * @param jForum contain the forum name, the date and the place to create
-	 * @return {@link HttpException} corresponding to the statut of the request
+	 * @return {@link HttpException} corresponding to the status of the request
 	 *         ({@link ConflictException} if the ressource cannot be create
 	 *         {@link CreatedException} if the forum is create
 	 * @author MAQUINGHEN MAXIME
@@ -64,7 +64,7 @@ public class ForumEntityController {
 	 * Delete a Forum
 	 *
 	 * @param params contain the name, date and place of the forum to delete
-	 * @return {@link HttpException} corresponding to the statut of the request
+	 * @return {@link HttpException} corresponding to the status of the request
 	 *         ({@link RessourceNotFoundException} if the ressource cannot be found
 	 *         {@link OkException} if the forum is deleted
 	 * @author MAQUINGHEN MAXIME
@@ -109,7 +109,7 @@ public class ForumEntityController {
 	 * Update a forum data
 	 *
 	 * @param params contain the forum oldname, olddate and oldplace to update
-	 * @return {@link HttpException} corresponding to the statut of the request
+	 * @return {@link HttpException} corresponding to the status of the request
 	 *         ({@link RessourceNotFoundException} if the ressource cannot be found
 	 *         {@link OkException} if the forum is updated
 	 * @author MAQUINGHEN MAXIME

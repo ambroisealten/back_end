@@ -35,7 +35,7 @@ public class SectorEntityController {
 	 * Method to create an sector.
 	 *
 	 * @param jSector JsonNode with all sector parameters
-	 * @return the @see {@link HttpException} corresponding to the statut of the
+	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ConflictException} if there is a conflict in the
 	 *         database and {@link CreatedException} if the sector is created
 	 * @author Andy Chabalier
@@ -55,7 +55,7 @@ public class SectorEntityController {
 
 	/**
 	 * @param jSector JsonNode with the sector name to delete
-	 * @return {@link HttpException} corresponding to the statut of the request
+	 * @return {@link HttpException} corresponding to the status of the request
 	 *         ({@link RessourceNotFoundException} if the ressource is not found and
 	 *         {@link OkException} if the sector is deleted *
 	 * @author Andy Chabalier
@@ -86,7 +86,7 @@ public class SectorEntityController {
 	 *
 	 * @param jSector JsonNode with all sector parameters and the oldName to perform
 	 *                the update even if the name is changed
-	 * @return the @see {@link HttpException} corresponding to the statut of the
+	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link RessourceNotFoundException} if the ressource is not
 	 *         found and {@link OkException} if the sector is updated
 	 * @author Andy Chabalier

@@ -155,7 +155,7 @@ public class InitBaseWebService {
 	/**
 	 * create and populate Database with users 1 user with Manager_Admin role, 1
 	 * user with CDR_Admin role, 1 user with Manager role, 1 user with CDR role,, 1
-	 * user with Consultant role, 1 user who will be desactivated and 10 consultants
+	 * user with Consultant role, 1 user who will be deactivated and 10 consultants
 	 *
 	 * @throws IOException
 	 * @author Andy Chabalier
@@ -189,7 +189,7 @@ public class InitBaseWebService {
 
 		User userDesactivated = new User();
 		userDesactivated.setForname("");
-		userDesactivated.setMail("desactivated" + System.currentTimeMillis());
+		userDesactivated.setMail("deactivated" + System.currentTimeMillis());
 		userDesactivated.setName("");
 
 		JsonNode userAdminManagerJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(userAdminManager).getAsJsonObject());
@@ -214,7 +214,7 @@ public class InitBaseWebService {
 		((ObjectNode) userConsultantJsonNode).put("agency", "Strasbourg");
 		JsonNode userDesactivatedJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(userDesactivated).getAsJsonObject());
 		((ObjectNode) userDesactivatedJsonNode).put("pswd", "pass");
-		((ObjectNode) userDesactivatedJsonNode).put("role", "DESACTIVATED");
+		((ObjectNode) userDesactivatedJsonNode).put("role", "DEACTIVATED");
 		((ObjectNode) userDesactivatedJsonNode).put("agency", "Strasbourg");
 
 		userBusinessController.createUser(userAdminManagerJsonNode, UserRole.MANAGER_ADMIN);

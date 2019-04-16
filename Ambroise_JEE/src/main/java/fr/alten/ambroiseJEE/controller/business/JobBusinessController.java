@@ -53,7 +53,7 @@ public class JobBusinessController {
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ResourceNotFoundException} if the resource hasn't
 	 *         been found in the database and {@link OkException} if the job is
-	 *         desactivated
+	 *         deactivated
 	 * @author Lucas Royackkers
 	 */
 	public HttpException deleteJob(JsonNode params, UserRole role) {
