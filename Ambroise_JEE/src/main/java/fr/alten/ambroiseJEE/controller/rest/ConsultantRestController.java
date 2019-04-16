@@ -1,6 +1,8 @@
 package fr.alten.ambroiseJEE.controller.rest;
 
 import java.text.ParseException;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,9 +17,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import fr.alten.ambroiseJEE.controller.business.ConsultantBusinessController;
+import fr.alten.ambroiseJEE.model.beans.Person;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
 
 /**
  * Rest Controller for Consultant
@@ -79,7 +83,11 @@ public class ConsultantRestController {
 	@GetMapping(value = "/consultant/{mail}")
 	@ResponseBody
 	public String getConsultant(@PathVariable("mail") String consultantMail, @RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
-		return gson.toJson(consultantBusinessController.getConsultant(consultantMail,role));
+		Optional<Person> personOptional = consultantBusinessController.getConsultant(consultantMail,role);
+		if(personOptional.isPresent()) {
+			return gson.toJson(personOptional.get());
+		}
+		throw new RessourceNotFoundException();
 	}
 	
 	/**

@@ -1,6 +1,7 @@
 package fr.alten.ambroiseJEE.controller.rest;
 
 import java.text.ParseException;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,9 +19,13 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import fr.alten.ambroiseJEE.controller.business.ApplicantBusinessController;
+import fr.alten.ambroiseJEE.model.beans.Person;
 import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
+import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
@@ -83,7 +88,11 @@ public class ApplicantRestController {
 	@GetMapping(value = "/applicant/{mail}")
 	@ResponseBody
 	public String getApplicant(@PathVariable("mail") String applicantMail, @RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
-		return gson.toJson(applicantBusinessController.getApplicant(applicantMail,role));
+		Optional<Person> personOptional = applicantBusinessController.getApplicant(applicantMail,role);
+		if(personOptional.isPresent()) {
+			return gson.toJson(personOptional.get());
+		}
+		throw new RessourceNotFoundException();
 	}
 	
 	/**
