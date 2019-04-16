@@ -17,6 +17,8 @@ import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 
 import fr.alten.ambroiseJEE.filter.LocalhostFilter;
 import fr.alten.ambroiseJEE.filter.TokenFilter;
+import fr.alten.ambroiseJEE.utils.CustomLogger;
+import fr.alten.ambroiseJEE.utils.LogLevel;
 
 
 
