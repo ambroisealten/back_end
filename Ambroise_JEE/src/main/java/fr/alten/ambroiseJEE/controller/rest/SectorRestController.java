@@ -49,7 +49,7 @@ public class SectorRestController {
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the user mail
 	 * @param role   the user role
-	 * @return {@link HttpException} corresponding to the statut of the request
+	 * @return {@link HttpException} corresponding to the status of the request
 	 *         ({@link UnprocessableEntityException} if the ressource is not found
 	 *         and {@link CreatedException} if the sector is created
 	 * @throws Exception @see ForbiddenException if wrong identifiers
@@ -69,7 +69,7 @@ public class SectorRestController {
 	 * @param params contains the mail of the sector to delete
 	 * @param mail   the user mail
 	 * @param role   the user role
-	 * @return {@link HttpException} corresponding to the statut of the request
+	 * @return {@link HttpException} corresponding to the status of the request
 	 *         ({@link UnprocessableEntityException} if the ressource is not found
 	 *         and {@link OkException} if the sector is deleted successfully
 	 * @throws Exception
@@ -104,7 +104,7 @@ public class SectorRestController {
 	 * @param params JsonNode containing put parameters from http request
 	 * @param mail   the user mail
 	 * @param role   the user role
-	 * @return {@link HttpException} corresponding to the statut of the request
+	 * @return {@link HttpException} corresponding to the status of the request
 	 *         ({@link UnprocessableEntityException} if the ressource is not found
 	 *         and {@link OkException} if the sector is updated successfully
 	 * @throws Exception

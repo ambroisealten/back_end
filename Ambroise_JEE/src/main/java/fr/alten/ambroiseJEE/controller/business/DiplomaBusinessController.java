@@ -69,6 +69,7 @@ public class DiplomaBusinessController {
 	 *
 	 * @param role the user's role
 	 * @return a List of Diploma objects
+	 *
 	 * @author Lucas Royackkers
 	 */
 	public List<Diploma> getDiplomas(UserRole role) {

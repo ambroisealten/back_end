@@ -119,7 +119,7 @@ public class UserEntityController {
 			user.setMail("deactivated" + System.currentTimeMillis());
 			user.setName("");
 			user.setPswd("");
-			user.setRole(UserRole.DESACTIVATED);
+			user.setRole(UserRole.DEACTIVATED);
 			user.setAgency(null);
 			userRepository.save(user);
 		} else {

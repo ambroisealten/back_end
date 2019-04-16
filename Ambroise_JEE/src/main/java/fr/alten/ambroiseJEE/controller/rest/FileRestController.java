@@ -121,7 +121,7 @@ public class FileRestController {
 	 * @param file the file to store
 	 * @param mail the current logged user's mail
 	 * @param role the current logged user's role
-	 * @return {@link HttpException} corresponding to the statut of the request
+	 * @return {@link HttpException} corresponding to the status of the request
 	 *         ({@link UnprocessableEntityException} if the ressource is not found,
 	 *         ({@link OkException} if there is a conflict in the database (that
 	 *         mean file already exist and then it's an upload. But no change to

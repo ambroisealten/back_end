@@ -53,7 +53,7 @@ public class EmployerBusinessController {
 	 * @param role   the user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link RessourceNotFoundException} if the resource is not
-	 *         found and {@link OkException} if the employer is desactivated
+	 *         found and {@link OkException} if the employer is deactivated
 	 * @author Lucas Royackkers
 	 */
 	public HttpException deleteEmployer(JsonNode params, UserRole role) {

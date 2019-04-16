@@ -49,7 +49,7 @@ public class ForumRestController {
 	 * @param params JsonNode containing put parameters from http request : name,
 	 *               date, place
 	 * @param role   the user role
-	 * @return {@link HttpException} corresponding to the statut of the request
+	 * @return {@link HttpException} corresponding to the status of the request
 	 *         ({@link UnprocessableEntityException} if the ressource is not found
 	 *         and {@link OkException} if the forum is create successfully
 	 * @throws Exception
@@ -69,7 +69,7 @@ public class ForumRestController {
 	 *
 	 * @param params contain the forum name, date, place
 	 * @param role   the user role
-	 * @return the @see {@link HttpException} corresponding to the statut of the
+	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link UnprocessableEntityException}) when the forum cannot
 	 *         be found ({@link RessourceNotFoundException} if the ressource is not
 	 *         found and {@link CreatedException} if the forum is deleted
@@ -119,7 +119,7 @@ public class ForumRestController {
 	 *
 	 * @param params contain the forum name, date, place
 	 * @param role   the user role
-	 * @return the @see {@link HttpException} corresponding to the statut of the
+	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link UnprocessableEntityException}) when the forum cannot
 	 *         be found ({@link RessourceNotFoundException} if the ressource is not
 	 *         found and {@link CreatedException} if the forum is updated

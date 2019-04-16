@@ -155,7 +155,7 @@ public class InitBaseWebService {
 	/**
 	 * create and populate Database with users 1 user with Manager_Admin role, 1
 	 * user with CDR_Admin role, 1 user with Manager role, 1 user with CDR role,, 1
-	 * user with Consultant role, 1 user who will be desactivated and 10 consultants
+	 * user with Consultant role, 1 user who will be deactivated and 10 consultants
 	 *
 	 * @throws IOException
 	 * @author Andy Chabalier
@@ -187,10 +187,10 @@ public class InitBaseWebService {
 		userConsultant.setMail("tempUserConsultant@mail.com");
 		userConsultant.setName("tempUserConsultantName");
 
-		User userDesactivated = new User();
-		userDesactivated.setForname("");
-		userDesactivated.setMail("desactivated" + System.currentTimeMillis());
-		userDesactivated.setName("");
+		User userDeactivated = new User();
+		userDeactivated.setForname("");
+		userDeactivated.setMail("deactivated" + System.currentTimeMillis());
+		userDeactivated.setName("");
 
 		JsonNode userAdminManagerJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(userAdminManager).getAsJsonObject());
 		((ObjectNode) userAdminManagerJsonNode).put("pswd", "pass");
@@ -212,17 +212,17 @@ public class InitBaseWebService {
 		((ObjectNode) userConsultantJsonNode).put("pswd", "pass");
 		((ObjectNode) userConsultantJsonNode).put("role", "CONSULTANT");
 		((ObjectNode) userConsultantJsonNode).put("agency", "Strasbourg");
-		JsonNode userDesactivatedJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(userDesactivated).getAsJsonObject());
-		((ObjectNode) userDesactivatedJsonNode).put("pswd", "pass");
-		((ObjectNode) userDesactivatedJsonNode).put("role", "DESACTIVATED");
-		((ObjectNode) userDesactivatedJsonNode).put("agency", "Strasbourg");
+		JsonNode userDeactivatedJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(userDeactivated).getAsJsonObject());
+		((ObjectNode) userDeactivatedJsonNode).put("pswd", "pass");
+		((ObjectNode) userDeactivatedJsonNode).put("role", "DEACTIVATED");
+		((ObjectNode) userDeactivatedJsonNode).put("agency", "Strasbourg");
 
 		userBusinessController.createUser(userAdminManagerJsonNode, UserRole.MANAGER_ADMIN);
 		userBusinessController.createUser(userAdminCDRJsonNode, UserRole.MANAGER_ADMIN);
 		userBusinessController.createUser(userManagerJsonNode, UserRole.MANAGER_ADMIN);
 		userBusinessController.createUser(userCDRJsonNode, UserRole.MANAGER_ADMIN);
 		userBusinessController.createUser(userConsultantJsonNode, UserRole.MANAGER_ADMIN);
-		userBusinessController.createUser(userDesactivatedJsonNode, UserRole.MANAGER_ADMIN);
+		userBusinessController.createUser(userDeactivatedJsonNode, UserRole.MANAGER_ADMIN);
 
 		// Remplissage d'une population de consultant
 		for (int i = 0; i < 10; i++) {

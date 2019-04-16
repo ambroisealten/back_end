@@ -30,7 +30,7 @@ public class ConfigBusinessController {
 	 *                               connected
 	 */
 	public String getMenuItems(UserRole role) throws FileNotFoundException {
-		if (!(UserRole.DESACTIVATED == role))
+		if (!(UserRole.DEACTIVATED == role))
 			return ParseConfigFile.getJsonMenuItemsByRole(role);
 		throw new ForbiddenException();
 	}
@@ -44,7 +44,7 @@ public class ConfigBusinessController {
 	 *                               connected
 	 */
 	public String getRoutes(UserRole role, AngularModule module) throws FileNotFoundException {
-		if (!(UserRole.DESACTIVATED == role))
+		if (!(UserRole.DEACTIVATED == role))
 			return ParseRoutingFile.getJsonRoutingItemsByRole(role, module);
 		throw new ForbiddenException();
 	}

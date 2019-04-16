@@ -36,7 +36,7 @@ public class ForumBusinessController {
 	 *
 	 * @param jForum JsonNode with all user parameters (name, date, place)
 	 * @param role
-	 * @return the @see {@link HttpException} corresponding to the statut of the
+	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ConflictException} if there is a conflict in the
 	 *         database and {@link CreatedException} if the forum is created
 	 * @author MAQUINGHEN MAXIME
@@ -51,9 +51,9 @@ public class ForumBusinessController {
 	 *
 	 * @param params the forum name, date, place
 	 * @param role   the users role
-	 * @return @see {@link HttpException} corresponding to the statut of the request
+	 * @return @see {@link HttpException} corresponding to the status of the request
 	 *         ({@link ForbiddenException} if the ressource is not found and
-	 *         {@link CreatedException} if the forum is desactivated
+	 *         {@link CreatedException} if the forum is deactivated
 	 * @author MAQUINGHEN MAXIME
 	 */
 	public HttpException deleteForum(JsonNode params, UserRole role) {
@@ -100,7 +100,7 @@ public class ForumBusinessController {
 	 *
 	 * @param params the forum name, date, place
 	 * @param role   the user role
-	 * @return the @see {@link HttpException} corresponding to the statut of the
+	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link RessourceNotFoundException} if the ressource is not
 	 *         found and {@link CreatedException} if the forum is updated
 	 * @author MAQUINGHEN MAXIME

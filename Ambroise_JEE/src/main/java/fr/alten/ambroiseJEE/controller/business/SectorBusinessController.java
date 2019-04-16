@@ -34,7 +34,7 @@ public class SectorBusinessController {
 	/**
 	 * @param JSector JsonNode with all sector parameters
 	 * @param role    the current logged user's role
-	 * @return the @see {@link HttpException} corresponding to the statut of the
+	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ConflictException} if there is a conflict in the
 	 *         database and {@link CreatedException} if the sector is created
 	 *         * @author Andy Chabalier
@@ -48,7 +48,7 @@ public class SectorBusinessController {
 	/**
 	 * @param JSector JsonNode with sector's name parameter
 	 * @param role    the current logged user's role
-	 * @return the @see {@link HttpException} corresponding to the statut of the
+	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link RessourceNotFoundException} if the ressource is not
 	 *         found and {@link CreatedException} if the sector is deleted
 	 * @author Andy Chabalier
@@ -74,7 +74,7 @@ public class SectorBusinessController {
 	/**
 	 * @param JSector JsonNode with all sector parameters
 	 * @param role    the current logged user's role
-	 * @return the @see {@link HttpException} corresponding to the statut of the
+	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link RessourceNotFoundException} if the ressource is not
 	 *         found and {@link CreatedException} if the sector is updated
 	 * @author Andy Chabalier
