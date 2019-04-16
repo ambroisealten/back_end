@@ -11,7 +11,7 @@ import org.jose4j.lang.JoseException;
 
 /**
  * Provide utilities methods for JW Token
- * 
+ *
  * @author Andy Chabalier
  *
  */
@@ -19,7 +19,7 @@ public class JWTokenUtility {
 
 	/**
 	 * Build a JW token
-	 * 
+	 *
 	 * @param subject user data to encrypt in token
 	 * @return String generated token
 	 * @author Andy Chabalier
@@ -47,10 +47,10 @@ public class JWTokenUtility {
 		}
 		return new Token(jwt);
 	}
-	
+
 	/**
 	 * Méthode de validation d'un JWT
-	 * 
+	 *
 	 * @param jwt le token à tester
 	 * @return le contenu du token déchiffré s'il est valide
 	 * @throws InvalidJwtException si le token n'est pas valide

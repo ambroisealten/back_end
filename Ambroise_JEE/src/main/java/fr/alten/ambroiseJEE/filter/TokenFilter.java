@@ -17,7 +17,7 @@ import fr.alten.ambroiseJEE.security.JWTokenUtility;
 import fr.alten.ambroiseJEE.security.UserRole;
 
 public class TokenFilter implements Filter {
-	
+
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
@@ -33,12 +33,13 @@ public class TokenFilter implements Filter {
 		//If the requested method is the HTTP OPTION method, we let it go throught the filter to allow an normal HTTP communication
 		if (!(requestURI.endsWith("/login") || requestURI.startsWith("/test") || method.equals(HttpMethod.OPTIONS.toString()))) {
 			try {
-				//We try to validate the token. In our case, the subject is formed by mail|role
+				// We try to validate the token. In our case, the subject is formed by mail|role
 				String[] tokenInfo = JWTokenUtility.validate(token).split("\\|");
 				String subject = tokenInfo[0];
 				UserRole role = UserRole.valueOf(tokenInfo[1]);
 
-				//We put the decoded subject parameters in attribute to allow further use in the chain
+				// We put the decoded subject parameters in attribute to allow further use in
+				// the chain
 				httpRequest.setAttribute("mail", subject);
 				httpRequest.setAttribute("role", role);
 
