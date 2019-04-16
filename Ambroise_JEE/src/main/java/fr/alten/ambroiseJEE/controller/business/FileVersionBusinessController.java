@@ -8,6 +8,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import fr.alten.ambroiseJEE.model.beans.File;
 import fr.alten.ambroiseJEE.model.entityControllers.FileVersionEntityController;
 import fr.alten.ambroiseJEE.security.UserRole;
@@ -26,7 +28,7 @@ public class FileVersionBusinessController {
 	private FileVersionEntityController fileVersionEntityController;
 
 	/**
-	 * Compare the data received by the mobile app and the version store on the
+	 * Compare the data received by the app and the version store on the
 	 * server
 	 * 
 	 * @param appVersion    the App Version data
@@ -37,14 +39,14 @@ public class FileVersionBusinessController {
 	 *         this data
 	 * @author MAQUINGHEN MAXIME
 	 */
-	public HttpException compareDataVersion(String appVersion, String serverVersion, UserRole role) {
+	public HttpException compareDataVersion(JsonNode appVersion, UserRole role) {
 		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role
-				|| UserRole.CDR == role) ? fileVersionEntityController.compareVersionData(appVersion, serverVersion)
+				|| UserRole.CDR == role) ? fileVersionEntityController.compareVersionData(appVersion)
 						: new ForbiddenException();
 	}
 
 	/**
-	 * Update Data Version of Files.
+	 * Update files Data Version
 	 * 
 	 * @param appVersion    the App Version data
 	 * @param serverVersion the Server Version data

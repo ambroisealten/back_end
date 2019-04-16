@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -55,17 +56,18 @@ public class FileVersionRestController {
 
 	@GetMapping("/version")
 	@ResponseBody
-	public HttpException setAppStatut() {
-		return null;
+	public HttpException setAppStatut(JsonNode params, @RequestAttribute("role") UserRole role) {
+		return fileVersionBusinessController.compareDataVersion(params, role);
 	}
 
 	@PutMapping("/version")
 	@ResponseBody
-	public HttpException updateAppData() {
+	public HttpException updateAppData(@RequestParam("appVersion") String appVersion,
+			@RequestAttribute("role") UserRole role) {
 		return null;
 	}
 
-	@GetMapping("/version/")
+	@GetMapping("/appversion")
 	@ResponseBody
 	public String getAppData(@RequestAttribute("role") UserRole role) {
 		return gson.toJson(fileVersionBusinessController.setAppVersion(role));

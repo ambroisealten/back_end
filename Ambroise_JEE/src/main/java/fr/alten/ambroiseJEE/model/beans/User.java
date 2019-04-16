@@ -32,7 +32,7 @@ public class User implements Serializable {
 	private String name;
 	private String forname;
 	private transient UserRole role;
-	private Agency agency;
+	private String agency;
 
 	public User() {
 		super();
@@ -86,11 +86,12 @@ public class User implements Serializable {
 		this.role = role;
 	}
 
-	public Agency getAgency() {
+	public String getAgency() {
 		return agency;
 	}
 
-	public void setAgency(Agency agency) {
+	public void setAgency(String agency) {
 		this.agency = agency;
 	}
+
 }
