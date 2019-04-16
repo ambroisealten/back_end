@@ -74,7 +74,7 @@ public class UserEntityController {
 			newRole = UserRole.CONSULTANT; //in case of wrong role input, we get the default role
 		}
 		newUser.setRole(newRole);
-		newUser.setAgency(agencyEntityController.getAgency(jUser.get("agency").textValue()));
+		newUser.setAgency(agencyEntityController.getAgency(jUser.get("agency").textValue()).toString());
 
 		try {
 			userRepository.save(newUser);
@@ -153,7 +153,7 @@ public class UserEntityController {
 			} catch (Exception e) {
 				//in case of wrong role input, we not change the role
 			}
-			user.setAgency(agencyEntityController.getAgency(jUser.get("agency").textValue()));
+			user.setAgency(agencyEntityController.getAgency(jUser.get("agency").textValue()).toString());
 			userRepository.save(user);
 		} else {
 			throw new RessourceNotFoundException();
@@ -179,7 +179,7 @@ public class UserEntityController {
 			user.setName("");
 			user.setPswd("");
 			user.setRole(UserRole.DESACTIVATED);
-			user.setAgency(agencyEntityController.getAgency(""));
+			user.setAgency(agencyEntityController.getAgency("").toString());
 			userRepository.save(user);
 		} else {
 			throw new RessourceNotFoundException();
