@@ -19,7 +19,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 /**
  * Job controller for business rules
  *
- * @author Lucas Royackkers >>>>>>> origin/JobWebService
+ * @author Lucas Royackkers
  *
  */
 @Service
@@ -27,7 +27,6 @@ public class JobBusinessController {
 
 	@Autowired
 	private JobEntityController jobEntityController;
-
 	/**
 	 * Method to delegate Job creation
 	 *

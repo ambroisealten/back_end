@@ -39,7 +39,6 @@ public class JobRestController {
 		GsonBuilder builder = new GsonBuilder();
 		this.gson = builder.create();
 	}
-
 	@PostMapping("/job")
 	@ResponseBody
 	public HttpException createJob(@RequestBody JsonNode params, @RequestAttribute("role") UserRole role) {

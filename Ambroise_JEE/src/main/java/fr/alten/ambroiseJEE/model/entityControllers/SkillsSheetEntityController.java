@@ -59,7 +59,7 @@ public class SkillsSheetEntityController {
 
 		Optional<Person> personAttachedTo;
 		String status = jSkillsSheet.get("role").textValue();
-		String personMail = jSkillsSheet.get("personMail").textValue();
+		String personMail = jSkillsSheet.get("mailPersonAttachedTo").textValue();
 		// Given the created person status
 		switch (status) {
 		case "consultant":
@@ -73,14 +73,14 @@ public class SkillsSheetEntityController {
 			newSkillsSheet.setMailPersonAttachedTo(personAttachedTo.get().getMail());
 		}
 		// Get all skills given several lists of skills (tech and soft)
-		newSkillsSheet.setSoftSkillsList(this.getAllSoftSkills(jSkillsSheet.get("softskills")));
-		newSkillsSheet.setTechSkillsList(this.getAllTechSkills(jSkillsSheet.get("techskills")));
+		newSkillsSheet.setSoftSkillsList(this.getAllSoftSkills(jSkillsSheet.get("softSkillsList")));
+		newSkillsSheet.setTechSkillsList(this.getAllTechSkills(jSkillsSheet.get("techSkillsList")));
 
 		// Set an Id and a Version Number on this skills sheet
 		newSkillsSheet.setVersionNumber(1);
 		newSkillsSheet.set_id(new ObjectId());
 
-		String authorMail = jSkillsSheet.get("authorMail").textValue();
+		String authorMail = jSkillsSheet.get("mailVersionAuthor").textValue();
 		Optional<User> userAuthor = userEntityController.getUserByMail(authorMail);
 		if (userAuthor.isPresent()) {
 			newSkillsSheet.setMailVersionAuthor(userAuthor.get().getMail());
