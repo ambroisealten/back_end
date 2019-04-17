@@ -52,7 +52,7 @@ public class ConfigRestController {
 	 * @author Kylian Gehier
 	 * @throws FileNotFoundException
 	 */
-	@GetMapping(value = "/configRouting{angularModule}")
+	@GetMapping(value = "/configRouting/{angularModule}")
 	@ResponseBody
 	public String getRoutes(@PathVariable("angularModule") AngularModule module, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws FileNotFoundException {

@@ -1,6 +1,5 @@
 package fr.alten.ambroiseJEE.utils.routing;
 
-public enum AngularModule {
-	Skills,
-	Init;
+public class AngularModulesTest {
+
 }
