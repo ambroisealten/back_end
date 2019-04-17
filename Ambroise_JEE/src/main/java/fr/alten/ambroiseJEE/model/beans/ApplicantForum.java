@@ -10,6 +10,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import fr.alten.ambroiseJEE.utils.Nationality;
 
 /**
+ * Forum applicant. Extend {@link Person}
+ * 
  * @author Andy Chabalier
  *
  */

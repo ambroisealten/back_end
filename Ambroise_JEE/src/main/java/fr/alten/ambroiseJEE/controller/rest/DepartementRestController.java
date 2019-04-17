@@ -21,6 +21,7 @@ import fr.alten.ambroiseJEE.controller.business.geographic.DepartementBusinessCo
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
@@ -43,13 +44,14 @@ public class DepartementRestController {
 	}
 
 	/**
-	 *
+	 * Rest controller to create departement. HTTP Method : POST
+	 * 
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the current logged user mail
 	 * @param role   the current logged user role
 	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link UnprocessableEntityException} if the ressource is not found
-	 *         and {@link CreatedException} if the user is created
+	 *         ({@link UnprocessableEntityException} if the name is not provided and
+	 *         {@link CreatedException} if the departement is created
 	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author Andy Chabalier
 	 */
@@ -62,13 +64,14 @@ public class DepartementRestController {
 	}
 
 	/**
-	 *
+	 * Rest controller to delete departement. HTTP Method : DELETE
+	 * 
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the current logged user mail
 	 * @param role   the current logged user role
 	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link UnprocessableEntityException} if the ressource is not found
-	 *         and {@link CreatedException} if the user is created
+	 *         ({@link UnprocessableEntityException} if the name is not provided and
+	 *         {@link OkException} if the departement is deleted
 	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author Andy Chabalier
 	 */
@@ -81,7 +84,8 @@ public class DepartementRestController {
 	}
 
 	/**
-	 *
+	 * Rest controller to fetch all departements. HTTP Method : GET
+	 * 
 	 * @param mail the current logged user mail
 	 * @param role the current logged user role
 	 * @return the list of all departements
@@ -94,13 +98,14 @@ public class DepartementRestController {
 	}
 
 	/**
-	 *
+	 * Rest controller to update departement
+	 * 
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the current logged user mail
 	 * @param role   the current logged user role
 	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link UnprocessableEntityException} if the ressource is not found
-	 *         and {@link CreatedException} if the user is created
+	 *         ({@link UnprocessableEntityException} if the name is not provided and
+	 *         {@link OkException} if the departement is updated
 	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author Andy Chabalier
 	 */
@@ -108,7 +113,7 @@ public class DepartementRestController {
 	@ResponseBody
 	public HttpException updateDepartement(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("name") != null ? departementBusinessController.createDepartement(params, role)
+		return params.get("name") != null ? departementBusinessController.updateDepartement(params, role)
 				: new UnprocessableEntityException();
 	}
 }

@@ -204,7 +204,7 @@ public class GeographicBusinessController {
 	 *         done
 	 * @author Andy Chabalier
 	 */
-	public HttpException synchronise(UserRole role) {
+	public HttpException synchronize(UserRole role) {
 		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
 			HashMap<String, ArrayList<LinkedTreeMap>> data = fetchData();
 

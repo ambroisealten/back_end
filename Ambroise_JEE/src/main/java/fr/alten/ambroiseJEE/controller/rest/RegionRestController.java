@@ -21,6 +21,7 @@ import fr.alten.ambroiseJEE.controller.business.geographic.RegionBusinessControl
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
@@ -43,13 +44,15 @@ public class RegionRestController {
 	}
 
 	/**
-	 *
+	 * Rest controller for region creation. HTTP Method : POST
+	 * 
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the current logged user mail
 	 * @param role   the current logged user role
 	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link UnprocessableEntityException} if the ressource is not found
-	 *         and {@link CreatedException} if the user is created
+	 *         ({@link UnprocessableEntityException} if the the JsonNode don't have
+	 *         the parameters name and then we can't process the entity and
+	 *         {@link CreatedException} if the region is created
 	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author Andy Chabalier
 	 */
@@ -62,13 +65,14 @@ public class RegionRestController {
 	}
 
 	/**
-	 *
+	 * Rest controller for region deletion. HTTP Method : DELETE
+	 * 
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the current logged user mail
 	 * @param role   the current logged user role
 	 * @return {@link HttpException} corresponding to the status of the request
 	 *         ({@link UnprocessableEntityException} if the ressource is not found
-	 *         and {@link CreatedException} if the user is created
+	 *         and {@link OkException} if the region is deleted
 	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author Andy Chabalier
 	 */
@@ -81,7 +85,8 @@ public class RegionRestController {
 	}
 
 	/**
-	 *
+	 * Rest controller to fetch all regions. HTTP Method : GET
+	 * 
 	 * @param mail the current logged user mail
 	 * @param role the current logged user role
 	 * @return the list of all regions
@@ -94,13 +99,14 @@ public class RegionRestController {
 	}
 
 	/**
-	 *
+	 * Rest controller to update region. HTTP Method : PUT
+	 * 
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the current logged user mail
 	 * @param role   the current logged user role
 	 * @return {@link HttpException} corresponding to the status of the request
 	 *         ({@link UnprocessableEntityException} if the ressource is not found
-	 *         and {@link CreatedException} if the user is created
+	 *         and {@link OkException} if the region is updated
 	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author Andy Chabalier
 	 */
@@ -108,7 +114,7 @@ public class RegionRestController {
 	@ResponseBody
 	public HttpException updateRegion(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("name") != null ? regionBusinessController.createRegion(params, role)
+		return params.get("name") != null ? regionBusinessController.updateRegion(params, role)
 				: new UnprocessableEntityException();
 	}
 }

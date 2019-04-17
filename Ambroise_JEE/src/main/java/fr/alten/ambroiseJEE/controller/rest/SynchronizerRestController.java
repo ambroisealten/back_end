@@ -39,9 +39,9 @@ public class SynchronizerRestController {
 	 */
 	@PostMapping(value = "/admin/synchronize/geographics")
 	@ResponseBody
-	public HttpException synchronise(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role)
+	public HttpException synchronize(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role)
 			throws Exception {
-		return geographicBusinessController.synchronise(role);
+		return geographicBusinessController.synchronize(role);
 	}
 
 }

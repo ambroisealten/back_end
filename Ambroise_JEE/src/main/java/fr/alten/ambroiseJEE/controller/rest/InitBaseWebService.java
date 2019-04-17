@@ -51,9 +51,10 @@ public class InitBaseWebService {
 	}
 
 	/**
-	 *
+	 * create a set of agencies
+	 * 
 	 * @author Andy Chabalier
-	 * @throws IOException
+	 * @throws IOException if an I/O problem occur
 	 */
 	private void createAgencies() throws IOException {
 		Agency agencyStrasbourg = new Agency();
@@ -149,7 +150,7 @@ public class InitBaseWebService {
 	 * @author Andy Chabalier
 	 */
 	private void createGeographics() {
-		geographicBusinessController.synchronise(UserRole.MANAGER_ADMIN);
+		geographicBusinessController.synchronize(UserRole.MANAGER_ADMIN);
 	}
 
 	/**
@@ -240,6 +241,13 @@ public class InitBaseWebService {
 		}
 	}
 
+	/**
+	 * Rest controller to init the database with set of object. HTTP Method : POST
+	 * 
+	 * @return {@link CreatedException} if the database is sucessfully created
+	 * @throws IOException if an I/O problem occur
+	 * @author Andy Chabalier
+	 */
 	@PostMapping(value = "/admin/init")
 	@ResponseBody
 	public HttpException init() throws IOException {

@@ -24,6 +24,7 @@ import fr.alten.ambroiseJEE.controller.business.ApplicantForumBusinessController
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
@@ -44,13 +45,14 @@ public class ApplicantForumRestController {
 	}
 
 	/**
-	 *
+	 * Rest controller to create an forum applicant. HTTP Method : POST
+	 * 
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the user's mail
 	 * @param role   the user's role
 	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link UnprocessableEntityException} if the resource is not found
-	 *         and {@link CreatedException} if the applicant is created
+	 *         ({@link UnprocessableEntityException} if mail is not provided and
+	 *         {@link CreatedException} if the applicant is created
 	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author Andy Chabalier
 	 */
@@ -58,17 +60,19 @@ public class ApplicantForumRestController {
 	@ResponseBody
 	public HttpException createApplicant(@RequestBody JsonNode params, @RequestAttribute("role") UserRole role)
 			throws Exception {
-		return applicantForumBusinessController.createApplicant(params, role);
+		return params.get("mail") != null ? applicantForumBusinessController.createApplicant(params, role)
+				: new UnprocessableEntityException();
 	}
 
 	/**
-	 *
+	 * Rest controller to delete an forum applicant. HTTP Method : DELETE
+	 * 
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the user's mail
 	 * @param role   the user's role
 	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link UnprocessableEntityException} if the resource is not found
-	 *         and {@link CreatedException} if the person(applicant) is deleted
+	 *         ({@link UnprocessableEntityException} if the mail is not provided and
+	 *         {@link OkException} if the person(applicant) is deleted
 	 * @author Andy Chabalier
 	 */
 	@DeleteMapping(value = "/forum/applicant")
@@ -80,22 +84,24 @@ public class ApplicantForumRestController {
 	}
 
 	/**
-	 *
-	 * @param applicantName the applicant's name
+	 * Rest controller to fetch a specific applicant. HTTP Method : GET
+	 * 
+	 * @param applicantMail the applicant's name
 	 * @param mail          the user's mail
 	 * @param role          the user's role
 	 * @return an applicant, given its name
 	 * @author Andy Chabalier
 	 */
-	@GetMapping(value = "/forum/applicant/{name}")
+	@GetMapping(value = "/forum/applicant/{mail}")
 	@ResponseBody
-	public String getApplicant(@PathVariable("name") String applicantName, @RequestAttribute("mail") String mail,
+	public String getApplicant(@PathVariable("mail") String applicantMail, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) {
-		return gson.toJson(applicantForumBusinessController.getApplicant(applicantName, role));
+		return gson.toJson(applicantForumBusinessController.getApplicant(applicantMail, role));
 	}
 
 	/**
-	 *
+	 * Rest controller to fetch all forum applicants. HTTP Method : GET
+	 * 
 	 * @param mail the user's mail
 	 * @param role the user's role
 	 * @return the list of all applicants
@@ -108,13 +114,14 @@ public class ApplicantForumRestController {
 	}
 
 	/**
-	 *
+	 * Rest controller to update a forum applicant
+	 * 
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the user's mail
 	 * @param role   the user's role
 	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link UnprocessableEntityException} if the resource is not found
-	 *         and {@link CreatedException} if the applicant is updated
+	 *         ({@link UnprocessableEntityException} if the mail is not provided and
+	 *         {@link OkException} if the applicant is updated
 	 * @author Andy Chabalier
 	 * @throws ParseException
 	 */

@@ -21,6 +21,7 @@ import fr.alten.ambroiseJEE.controller.business.AgencyBusinessController;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
@@ -43,13 +44,14 @@ public class AgencyRestController {
 	}
 
 	/**
-	 *
+	 * Rest controller to create agency. HTTP Method : POST
+	 * 
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the current logged user mail
 	 * @param role   the current logged user role
 	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link UnprocessableEntityException} if the ressource is not found
-	 *         and {@link CreatedException} if the user is created
+	 *         ({@link UnprocessableEntityException} if the agency name is not
+	 *         provided and {@link CreatedException} if the agency is created
 	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author Andy Chabalier
 	 */
@@ -62,13 +64,14 @@ public class AgencyRestController {
 	}
 
 	/**
-	 *
+	 * Rest controller to delete agency. HTTP Method : DELETE
+	 * 
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the current logged user mail
 	 * @param role   the current logged user role
 	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link UnprocessableEntityException} if the ressource is not found
-	 *         and {@link CreatedException} if the user is created
+	 *         ({@link UnprocessableEntityException} if the agency name is not
+	 *         provided and {@link OkException} if the agency is deleted
 	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author Andy Chabalier
 	 */
@@ -76,12 +79,13 @@ public class AgencyRestController {
 	@ResponseBody
 	public HttpException deleteAgency(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("mail") != null ? agencyBusinessController.deleteAgency(params, role)
+		return params.get("name") != null ? agencyBusinessController.deleteAgency(params, role)
 				: new UnprocessableEntityException();
 	}
 
 	/**
-	 *
+	 * Rest controller to fetch all agencies. HTTP Method : GET
+	 * 
 	 * @param mail the current logged user mail
 	 * @param role the current logged user role
 	 * @return the list of all agencies
@@ -94,13 +98,14 @@ public class AgencyRestController {
 	}
 
 	/**
-	 *
+	 * Rest controller to update an agency. HTTP Method : PUT
+	 * 
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the current logged user mail
 	 * @param role   the current logged user role
 	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link UnprocessableEntityException} if the ressource is not found
-	 *         and {@link CreatedException} if the user is created
+	 *         ({@link UnprocessableEntityException} if the agency name is not
+	 *         provided and {@link OkException} if the agency is updated
 	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author Andy Chabalier
 	 */
@@ -108,7 +113,7 @@ public class AgencyRestController {
 	@ResponseBody
 	public HttpException updateAgency(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("mail") != null ? agencyBusinessController.updateAgency(params, role)
+		return params.get("name") != null ? agencyBusinessController.updateAgency(params, role)
 				: new UnprocessableEntityException();
 	}
 }

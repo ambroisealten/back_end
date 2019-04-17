@@ -21,6 +21,7 @@ import fr.alten.ambroiseJEE.controller.business.geographic.CityBusinessControlle
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
@@ -43,13 +44,14 @@ public class CityRestController {
 	}
 
 	/**
-	 *
+	 * Rest controller to create a city. HTTP Method : POST
+	 * 
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the current logged user mail
 	 * @param role   the current logged user role
 	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link UnprocessableEntityException} if the ressource is not found
-	 *         and {@link CreatedException} if the user is created
+	 *         ({@link UnprocessableEntityException} if the name is not provided and
+	 *         {@link CreatedException} if the city is created
 	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author Andy Chabalier
 	 */
@@ -62,13 +64,14 @@ public class CityRestController {
 	}
 
 	/**
-	 *
+	 * Rest controller to delete a city. HTTP Method : DELETE
+	 * 
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the current logged user mail
 	 * @param role   the current logged user role
 	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link UnprocessableEntityException} if the ressource is not found
-	 *         and {@link CreatedException} if the user is created
+	 *         ({@link UnprocessableEntityException} if the name is not provided and
+	 *         {@link OkException} if the city is deleted
 	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author Andy Chabalier
 	 */
@@ -81,7 +84,8 @@ public class CityRestController {
 	}
 
 	/**
-	 *
+	 * Rest controller to fetch all cities. HTTP Method : GET
+	 * 
 	 * @param mail the current logged user mail
 	 * @param role the current logged user role
 	 * @return the list of all cities
@@ -94,13 +98,14 @@ public class CityRestController {
 	}
 
 	/**
-	 *
+	 * Rest controller to update a city
+	 * 
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the current logged user mail
 	 * @param role   the current logged user role
 	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link UnprocessableEntityException} if the ressource is not found
-	 *         and {@link CreatedException} if the user is created
+	 *         ({@link UnprocessableEntityException} if the name is not provided and
+	 *         {@link OkException} if the city is updated
 	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author Andy Chabalier
 	 */

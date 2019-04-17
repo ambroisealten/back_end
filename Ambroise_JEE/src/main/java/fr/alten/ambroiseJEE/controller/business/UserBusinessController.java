@@ -37,7 +37,7 @@ public class UserBusinessController {
 	 *
 	 * @param mail the user's mail to check
 	 * @param pswd the user's password to check
-	 * @return an empty optional
+	 * @return an optional with the fetched user or empty if user is not found
 	 * @author Andy Chabalier
 	 */
 	public Optional<String> checkIfCredentialIsValid(String mail, String pswd) {
@@ -75,12 +75,6 @@ public class UserBusinessController {
 		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)
 				? userEntityController.deleteUser(params.get("mail").textValue())
 				: new ForbiddenException();
-	}
-
-	public Optional<User> getUser(String usermail, JsonNode jUser, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)
-				? userEntityController.getUserByMail(usermail)
-				: Optional.empty();
 	}
 
 	/**

@@ -21,6 +21,7 @@ import fr.alten.ambroiseJEE.controller.business.geographic.PostalCodeBusinessCon
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
@@ -43,13 +44,14 @@ public class PostalCodeRestController {
 	}
 
 	/**
-	 *
+	 * Rest controller to create postal Code. HTTP Method : POST
+	 * 
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the current logged user mail
 	 * @param role   the current logged user role
 	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link UnprocessableEntityException} if the ressource is not found
-	 *         and {@link CreatedException} if the user is created
+	 *         ({@link UnprocessableEntityException} if the name is not provided and
+	 *         {@link CreatedException} if the postal code is created
 	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author Andy Chabalier
 	 */
@@ -62,13 +64,14 @@ public class PostalCodeRestController {
 	}
 
 	/**
-	 *
+	 * Rest controller to delete postal code. HTTP Method : DELETE
+	 * 
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the current logged user mail
 	 * @param role   the current logged user role
 	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link UnprocessableEntityException} if the ressource is not found
-	 *         and {@link CreatedException} if the user is created
+	 *         ({@link UnprocessableEntityException} if the name is not provided and
+	 *         {@link OkException} if the postal code is deleted
 	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author Andy Chabalier
 	 */
@@ -81,10 +84,11 @@ public class PostalCodeRestController {
 	}
 
 	/**
-	 *
+	 * Rest controller to fetch all postal codes. HTTP Method : GET
+	 * 
 	 * @param mail the current logged user mail
 	 * @param role the current logged user role
-	 * @return the list of all users
+	 * @return the list of all postal codes
 	 * @author Andy Chabalier
 	 */
 	@GetMapping(value = "/postalCodes")
@@ -94,13 +98,14 @@ public class PostalCodeRestController {
 	}
 
 	/**
-	 *
+	 * Rest controller to update postal code. HTTP Method : PUT
+	 * 
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the current logged user mail
 	 * @param role   the current logged user role
 	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link UnprocessableEntityException} if the ressource is not found
-	 *         and {@link CreatedException} if the user is created
+	 *         ({@link UnprocessableEntityException} if the name is not provided and
+	 *         {@link OkException} if the postal code is updated
 	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author Andy Chabalier
 	 */
@@ -108,7 +113,7 @@ public class PostalCodeRestController {
 	@ResponseBody
 	public HttpException updatePostalCode(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("name") != null ? postalCodeBusinessController.createPostalCode(params, role)
+		return params.get("name") != null ? postalCodeBusinessController.updatePostalCode(params, role)
 				: new UnprocessableEntityException();
 	}
 }

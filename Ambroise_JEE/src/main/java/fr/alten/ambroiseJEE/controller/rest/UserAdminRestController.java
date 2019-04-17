@@ -66,14 +66,14 @@ public class UserAdminRestController {
 	}
 
 	/**
-	 * Desactivate a User. HTTP method DELETE
+	 * Deactivate a User. HTTP method DELETE
 	 *
 	 * @param params contains the mail of the user to deactivated
 	 * @param mail   the user mail
 	 * @param role   the user role
 	 * @return {@link HttpException} corresponding to the status of the request
 	 *         ({@link UnprocessableEntityException} if the resource is not found
-	 *         and {@link OkException} if the user is updated successfully
+	 *         and {@link OkException} if the user is deactivated successfully
 	 * @throws Exception
 	 * @author MAQUINGHEN MAXIME
 	 */
@@ -89,7 +89,7 @@ public class UserAdminRestController {
 	@ResponseBody
 	public String getUser(@PathVariable("mail") String usermail, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) {
-		return gson.toJson(userBusinessController.getUser(usermail, null, role));
+		return gson.toJson(userBusinessController.getUserByMail(usermail, role));
 	}
 
 	/**
