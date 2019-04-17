@@ -32,7 +32,7 @@ public class SpringRestControllerTest {
 	public void getDataTest() {
 		//when().get("/test/api/tdd/truc")
 		//	.then().assertThat().body("data", equalTo("truc"));
-		System.out.println("\n\n\nTADA :"+when().get("/test/api/tdd/truc").asString()+"\n\n\n");
+		//System.out.println("\n\n\nTADA :"+when().get("/test/api/tdd/truc").asString()+"\n\n\n");
 	}
 
 	@Before

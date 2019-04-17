@@ -57,7 +57,7 @@ public class UserAdminRestController {
 	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author MAQUINGHEN MAXIME
 	 */
-	@PostMapping(value = "/admin/user") //To-DELETE : /test
+	@PostMapping(value = "/admin/user")
 	@ResponseBody
 	public HttpException createUser(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws Exception {

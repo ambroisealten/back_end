@@ -11,9 +11,14 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.response.Header;
+import com.jayway.restassured.response.Headers;
+
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.security.test.context.support.WithMockUser;
 
 import fr.alten.ambroiseJEE.AmbroiseJeeApplication;
+import fr.alten.ambroiseJEE.security.UserRole;
 
 /**
  * 
@@ -24,7 +29,8 @@ import fr.alten.ambroiseJEE.AmbroiseJeeApplication;
 @ContextConfiguration(classes = AmbroiseJeeApplication.class)
 @TestPropertySource(value = { "classpath:application.properties" })
 @SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
-public class UserAdminRestControllerTest {
+public class ConfigRestControllerTest {
+
 	@Value("${local.server.port}")
 	int port;
 
@@ -33,12 +39,21 @@ public class UserAdminRestControllerTest {
 		RestAssured.port = port;
 		RestAssured.baseURI = "http://localhost"; // replace as appropriate
 	}
-	
 
 	@Test
 	public void createUserTest() {
-		//when().get("/test/api/tdd/truc")
-		//	.then().assertThat().body("data", equalTo("truc"));
-		System.out.println("\n\n\nTADA :"+when().get("/test/api/tdd/truc").asString()+"\n\n\n");
+		// when().get("/test/api/tdd/truc")
+		// .then().assertThat().body("data", equalTo("truc"));
+		// System.out.println("\n\n\nTADA
+		// :"+when().get("/test/configRouting/Skills").asString()+"\n\n\n");
+
+		Header mailHeader = new Header("mail", "abc@gmail.com");
+		Header roleHeader = new Header("role", UserRole.MANAGER_ADMIN.toString());
+		Headers header = new Headers(mailHeader, roleHeader);
+		System.out.println(given().headers(header)
+				.when().get("\n\n\nTADA :" + "/test/configRouting/Skills")
+				.asString() + "\n\n\n");
+
 	}
+
 }

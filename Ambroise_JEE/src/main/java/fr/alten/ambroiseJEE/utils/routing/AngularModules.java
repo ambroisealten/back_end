@@ -35,7 +35,8 @@ public class AngularModules {
 
 	private void fillModules() {
 		System.out.println(jsonLinks);
-		this.jsonLinks.put(AngularModule.Skill, "src/main/resources/routing/skill.routing.json");
+		this.jsonLinks.put(AngularModule.Skills, "src/main/resources/routing/skills.routing.json");
+		this.jsonLinks.put(AngularModule.Init, "src/main/resources/routing/init.routing.json");
 		System.out.println(jsonLinks);
 	}
 
