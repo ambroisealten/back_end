@@ -1,0 +1,39 @@
+{
+	"routing": [
+		{
+			"role": "MANAGER_ADMIN",
+			"routes": [
+				{
+					"path": "",
+					"redirectTo": "/login",
+					"pathMatch": "full"
+				},
+				{
+					"path": "**",
+					"redirectTo": "/login",
+					"pathMatch": "full"
+				},
+				{
+					"path": "skills",
+					"loadChildren": "./competences/competences.module#CompetencesModule"
+				},
+				{
+					"path": "login",
+					"loadChildren": "./login/login.module#LoginModule"
+				},
+				{
+					"path": "missions",
+					"loadChildren": "./missions/missions.module#MissionsModule"
+				},
+				{
+					"path": "forum",
+					"loadChildren": "./forum/forum.module#ForumModule"
+				},
+				{
+					"path": "c2lnbnVw",
+					"component": "SignupComponent"
+				}
+			]
+		}
+	]
+}
