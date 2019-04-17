@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.controller.rest;
 
@@ -40,7 +40,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 
 /**
  * Rest Controller for User Administration !!!! ONLY FOR DEVELOPPMENT !!!!
- * 
+ *
  * @author Andy Chabalier
  *
  */
@@ -52,7 +52,7 @@ public class InitBaseWebService {
 
 	@Autowired
 	private GeographicBusinessController geographicBusinessController;
-	
+
 	@Autowired
 	private AgencyBusinessController AgencyBusinessController;
 	
@@ -326,9 +326,9 @@ public class InitBaseWebService {
 	}
 
 	/**
-	 * 
+	 *
 	 * @author Andy Chabalier
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	private void createAgencies() throws IOException {
 		Agency agencyStrasbourg = new Agency();
@@ -337,77 +337,78 @@ public class InitBaseWebService {
 		((ObjectNode) agencyStrasbourgJsonNode).put("place", "Schiltigheim");
 		((ObjectNode) agencyStrasbourgJsonNode).put("placeType", "city");
 		AgencyBusinessController.createAgency(agencyStrasbourgJsonNode, UserRole.MANAGER_ADMIN);
-		
+
 		Agency agencyMulhouse = new Agency();
 		agencyMulhouse.setName("Mulhouse");
 		JsonNode agencyMulhouseJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(agencyMulhouse).getAsJsonObject());
 		((ObjectNode) agencyMulhouseJsonNode).put("place", "Mulhouse");
 		((ObjectNode) agencyMulhouseJsonNode).put("placeType", "city");
 		AgencyBusinessController.createAgency(agencyMulhouseJsonNode, UserRole.MANAGER_ADMIN);
-		
+
 		Agency agencyLille = new Agency();
 		agencyLille.setName("Lille");
 		JsonNode agencyLilleJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(agencyLille).getAsJsonObject());
 		((ObjectNode) agencyLilleJsonNode).put("place", "Villeneuve-d'Ascq");
 		((ObjectNode) agencyLilleJsonNode).put("placeType", "city");
 		AgencyBusinessController.createAgency(agencyLilleJsonNode, UserRole.MANAGER_ADMIN);
-		
+
 		Agency agencyParis = new Agency();
 		agencyParis.setName("Paris");
 		JsonNode agencyParisJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(agencyParis).getAsJsonObject());
 		((ObjectNode) agencyParisJsonNode).put("place", "Boulogne-Billancourt");
 		((ObjectNode) agencyParisJsonNode).put("placeType", "city");
 		AgencyBusinessController.createAgency(agencyParisJsonNode, UserRole.MANAGER_ADMIN);
-		
+
 		Agency agencyRennes = new Agency();
 		agencyRennes.setName("Rennes");
 		JsonNode agencyRennesJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(agencyRennes).getAsJsonObject());
 		((ObjectNode) agencyRennesJsonNode).put("place", "Rennes");
 		((ObjectNode) agencyRennesJsonNode).put("placeType", "city");
 		AgencyBusinessController.createAgency(agencyRennesJsonNode, UserRole.MANAGER_ADMIN);
-		
+
 		Agency agencyNantes = new Agency();
 		agencyNantes.setName("Nantes");
 		JsonNode agencyNantesJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(agencyNantes).getAsJsonObject());
 		((ObjectNode) agencyNantesJsonNode).put("place", "Saint-Herblain");
 		((ObjectNode) agencyNantesJsonNode).put("placeType", "city");
 		AgencyBusinessController.createAgency(agencyNantesJsonNode, UserRole.MANAGER_ADMIN);
-		
+
 		Agency agencyBordeaux = new Agency();
 		agencyBordeaux.setName("Bordeaux");
 		JsonNode agencyBordeauxJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(agencyBordeaux).getAsJsonObject());
 		((ObjectNode) agencyBordeauxJsonNode).put("place", "Merignac");
 		((ObjectNode) agencyBordeauxJsonNode).put("placeType", "city");
 		AgencyBusinessController.createAgency(agencyBordeauxJsonNode, UserRole.MANAGER_ADMIN);
-		
+
 		Agency agencyLyon = new Agency();
 		agencyLyon.setName("Lyon");
 		JsonNode agencyLyonJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(agencyLyon).getAsJsonObject());
 		((ObjectNode) agencyLyonJsonNode).put("place", "Villeurbanne");
 		((ObjectNode) agencyLyonJsonNode).put("placeType", "city");
 		AgencyBusinessController.createAgency(agencyLyonJsonNode, UserRole.MANAGER_ADMIN);
-		
+
 		Agency agencyGrenoble = new Agency();
 		agencyGrenoble.setName("Grenoble");
 		JsonNode agencyGrenobleJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(agencyGrenoble).getAsJsonObject());
 		((ObjectNode) agencyGrenobleJsonNode).put("place", "Grenoble");
 		((ObjectNode) agencyGrenobleJsonNode).put("placeType", "city");
 		AgencyBusinessController.createAgency(agencyGrenobleJsonNode, UserRole.MANAGER_ADMIN);
-		
+
 		Agency agencyToulouse = new Agency();
 		agencyToulouse.setName("Toulouse");
 		JsonNode agencyToulouseJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(agencyToulouse).getAsJsonObject());
 		((ObjectNode) agencyToulouseJsonNode).put("place", "Labège");
 		((ObjectNode) agencyToulouseJsonNode).put("placeType", "city");
 		AgencyBusinessController.createAgency(agencyToulouseJsonNode, UserRole.MANAGER_ADMIN);
-		
+
 		Agency agencyAixEnProvence = new Agency();
 		agencyAixEnProvence.setName("Aix-en-Provence");
-		JsonNode agencyAixEnProvenceJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(agencyAixEnProvence).getAsJsonObject());
+		JsonNode agencyAixEnProvenceJsonNode = JsonUtils
+				.toJsonNode(gson.toJsonTree(agencyAixEnProvence).getAsJsonObject());
 		((ObjectNode) agencyAixEnProvenceJsonNode).put("place", "Aix-en-Provence");
 		((ObjectNode) agencyAixEnProvenceJsonNode).put("placeType", "city");
 		AgencyBusinessController.createAgency(agencyAixEnProvenceJsonNode, UserRole.MANAGER_ADMIN);
-		
+
 		Agency agencyNice = new Agency();
 		agencyNice.setName("Nice");
 		JsonNode agencyNiceJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(agencyNice).getAsJsonObject());
@@ -418,10 +419,19 @@ public class InitBaseWebService {
 	}
 
 	/**
+	 * create and populate Database with geographics
+	 *
+	 * @author Andy Chabalier
+	 */
+	private void createGeographics() {
+		geographicBusinessController.synchronise(UserRole.MANAGER_ADMIN);
+	}
+
+	/**
 	 * create and populate Database with users 1 user with Manager_Admin role, 1
 	 * user with CDR_Admin role, 1 user with Manager role, 1 user with CDR role,, 1
-	 * user with Consultant role, 1 user who will be desactivated and 10 consultants
-	 * 
+	 * user with Consultant role, 1 user who will be deactivated and 10 consultants
+	 *
 	 * @throws IOException
 	 * @author Andy Chabalier
 	 */
@@ -452,10 +462,10 @@ public class InitBaseWebService {
 		userConsultant.setMail("tempUserConsultant@mail.com");
 		userConsultant.setName("tempUserConsultantName");
 
-		User userDesactivated = new User();
-		userDesactivated.setForname("");
-		userDesactivated.setMail("desactivated" + System.currentTimeMillis());
-		userDesactivated.setName("");
+		User userDeactivated = new User();
+		userDeactivated.setForname("");
+		userDeactivated.setMail("deactivated" + System.currentTimeMillis());
+		userDeactivated.setName("");
 
 		JsonNode userAdminManagerJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(userAdminManager).getAsJsonObject());
 		((ObjectNode) userAdminManagerJsonNode).put("pswd", "pass");
@@ -477,17 +487,17 @@ public class InitBaseWebService {
 		((ObjectNode) userConsultantJsonNode).put("pswd", "pass");
 		((ObjectNode) userConsultantJsonNode).put("role", "CONSULTANT");
 		((ObjectNode) userConsultantJsonNode).put("agency", "Strasbourg");
-		JsonNode userDesactivatedJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(userDesactivated).getAsJsonObject());
-		((ObjectNode) userDesactivatedJsonNode).put("pswd", "pass");
-		((ObjectNode) userDesactivatedJsonNode).put("role", "DESACTIVATED");
-		((ObjectNode) userDesactivatedJsonNode).put("agency", "Strasbourg");
+		JsonNode userDeactivatedJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(userDeactivated).getAsJsonObject());
+		((ObjectNode) userDeactivatedJsonNode).put("pswd", "pass");
+		((ObjectNode) userDeactivatedJsonNode).put("role", "DEACTIVATED");
+		((ObjectNode) userDeactivatedJsonNode).put("agency", "Strasbourg");
 
 		userBusinessController.createUser(userAdminManagerJsonNode, UserRole.MANAGER_ADMIN);
 		userBusinessController.createUser(userAdminCDRJsonNode, UserRole.MANAGER_ADMIN);
 		userBusinessController.createUser(userManagerJsonNode, UserRole.MANAGER_ADMIN);
 		userBusinessController.createUser(userCDRJsonNode, UserRole.MANAGER_ADMIN);
 		userBusinessController.createUser(userConsultantJsonNode, UserRole.MANAGER_ADMIN);
-		userBusinessController.createUser(userDesactivatedJsonNode, UserRole.MANAGER_ADMIN);
+		userBusinessController.createUser(userDeactivatedJsonNode, UserRole.MANAGER_ADMIN);
 
 		// Remplissage d'une population de consultant
 		for (int i = 0; i < 10; i++) {
@@ -504,7 +514,4 @@ public class InitBaseWebService {
 			userBusinessController.createUser(useriJsonNode, UserRole.MANAGER_ADMIN);
 		}
 	}
-	
-	
-	
 }

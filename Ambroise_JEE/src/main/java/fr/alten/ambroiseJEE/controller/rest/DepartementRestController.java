@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.controller.rest;
 
@@ -19,12 +19,13 @@ import com.google.gson.GsonBuilder;
 
 import fr.alten.ambroiseJEE.controller.business.geographic.DepartementBusinessController;
 import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
  * Rest controller for the city web service
- * 
+ *
  * @author Andy Chabalier
  *
  */
@@ -42,12 +43,12 @@ public class DepartementRestController {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param params JsonNode containing post parameters from http request
-	 * @param mail the current logged user mail
-	 * @param role the current logged user role
-	 * @return {@link HttpException} corresponding to the statut of the
-	 *         request ({@link UnprocessableEntityException} if the ressource is not found
+	 * @param mail   the current logged user mail
+	 * @param role   the current logged user role
+	 * @return {@link HttpException} corresponding to the status of the request
+	 *         ({@link UnprocessableEntityException} if the ressource is not found
 	 *         and {@link CreatedException} if the user is created
 	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author Andy Chabalier
@@ -56,12 +57,31 @@ public class DepartementRestController {
 	@ResponseBody
 	public HttpException createDepartement(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("mail") != null ? departementBusinessController.createDepartement(params, role)
+		return params.get("name") != null ? departementBusinessController.createDepartement(params, role)
 				: new UnprocessableEntityException();
 	}
 
 	/**
-	 * 
+	 *
+	 * @param params JsonNode containing post parameters from http request
+	 * @param mail   the current logged user mail
+	 * @param role   the current logged user role
+	 * @return {@link HttpException} corresponding to the status of the request
+	 *         ({@link UnprocessableEntityException} if the ressource is not found
+	 *         and {@link CreatedException} if the user is created
+	 * @throws Exception @see ForbiddenException if wrong identifiers
+	 * @author Andy Chabalier
+	 */
+	@DeleteMapping(value = "/departement")
+	@ResponseBody
+	public HttpException deleteDepartement(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
+			@RequestAttribute("role") UserRole role) throws Exception {
+		return params.get("name") != null ? departementBusinessController.deleteDepartement(params, role)
+				: new UnprocessableEntityException();
+	}
+
+	/**
+	 *
 	 * @param mail the current logged user mail
 	 * @param role the current logged user role
 	 * @return the list of all departements
@@ -72,14 +92,14 @@ public class DepartementRestController {
 	public String getDepartements(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
 		return gson.toJson(departementBusinessController.getDepartements(role));
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param params JsonNode containing post parameters from http request
-	 * @param mail the current logged user mail
-	 * @param role the current logged user role
-	 * @return {@link HttpException} corresponding to the statut of the
-	 *         request ({@link UnprocessableEntityException} if the ressource is not found
+	 * @param mail   the current logged user mail
+	 * @param role   the current logged user role
+	 * @return {@link HttpException} corresponding to the status of the request
+	 *         ({@link UnprocessableEntityException} if the ressource is not found
 	 *         and {@link CreatedException} if the user is created
 	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author Andy Chabalier
@@ -88,28 +108,7 @@ public class DepartementRestController {
 	@ResponseBody
 	public HttpException updateDepartement(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("mail") != null ? departementBusinessController.createDepartement(params, role)
-				: new UnprocessableEntityException();
-	}
-	
-	/**
-	 * 
-	 * @param params JsonNode containing post parameters from http request
-	 * @param mail the current logged user mail
-	 * @param role the current logged user role
-	 * @return {@link HttpException} corresponding to the statut of the
-	 *         request ({@link UnprocessableEntityException} if the ressource is not found
-	 *         and {@link CreatedException} if the user is created
-	 * @throws Exception @see ForbiddenException if wrong identifiers
-	 * @author Andy Chabalier
-	 */
-	@DeleteMapping(value = "/departement")
-	@ResponseBody
-	public HttpException deleteDepartement(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("mail") != null ? departementBusinessController.deleteDepartement(params, role)
+		return params.get("name") != null ? departementBusinessController.createDepartement(params, role)
 				: new UnprocessableEntityException();
 	}
 }
-
-

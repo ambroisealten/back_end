@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.model.beans;
 
@@ -21,42 +21,46 @@ public class Agency implements Serializable {
 
 	@Id
 	private transient ObjectId _id;
-	
+
 	@Indexed(unique = true)
 	private String name;
 	private String place;
 	private String placeType;
-	
+
 	public Agency() {
 		super();
 	}
-	
+
 	public ObjectId get_id() {
 		return _id;
 	}
-	public void set_id(ObjectId _id) {
-		this._id = _id;
-	}
+
 	public String getName() {
 		return name;
 	}
-	public void setName(String name) {
-		this.name = name;
-	}
+
 	public String getPlace() {
 		return place;
-	}
-	public void setPlace(String place) {
-		this.place = place;
 	}
 
 	public String getPlaceType() {
 		return placeType;
 	}
 
+	public void set_id(ObjectId _id) {
+		this._id = _id;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setPlace(String place) {
+		this.place = place;
+	}
+
 	public void setPlaceType(String placeType) {
 		this.placeType = placeType;
 	}
-	
-	
+
 }

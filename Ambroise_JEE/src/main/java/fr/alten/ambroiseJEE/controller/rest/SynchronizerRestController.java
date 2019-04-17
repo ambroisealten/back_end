@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.controller.rest;
 
@@ -17,7 +17,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 
 /**
  * Rest controller for the agency web service
- * 
+ *
  * @author Andy Chabalier
  *
  */
@@ -28,12 +28,12 @@ public class SynchronizerRestController {
 	private GeographicBusinessController geographicBusinessController;
 
 	/**
-	 * 
+	 *
 	 * @param mail the current logged user mail
 	 * @param role the current logged user role
-	 * @return {@link HttpException} corresponding to the status of the
-	 *         request ({@link InternalServerErrorException} a problem occur
-	 *         and {@link OkException} if the process is successful
+	 * @return {@link HttpException} corresponding to the status of the request
+	 *         ({@link InternalServerErrorException} a problem occur and
+	 *         {@link OkException} if the process is successful
 	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author Andy Chabalier
 	 */
@@ -44,5 +44,4 @@ public class SynchronizerRestController {
 		return geographicBusinessController.synchronise(role);
 	}
 
-	
 }

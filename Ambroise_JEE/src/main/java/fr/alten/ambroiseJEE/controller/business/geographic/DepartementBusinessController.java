@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.controller.business.geographic;
 
@@ -18,10 +18,12 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
 
 /**
  * Departement controller for business rules.
+ *
  * @author Andy Chabalier
  *
  */
@@ -30,15 +32,10 @@ public class DepartementBusinessController {
 
 	@Autowired
 	private DepartementEntityController departementEntityController;
-	
-
-	public Optional<Departement> getDepartement(String name) {
-		return departementEntityController.getDepartement(name);
-	}
-
 
 	/**
-	 * Method to delegate Departement creation
+	 * Method to delegate departement creation
+	 *
 	 * @param jUser JsonNode with all departement parameters
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ConflictException} if there is a conflict in the
@@ -46,11 +43,41 @@ public class DepartementBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException createDepartement(JsonNode jDepartement, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) ? departementEntityController.createDepartement(jDepartement) : new ForbiddenException();
+		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)
+				? departementEntityController.createDepartement(jDepartement)
+				: new ForbiddenException();
 	}
 
+	/**
+	 * Method to delegate departement deletion
+	 *
+	 * @param params the departement name to delete
+	 * @param role   the user role
+	 * @return @see {@link HttpException} corresponding to the status of the request
+	 *         ({@link ForbiddenException} if the resource is not found and
+	 *         {@link OkException} if the departement is deleted
+	 * @author Andy Chabalier
+	 */
+	public HttpException deleteDepartement(JsonNode params, UserRole role) {
+		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)
+				? departementEntityController.deleteDepartement(params.get("name").textValue())
+				: new ForbiddenException();
+	}
 
 	/**
+	 * Method to fetch a departement
+	 *
+	 * @param name the departement name to fetch
+	 * @return an optional with the fetched value or empty if it's not found
+	 * @author Andy Chabalier
+	 */
+	public Optional<Departement> getDepartement(String name) {
+		return departementEntityController.getDepartement(name);
+	}
+
+	/**
+	 * Method to fetch the list of all departements
+	 *
 	 * @param role the user role
 	 * @return the list of all departements
 	 * @author Andy Chabalier
@@ -59,35 +86,24 @@ public class DepartementBusinessController {
 		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
 			return departementEntityController.getDepartements();
 		}
-		throw new ForbiddenException();	
+		throw new ForbiddenException();
 	}
 
-
 	/**
-	 * 
-	 * @param jDepartement JsonNode with all departement parameters and the old name to perform the update even if the name is changed
-	 * @param role user role
+	 * Method to delegate departement update
+	 *
+	 * @param jDepartement JsonNode with all departement parameters and the old name
+	 *                     to perform the update even if the name is changed
+	 * @param role         user role
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link RessourceNotFoundException} if the resource is not found
-	 *         and {@link CreatedException} if the departement is updated
+	 *         request ({@link RessourceNotFoundException} if the resource is not
+	 *         found and {@link OkException} if the departement is updated
 	 * @author Andy Chabalier
 	 */
 	public HttpException updateDepartement(JsonNode jDepartement, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) ? departementEntityController.updateDepartement(jDepartement) : new ForbiddenException();
-	}
-
-
-	/**
-	 * 
-	 * @param params the departement name to delete 
-	 * @param role the user role
-	 * @return @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link ForbiddenException} if the resource is not found
-	 *         and {@link CreatedException} if the departement is deleted
-	 * @author Andy Chabalier
-	 */
-	public HttpException deleteDepartement(JsonNode params, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) ? departementEntityController.deleteDepartement(params.get("name").textValue()) : new ForbiddenException();
+		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)
+				? departementEntityController.updateDepartement(jDepartement)
+				: new ForbiddenException();
 	}
 
 }

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.controller.business;
 
@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import fr.alten.ambroiseJEE.model.beans.SoftSkill;
 import fr.alten.ambroiseJEE.model.entityControllers.SoftSkillEntityController;
 import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.utils.SoftSkillGrade;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
@@ -22,6 +23,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
 
 /**
  * SoftSkill controller for business rules.
+ *
  * @author Thomas Decamp
  *
  */
@@ -30,18 +32,10 @@ public class SoftSkillBusinessController {
 
 	@Autowired
 	private SoftSkillEntityController softSkillEntityController;
-	
-
-	public Optional<SoftSkill> getSoftSkill(String name) {
-		return softSkillEntityController.getSoftSkillByName(name);
-	}
-	
-	public Optional<SoftSkill> getSoftSkillByNameAndGrade(String name,float grade) {
-		return softSkillEntityController.getSoftSkillByNameAndGrade(name,grade);
-	}
 
 	/**
 	 * Method to delegate softSkill creation
+	 *
 	 * @param jUser JsonNode with all softSkill parameters
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ConflictException} if there is a conflict in the
@@ -49,9 +43,33 @@ public class SoftSkillBusinessController {
 	 * @author Thomas Decamp
 	 */
 	public HttpException createSoftSkill(JsonNode jSoftSkill, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) ? softSkillEntityController.createSoftSkillAndGrade(jSoftSkill) : new ForbiddenException();
+		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)
+				? softSkillEntityController.createSoftSkillAndGrade(jSoftSkill)
+				: new ForbiddenException();
 	}
 
+	/**
+	 *
+	 * @param params the softSkill name to delete
+	 * @param role   the user role
+	 * @return @see {@link HttpException} corresponding to the status of the request
+	 *         ({@link ForbiddenException} if the resource is not found and
+	 *         {@link CreatedException} if the softSkill is deleted
+	 * @author Thomas Decamp
+	 */
+	public HttpException deleteSoftSkill(JsonNode jSoftSkill, UserRole role) {
+		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)
+				? softSkillEntityController.deleteSoftSkill(jSoftSkill)
+				: new ForbiddenException();
+	}
+
+	public List<SoftSkill> getSoftSkill(String name) {
+		return softSkillEntityController.getSoftSkillByName(name);
+	}
+
+	public Optional<SoftSkill> getSoftSkillByNameAndGrade(String name, SoftSkillGrade grade) {
+		return softSkillEntityController.getSoftSkillByNameAndGrade(name, grade);
+	}
 
 	/**
 	 * @param role the user role
@@ -62,35 +80,23 @@ public class SoftSkillBusinessController {
 		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
 			return softSkillEntityController.getSoftSkills();
 		}
-		throw new ForbiddenException();	
+		throw new ForbiddenException();
 	}
 
-
 	/**
-	 * 
-	 * @param jSoftSkill JsonNode with all softSkill parameters and the old name to perform the update even if the name is changed
-	 * @param role user role
+	 *
+	 * @param jSoftSkill JsonNode with all softSkill parameters and the old name to
+	 *                   perform the update even if the name is changed
+	 * @param role       user role
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link RessourceNotFoundException} if the resource is not found
-	 *         and {@link CreatedException} if the softSkill is updated
+	 *         request ({@link RessourceNotFoundException} if the resource is not
+	 *         found and {@link CreatedException} if the softSkill is updated
 	 * @author Thomas Decamp
 	 */
 	public HttpException updateSoftSkill(JsonNode jSoftSkill, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) ? softSkillEntityController.updateSoftSkill(jSoftSkill) : new ForbiddenException();
-	}
-
-
-	/**
-	 * 
-	 * @param params the softSkill name to delete 
-	 * @param role the user role
-	 * @return @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link ForbiddenException} if the resource is not found
-	 *         and {@link CreatedException} if the softSkill is deleted
-	 * @author Thomas Decamp
-	 */
-	public HttpException deleteSoftSkill(JsonNode params, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) ? softSkillEntityController.deleteSoftSkill(params.get("name").textValue()) : new ForbiddenException();
+		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)
+				? softSkillEntityController.updateSoftSkill(jSoftSkill)
+				: new ForbiddenException();
 	}
 
 }

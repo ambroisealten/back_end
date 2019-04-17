@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.controller.rest;
 
@@ -20,12 +20,10 @@ import com.google.gson.GsonBuilder;
 import fr.alten.ambroiseJEE.controller.business.TechSkillBusinessController;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
-import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
-
 
 /**
  * Rest controller for the techSkill web service
- * 
+ *
  * @author Thomas Decamp
  *
  */
@@ -46,8 +44,14 @@ public class TechSkillRestController {
 	@ResponseBody
 	public HttpException createTechSkill(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("mail") != null ? techSkillBusinessController.createTechSkill(params, role)
-				: new UnprocessableEntityException();
+		return techSkillBusinessController.createTechSkill(params, role);
+	}
+
+	@DeleteMapping(value = "/techSkill")
+	@ResponseBody
+	public HttpException deleteTechSkill(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
+			@RequestAttribute("role") UserRole role) throws Exception {
+		return techSkillBusinessController.deleteTechSkill(params, role);
 	}
 
 	@GetMapping(value = "/techSkills")
@@ -60,15 +64,6 @@ public class TechSkillRestController {
 	@ResponseBody
 	public HttpException updateTechSkill(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("mail") != null ? techSkillBusinessController.createTechSkill(params, role)
-				: new UnprocessableEntityException();
-	}
-
-	@DeleteMapping(value = "/techSkill")
-	@ResponseBody
-	public HttpException deleteTechSkill(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("mail") != null ? techSkillBusinessController.deleteTechSkill(params, role)
-				: new UnprocessableEntityException();
+		return techSkillBusinessController.updateTechSkill(params, role);
 	}
 }

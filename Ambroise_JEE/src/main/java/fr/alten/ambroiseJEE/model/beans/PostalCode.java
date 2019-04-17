@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.model.beans;
 
@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
- * 
+ *
  * @author Andy Chabalier
  *
  */
@@ -34,21 +34,20 @@ public class PostalCode extends Geographic implements Serializable {
 		return _id;
 	}
 
-	public void set_id(ObjectId _id) {
-		this._id = _id;
+	@Override
+	public String getIdentifier() {
+		return this.getName();
 	}
 
 	public String getName() {
 		return name;
 	}
 
+	public void set_id(ObjectId _id) {
+		this._id = _id;
+	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
-	
-	@Override
-	public String getIdentifier() {
-		return this.getName();
-	}
 }
-

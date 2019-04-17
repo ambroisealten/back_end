@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.controller.rest;
 
@@ -20,12 +20,10 @@ import com.google.gson.GsonBuilder;
 import fr.alten.ambroiseJEE.controller.business.SoftSkillBusinessController;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
-import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
-
 
 /**
  * Rest controller for the softSkill web service
- * 
+ *
  * @author Thomas Decamp
  *
  */
@@ -46,8 +44,15 @@ public class SoftSkillRestController {
 	@ResponseBody
 	public HttpException createSoftSkill(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("mail") != null ? softSkillBusinessController.createSoftSkill(params, role)
-				: new UnprocessableEntityException();
+		return softSkillBusinessController.createSoftSkill(params, role);
+
+	}
+
+	@DeleteMapping(value = "/softSkill")
+	@ResponseBody
+	public HttpException deleteSoftSkill(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
+			@RequestAttribute("role") UserRole role) throws Exception {
+		return softSkillBusinessController.deleteSoftSkill(params, role);
 	}
 
 	@GetMapping(value = "/softSkills")
@@ -60,15 +65,6 @@ public class SoftSkillRestController {
 	@ResponseBody
 	public HttpException updateSoftSkill(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("mail") != null ? softSkillBusinessController.createSoftSkill(params, role)
-				: new UnprocessableEntityException();
-	}
-
-	@DeleteMapping(value = "/softSkill")
-	@ResponseBody
-	public HttpException deleteSoftSkill(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("mail") != null ? softSkillBusinessController.deleteSoftSkill(params, role)
-				: new UnprocessableEntityException();
+		return softSkillBusinessController.updateSoftSkill(params, role);
 	}
 }

@@ -14,7 +14,9 @@ import fr.alten.ambroiseJEE.AmbroiseJeeApplication;
 
 /**
  * This filter allow to lock request when it's not coming from an local adress
- * @see AmbroiseJeeApplication#filterRegistrationBeanLocalhost() for pattern concerned by this filter. 
+ *
+ * @see AmbroiseJeeApplication#filterRegistrationBeanLocalhost() for pattern
+ *      concerned by this filter.
  * @author Andy Chabalier
  *
  */
@@ -29,7 +31,7 @@ public class LocalhostFilter implements Filter {
 		if (httpRequest.getRemoteAddr().equals("0:0:0:0:0:0:0:1") || httpRequest.getRemoteAddr().equals("127.0.0.1")) {
 			chain.doFilter(httpRequest, response);
 		} else {
-			((HttpServletResponse) response).sendError(404 ,"You don't have the right to make this request");
+			((HttpServletResponse) response).sendError(404, "You don't have the right to make this request");
 		}
 	}
 }

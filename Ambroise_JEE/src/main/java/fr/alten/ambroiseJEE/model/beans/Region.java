@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.model.beans;
 
@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
- * 
+ *
  * @author Andy Chabalier
  *
  */
@@ -27,24 +27,24 @@ public class Region extends Geographic implements Serializable {
 		super();
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
 	public String getCode() {
 		return code;
+	}
+
+	@Override
+	public String getIdentifier() {
+		return this.getCode();
+	}
+
+	public String getName() {
+		return name;
 	}
 
 	public void setCode(String code) {
 		this.code = code;
 	}
 
-	@Override
-	public String getIdentifier() {
-		return this.getCode();
+	public void setName(String name) {
+		this.name = name;
 	}
 }

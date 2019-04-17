@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.model.entityControllers;
 
@@ -26,17 +26,13 @@ import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
 
 @Service
 public class SkillEntityController {
-	
+
 	@Autowired
 	private SkillRepository skillRepository;
 
-	public Optional<Skill> getSkill(String name) {
-		return skillRepository.findByName(name);
-	}
-
 	/**
 	 * Method to create a skill.
-	 * 
+	 *
 	 * @param jSkill JsonNode with all skill parameters
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ConflictException} if there is a conflict in the
@@ -57,6 +53,31 @@ public class SkillEntityController {
 	}
 
 	/**
+	 *
+	 * @param name the skill name to fetch
+	 * @return {@link HttpException} corresponding to the status of the request
+	 *         ({@link RessourceNotFoundException} if the resource is not found and
+	 *         {@link OkException} if the skill is deactivated
+	 * @author Thomas Decamp
+	 */
+	public HttpException deleteSkill(String name) {
+		Optional<Skill> skillOptionnal = skillRepository.findByName(name);
+
+		if (skillOptionnal.isPresent()) {
+			Skill skill = skillOptionnal.get();
+			skill.setName("deactivated" + System.currentTimeMillis());
+			skillRepository.save(skill);
+		} else {
+			throw new RessourceNotFoundException();
+		}
+		return new OkException();
+	}
+
+	public Optional<Skill> getSkill(String name) {
+		return skillRepository.findByName(name);
+	}
+
+	/**
 	 * @return the list of all skills
 	 * @author Thomas Decamp
 	 */
@@ -65,49 +86,26 @@ public class SkillEntityController {
 	}
 
 	/**
-	 * 
-	 * @param jSkill JsonNode with all skill parameters and the old name to perform the update even if the name is changed
+	 *
+	 * @param jSkill JsonNode with all skill parameters and the old name to perform
+	 *               the update even if the name is changed
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link RessourceNotFoundException} if the resource is not found
-	 *         and {@link CreatedException} if the skill is updated
+	 *         request ({@link RessourceNotFoundException} if the resource is not
+	 *         found and {@link CreatedException} if the skill is updated
 	 * @author Thomas Decamp
 	 */
 	public HttpException updateSkill(JsonNode jSkill) {
 		Optional<Skill> skillOptionnal = skillRepository.findByName(jSkill.get("oldName").textValue());
-		
+
 		if (skillOptionnal.isPresent()) {
 			Skill skill = skillOptionnal.get();
 			skill.setName(jSkill.get("name").textValue());
-			
-			skillRepository.save(skill);
-		}
-		else {
-			throw new RessourceNotFoundException();
-		}		
-		return new OkException();
-	}
 
-	/**
-	 * 
-	 * @param name the skill name to fetch 
-	 * @return {@link HttpException} corresponding to the status of the
-	 *         request ({@link RessourceNotFoundException} if the resource is not found
-	 *         and {@link OkException} if the skill is deactivated
-	 * @author Thomas Decamp
-	 */
-	public HttpException deleteSkill(String name) {
-		Optional<Skill> skillOptionnal = skillRepository.findByName(name);
-		
-		if (skillOptionnal.isPresent()) {
-			Skill skill = skillOptionnal.get();
-			skill.setName("deactivated" + System.currentTimeMillis());
 			skillRepository.save(skill);
-		}
-		else {
+		} else {
 			throw new RessourceNotFoundException();
-		}		
+		}
 		return new OkException();
 	}
 
 }
-

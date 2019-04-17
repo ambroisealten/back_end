@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.model.entityControllers;
 
@@ -26,17 +26,13 @@ import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
 
 @Service
 public class RegionEntityController {
-	
+
 	@Autowired
 	private RegionRepository regionRepository;
 
-	public Optional<Region> getRegion(String name) {
-		return regionRepository.findByName(name);
-	}
-
 	/**
 	 * Method to create a region.
-	 * 
+	 *
 	 * @param jRegion JsonNode with all city parameters
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ConflictException} if there is a conflict in the
@@ -58,6 +54,31 @@ public class RegionEntityController {
 	}
 
 	/**
+	 *
+	 * @param name the region name to fetch
+	 * @return {@link HttpException} corresponding to the status of the request
+	 *         ({@link RessourceNotFoundException} if the resource is not found and
+	 *         {@link OkException} if the region is deactivated
+	 * @author Andy Chabalier
+	 */
+	public HttpException deleteRegion(String name) {
+		Optional<Region> regionOptionnal = regionRepository.findByName(name);
+
+		if (regionOptionnal.isPresent()) {
+			Region region = regionOptionnal.get();
+			region.setName("deactivated" + System.currentTimeMillis());
+			regionRepository.save(region);
+		} else {
+			throw new RessourceNotFoundException();
+		}
+		return new OkException();
+	}
+
+	public Optional<Region> getRegion(String name) {
+		return regionRepository.findByName(name);
+	}
+
+	/**
 	 * @return the list of all regions
 	 * @author Andy Chabalier
 	 */
@@ -66,49 +87,26 @@ public class RegionEntityController {
 	}
 
 	/**
-	 * 
-	 * @param jRegion JsonNode with all region parameters and the old name to perform the update even if the name is changed
+	 *
+	 * @param jRegion JsonNode with all region parameters and the old name to
+	 *                perform the update even if the name is changed
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link RessourceNotFoundException} if the resource is not found
-	 *         and {@link CreatedException} if the region is updated
+	 *         request ({@link RessourceNotFoundException} if the resource is not
+	 *         found and {@link CreatedException} if the region is updated
 	 * @author Andy Chabalier
 	 */
 	public HttpException updateRegion(JsonNode jRegion) {
 		Optional<Region> regionOptionnal = regionRepository.findByName(jRegion.get("oldName").textValue());
-		
+
 		if (regionOptionnal.isPresent()) {
 			Region region = regionOptionnal.get();
 			region.setName(jRegion.get("name").textValue());
-			
-			regionRepository.save(region);
-		}
-		else {
-			throw new RessourceNotFoundException();
-		}		
-		return new OkException();
-	}
 
-	/**
-	 * 
-	 * @param name the region name to fetch 
-	 * @return {@link HttpException} corresponding to the status of the
-	 *         request ({@link RessourceNotFoundException} if the resource is not found
-	 *         and {@link OkException} if the region is deactivated
-	 * @author Andy Chabalier
-	 */
-	public HttpException deleteRegion(String name) {
-		Optional<Region> regionOptionnal = regionRepository.findByName(name);
-		
-		if (regionOptionnal.isPresent()) {
-			Region region = regionOptionnal.get();
-			region.setName("deactivated" + System.currentTimeMillis());
 			regionRepository.save(region);
-		}
-		else {
+		} else {
 			throw new RessourceNotFoundException();
-		}		
+		}
 		return new OkException();
 	}
 
 }
-

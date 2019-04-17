@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.model.entityControllers;
 
@@ -27,21 +27,16 @@ import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
  */
 @Service
 public class AgencyEntityController {
-	
+
 	@Autowired
 	private AgencyRepository agencyRepository;
 
 	@Autowired
 	private GeographicBusinessController geographicBusinessController;
-	
-	
-	public Optional<Agency> getAgency(String name) {
-		return agencyRepository.findByName(name);
-	}
 
 	/**
 	 * Method to create an agency.
-	 * 
+	 *
 	 * @param jAgency JsonNode with all agency parameters (name and place parameter)
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ConflictException} if there is a conflict in the
@@ -52,10 +47,10 @@ public class AgencyEntityController {
 
 		Agency newAgency = new Agency();
 		newAgency.setName(jAgency.get("name").textValue());
-		
+
 		String placeType = jAgency.get("placeType").textValue();
-		Optional<Geographic> place = geographicBusinessController.getPlace(jAgency.get("place").textValue(),placeType);
-		if(place.isPresent()) {
+		Optional<Geographic> place = geographicBusinessController.getPlace(jAgency.get("place").textValue(), placeType);
+		if (place.isPresent()) {
 			newAgency.setPlace(place.get().getIdentifier());
 			newAgency.setPlaceType(placeType);
 		}
@@ -69,6 +64,28 @@ public class AgencyEntityController {
 	}
 
 	/**
+	 *
+	 * @param name the agency name to fetch
+	 * @return {@link HttpException} corresponding to the status of the request
+	 *         ({@link RessourceNotFoundException} if the resource is not found and
+	 *         {@link OkException} if the agency is deactivated
+	 * @author MAQUINGHEN MAXIME
+	 */
+	public HttpException deleteAgency(String name) {
+		Optional<Agency> agencyOptionnal = agencyRepository.findByName(name);
+
+		if (agencyOptionnal.isPresent()) {
+			Agency agency = agencyOptionnal.get();
+			agency.setName("deactivated" + System.currentTimeMillis());
+			agency.setPlace(null);
+			agencyRepository.save(agency);
+		} else {
+			throw new RessourceNotFoundException();
+		}
+		return new OkException();
+	}
+
+	/**
 	 * @return the list of all agencies
 	 * @author Andy Chabalier
 	 */
@@ -76,54 +93,36 @@ public class AgencyEntityController {
 		return agencyRepository.findAll();
 	}
 
+	public Optional<Agency> getAgency(String name) {
+		return agencyRepository.findByName(name);
+	}
+
 	/**
-	 * 
-	 * @param jAgency JsonNode with all user parameters (name, place) and the old name to perform the update even if the name is changed
+	 *
+	 * @param jAgency JsonNode with all user parameters (name, place) and the old
+	 *                name to perform the update even if the name is changed
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link RessourceNotFoundException} if the resource is not found
-	 *         and {@link CreatedException} if the agency is updated
+	 *         request ({@link RessourceNotFoundException} if the resource is not
+	 *         found and {@link CreatedException} if the agency is updated
 	 * @author Andy Chabalier
 	 */
 	public HttpException updateAgency(JsonNode jAgency) {
 		Optional<Agency> agencyOptionnal = agencyRepository.findByName(jAgency.get("oldName").textValue());
-		
+
 		if (agencyOptionnal.isPresent()) {
 			Agency agency = agencyOptionnal.get();
 			agency.setName(jAgency.get("name").textValue());
 			String placeType = jAgency.get("placeType").textValue();
-			Optional<Geographic> place = geographicBusinessController.getPlace(jAgency.get("place").textValue(),placeType);
-			if(place.isPresent()) {
+			Optional<Geographic> place = geographicBusinessController.getPlace(jAgency.get("place").textValue(),
+					placeType);
+			if (place.isPresent()) {
 				agency.setPlace(place.get().getIdentifier());
 				agency.setPlaceType(placeType);
 			}
 			agencyRepository.save(agency);
-		}
-		else {
+		} else {
 			throw new RessourceNotFoundException();
-		}		
-		return new OkException();
-	}
-
-	/**
-	 * 
-	 * @param name the agency name to fetch 
-	 * @return {@link HttpException} corresponding to the status of the
-	 *         request ({@link RessourceNotFoundException} if the resource is not found
-	 *         and {@link OkException} if the agency is deactivated
-	 * @author MAQUINGHEN MAXIME
-	 */
-	public HttpException deleteAgency(String name) {
-		Optional<Agency> agencyOptionnal = agencyRepository.findByName(name);
-		
-		if (agencyOptionnal.isPresent()) {
-			Agency agency = agencyOptionnal.get();
-			agency.setName("deactivated" + System.currentTimeMillis());
-			agency.setPlace(null);
-			agencyRepository.save(agency);
 		}
-		else {
-			throw new RessourceNotFoundException();
-		}		
 		return new OkException();
 	}
 

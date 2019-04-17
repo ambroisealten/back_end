@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.model.beans;
 
@@ -27,32 +27,32 @@ public class Departement extends Geographic implements Serializable {
 		super();
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-	
 	public String getCode() {
 		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
 	}
 
 	public String getCodeRegion() {
 		return codeRegion;
 	}
 
+	@Override
+	public String getIdentifier() {
+		return this.getCode();
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
 	public void setCodeRegion(String codeRegion) {
 		this.codeRegion = codeRegion;
 	}
 
-	@Override
-	public String getIdentifier() {
-		return this.getCode();
+	public void setName(String name) {
+		this.name = name;
 	}
 }
