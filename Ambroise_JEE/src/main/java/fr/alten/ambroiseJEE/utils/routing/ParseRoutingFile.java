@@ -13,7 +13,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import fr.alten.ambroiseJEE.security.UserRole;
-import fr.alten.ambroiseJEE.utils.TokenForTest;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 
 /**
@@ -63,12 +62,6 @@ public class ParseRoutingFile {
 
 		throw new ForbiddenException();
 
-	}
-	
-	public static void main(String[] args) throws FileNotFoundException {
-
-		System.out.println(getJsonRoutingItemsByRole(UserRole.MANAGER_ADMIN, AngularModule.Init));
-		
 	}
 
 }
