@@ -1,5 +1,5 @@
 package fr.alten.ambroiseJEE.model.entityControllers;
 
-public class MoilityEntityControllerTest {
+public class MobilityEntityControllerTest {
 
 }
