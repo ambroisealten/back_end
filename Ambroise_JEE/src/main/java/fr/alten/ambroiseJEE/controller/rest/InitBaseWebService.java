@@ -23,7 +23,9 @@ import fr.alten.ambroiseJEE.controller.business.ApplicantBusinessController;
 import fr.alten.ambroiseJEE.controller.business.ConsultantBusinessController;
 import fr.alten.ambroiseJEE.controller.business.DiplomaBusinessController;
 import fr.alten.ambroiseJEE.controller.business.EmployerBusinessController;
+import fr.alten.ambroiseJEE.controller.business.ForumBusinessController;
 import fr.alten.ambroiseJEE.controller.business.JobBusinessController;
+import fr.alten.ambroiseJEE.controller.business.SectorBusinessController;
 import fr.alten.ambroiseJEE.controller.business.SkillsSheetBusinessController;
 import fr.alten.ambroiseJEE.controller.business.SoftSkillBusinessController;
 import fr.alten.ambroiseJEE.controller.business.TechSkillBusinessController;
@@ -32,8 +34,10 @@ import fr.alten.ambroiseJEE.controller.business.geographic.GeographicBusinessCon
 import fr.alten.ambroiseJEE.model.beans.Agency;
 import fr.alten.ambroiseJEE.model.beans.Diploma;
 import fr.alten.ambroiseJEE.model.beans.Employer;
+import fr.alten.ambroiseJEE.model.beans.Forum;
 import fr.alten.ambroiseJEE.model.beans.Job;
 import fr.alten.ambroiseJEE.model.beans.Person;
+import fr.alten.ambroiseJEE.model.beans.Sector;
 import fr.alten.ambroiseJEE.model.beans.SkillsSheet;
 import fr.alten.ambroiseJEE.model.beans.SoftSkill;
 import fr.alten.ambroiseJEE.model.beans.TechSkill;
@@ -88,6 +92,12 @@ public class InitBaseWebService {
 	
 	@Autowired
 	private SkillsSheetBusinessController skillsSheetBusinessController;
+	
+	@Autowired
+	private ForumBusinessController forumBusinessController;
+	
+	@Autowired
+	private SectorBusinessController sectorBusinessController;
 
 	private final Gson gson;
 
@@ -122,6 +132,12 @@ public class InitBaseWebService {
 		
 		// peupler la base de données géographiques
 		createGeographics();
+		
+		// peupler la base de données forums
+		createForums();
+		
+		// peupler la base de données secteud d'activité
+		createSectors();
 		
 		// peupler la base de données des compétences techniques (TechSkill)
 		createTechSkills();
@@ -356,6 +372,66 @@ public class InitBaseWebService {
 	}
 	
 	/**
+	 * Create and populate database with forums
+	 * @throws IOException
+	 * @author Lucas Royackkers
+	 */
+	private void createForums() throws IOException {
+		Forum newForum = new Forum();
+		newForum.setName("EPITECH");
+		newForum.setDate("2019");
+		newForum.setPlace("Nancy");
+		JsonNode newForumJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(newForum).getAsJsonObject());
+		forumBusinessController.createForum(newForumJsonNode, UserRole.MANAGER_ADMIN);
+		
+		Forum newForum1 = new Forum();
+		newForum1.setName("AlsaTech");
+		newForum1.setDate("2019");
+		newForum1.setPlace("Strasbourg");
+		JsonNode newForum1JsonNode = JsonUtils.toJsonNode(gson.toJsonTree(newForum1).getAsJsonObject());
+		forumBusinessController.createForum(newForum1JsonNode, UserRole.MANAGER_ADMIN);
+		
+		Forum newForum2 = new Forum();
+		newForum2.setName("ENSISA");
+		newForum2.setDate("2019");
+		newForum2.setPlace("Schiltigheim");
+		JsonNode newForum2JsonNode = JsonUtils.toJsonNode(gson.toJsonTree(newForum2).getAsJsonObject());
+		forumBusinessController.createForum(newForum2JsonNode, UserRole.MANAGER_ADMIN);
+	}
+	
+	/**
+	 * Create and populate database with sectors
+	 * @throws IOException
+	 * @author Lucas Royackkers
+	 */
+	private void createSectors() throws IOException {
+		Sector newSector = new Sector();
+		newSector.setName("Aéronautique");
+		JsonNode newSectorJsonNode = JsonUtils.toJsonNode(gson.toJsonTree(newSector).getAsJsonObject());
+		sectorBusinessController.createSector(newSectorJsonNode, UserRole.MANAGER_ADMIN);
+		
+		Sector newSector1 = new Sector();
+		newSector1.setName("Banque");
+		JsonNode newSector1JsonNode = JsonUtils.toJsonNode(gson.toJsonTree(newSector1).getAsJsonObject());
+		sectorBusinessController.createSector(newSector1JsonNode, UserRole.MANAGER_ADMIN);
+		
+		Sector newSector2 = new Sector();
+		newSector2.setName("Grande distribution");
+		JsonNode newSector2JsonNode = JsonUtils.toJsonNode(gson.toJsonTree(newSector2).getAsJsonObject());
+		sectorBusinessController.createSector(newSector2JsonNode, UserRole.MANAGER_ADMIN);
+		
+		Sector newSector3 = new Sector();
+		newSector3.setName("Ferroviaire");
+		JsonNode newSector3JsonNode = JsonUtils.toJsonNode(gson.toJsonTree(newSector3).getAsJsonObject());
+		sectorBusinessController.createSector(newSector3JsonNode, UserRole.MANAGER_ADMIN);
+		
+		Sector newSector4 = new Sector();
+		newSector4.setName("Automobile");
+		JsonNode newSector4JsonNode = JsonUtils.toJsonNode(gson.toJsonTree(newSector4).getAsJsonObject());
+		sectorBusinessController.createSector(newSector4JsonNode, UserRole.MANAGER_ADMIN);
+	}
+	
+	/**
 	 * Create and populate Database with TechSkills
 	 * @throws IOException
 	 * @author Lucas Royackkers
@@ -586,6 +662,11 @@ public class InitBaseWebService {
 		}
 	}
 	
+	/**
+	 * Create and populate database with skills sheets.
+	 * @throws IOException
+	 * @author Lucas Royackkers
+	 */
 	private void createSkillsSheets() throws IOException {
 		SkillsSheet newFirst = new SkillsSheet();
 		newFirst.setName("JTE-mmm-AAA");
