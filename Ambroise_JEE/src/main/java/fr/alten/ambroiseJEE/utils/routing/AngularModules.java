@@ -35,11 +35,14 @@ public class AngularModules {
 		fillModules();
 	}
 
+	/**
+	 * 
+	 */
 	private void fillModules() {
-		//CustomLogger.log(jsonLinks, LogLevel.DEBUG);
+		CustomLogger.log(jsonLinks, LogLevel.DEBUG);
 		this.jsonLinks.put(AngularModule.Skills, "src/main/resources/routing/skills.routing.json");
 		this.jsonLinks.put(AngularModule.Init, "src/main/resources/routing/init.routing.json");
-		//CustomLogger.log(jsonLinks, LogLevel.DEBUG);
+		CustomLogger.log(jsonLinks, LogLevel.DEBUG);
 	}
 
 	/**
