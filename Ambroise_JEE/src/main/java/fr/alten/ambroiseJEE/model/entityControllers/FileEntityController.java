@@ -61,7 +61,7 @@ public class FileEntityController {
 			file = new File();
 		}
 		file.setUri(fileDownloadUri);
-		file.setDateOfAddition(System.currentTimeMillis());
+		file.setDateOfModification(System.currentTimeMillis());
 		file.setForForum(isForForum);
 		try {
 			fileRepository.save(file);

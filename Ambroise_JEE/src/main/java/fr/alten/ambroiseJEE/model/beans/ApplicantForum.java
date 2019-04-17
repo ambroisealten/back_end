@@ -29,7 +29,7 @@ public class ApplicantForum extends Person {
 	private String contractDuration;
 	private List<String> skills;
 	private boolean vehicule;
-	private boolean permis;
+	private boolean driverLicense;
 	private Nationality nationality;
 
 	public String getCommentary() {
@@ -68,8 +68,8 @@ public class ApplicantForum extends Person {
 		return startAt;
 	}
 
-	public boolean isPermis() {
-		return permis;
+	public boolean isDriverLicense() {
+		return driverLicense;
 	}
 
 	public boolean isVehicule() {
@@ -100,8 +100,8 @@ public class ApplicantForum extends Person {
 		this.nationality = nationality;
 	}
 
-	public void setPermis(boolean permis) {
-		this.permis = permis;
+	public void setDriverLicense(boolean permis) {
+		this.driverLicense = permis;
 	}
 
 	public void setPhoneNumber(String phoneNumber) {

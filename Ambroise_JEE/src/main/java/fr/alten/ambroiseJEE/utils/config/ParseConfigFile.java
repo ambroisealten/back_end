@@ -44,29 +44,28 @@ public class ParseConfigFile {
 		} catch (UnsupportedEncodingException e1) {
 			e1.printStackTrace();
 		}
-		JsonElement configElement = new JsonParser().parse(jsonFile);
-		JsonObject configObject = configElement.getAsJsonObject();
+		JsonObject configObject = new JsonParser().parse(jsonFile).getAsJsonObject();
 
 		// get menuItems info from json
-		JsonArray menuItemsArray = configObject.get("menuItems").getAsJsonArray();
-		JsonElement menuElement = menuItemsArray.get(0);
+		JsonObject menuElementJsonObject = configObject.get("menuItems").getAsJsonArray().get(0).getAsJsonObject();
 
 		// get access rights String for current UserRole
-		JsonArray accessRightsArray = (JsonArray) menuElement.getAsJsonObject().get("access");
-		String currentRoleRights = accessRightsArray.get(0).getAsJsonObject().get(role.toString()).toString();
+		JsonArray accessRightsArray = (JsonArray) menuElementJsonObject.get("access");
+		String currentRoleRights = accessRightsArray.get(0).getAsJsonObject().get(role.name()).getAsString();
 
 		// get array containing menus for each module
-		JsonArray modulesArray = (JsonArray) menuElement.getAsJsonObject().get("modules");
+		JsonArray modulesArray = (JsonArray) menuElementJsonObject.get("modules");
 
 		// create result Json
 		JsonObject resultJson = new JsonObject();
 		JsonArray resultModulesArray = new JsonArray();
 
 		// put menus info into result Json
-		for (int i = 0; i < modulesArray.size(); i++) {
-			String moduleName = modulesArray.get(i).getAsJsonObject().get("label").getAsString();
-			if (currentRoleRights.contains(moduleName))
-				resultModulesArray.add(modulesArray.get(i));
+		for (JsonElement module : modulesArray) {
+			String moduleName = module.getAsJsonObject().get("label").getAsString();
+			if (currentRoleRights.contains(moduleName)) {
+				resultModulesArray.add(module);
+			}
 		}
 
 		resultJson.add("modules", resultModulesArray);
@@ -74,7 +73,7 @@ public class ParseConfigFile {
 		return gson.toJson(resultJson);
 	}
 
-	// TO-DO
+	// TODO
 	public static String getJsonRoutingItemsByRole(UserRole role) throws FileNotFoundException {
 		BufferedReader jsonFile = null;
 		try {

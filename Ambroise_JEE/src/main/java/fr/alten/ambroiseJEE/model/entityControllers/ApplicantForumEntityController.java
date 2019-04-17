@@ -149,7 +149,7 @@ public class ApplicantForumEntityController {
 		newApplicant.setSkills(skills);
 
 		newApplicant.setVehicule(Boolean.getBoolean(jApplicant.get("hasVehicule").textValue()));
-		newApplicant.setPermis(Boolean.getBoolean(jApplicant.get("hasPermis").textValue()));
+		newApplicant.setDriverLicense(Boolean.getBoolean(jApplicant.get("hasPermis").textValue()));
 		newApplicant.setNationality(Nationality.valueOf(jApplicant.get("nationality").textValue()));
 
 		try {
@@ -194,7 +194,7 @@ public class ApplicantForumEntityController {
 			applicant.setContractDuration(null);
 			applicant.setSkills(null);
 			applicant.setVehicule(false);
-			applicant.setPermis(false);
+			applicant.setDriverLicense(false);
 			applicant.setNationality(Nationality.NONE);
 
 			applicantForumRepository.save(applicant);
@@ -318,7 +318,7 @@ public class ApplicantForumEntityController {
 			applicant.setSkills(skills);
 
 			applicant.setVehicule(Boolean.getBoolean(jApplicant.get("hasVehicule").textValue()));
-			applicant.setPermis(Boolean.getBoolean(jApplicant.get("hasPermis").textValue()));
+			applicant.setDriverLicense(Boolean.getBoolean(jApplicant.get("hasPermis").textValue()));
 			applicant.setNationality(Nationality.valueOf(jApplicant.get("nationality").textValue()));
 
 			applicantForumRepository.save(applicant);

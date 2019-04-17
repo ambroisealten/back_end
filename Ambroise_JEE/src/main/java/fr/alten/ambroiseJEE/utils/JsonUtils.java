@@ -16,10 +16,12 @@ import com.google.gson.JsonObject;
 public class JsonUtils {
 
 	/**
-	 *
+	 * Util method to convert JsonObject to JsonNode
+	 * 
 	 * @param jsonObj JsonObject to convert into JsonNode
 	 * @return the corresponding JsonNode
-	 * @throws IOException
+	 * @throws IOException If a low-level I/O problem (missing input, network error)
+	 *                     occurs
 	 * @author Andy Chabalier
 	 */
 	public static JsonNode toJsonNode(JsonObject jsonObj) throws IOException {

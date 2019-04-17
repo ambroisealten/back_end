@@ -1,6 +1,5 @@
 package fr.alten.ambroiseJEE.utils.routing;
 
-import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,16 +42,16 @@ public class AngularModules {
 	 *
 	 * @param module : AngularModule of the filePath
 	 * @return filePath of the AngularModule Json associated
-	 * @throws FileNotFoundException
+	 * @throws RessourceNotFoundException
 	 */
-	public String getFileByAngularModule(AngularModule module) throws FileNotFoundException {
+	public String getFileByAngularModule(AngularModule module) throws RessourceNotFoundException {
 		for (Map.Entry<AngularModule, String> e : this.jsonLinks.entrySet()) {
 			if (e.getKey().equals(module)) {
 				return e.getValue();
 			}
 		}
 
-		throw new RessourceNotFoundException("AngularModule unexistent");
+		throw new RessourceNotFoundException();
 	}
 
 }

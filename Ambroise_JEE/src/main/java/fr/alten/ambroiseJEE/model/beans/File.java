@@ -19,15 +19,15 @@ public class File {
 	private transient ObjectId _id;
 	@Indexed(unique = true)
 	private String uri;
-	private long dateOfAddition;
+	private long dateOfModification;
 	private boolean isForForum;
 
 	public ObjectId get_id() {
 		return _id;
 	}
 
-	public long getDateOfAddition() {
-		return dateOfAddition;
+	public long getDateOfModification() {
+		return dateOfModification;
 	}
 
 	public String getUri() {
@@ -42,8 +42,8 @@ public class File {
 		this._id = _id;
 	}
 
-	public void setDateOfAddition(long dateOfAddition) {
-		this.dateOfAddition = dateOfAddition;
+	public void setDateOfModification(long dateOfAddition) {
+		this.dateOfModification = dateOfAddition;
 	}
 
 	public void setForForum(boolean isForForum) {
