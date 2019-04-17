@@ -9,11 +9,6 @@
 					"pathMatch": "full"
 				},
 				{
-					"path": "**",
-					"redirectTo": "/login",
-					"pathMatch": "full"
-				},
-				{
 					"path": "skills",
 					"loadChildren": "./competences/competences.module#CompetencesModule"
 				},
@@ -32,6 +27,11 @@
 				{
 					"path": "c2lnbnVw",
 					"component": "SignupComponent"
+				},
+				{
+					"path": "**",
+					"redirectTo": "/login",
+					"pathMatch": "full"
 				}
 			]
 		}

@@ -3,8 +3,9 @@ package fr.alten.ambroiseJEE.utils.routing;
 import java.util.HashMap;
 import java.util.Map;
 
-import fr.alten.ambroiseJEE.utils.CustomLogger;
-import fr.alten.ambroiseJEE.utils.LogLevel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
 
 /**
@@ -15,6 +16,8 @@ import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
 
 // Singleton
 public class AngularModules {
+	
+	private static final Logger logger = LoggerFactory.getLogger(AngularModule.class);
 
 	// unique instance pré-initiate
 	private static AngularModules INSTANCE = null;
@@ -35,13 +38,12 @@ public class AngularModules {
 	}
 
 	/**
-	 * 
+	 * Filling the singleton HashMap.
+	 * Each new pair AngularModule / XXX.routing.json has to be added here
 	 */
 	private void fillModules() {
-		CustomLogger.log(jsonLinks, LogLevel.DEBUG);
 		this.jsonLinks.put(AngularModule.Skills, "src/main/resources/routing/skills.routing.json");
 		this.jsonLinks.put(AngularModule.Init, "src/main/resources/routing/init.routing.json");
-		CustomLogger.log(jsonLinks, LogLevel.DEBUG);
 	}
 
 	/**
@@ -53,6 +55,7 @@ public class AngularModules {
 	public String getFileByAngularModule(AngularModule module) throws RessourceNotFoundException {
 		for (Map.Entry<AngularModule, String> e : this.jsonLinks.entrySet()) {
 			if (e.getKey().equals(module)) {
+				logger.debug("Récuperation de la ressource suivante pour parsing : {}", e.getValue());
 				return e.getValue();
 			}
 		}
