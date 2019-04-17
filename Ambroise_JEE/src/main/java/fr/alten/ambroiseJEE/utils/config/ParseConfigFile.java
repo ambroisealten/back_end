@@ -73,42 +73,4 @@ public class ParseConfigFile {
 		return gson.toJson(resultJson);
 	}
 
-	// TODO
-	public static String getJsonRoutingItemsByRole(UserRole role) throws FileNotFoundException {
-		BufferedReader jsonFile = null;
-		try {
-			jsonFile = new BufferedReader(
-					new InputStreamReader(new FileInputStream("src/main/resources/routing.json"), "ISO-8859-1"));
-		} catch (UnsupportedEncodingException e1) {
-			e1.printStackTrace();
-		}
-
-		JsonElement configElement = new JsonParser().parse(jsonFile);
-		JsonObject configObject = configElement.getAsJsonObject();
-
-		// get routingItems info from json
-		JsonArray routingItemsArray = configObject.get("routingItems").getAsJsonArray();
-
-		// get the routingItem for current UserRole
-		for (JsonElement e : routingItemsArray) {
-			if (UserRole.valueOf(e.getAsJsonObject().get("role").getAsString()) == role) {
-				JsonObject currentRoleRoutingItem = (JsonObject) e;
-
-				// get the routing list for current UserRole
-				JsonArray currentRoleRoutingArray = (JsonArray) currentRoleRoutingItem.getAsJsonObject().get("routes");
-
-				// transforming the routing list JsonArray to a JsonObject
-				JsonObject resultJson = new JsonObject();
-				resultJson.add("routes", currentRoleRoutingArray);
-
-				return gson.toJson(resultJson);
-
-			}
-		}
-
-		// Exception in case UserRole doesn't exist in routing.json or UserRole
-		throw new ForbiddenException();
-
-	}
-
 }
