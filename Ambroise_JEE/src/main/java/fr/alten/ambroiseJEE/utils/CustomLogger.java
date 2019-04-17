@@ -31,6 +31,7 @@ public class CustomLogger {
 
 	public static void log(Object o, LogLevel logType) {
 		try {
+			System.out.println(globalLogMode);
 			if (getValue(logType) <= getValue(globalLogMode)) {
 				System.out.println(o);
 			}

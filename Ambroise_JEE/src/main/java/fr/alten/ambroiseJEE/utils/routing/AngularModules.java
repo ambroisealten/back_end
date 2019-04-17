@@ -4,6 +4,8 @@ import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
+import fr.alten.ambroiseJEE.utils.CustomLogger;
+import fr.alten.ambroiseJEE.utils.LogLevel;
 import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
 
 /**
@@ -34,10 +36,10 @@ public class AngularModules {
 	}
 
 	private void fillModules() {
-		System.out.println(jsonLinks);
+		//CustomLogger.log(jsonLinks, LogLevel.DEBUG);
 		this.jsonLinks.put(AngularModule.Skills, "src/main/resources/routing/skills.routing.json");
 		this.jsonLinks.put(AngularModule.Init, "src/main/resources/routing/init.routing.json");
-		System.out.println(jsonLinks);
+		//CustomLogger.log(jsonLinks, LogLevel.DEBUG);
 	}
 
 	/**

@@ -67,7 +67,7 @@ public class ParseRoutingFile {
 	
 	public static void main(String[] args) throws FileNotFoundException {
 
-		//System.out.println(getJsonRoutingItemsByRole(UserRole.MANAGER_ADMIN, AngularModule.Init));
+		System.out.println(getJsonRoutingItemsByRole(UserRole.MANAGER_ADMIN, AngularModule.Init));
 		
 	}
 
