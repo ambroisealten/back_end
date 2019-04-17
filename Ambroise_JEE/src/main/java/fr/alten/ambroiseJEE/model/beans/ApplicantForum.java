@@ -18,7 +18,7 @@ import fr.alten.ambroiseJEE.utils.Nationality;
 @Document(collection = "applicantForum")
 public class ApplicantForum extends Person {
 
-	private static final long serialVersionUID = -6269027301156154990L;
+	private static final long serialVersionUID = 3760154743236315923L;
 
 	private List<String> mobilities;
 	private String phoneNumber;
