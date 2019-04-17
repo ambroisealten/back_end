@@ -5,8 +5,6 @@ package fr.alten.ambroiseJEE.controller.rest;
 
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,8 +28,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
  */
 @Controller
 public class LoginRestController {
-	
-	
+
 	@Autowired
 	private UserBusinessController userBusinessController;
 
@@ -53,7 +50,7 @@ public class LoginRestController {
 	@PostMapping(value = "/login")
 	@ResponseBody
 	public String login(@RequestBody JsonNode params) throws Exception {
-		
+
 		String mail = params.get("mail").textValue();
 		String pswd = params.get("pswd").textValue();
 
