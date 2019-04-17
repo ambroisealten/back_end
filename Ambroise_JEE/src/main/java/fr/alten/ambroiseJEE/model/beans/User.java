@@ -87,7 +87,7 @@ public class User implements Serializable {
 	}
 
 	public String getAgency() {
-		return agency;
+		return this.agency;
 	}
 
 	public void setAgency(String agency) {

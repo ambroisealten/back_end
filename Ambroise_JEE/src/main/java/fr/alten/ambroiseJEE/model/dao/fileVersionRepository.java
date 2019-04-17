@@ -5,13 +5,14 @@ import java.util.Optional;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import fr.alten.ambroiseJEE.model.beans.File;
+import fr.alten.ambroiseJEE.model.beans.FileVersion;
 
 /**
  * 
  * @author MAQUINGHEN MAXIME
  *
  */
-public interface FileVersionRepository extends MongoRepository<File, Long> {
+public interface FileVersionRepository extends MongoRepository<FileVersion, Long> {
 
 	/**
 	 * fetch file by uri
@@ -20,4 +21,6 @@ public interface FileVersionRepository extends MongoRepository<File, Long> {
 	 * @author MAQUINGHEN MAXIME
 	 */
 	Optional<File> findByUri(String fileDownloadUri);
+
+	Optional<File> findByUriAndDateOfAddition(String uri, String dateOfAddition);
 }
