@@ -53,7 +53,7 @@ public class SkillsSheetBusinessController {
 	 */
 	public List<SkillsSheet> getAllSkillsSheets(UserRole role) {
 		if (UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role) {
-			skillsSheetEntityController.getSkillsSheets();
+			return skillsSheetEntityController.getSkillsSheets();
 		}
 		throw new ForbiddenException();
 	}
