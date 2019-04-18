@@ -81,7 +81,7 @@ public class TechSkillEntityController {
 	 * Try to fetch a tech skill by its name
 	 *
 	 * @param name the tech skill's name to fetch
-	 * @return An Optional with the corresponding tech skill or not.
+	 * @return the list of all techSkills given a name (can be empty)
 	 * @author Lucas Royackkers
 	 */
 	public List<TechSkill> getTechSkillByName(String name) {
