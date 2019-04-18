@@ -247,4 +247,9 @@ public class SkillsSheetEntityController {
 		return new OkException();
 	}
 
+	public boolean checkIfSkillsWithMailExists(String mailPerson) {
+		List<SkillsSheet> listSkillsSheet = skillsSheetRepository.findByMailPersonAttachedTo(mailPerson);
+		return (listSkillsSheet.size() > 0);
+	}
+
 }

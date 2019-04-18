@@ -75,7 +75,23 @@ public class SkillsSheetRestController {
 			@RequestAttribute("role") UserRole role) {
 		return gson.toJson(skillsSheetBusinessController.getSkillsSheets(sheetName, role));
 	}
-
+	
+	/**
+	 * 
+	 * @param mailPerson a person's mail that we need to check whether it has been used in a skills sheet or not 
+	 * @param mail the current logged user's mail
+	 * @param role the current logged user's role
+	 * @return a boolean showing if the mailPerson has been used in a skills sheet or not
+	 * @author Lucas Royackkers
+	 */
+	@GetMapping(value = "/skillsheet?mail={mail}")
+	@ResponseBody
+	public boolean checkIfSkillsWithMailExists(@PathVariable("mail") String mailPerson, @RequestAttribute("mail") String mail,
+			@RequestAttribute("role") UserRole role) {
+		return skillsSheetBusinessController.checkIfSkillsWithMailExists(mailPerson,role);
+	}
+	
+	
 	/**
 	 *
 	 * @param sheetName     the name of the skills sheet
