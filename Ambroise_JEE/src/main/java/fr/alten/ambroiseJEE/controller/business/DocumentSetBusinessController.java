@@ -34,6 +34,14 @@ public class DocumentSetBusinessController {
 				|| UserRole.CDR == role) ? documentSetEntityController.updateDocumentSet(jDocumentSet)
 						: new ForbiddenException();
 	}
+//
+//	public  getAppVersion(String appVersion, UserRole role) {
+//		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role
+//			|| UserRole.CDR == role) {
+//			return documentSetEntityController.getVersionData();
+//		}
+//		}throw new ForbiddenException();
+//}
 
 //	/**
 //	 * Update files Data Version
