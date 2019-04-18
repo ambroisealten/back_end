@@ -21,6 +21,7 @@ public class SkillsSheet implements Serializable {
 	private transient ObjectId _id;
 	private String name;
 	private String mailPersonAttachedTo;
+	private String rolePersonAttachedTo;
 	private String mailVersionAuthor;
 	private long versionNumber;
 	private List<TechSkill> techSkillsList;
@@ -95,4 +96,11 @@ public class SkillsSheet implements Serializable {
 		this.versionNumber = versionNumber;
 	}
 
+	public String getRolePersonAttachedTo() {
+		return rolePersonAttachedTo;
+	}
+
+	public void setRolePersonAttachedTo(String rolePersonAttachedTo) {
+		this.rolePersonAttachedTo = rolePersonAttachedTo;
+	}
 }
