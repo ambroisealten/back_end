@@ -28,10 +28,13 @@ public class TokenFilter implements Filter {
 
 		String requestURI = httpRequest.getRequestURI();
 		String method = httpRequest.getMethod();
-		
-		// we check if the url don't end with /login. if it's the case, the filter don't have to applied. 
-		//If the requested method is the HTTP OPTION method, we let it go throught the filter to allow an normal HTTP communication
-		if (!(requestURI.endsWith("/login") || requestURI.endsWith("/admin/init") || requestURI.startsWith("/test") || method.equals(HttpMethod.OPTIONS.toString()))) {
+
+		// we check if the url don't end with /login. if it's the case, the filter don't
+		// have to applied.
+		// If the requested method is the HTTP OPTION method, we let it go throught the
+		// filter to allow an normal HTTP communication
+		if (!(requestURI.endsWith("/login") || requestURI.endsWith("/admin/init") || requestURI.startsWith("/test")
+				|| method.equals(HttpMethod.OPTIONS.toString()))) {
 			try {
 				// We try to validate the token. In our case, the subject is formed by mail|role
 				String[] tokenInfo = JWTokenUtility.validate(token).split("\\|");
@@ -46,7 +49,7 @@ public class TokenFilter implements Filter {
 				chain.doFilter(httpRequest, response);
 
 			} catch (InvalidJwtException e) {
-				((HttpServletResponse) response).sendError(403, "Invalid token or token is expired");
+				((HttpServletResponse) response).sendError(401, "Invalid token or token is expired");
 			}
 		} else {
 			chain.doFilter(request, response);
