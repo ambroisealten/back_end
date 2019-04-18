@@ -22,7 +22,7 @@ public class DocumentSet implements Serializable {
 	private static final long serialVersionUID = 8130484628750269655L;
 	
 	@Id
-	private ObjectId _id;
+	private transient ObjectId _id;
 	
 	@Indexed(unique= true)
 	private String name;
