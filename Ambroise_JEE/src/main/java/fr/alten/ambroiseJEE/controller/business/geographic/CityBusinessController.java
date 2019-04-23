@@ -19,7 +19,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
-import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
+import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 
 /**
  * City controller for business rules.
@@ -95,7 +95,7 @@ public class CityBusinessController {
 	 *              the update even if the name is changed
 	 * @param role  user role
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link RessourceNotFoundException} if the resource is not
+	 *         request ({@link ResourceNotFoundException} if the resource is not
 	 *         found and {@link OkException} if the city is updated
 	 * @author Andy Chabalier
 	 */

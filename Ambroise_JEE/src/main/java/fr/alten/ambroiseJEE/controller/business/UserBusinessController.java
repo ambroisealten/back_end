@@ -18,7 +18,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
-import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
+import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 
 /**
  * User controller for business rules.
@@ -121,7 +121,7 @@ public class UserBusinessController {
 	 *              is changed
 	 * @param role  user role
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link RessourceNotFoundException} if the resource is not
+	 *         request ({@link ResourceNotFoundException} if the resource is not
 	 *         found and {@link CreatedException} if the user is updated
 	 * @author MAQUINGHEN MAXIME
 	 */

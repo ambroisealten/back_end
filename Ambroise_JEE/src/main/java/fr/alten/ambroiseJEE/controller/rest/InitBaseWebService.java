@@ -793,7 +793,7 @@ public class InitBaseWebService {
 		// peupler la base de données des matrices de compétences
 		createSkillsSheets();
 
-		LoggerFactory.getLogger(InitBaseWebService.class).info(String.valueOf(System.currentTimeMillis() - start));
+		//LoggerFactory.getLogger(InitBaseWebService.class).info(String.valueOf(System.currentTimeMillis() - start));
 		return new CreatedException();
 	}
 }

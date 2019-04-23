@@ -50,7 +50,7 @@ public class SectorRestController {
 	 * @param mail   the user mail
 	 * @param role   the user role
 	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link UnprocessableEntityException} if the ressource is not found
+	 *         ({@link UnprocessableEntityException} if the resource is not found
 	 *         and {@link CreatedException} if the sector is created
 	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author Andy Chabalier
@@ -70,7 +70,7 @@ public class SectorRestController {
 	 * @param mail   the user mail
 	 * @param role   the user role
 	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link UnprocessableEntityException} if the ressource is not found
+	 *         ({@link UnprocessableEntityException} if the resource is not found
 	 *         and {@link OkException} if the sector is deleted successfully
 	 * @throws Exception
 	 * @author Andy Chabalier
@@ -105,7 +105,7 @@ public class SectorRestController {
 	 * @param mail   the user mail
 	 * @param role   the user role
 	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link UnprocessableEntityException} if the ressource is not found
+	 *         ({@link UnprocessableEntityException} if the resource is not found
 	 *         and {@link OkException} if the sector is updated successfully
 	 * @throws Exception
 	 * @author Andy Chabalier

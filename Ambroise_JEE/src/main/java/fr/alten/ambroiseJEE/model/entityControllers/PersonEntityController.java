@@ -23,7 +23,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
-import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
+import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
@@ -161,7 +161,7 @@ public class PersonEntityController {
 
 			personRepository.save(person);
 		} else {
-			return new RessourceNotFoundException();
+			return new ResourceNotFoundException();
 		}
 		return new OkException();
 	}
@@ -256,7 +256,7 @@ public class PersonEntityController {
 				return new ConflictException();
 			}
 		} else {
-			return new RessourceNotFoundException();
+			return new ResourceNotFoundException();
 		}
 		return new OkException();
 	}

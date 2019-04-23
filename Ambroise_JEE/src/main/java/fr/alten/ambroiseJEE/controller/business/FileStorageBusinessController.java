@@ -24,7 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
-import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
+import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
@@ -61,7 +61,7 @@ public class FileStorageBusinessController {
 	 * Load a file
 	 *
 	 * @param fileName file to load
-	 * @return the ressource fetched
+	 * @return the resource fetched
 	 * @author Andy Chabalier
 	 */
 	public Resource loadFileAsResource(final String fileName) {
@@ -71,10 +71,10 @@ public class FileStorageBusinessController {
 			if (resource.exists()) {
 				return resource;
 			} else {
-				throw new RessourceNotFoundException();
+				throw new ResourceNotFoundException();
 			}
 		} catch (final MalformedURLException ex) {
-			throw new RessourceNotFoundException();
+			throw new ResourceNotFoundException();
 		}
 	}
 

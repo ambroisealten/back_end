@@ -23,7 +23,7 @@ import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
-import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
+import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
@@ -50,7 +50,7 @@ public class ForumRestController {
 	 *               date, place
 	 * @param role   the user role
 	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link UnprocessableEntityException} if the ressource is not found
+	 *         ({@link UnprocessableEntityException} if the resource is not found
 	 *         and {@link OkException} if the forum is create successfully
 	 * @throws Exception
 	 * @author MAQUINGHEN MAXIME
@@ -71,7 +71,7 @@ public class ForumRestController {
 	 * @param role   the user role
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link UnprocessableEntityException}) when the forum cannot
-	 *         be found ({@link RessourceNotFoundException} if the ressource is not
+	 *         be found ({@link ResourceNotFoundException} if the resource is not
 	 *         found and {@link CreatedException} if the forum is deleted
 	 * @throws Exception
 	 * @author MAQUINGHEN MAXIME
@@ -121,7 +121,7 @@ public class ForumRestController {
 	 * @param role   the user role
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link UnprocessableEntityException}) when the forum cannot
-	 *         be found ({@link RessourceNotFoundException} if the ressource is not
+	 *         be found ({@link ResourceNotFoundException} if the resource is not
 	 *         found and {@link CreatedException} if the forum is updated
 	 * @throws Exception
 	 * @author MAQUINGHEN MAXIME

@@ -71,7 +71,7 @@ public class RegionRestController {
 	 * @param mail   the current logged user mail
 	 * @param role   the current logged user role
 	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link UnprocessableEntityException} if the ressource is not found
+	 *         ({@link UnprocessableEntityException} if the resource is not found
 	 *         and {@link OkException} if the region is deleted
 	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author Andy Chabalier
@@ -105,7 +105,7 @@ public class RegionRestController {
 	 * @param mail   the current logged user mail
 	 * @param role   the current logged user role
 	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link UnprocessableEntityException} if the ressource is not found
+	 *         ({@link UnprocessableEntityException} if the resource is not found
 	 *         and {@link OkException} if the region is updated
 	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author Andy Chabalier

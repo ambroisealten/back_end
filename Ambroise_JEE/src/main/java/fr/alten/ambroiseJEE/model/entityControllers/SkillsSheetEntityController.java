@@ -24,7 +24,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
-import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
+import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 
 @Service
 public class SkillsSheetEntityController {
@@ -188,7 +188,7 @@ public class SkillsSheetEntityController {
 	 *                     the database
 	 *
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request {@link RessourceNotFoundException} if the resource is not
+	 *         request {@link ResourceNotFoundException} if the resource is not
 	 *         found, {@link ConflictException} if there is a conflict in the database
 	 *         and {@link OkException} if the skills sheet is updated
 	 * @author Lucas Royackkers
@@ -243,7 +243,7 @@ public class SkillsSheetEntityController {
 
 			skillsSheetRepository.save(skillsSheet);
 		} else {
-			return new RessourceNotFoundException();
+			return new ResourceNotFoundException();
 		}
 		return new OkException();
 	}

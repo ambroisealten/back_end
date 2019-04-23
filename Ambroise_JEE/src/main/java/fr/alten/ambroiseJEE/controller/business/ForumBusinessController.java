@@ -18,7 +18,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
-import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
+import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 
 /**
  * Forum Controller for Business rules
@@ -52,7 +52,7 @@ public class ForumBusinessController {
 	 * @param params the forum name, date, place
 	 * @param role   the users role
 	 * @return @see {@link HttpException} corresponding to the status of the request
-	 *         ({@link ForbiddenException} if the ressource is not found and
+	 *         ({@link ForbiddenException} if the resource is not found and
 	 *         {@link CreatedException} if the forum is deactivated
 	 * @author MAQUINGHEN MAXIME
 	 */
@@ -101,7 +101,7 @@ public class ForumBusinessController {
 	 * @param params the forum name, date, place
 	 * @param role   the user role
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link RessourceNotFoundException} if the ressource is not
+	 *         request ({@link ResourceNotFoundException} if the resource is not
 	 *         found and {@link CreatedException} if the forum is updated
 	 * @author MAQUINGHEN MAXIME
 	 */

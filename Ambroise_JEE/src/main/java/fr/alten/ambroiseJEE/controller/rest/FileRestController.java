@@ -57,13 +57,13 @@ public class FileRestController {
 	}
 
 	/**
-	 * Send the requested ressources. HTTP Method : GET
+	 * Send the requested resources. HTTP Method : GET
 	 *
 	 * @param fileName the file's name to fetch
 	 * @param mail     the current logged user's mail
 	 * @param role     the current logged user's role
 	 * @param request  Request object with informations
-	 * @return the asked ressource wrapped in an ResponseEntity
+	 * @return the asked resource wrapped in an ResponseEntity
 	 * @author Andy Chabalier
 	 */
 	@GetMapping("/file/{fileName}")
@@ -122,7 +122,7 @@ public class FileRestController {
 	 * @param mail the current logged user's mail
 	 * @param role the current logged user's role
 	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link UnprocessableEntityException} if the ressource is not found,
+	 *         ({@link UnprocessableEntityException} if the resource is not found,
 	 *         ({@link OkException} if there is a conflict in the database (that
 	 *         mean file already exist and then it's an upload. But no change to
 	 *         make in base and {@link CreatedException} if the file is stored and

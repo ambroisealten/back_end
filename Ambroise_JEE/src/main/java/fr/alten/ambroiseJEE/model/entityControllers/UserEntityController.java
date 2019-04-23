@@ -24,7 +24,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
-import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
+import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
@@ -106,7 +106,7 @@ public class UserEntityController {
 	 *
 	 * @param mail the user mail to fetch
 	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link RessourceNotFoundException} if the resource is not found and
+	 *         ({@link ResourceNotFoundException} if the resource is not found and
 	 *         {@link CreatedException} if the user is deactivated
 	 * @author MAQUINGHEN MAXIME
 	 */
@@ -123,7 +123,7 @@ public class UserEntityController {
 			user.setAgency(null);
 			userRepository.save(user);
 		} else {
-			throw new RessourceNotFoundException();
+			throw new ResourceNotFoundException();
 		}
 		return new OkException();
 	}
@@ -174,7 +174,7 @@ public class UserEntityController {
 	 * @param mail the mail concerned by the password changement
 	 *
 	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link RessourceNotFoundException} if the resource is not found and
+	 *         ({@link ResourceNotFoundException} if the resource is not found and
 	 *         {@link CreatedException} if the password is changed
 	 * @author MAQUINGHEN MAXIME
 	 */
@@ -188,7 +188,7 @@ public class UserEntityController {
 			userRepository.save(user);
 			MailCreator.AdminUserResetPassword(new_pass); // TODO
 		} else {
-			throw new RessourceNotFoundException();
+			throw new ResourceNotFoundException();
 		}
 		return new OkException();
 	}
@@ -199,7 +199,7 @@ public class UserEntityController {
 	 *              password) and the oldMail to perform the update even if the mail
 	 *              is changed
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link RessourceNotFoundException} if the resource is not
+	 *         request ({@link ResourceNotFoundException} if the resource is not
 	 *         found and {@link CreatedException} if the user is updated
 	 * @author MAQUINGHEN MAXIME
 	 */
@@ -225,7 +225,7 @@ public class UserEntityController {
 			}
 			userRepository.save(user);
 		} else {
-			throw new RessourceNotFoundException();
+			throw new ResourceNotFoundException();
 		}
 		return new OkException();
 	}
