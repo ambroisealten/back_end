@@ -4,6 +4,7 @@
 package fr.alten.ambroiseJEE.controller.business;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -93,14 +94,15 @@ public class FileStorageBusinessController {
 
 		try {
 			// Check if the file's name contains invalid characters
-			if (fileName.contains("..")) {
+			if (fileName.contains("['{}[\\]\\\\;':\",./?!@#$%&*()_+=-]")) {
 				throw new UnprocessableEntityException();
 			}
 
 			// Copy file to the target location (Replacing existing file with the same name)
 			final Path targetLocation = this.fileStorageLocation.resolve(fileName);
-			Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
-
+			InputStream fileInputStream = file.getInputStream();
+			Files.copy(fileInputStream, targetLocation, StandardCopyOption.REPLACE_EXISTING);
+			fileInputStream.close();
 			return "file/" + fileName;
 		} catch (final IOException ex) {
 			throw new UnprocessableEntityException();
