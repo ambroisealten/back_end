@@ -99,7 +99,7 @@ public class ApplicantForumEntityController {
 		ApplicantForum newApplicant = new ApplicantForum();
 		newApplicant.setName(jApplicant.get("name").textValue());
 		newApplicant.setSurname(jApplicant.get("surname").textValue());
-		newApplicant.setMonthlyWage(Integer.parseInt(jApplicant.get("wage").textValue()));
+		newApplicant.setMonthlyWage(Integer.parseInt(jApplicant.get("monthlyWage").textValue()));
 		newApplicant.setMail(applicantMail);
 		List<String> docList = new ArrayList<String>();
 		JsonNode docNode = jApplicant.get("docs");
@@ -150,7 +150,8 @@ public class ApplicantForumEntityController {
 
 		newApplicant.setVehicule(Boolean.getBoolean(jApplicant.get("hasVehicule").textValue()));
 		newApplicant.setDriverLicense(Boolean.getBoolean(jApplicant.get("hasPermis").textValue()));
-		newApplicant.setNationality(Nationality.valueOf(jApplicant.get("nationality").textValue()));
+		JsonNode nationality = jApplicant.get("nationality");
+		newApplicant.setNationality(Nationality.valueOf(nationality.isNull() ? "NONE" : nationality.textValue()));
 
 		try {
 			applicantForumRepository.save(newApplicant);

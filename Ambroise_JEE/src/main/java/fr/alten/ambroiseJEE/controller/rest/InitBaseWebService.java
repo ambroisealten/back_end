@@ -6,7 +6,10 @@ package fr.alten.ambroiseJEE.controller.rest;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,7 @@ import com.google.gson.GsonBuilder;
 
 import fr.alten.ambroiseJEE.controller.business.AgencyBusinessController;
 import fr.alten.ambroiseJEE.controller.business.ApplicantBusinessController;
+import fr.alten.ambroiseJEE.controller.business.ApplicantForumBusinessController;
 import fr.alten.ambroiseJEE.controller.business.ConsultantBusinessController;
 import fr.alten.ambroiseJEE.controller.business.DiplomaBusinessController;
 import fr.alten.ambroiseJEE.controller.business.EmployerBusinessController;
@@ -33,6 +37,7 @@ import fr.alten.ambroiseJEE.controller.business.TechSkillBusinessController;
 import fr.alten.ambroiseJEE.controller.business.UserBusinessController;
 import fr.alten.ambroiseJEE.controller.business.geographic.GeographicBusinessController;
 import fr.alten.ambroiseJEE.model.beans.Agency;
+import fr.alten.ambroiseJEE.model.beans.ApplicantForum;
 import fr.alten.ambroiseJEE.model.beans.Diploma;
 import fr.alten.ambroiseJEE.model.beans.Employer;
 import fr.alten.ambroiseJEE.model.beans.Forum;
@@ -100,11 +105,60 @@ public class InitBaseWebService {
 	@Autowired
 	private SectorBusinessController sectorBusinessController;
 
+	@Autowired
+	private ApplicantForumBusinessController applicantForumBusinessController;
+
 	private final Gson gson;
 
 	public InitBaseWebService() {
 		final GsonBuilder builder = new GsonBuilder();
 		this.gson = builder.create();
+	}
+
+	/**
+	 * create forum applicant
+	 * 
+	 * @author Andy Chabalier
+	 * @throws IOException
+	 * @throws ParseException
+	 */
+	private void createApplicantForum() throws IOException, ParseException {
+		Map<String, String> skills = new HashMap<String, String>();
+		for (String skill : Arrays.asList("c++", "java", "c#", "javascript")) {
+			skills.put("name", skill);
+		}
+
+		// Remplissage d'une population de consultant
+		for (int i = 0; i < 10; i++) {
+			final ApplicantForum applicantForumi = new ApplicantForum();
+			applicantForumi.setMail("applicantForum" + i + "@mail.com");
+			applicantForumi.setName("applicantForumName");
+			applicantForumi.setSurname("applicantForumSurname");
+			applicantForumi.setJob("DevOps");
+			applicantForumi.setEmployer("ALTEN");
+			applicantForumi.setPhoneNumber("0000000000");
+			applicantForumi.setStartAt("11/11/11");
+			applicantForumi.setCommentary("Comentary for" + applicantForumi.getName());
+			applicantForumi.setContractDuration("infinity");
+			applicantForumi.setContractType("CDI");
+
+			final JsonNode applicantForumiJsonNode = JsonUtils
+					.toJsonNode(this.gson.toJsonTree(applicantForumi).getAsJsonObject());
+			((ObjectNode) applicantForumiJsonNode).put("diplomaName", "MASTER");
+			((ObjectNode) applicantForumiJsonNode).put("diplomaYear", "2019");
+			((ObjectNode) applicantForumiJsonNode).put("monthlyWage", "" + (i + 1) * 1000);
+			((ObjectNode) applicantForumiJsonNode).put("managerMail", "tempUserAdminManager@mail.com");
+			((ObjectNode) applicantForumiJsonNode).put("canStartAt", "11/11/11");
+			((ObjectNode) applicantForumiJsonNode).put("skills", JsonUtils.toJsonNode(skills).asText());
+			((ObjectNode) applicantForumiJsonNode).putNull("mobilities");
+			((ObjectNode) applicantForumiJsonNode).putNull("docs");
+			((ObjectNode) applicantForumiJsonNode).putNull("grade");
+			((ObjectNode) applicantForumiJsonNode).putNull("hasVehicule");
+			((ObjectNode) applicantForumiJsonNode).putNull("hasPermis");
+			((ObjectNode) applicantForumiJsonNode).putNull("nationality");
+
+			this.applicantForumBusinessController.createApplicant(applicantForumiJsonNode, UserRole.MANAGER_ADMIN);
+		}
 	}
 
 	/**
@@ -757,6 +811,7 @@ public class InitBaseWebService {
 	@PostMapping(value = "/admin/init")
 	@ResponseBody
 	public HttpException init() throws IOException, ParseException {
+		long start = System.currentTimeMillis();
 		// peupler la base de données des diplômes
 		createDiplomas();
 
@@ -792,6 +847,8 @@ public class InitBaseWebService {
 
 		// peupler la base de données des matrices de compétences
 		createSkillsSheets();
+
+		createApplicantForum();
 
 		LoggerFactory.getLogger(InitBaseWebService.class).info(String.valueOf(System.currentTimeMillis() - start));
 		return new CreatedException();
