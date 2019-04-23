@@ -119,7 +119,7 @@ public class SkillsSheetBusinessController {
 	 */
 	public boolean checkIfSkillsWithMailExists(String mailPerson, UserRole role) {
 		if (UserRole.MANAGER == role || UserRole.MANAGER_ADMIN == role) { 
-				skillsSheetEntityController.checkIfSkillsWithMailExists(mailPerson);
+				return skillsSheetEntityController.checkIfSkillsWithMailExists(mailPerson);
 		}
 		throw new ForbiddenException();
 	}

@@ -88,7 +88,7 @@ public class SkillsSheetRestController {
 	 * @throws {@link ForbiddenException} if the current logged user hasn't the rights to perform this action
 	 * @author Lucas Royackkers
 	 */
-	@GetMapping(value = "/skillsheet?mail={mail}")
+	@GetMapping(value = "/skillsheetMail/{mail}")
 	@ResponseBody
 	public boolean checkIfSkillsWithMailExists(@PathVariable("mail") String mailPerson, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) {
