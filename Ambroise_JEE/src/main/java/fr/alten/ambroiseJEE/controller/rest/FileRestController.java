@@ -134,7 +134,7 @@ public class FileRestController {
 			@RequestAttribute("role") UserRole role) {
 		return file != null
 				? fileBusinessController.createDocument(ServletUriComponentsBuilder.fromCurrentContextPath()
-						.path(fileStorageBusinessController.storeFile(file)).toUriString(), "false", role)
+						.path(fileStorageBusinessController.storeFile(file, role)).toUriString(), "false", role)
 				: new UnprocessableEntityException();
 	}
 
