@@ -31,7 +31,8 @@ public class ConfigRestController {
 	}
 
 	/**
-	 *
+	 * Rest controller to fetch all menu items for the header menu. HTTP Method : GET
+	 * 
 	 * @param role the user role
 	 * @return json reponse containing all menus and submenus items
 	 * @author Camille Schnell
