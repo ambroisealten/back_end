@@ -17,18 +17,11 @@ import fr.alten.ambroiseJEE.model.beans.File;
 public interface FileRepository extends MongoRepository<File, Long> {
 
 	/**
-	 * @param isForforum true if we want the list of files of forum
-	 * @return the list of forum files
-	 * @author Andy Chabalier
-	 */
-	List<File> findByIsForForum(boolean isForforum);
-
-	/**
 	 * fetch file by uri
 	 *
 	 * @param fileDownloadUri the uri to fetch
 	 * @author Andy Chabalier
 	 */
-	Optional<File> findByUri(String fileDownloadUri);
+	Optional<File> findByPath(String fileDownloadUri);
 
 }

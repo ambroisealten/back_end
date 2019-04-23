@@ -12,7 +12,6 @@ import fr.alten.ambroiseJEE.model.beans.File;
 import fr.alten.ambroiseJEE.model.entityControllers.FileEntityController;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
-import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 
 /**
  * @author Andy Chabalier

@@ -34,41 +34,24 @@ public class FileEntityController {
 	}
 
 	/**
-	 * @return the list of forum files
-	 * @author Andy Chabalier
-	 */
-	public List<File> getFilesForum() {
-		return fileRepository.findByIsForForum(true);
-	}
-
-	/**
 	 * Method to create a document
 	 *
-	 * @param fileDownloadUri the uri of the document to create
+	 * @param path the path of the document to create
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link OkException} if there is a conflict in the database
-	 *         (that mean file already exist and then it's an upload. But no change
-	 *         to make in base and {@link CreatedException} if the document is
-	 *         created
+	 *         request ({@link ConflictException} if there is a conflict in the
+	 *         database{@link CreatedException} if the document is created
 	 * @author Andy Chabalier
 	 */
-	public HttpException pushDocument(String fileDownloadUri, boolean isForForum) {
-		Optional<File> fileOptional = fileRepository.findByUri(fileDownloadUri);
-		File file;
-		if (fileOptional.isPresent()) {
-			file = fileOptional.get();
-		} else {
-			file = new File();
-		}
-		file.setUri(fileDownloadUri);
-		file.setDateOfModification(System.currentTimeMillis());
-		file.setForForum(isForForum);
+	public File pushDocument(String path, String extension) {
+		File file = new File();
+		file.setPath(path);
+		file.setExtension(extension);
+		file.setDateOfCreation(System.currentTimeMillis());
 		try {
-			fileRepository.save(file);
+			return fileRepository.save(file);
 		} catch (Exception e) {
-			return new OkException();
+			throw new ConflictException();
 		}
-		return new CreatedException();
 	}
 
 }

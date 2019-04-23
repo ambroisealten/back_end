@@ -21,13 +21,13 @@ import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import fr.alten.ambroiseJEE.controller.business.FileBusinessController;
 import fr.alten.ambroiseJEE.controller.business.FileStorageBusinessController;
+import fr.alten.ambroiseJEE.model.beans.File;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
@@ -111,7 +111,8 @@ public class FileRestController {
 	 */
 	@GetMapping("/files/forum")
 	public String getFilesForum(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
-		return gson.toJson(fileBusinessController.getFilesForum(role));
+		// TODO
+		return null;
 	}
 
 	/**
@@ -130,12 +131,17 @@ public class FileRestController {
 	 * @author Andy Chabalier
 	 */
 	@PostMapping("/file")
-	public HttpException uploadFile(@RequestParam("file") MultipartFile file, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) {
-		return file != null
-				? fileBusinessController.createDocument(ServletUriComponentsBuilder.fromCurrentContextPath()
-						.path(fileStorageBusinessController.storeFile(file, role)).toUriString(), "false", role)
-				: new UnprocessableEntityException();
+	public HttpException uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("path") String path,
+			@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
+
+		if (file != null) {
+			File newFile = fileBusinessController.createDocument(path,
+					FilenameUtils.getExtension(file.getOriginalFilename()), role);
+			return fileStorageBusinessController.storeFile(file, newFile.getPath(),
+					newFile.get_id() + "." + newFile.getExtension(), role);
+		} else {
+			return new UnprocessableEntityException();
+		}
 	}
 
 	/**
@@ -151,7 +157,9 @@ public class FileRestController {
 	 */
 	@PostMapping("/file/multiples")
 	public List<HttpException> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files,
-			@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
-		return Arrays.asList(files).stream().map(file -> uploadFile(file, mail, role)).collect(Collectors.toList());
+			@RequestParam("path") String path, @RequestAttribute("mail") String mail,
+			@RequestAttribute("role") UserRole role) {
+		return Arrays.asList(files).stream().map(file -> uploadFile(file, path, mail, role))
+				.collect(Collectors.toList());
 	}
 }
