@@ -67,7 +67,7 @@ public class FileStorageBusinessController {
 	 */
 	public Resource loadFileAsResource(final String fileName) {
 		try {
-			final Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
+			final Path filePath = Paths.get(this.fileStorageLocation.toAbsolutePath() + fileName).normalize();
 			final Resource resource = new UrlResource(filePath.toUri());
 			if (resource.exists()) {
 				return resource;
@@ -82,31 +82,33 @@ public class FileStorageBusinessController {
 	/**
 	 * Store a file
 	 *
-	 * @param file file to store
+	 * @param file     file to store
+	 * @param fullPath full relative path of file
 	 * @return the name of the stored file
 	 * @author Andy Chabalier
 	 */
-	public String storeFile(final MultipartFile file, final UserRole role) {
+	public HttpException storeFile(final MultipartFile file, final String path, final String fileName,
+			final UserRole role) {
 		if (!(UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)) {
 			throw new ForbiddenException();
 		}
-		// Normalize file name
-		final String fileName = StringUtils.cleanPath(file.getOriginalFilename());
 
 		try {
-			// Check if the file's name contains invalid characters
-			if (fileName.contains("['{}[\\]\\\\;':\",./?!@#$%&*()_+=-]")) {
+			// Check if the file's name contains invalid characters or path doesn't end with
+			// "/"
+			if (fileName.contains("['{}[\\]\\\\;':\",./?!@#$%&*()_+=-]") || !path.endsWith("/")) {
 				throw new UnprocessableEntityException();
 			}
 
-			// Copy file to the target location (Replacing existing file with the same name)
-			final Path targetLocation = this.fileStorageLocation.resolve(fileName);
-			InputStream fileInputStream = file.getInputStream();
-			Files.copy(fileInputStream, targetLocation, StandardCopyOption.REPLACE_EXISTING);
+			final Path dirPath = Paths.get(this.fileStorageLocation.toAbsolutePath() + path);
+			Files.createDirectories(dirPath);
+			final Path targetLocation = dirPath.resolve(fileName);
+			final InputStream fileInputStream = file.getInputStream();
+			Files.copy(fileInputStream, targetLocation);
 			fileInputStream.close();
-			return "file/" + fileName;
+			return new CreatedException();
 		} catch (final IOException ex) {
-			throw new UnprocessableEntityException();
+			return new InternalServerErrorException();
 		}
 	}
 }

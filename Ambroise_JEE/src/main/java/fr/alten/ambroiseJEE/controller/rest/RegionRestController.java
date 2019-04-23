@@ -39,13 +39,13 @@ public class RegionRestController {
 	private final Gson gson;
 
 	public RegionRestController() {
-		GsonBuilder builder = new GsonBuilder();
+		final GsonBuilder builder = new GsonBuilder();
 		this.gson = builder.create();
 	}
 
 	/**
 	 * Rest controller for region creation. HTTP Method : POST
-	 * 
+	 *
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the current logged user mail
 	 * @param role   the current logged user role
@@ -58,15 +58,15 @@ public class RegionRestController {
 	 */
 	@PostMapping(value = "/region")
 	@ResponseBody
-	public HttpException createRegion(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) {
-		return params.get("name") != null ? regionBusinessController.createRegion(params, role)
+	public HttpException createRegion(@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
+			@RequestAttribute("role") final UserRole role) {
+		return params.get("name") != null ? this.regionBusinessController.createRegion(params, role)
 				: new UnprocessableEntityException();
 	}
 
 	/**
 	 * Rest controller for region deletion. HTTP Method : DELETE
-	 * 
+	 *
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the current logged user mail
 	 * @param role   the current logged user role
@@ -78,15 +78,15 @@ public class RegionRestController {
 	 */
 	@DeleteMapping(value = "/region")
 	@ResponseBody
-	public HttpException deleteRegion(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) {
-		return params.get("name") != null ? regionBusinessController.deleteRegion(params, role)
+	public HttpException deleteRegion(@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
+			@RequestAttribute("role") final UserRole role) {
+		return params.get("name") != null ? this.regionBusinessController.deleteRegion(params, role)
 				: new UnprocessableEntityException();
 	}
 
 	/**
 	 * Rest controller to fetch all regions. HTTP Method : GET
-	 * 
+	 *
 	 * @param mail the current logged user mail
 	 * @param role the current logged user role
 	 * @return the list of all regions
@@ -94,13 +94,14 @@ public class RegionRestController {
 	 */
 	@GetMapping(value = "/regions")
 	@ResponseBody
-	public String getRegions(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
-		return gson.toJson(regionBusinessController.getRegions(role));
+	public String getRegions(@RequestAttribute("mail") final String mail,
+			@RequestAttribute("role") final UserRole role) {
+		return this.gson.toJson(this.regionBusinessController.getRegions(role));
 	}
 
 	/**
 	 * Rest controller to update region. HTTP Method : PUT
-	 * 
+	 *
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the current logged user mail
 	 * @param role   the current logged user role
@@ -112,9 +113,9 @@ public class RegionRestController {
 	 */
 	@PutMapping(value = "/region")
 	@ResponseBody
-	public HttpException updateRegion(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) {
-		return params.get("name") != null ? regionBusinessController.updateRegion(params, role)
+	public HttpException updateRegion(@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
+			@RequestAttribute("role") final UserRole role) {
+		return params.get("name") != null ? this.regionBusinessController.updateRegion(params, role)
 				: new UnprocessableEntityException();
 	}
 }
