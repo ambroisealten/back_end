@@ -5,6 +5,7 @@ package fr.alten.ambroiseJEE.model.entityControllers;
 
 import java.util.List;
 
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,11 +42,12 @@ public class FileEntityController {
 	 *         database{@link CreatedException} if the document is created
 	 * @author Andy Chabalier
 	 */
-	public File pushDocument(final String path, final String extension) {
+	public File pushDocument(final String path, final String fileName) {
 		final File file = new File();
 		file.setPath(path);
-		file.setExtension(extension);
+		file.setExtension(FilenameUtils.getExtension(fileName));
 		file.setDateOfCreation(System.currentTimeMillis());
+		file.setName(fileName);
 		try {
 			return this.fileRepository.save(file);
 		} catch (final Exception e) {

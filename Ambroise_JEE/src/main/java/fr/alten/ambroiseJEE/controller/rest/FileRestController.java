@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -139,8 +138,7 @@ public class FileRestController {
 			@RequestAttribute("role") final UserRole role) {
 
 		if (file != null) {
-			final File newFile = this.fileBusinessController.createDocument(path,
-					FilenameUtils.getExtension(file.getOriginalFilename()), role);
+			final File newFile = this.fileBusinessController.createDocument(path, file.getOriginalFilename(), role);
 			return this.fileStorageBusinessController.storeFile(file, newFile.getPath(),
 					newFile.get_id() + "." + newFile.getExtension(), role);
 		} else {

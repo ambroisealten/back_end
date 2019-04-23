@@ -23,6 +23,7 @@ public class File implements Serializable {
 	private String path;
 	private String extension;
 	private long dateOfCreation;
+	private String name;
 
 	public ObjectId get_id() {
 		return this._id;
@@ -54,6 +55,14 @@ public class File implements Serializable {
 
 	public void setPath(final String uri) {
 		this.path = uri;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 }
