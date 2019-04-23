@@ -504,6 +504,7 @@ public class InitBaseWebService {
 		final SkillsSheet newFirst = new SkillsSheet();
 		newFirst.setName("JTE-mmm-AAA");
 		newFirst.setMailPersonAttachedTo("jc.test@gmail.com");
+		newFirst.setRolePersonAttachedTo("consultant");
 		newFirst.setMailVersionAuthor("tempUserAdminManager@mail.com");
 
 		final List<TechSkill> newListTechSkill = new ArrayList<TechSkill>();
@@ -551,6 +552,7 @@ public class InitBaseWebService {
 		final SkillsSheet newSecond = new SkillsSheet();
 		newSecond.setName("PTE-mmm-AAA");
 		newSecond.setMailPersonAttachedTo("paul.test@gmail.com");
+		newSecond.setRolePersonAttachedTo("applicant");
 		newSecond.setMailVersionAuthor("tempUserAdminManager@mail.com");
 
 		final List<TechSkill> newListTechSkillBis = new ArrayList<TechSkill>();
@@ -755,9 +757,6 @@ public class InitBaseWebService {
 	@PostMapping(value = "/admin/init")
 	@ResponseBody
 	public HttpException init() throws IOException, ParseException {
-
-		final long start = System.currentTimeMillis();
-
 		// peupler la base de données des diplômes
 		createDiplomas();
 
