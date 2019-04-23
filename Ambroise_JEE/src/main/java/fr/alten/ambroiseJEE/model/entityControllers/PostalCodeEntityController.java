@@ -17,7 +17,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
-import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
+import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 
 /**
  * @author Andy Chabalier
@@ -56,7 +56,7 @@ public class PostalCodeEntityController {
 	 *
 	 * @param name the postalCode name to fetch
 	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link RessourceNotFoundException} if the resource is not found and
+	 *         ({@link ResourceNotFoundException} if the resource is not found and
 	 *         {@link OkException} if the postalCode is deactivated
 	 * @author Andy Chabalier
 	 */
@@ -68,7 +68,7 @@ public class PostalCodeEntityController {
 			postalCode.setName("deactivated" + System.currentTimeMillis());
 			postalCodeRepository.save(postalCode);
 		} else {
-			throw new RessourceNotFoundException();
+			throw new ResourceNotFoundException();
 		}
 		return new OkException();
 	}
@@ -90,7 +90,7 @@ public class PostalCodeEntityController {
 	 * @param jPostalCode JsonNode with all postalCode parameters and the old name
 	 *                    to perform the update even if the name is changed
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link RessourceNotFoundException} if the resource is not
+	 *         request ({@link ResourceNotFoundException} if the resource is not
 	 *         found and {@link CreatedException} if the postalCode is updated
 	 * @author Andy Chabalier
 	 */
@@ -104,7 +104,7 @@ public class PostalCodeEntityController {
 
 			postalCodeRepository.save(postalCode);
 		} else {
-			throw new RessourceNotFoundException();
+			throw new ResourceNotFoundException();
 		}
 		return new OkException();
 	}

@@ -15,7 +15,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
-import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
+import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 
 /**
  * User controller for entity diploma gestion rules
@@ -61,7 +61,7 @@ public class DiplomaEntityController {
 	 *
 	 * @param jDiploma the JsonNode containing all diploma parameters
 	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link RessourceNotFoundException} if the resource is not found and
+	 *         ({@link ResourceNotFoundException} if the resource is not found and
 	 *         {@link OkException} if the diploma is deactivated
 	 * @author Lucas Royackkers
 	 */
@@ -75,7 +75,7 @@ public class DiplomaEntityController {
 			diploma.setYearOfResult(null);
 			diplomaRepository.save(diploma);
 		} else {
-			return new RessourceNotFoundException();
+			return new ResourceNotFoundException();
 		}
 		return new OkException();
 	}
@@ -98,7 +98,7 @@ public class DiplomaEntityController {
 	 *                 school who gave the diploma to perform the update even if the
 	 *                 name is changed
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link RessourceNotFoundException} if the diploma is not
+	 *         request ({@link ResourceNotFoundException} if the diploma is not
 	 *         found and {@link CreatedException} if the diploma is updated
 	 * @author Lucas Royackkers
 	 * @throws ParseException
@@ -121,7 +121,7 @@ public class DiplomaEntityController {
 
 			diplomaRepository.save(diploma);
 		} else {
-			return new RessourceNotFoundException();
+			return new ResourceNotFoundException();
 		}
 		return new OkException();
 	}

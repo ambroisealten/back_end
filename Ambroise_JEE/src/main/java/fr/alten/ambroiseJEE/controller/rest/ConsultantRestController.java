@@ -25,7 +25,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
-import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
+import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 
 /**
  * Rest Controller for Consultant
@@ -95,7 +95,7 @@ public class ConsultantRestController {
 		if (personOptional.isPresent()) {
 			return gson.toJson(personOptional.get());
 		}
-		throw new RessourceNotFoundException();
+		throw new ResourceNotFoundException();
 	}
 
 	/**

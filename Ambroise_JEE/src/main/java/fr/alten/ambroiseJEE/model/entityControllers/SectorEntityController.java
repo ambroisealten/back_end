@@ -17,7 +17,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
-import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
+import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 
 /**
  * User controller for entity gestion rules
@@ -56,7 +56,7 @@ public class SectorEntityController {
 	/**
 	 * @param jSector JsonNode with the sector name to delete
 	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link RessourceNotFoundException} if the ressource is not found and
+	 *         ({@link ResourceNotFoundException} if the resource is not found and
 	 *         {@link OkException} if the sector is deleted *
 	 * @author Andy Chabalier
 	 */
@@ -67,7 +67,7 @@ public class SectorEntityController {
 			sectorRepository.delete(sectorOptionnal.get());
 			;
 		} else {
-			throw new RessourceNotFoundException();
+			throw new ResourceNotFoundException();
 		}
 		return new OkException();
 	}
@@ -87,7 +87,7 @@ public class SectorEntityController {
 	 * @param jSector JsonNode with all sector parameters and the oldName to perform
 	 *                the update even if the name is changed
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link RessourceNotFoundException} if the ressource is not
+	 *         request ({@link ResourceNotFoundException} if the resource is not
 	 *         found and {@link OkException} if the sector is updated
 	 * @author Andy Chabalier
 	 */
@@ -98,7 +98,7 @@ public class SectorEntityController {
 			Sector sector = sectorOptionnal.get();
 			sectorRepository.save(sector);
 		} else {
-			throw new RessourceNotFoundException();
+			throw new ResourceNotFoundException();
 		}
 		return new OkException();
 	}

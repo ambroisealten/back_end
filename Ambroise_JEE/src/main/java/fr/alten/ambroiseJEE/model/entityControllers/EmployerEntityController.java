@@ -14,7 +14,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
-import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
+import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 
 /**
  * @author Lucas Royackkers
@@ -57,7 +57,7 @@ public class EmployerEntityController {
 	 *
 	 * @param jEmployer JsonNode with all employer parameters
 	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link RessourceNotFoundException} if the resource is not found and
+	 *         ({@link ResourceNotFoundException} if the resource is not found and
 	 *         {@link OkException} if the employer is deactivated
 	 * @author Lucas Royackkers
 	 */
@@ -70,7 +70,7 @@ public class EmployerEntityController {
 
 			employerRepository.save(employer);
 		} else {
-			throw new RessourceNotFoundException();
+			throw new ResourceNotFoundException();
 		}
 		return new OkException();
 	}
@@ -88,7 +88,7 @@ public class EmployerEntityController {
 	 * @param jEmployer JsonNode with all employer parameters and the old name to
 	 *                  perform the update even if the name is changed
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link RessourceNotFoundException} if the resource is not
+	 *         request ({@link ResourceNotFoundException} if the resource is not
 	 *         found, {@link ConflictException} if there is a conflict in the
 	 *         database and {@link OkException} if the employer is updated
 	 * @author Lucas Royackkers
@@ -106,7 +106,7 @@ public class EmployerEntityController {
 				return new ConflictException();
 			}
 		} else {
-			return new RessourceNotFoundException();
+			return new ResourceNotFoundException();
 		}
 		return new OkException();
 	}

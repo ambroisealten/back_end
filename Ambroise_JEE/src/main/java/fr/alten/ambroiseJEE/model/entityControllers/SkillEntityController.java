@@ -17,7 +17,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
-import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
+import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 
 /**
  * @author Thomas Decamp
@@ -56,7 +56,7 @@ public class SkillEntityController {
 	 *
 	 * @param name the skill name to fetch
 	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link RessourceNotFoundException} if the resource is not found and
+	 *         ({@link ResourceNotFoundException} if the resource is not found and
 	 *         {@link OkException} if the skill is deactivated
 	 * @author Thomas Decamp
 	 */
@@ -68,7 +68,7 @@ public class SkillEntityController {
 			skill.setName("deactivated" + System.currentTimeMillis());
 			skillRepository.save(skill);
 		} else {
-			throw new RessourceNotFoundException();
+			throw new ResourceNotFoundException();
 		}
 		return new OkException();
 	}
@@ -90,7 +90,7 @@ public class SkillEntityController {
 	 * @param jSkill JsonNode with all skill parameters and the old name to perform
 	 *               the update even if the name is changed
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link RessourceNotFoundException} if the resource is not
+	 *         request ({@link ResourceNotFoundException} if the resource is not
 	 *         found and {@link CreatedException} if the skill is updated
 	 * @author Thomas Decamp
 	 */
@@ -103,7 +103,7 @@ public class SkillEntityController {
 
 			skillRepository.save(skill);
 		} else {
-			throw new RessourceNotFoundException();
+			throw new ResourceNotFoundException();
 		}
 		return new OkException();
 	}

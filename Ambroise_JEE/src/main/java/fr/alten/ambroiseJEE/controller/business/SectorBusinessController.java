@@ -18,7 +18,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
-import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
+import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 
 /**
  * Sector controller for business rules.
@@ -54,7 +54,7 @@ public class SectorBusinessController {
 	 * @param JSector JsonNode with sector's name parameter
 	 * @param role    the current logged user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link RessourceNotFoundException} if the ressource is not
+	 *         request ({@link ResourceNotFoundException} if the resource is not
 	 *         found and {@link OkException} if the sector is deleted
 	 * @author Andy Chabalier
 	 */
@@ -84,7 +84,7 @@ public class SectorBusinessController {
 	 * @param JSector JsonNode with all sector parameters
 	 * @param role    the current logged user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link RessourceNotFoundException} if the ressource is not
+	 *         request ({@link ResourceNotFoundException} if the resource is not
 	 *         found and {@link OkException} if the sector is updated
 	 * @author Andy Chabalier
 	 */

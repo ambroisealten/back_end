@@ -1,5 +1,5 @@
 package fr.alten.ambroiseJEE.utils.httpStattus;
 
-public class RessourceNotFoundExceptionTest {
+public class ResourceNotFoundExceptionTest {
 
 }

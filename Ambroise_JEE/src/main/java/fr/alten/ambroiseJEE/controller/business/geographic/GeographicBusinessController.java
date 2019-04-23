@@ -26,7 +26,7 @@ import fr.alten.ambroiseJEE.utils.JsonUtils;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
-import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
+import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 
 /**
  * @author Andy Chabalier
@@ -157,12 +157,12 @@ public class GeographicBusinessController {
 	/**
 	 * Get the wanted Geographic object. Depending of the placeType, we get the
 	 * corresponding BusinessController if the object don't exist in base, we throw
-	 * the RessourceNotFoundException
+	 * the ResourceNotFoundException
 	 *
 	 * @param placeName the place's name
 	 * @param placeType the place's type
 	 * @return the geographic corresponding to placeName and placeType
-	 * @throws RessourceNotFoundException()
+	 * @throws ResourceNotFoundException()
 	 * @author Andy Chabalier
 	 */
 	public Optional<Geographic> getPlace(final String placeName, final String placeType) {
@@ -182,7 +182,7 @@ public class GeographicBusinessController {
 				place = this.postalCodeBusinessController.getPostalCode(placeName).get();
 				break;
 			default:
-				throw new RessourceNotFoundException();
+				throw new ResourceNotFoundException();
 			}
 		} catch (final NoSuchElementException nsee) {
 			return Optional.empty();
