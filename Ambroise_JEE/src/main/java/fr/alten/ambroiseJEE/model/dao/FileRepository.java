@@ -3,7 +3,6 @@
  */
 package fr.alten.ambroiseJEE.model.dao;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.mongodb.repository.MongoRepository;

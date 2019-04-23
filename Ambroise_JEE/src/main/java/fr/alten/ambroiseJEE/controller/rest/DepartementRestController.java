@@ -58,7 +58,7 @@ public class DepartementRestController {
 	@PostMapping(value = "/departement")
 	@ResponseBody
 	public HttpException createDepartement(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) throws Exception {
+			@RequestAttribute("role") UserRole role) {
 		return params.get("name") != null ? departementBusinessController.createDepartement(params, role)
 				: new UnprocessableEntityException();
 	}
@@ -78,7 +78,7 @@ public class DepartementRestController {
 	@DeleteMapping(value = "/departement")
 	@ResponseBody
 	public HttpException deleteDepartement(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) throws Exception {
+			@RequestAttribute("role") UserRole role) {
 		return params.get("name") != null ? departementBusinessController.deleteDepartement(params, role)
 				: new UnprocessableEntityException();
 	}
@@ -112,7 +112,7 @@ public class DepartementRestController {
 	@PutMapping(value = "/departement")
 	@ResponseBody
 	public HttpException updateDepartement(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) throws Exception {
+			@RequestAttribute("role") UserRole role) {
 		return params.get("name") != null ? departementBusinessController.updateDepartement(params, role)
 				: new UnprocessableEntityException();
 	}

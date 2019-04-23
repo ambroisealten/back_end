@@ -4,16 +4,15 @@
 package fr.alten.ambroiseJEE.model.entityControllers;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.alten.ambroiseJEE.model.beans.File;
 import fr.alten.ambroiseJEE.model.dao.FileRepository;
+import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
-import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 
 /**
  * @author Andy Chabalier

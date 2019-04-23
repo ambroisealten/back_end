@@ -59,7 +59,7 @@ public class RegionRestController {
 	@PostMapping(value = "/region")
 	@ResponseBody
 	public HttpException createRegion(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) throws Exception {
+			@RequestAttribute("role") UserRole role) {
 		return params.get("name") != null ? regionBusinessController.createRegion(params, role)
 				: new UnprocessableEntityException();
 	}
@@ -79,7 +79,7 @@ public class RegionRestController {
 	@DeleteMapping(value = "/region")
 	@ResponseBody
 	public HttpException deleteRegion(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) throws Exception {
+			@RequestAttribute("role") UserRole role) {
 		return params.get("name") != null ? regionBusinessController.deleteRegion(params, role)
 				: new UnprocessableEntityException();
 	}
@@ -113,7 +113,7 @@ public class RegionRestController {
 	@PutMapping(value = "/region")
 	@ResponseBody
 	public HttpException updateRegion(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) throws Exception {
+			@RequestAttribute("role") UserRole role) {
 		return params.get("name") != null ? regionBusinessController.updateRegion(params, role)
 				: new UnprocessableEntityException();
 	}
