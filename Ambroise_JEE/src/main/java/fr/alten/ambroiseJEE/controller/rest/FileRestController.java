@@ -130,12 +130,11 @@ public class FileRestController {
 	 * @author Andy Chabalier
 	 */
 	@PostMapping("/file")
-	public HttpException uploadFile(@RequestParam("isForForum") String isForForum,
-			@RequestParam("file") MultipartFile file, @RequestAttribute("mail") String mail,
+	public HttpException uploadFile(@RequestParam("file") MultipartFile file, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) {
 		return file != null
 				? fileBusinessController.createDocument(ServletUriComponentsBuilder.fromCurrentContextPath()
-						.path(fileStorageBusinessController.storeFile(file)).toUriString(), isForForum, role)
+						.path(fileStorageBusinessController.storeFile(file)).toUriString(), "false", role)
 				: new UnprocessableEntityException();
 	}
 
@@ -151,10 +150,8 @@ public class FileRestController {
 	 * @author Andy Chabalier
 	 */
 	@PostMapping("/file/multiples")
-	public List<HttpException> uploadMultipleFiles(@RequestParam("isForForum") String isForForum,
-			@RequestParam("files") MultipartFile[] files, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) {
-		return Arrays.asList(files).stream().map(file -> uploadFile(isForForum, file, mail, role))
-				.collect(Collectors.toList());
+	public List<HttpException> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files,
+			@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
+		return Arrays.asList(files).stream().map(file -> uploadFile(file, mail, role)).collect(Collectors.toList());
 	}
 }
