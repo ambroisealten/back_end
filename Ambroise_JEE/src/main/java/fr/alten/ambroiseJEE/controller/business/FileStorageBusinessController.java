@@ -67,7 +67,7 @@ public class FileStorageBusinessController {
 	 */
 	public Resource loadFileAsResource(final String fileName) {
 		try {
-			final Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
+			final Path filePath = Paths.get(this.fileStorageLocation.toAbsolutePath() + fileName).normalize();
 			final Resource resource = new UrlResource(filePath.toUri());
 			if (resource.exists()) {
 				return resource;

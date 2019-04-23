@@ -68,9 +68,10 @@ public class FileRestController {
 	 * @author Andy Chabalier
 	 */
 	@GetMapping("/file/{fileName}")
-	public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, HttpServletRequest request,
-			@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
-		Resource resource = fileStorageBusinessController.loadFileAsResource(fileName);
+	public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, @RequestParam("path") String path,
+			HttpServletRequest request, @RequestAttribute("mail") String mail,
+			@RequestAttribute("role") UserRole role) {
+		Resource resource = fileStorageBusinessController.loadFileAsResource(path + fileName);
 
 		// Try to determine file's content type
 		String contentType = null;
