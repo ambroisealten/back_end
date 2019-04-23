@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
- *
+ * Defines what an Employer is in our app
  *
  * @author Lucas Royackkers
  *

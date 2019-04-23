@@ -19,6 +19,7 @@ import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
  * Rest controller for the employer web service
@@ -40,36 +41,41 @@ public class EmployerRestController {
 	}
 
 	/**
+	 * Create an Employer
 	 *
-	 * @param params the JsonNode containing all parameters
-	 * @param role   the current logged user's role
+	 * @param params the JsonNode containing all parameters (only the name of the employer)
+	 * @param role the current logged user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link ConflictException} if there is a conflict in the
-	 *         database and {@link CreatedException} if the employer is created
+	 *         request, {@link ConflictException} if there is a conflict in the
+	 *         database, {@link UnprocessableEntityException} if there are not enough parameters to perform the action
+	 *         and {@link CreatedException} if the employer is created
 	 * @author Lucas Royackkers
 	 */
 	@PostMapping("/employer")
 	@ResponseBody
 	public HttpException createEmployer(@RequestBody JsonNode params, @RequestAttribute("role") UserRole role) {
-		return employerBusinessController.createEmployer(params, role);
+		return (params.get("name") != null) ? employerBusinessController.createEmployer(params, role) : new UnprocessableEntityException();
 	}
 
 	/**
+	 * Delete an Employer
 	 *
-	 * @param params the JsonNode containing all parameters
-	 * @param role   the current logged user's role
+	 * @param params the JsonNode containing all parameters (only the name of the employer)
+	 * @param role the current logged user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link ResourceNotFoundException} if the resource is not
-	 *         found and {@link CreatedException} if the employer is deleted
+	 *         request, {@link ResourceNotFoundException} if the resource is not
+	 *         found, {@link UnprocessableEntityException} if there are not enough parameters to perform the action
+	 *         and {@link OkException} if the employer is deleted
 	 * @author Lucas Royackkers
 	 */
 	@DeleteMapping("/employer")
 	@ResponseBody
 	public HttpException deleteEmployer(@RequestBody JsonNode params, @RequestAttribute("role") UserRole role) {
-		return employerBusinessController.deleteEmployer(params, role);
+		return (params.get("name") != null) ? employerBusinessController.deleteEmployer(params, role) : new UnprocessableEntityException();
 	}
 
 	/**
+	 * Get all Employers 
 	 *
 	 * @param role the current logged user's role
 	 * @return a String representing a Json, containing all the Employers
@@ -82,18 +88,21 @@ public class EmployerRestController {
 	}
 
 	/**
+	 * Update an employer
 	 *
-	 * @param params the JsonNode containing all parameters
-	 * @param role   the current logged user's role
+	 * @param params the JsonNode containing all parameters (the name of the employer and its oldname)
+	 * @param role the current logged user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link ResourceNotFoundException} if the resource is not
-	 *         found and {@link CreatedException} if the employer is updated
+	 *         request, ({@link ResourceNotFoundException} if the resource is not
+	 *         found, {@link UnprocessableEntityException} if there are not enough parameters to perform the action
+	 *         and {@link OkException} if the employer is updated
 	 * @author Lucas Royackkers
 	 */
 	@PutMapping("/employer")
 	@ResponseBody
 	public HttpException updateEmployer(@RequestBody JsonNode params, @RequestAttribute("role") UserRole role) {
-		return employerBusinessController.updateEmployer(params, role);
+		return (params.get("name") != null && params.get("oldName") != null) ? 
+				employerBusinessController.updateEmployer(params, role) : new UnprocessableEntityException();
 	}
 
 }

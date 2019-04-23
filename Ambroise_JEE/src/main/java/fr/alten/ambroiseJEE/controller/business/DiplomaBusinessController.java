@@ -31,13 +31,13 @@ public class DiplomaBusinessController {
 	/**
 	 * Method to delegate diploma creation
 	 *
-	 * @param params the JsonNode containing all diploma parameters
-	 * @param role   the user's role
+	 * @param params the JsonNode containing all diploma parameters (name, yearOfResult)
+	 * @param role the current logged user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link ConflictException} if there is a conflict in the
+	 *         request, {@link ConflictException} if there is a conflict in the
 	 *         database and {@link CreatedException} if the diploma is created
+	 * @throws {@link ForbiddenException} if the current logged user hasn't the rights to perform this action, ParseException
 	 * @author Lucas Royackkers
-	 * @throws ParseException
 	 */
 	public HttpException createDiploma(JsonNode params, UserRole role) throws ParseException {
 		if (UserRole.MANAGER_ADMIN == role || UserRole.CDR_ADMIN == role) {
@@ -49,12 +49,13 @@ public class DiplomaBusinessController {
 	/**
 	 * Method to delegate diploma deletion
 	 *
-	 * @param params the JsonNode containing all diploma parameters
-	 * @param role   the user's role
+	 * @param params the JsonNode containing all diploma parameters (name, yearOfResult)
+	 * @param role the current logged user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link ResourceNotFoundException} if the resource hasn't
-	 *         been found in the database and {@link CreatedException} if the
-	 *         diploma is desactivated
+	 *         request, {@link ResourceNotFoundException} if the resource hasn't
+	 *         been found in the database and {@link OkException} if the
+	 *         diploma is deactivated
+	 * @throws {@link ForbiddenException} if the current logged user hasn't the rights to perform this action
 	 * @author Lucas Royackkers
 	 */
 	public HttpException deleteDiploma(JsonNode params, UserRole role) {
@@ -67,8 +68,8 @@ public class DiplomaBusinessController {
 	/**
 	 * Method to get all diplomas
 	 *
-	 * @param role the user's role
-	 * @return a List of Diploma objects
+	 * @param role the current logged user's role
+	 * @return a List of Diploma objects (can be empty)
 	 *
 	 * @author Lucas Royackkers
 	 */
@@ -96,13 +97,13 @@ public class DiplomaBusinessController {
 	/**
 	 * Method to delegate diploma update
 	 *
-	 * @param params the JsonNode containing all diploma parameters
-	 * @param role   the user's role
+	 * @param params the JsonNode containing all diploma parameters (name,oldName,yearOfResult,oldYearOfResult)
+	 * @param role the current logged user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link ResourceNotFoundException} if the resource hasn't
-	 *         been found in the database and {@link CreatedException} if the
+	 *         request, {@link ResourceNotFoundException} if the resource hasn't
+	 *         been found in the database and {@link OkException} if the
 	 *         diploma is updated
-	 * @throws ParseException
+	 * @throws ParseException, {@link ForbiddenException} if the current logged user hasn't the rights to perform this action
 	 * @author Lucas Royackkers
 	 */
 	public HttpException updateDiploma(JsonNode params, UserRole role) throws ParseException {

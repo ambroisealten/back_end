@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
- *
+ * Defines what a Job is in our application
  *
  * @author Lucas Royackkers
  *

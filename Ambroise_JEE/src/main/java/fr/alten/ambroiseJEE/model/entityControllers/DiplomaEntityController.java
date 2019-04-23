@@ -31,7 +31,7 @@ public class DiplomaEntityController {
 	/**
 	 * Method to create a diploma
 	 *
-	 * @param jDiploma JsonNode with all diploma parameters
+	 * @param jDiploma JsonNode with all diploma parameters (name, yearOfResult)
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ConflictException} if there is a conflict in the
 	 *         database and {@link CreatedException} if the diploma is created
@@ -48,18 +48,15 @@ public class DiplomaEntityController {
 		Diploma newDiploma = new Diploma();
 		newDiploma.setName(jDiploma.get("name").textValue());
 		newDiploma.setYearOfResult(jDiploma.get("yearOfResult").textValue());
+		
+		diplomaRepository.save(newDiploma);
 
-		try {
-			diplomaRepository.save(newDiploma);
-		} catch (Exception e) {
-			return new ConflictException();
-		}
 		return new CreatedException();
 	}
 
 	/**
 	 *
-	 * @param jDiploma the JsonNode containing all diploma parameters
+	 * @param jDiploma the JsonNode containing all diploma parameters (name, yearOfResult)
 	 * @return {@link HttpException} corresponding to the status of the request
 	 *         ({@link ResourceNotFoundException} if the resource is not found and
 	 *         {@link OkException} if the diploma is deactivated
@@ -80,23 +77,41 @@ public class DiplomaEntityController {
 		return new OkException();
 	}
 
+	/**
+	 * Get a List of Diplomas given their name
+	 * @param name the searched name for this query
+	 * @return a List of Diplomas object (can be empty)
+	 * @author Lucas Royackkers
+	 */
 	public List<Diploma> getDiplomaByName(String name) {
 		return diplomaRepository.findByName(name);
 	}
 
+	/**
+	 * Get a specific Diploma 
+	 * @param name the searched name for this query
+	 * @param yearOfResult the searched year of result for this diploma 
+	 * @return an Optional with the corresponding Diploma or not
+	 * @author Lucas Royackkers
+	 */
 	public Optional<Diploma> getDiplomaByNameAndYearOfResult(String name, String yearOfResult) {
 		return diplomaRepository.findByNameAndYearOfResult(name, yearOfResult);
 	}
 
+	/**
+	 * Get all Diplomas in the database
+	 * 
+	 * @return a List of Diplomas (can be empty)
+	 * @author Lucas Royackkers
+	 */
 	public List<Diploma> getDiplomas() {
 		return diplomaRepository.findAll();
 	}
 
 	/**
+	 * Update a Diploma
 	 *
-	 * @param jDiploma JsonNode with all diploma parameters, the old name and the
-	 *                 school who gave the diploma to perform the update even if the
-	 *                 name is changed
+	 * @param jDiploma JsonNode with all diploma parameters (name,oldName,yearOfResult,oldYearOfResult)
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ResourceNotFoundException} if the diploma is not
 	 *         found and {@link CreatedException} if the diploma is updated
