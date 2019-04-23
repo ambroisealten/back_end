@@ -58,7 +58,7 @@ public class SkillsSheetEntityController {
 		newSkillsSheet.setName(skillsSheetName);
 
 		Optional<Person> personAttachedTo;
-		String status = jSkillsSheet.get("role").textValue();
+		String status = jSkillsSheet.get("rolePersonAttachedTo").textValue();
 		String personMail = jSkillsSheet.get("mailPersonAttachedTo").textValue();
 		// Given the created person status
 		switch (status) {
@@ -71,7 +71,8 @@ public class SkillsSheetEntityController {
 		}
 		if (personAttachedTo.isPresent()) {
 			newSkillsSheet.setMailPersonAttachedTo(personAttachedTo.get().getMail());
-		}
+		}		
+		newSkillsSheet.setRolePersonAttachedTo(status);
 		// Get all skills given several lists of skills (tech and soft)
 		newSkillsSheet.setSoftSkillsList(this.getAllSoftSkills(jSkillsSheet.get("softSkillsList")));
 		newSkillsSheet.setTechSkillsList(this.getAllTechSkills(jSkillsSheet.get("techSkillsList")));
@@ -203,8 +204,8 @@ public class SkillsSheetEntityController {
 			SkillsSheet skillsSheet = skillsSheetOptional.get();
 
 			Optional<Person> personAttachedTo;
-			String status = jSkillsSheet.get("role").textValue();
-			String personMail = jSkillsSheet.get("personMail").textValue();
+			String status = jSkillsSheet.get("rolePersonAttachedTo").textValue();
+			String personMail = jSkillsSheet.get("mailPersonAttachedTo").textValue();
 			switch (status) {
 			case "consultant":
 				personAttachedTo = personEntityController.getPersonByMailAndType(personMail, PersonRole.CONSULTANT);
@@ -216,9 +217,10 @@ public class SkillsSheetEntityController {
 			if (personAttachedTo.isPresent()) {
 				skillsSheet.setMailPersonAttachedTo(personAttachedTo.get().getMail());
 			}
+			skillsSheet.setRolePersonAttachedTo(status);
 
-			skillsSheet.setSoftSkillsList(this.getAllSoftSkills(jSkillsSheet.get("softskills")));
-			skillsSheet.setTechSkillsList(this.getAllTechSkills(jSkillsSheet.get("techskills")));
+			skillsSheet.setSoftSkillsList(this.getAllSoftSkills(jSkillsSheet.get("softSkillsList")));
+			skillsSheet.setTechSkillsList(this.getAllTechSkills(jSkillsSheet.get("techSkillsList")));
 
 			skillsSheet.setVersionNumber(latestVersionNumber + 1);
 
@@ -230,7 +232,7 @@ public class SkillsSheetEntityController {
 
 			skillsSheet.set_id(new ObjectId());
 
-			String authorMail = jSkillsSheet.get("authorMail").textValue();
+			String authorMail = jSkillsSheet.get("mailVersionAuthor").textValue();
 			Optional<User> userAuthor = userEntityController.getUserByMail(authorMail);
 			if (userAuthor.isPresent()) {
 				skillsSheet.setMailVersionAuthor(userAuthor.get().getMail());
@@ -243,6 +245,11 @@ public class SkillsSheetEntityController {
 			return new RessourceNotFoundException();
 		}
 		return new OkException();
+	}
+
+	public boolean checkIfSkillsWithMailExists(String mailPerson) {
+		List<SkillsSheet> listSkillsSheet = skillsSheetRepository.findByMailPersonAttachedTo(mailPerson);
+		return (listSkillsSheet.size() > 0);
 	}
 
 }

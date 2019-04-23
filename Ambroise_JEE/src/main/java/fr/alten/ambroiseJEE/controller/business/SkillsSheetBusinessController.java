@@ -102,4 +102,18 @@ public class SkillsSheetBusinessController {
 				: new ForbiddenException();
 	}
 
+	/**
+	 * Method to delegate the check if a Person already has a Skills sheets with its mail in it
+	 * @param mailPerson the mail of the person
+	 * @param role the user's role
+	 * @return a boolean whether the mail has been used
+	 * @author Lucas Royackkers
+	 */
+	public boolean checkIfSkillsWithMailExists(String mailPerson, UserRole role) {
+		if (UserRole.CDR == role || UserRole.CDR_ADMIN == role || UserRole.MANAGER == role || UserRole.MANAGER_ADMIN == role) { 
+				skillsSheetEntityController.checkIfSkillsWithMailExists(mailPerson);
+		}
+		throw new ForbiddenException();
+	}
+
 }

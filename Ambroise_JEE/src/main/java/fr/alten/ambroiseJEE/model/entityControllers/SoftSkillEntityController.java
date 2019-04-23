@@ -80,7 +80,7 @@ public class SoftSkillEntityController {
 	 * Try to fetch a soft skill by its name
 	 *
 	 * @param name the soft skill's name to fetch
-	 * @return An Optional with the corresponding soft skill or not.
+	 * @return the list of all softSkills given a name (can be empty)
 	 * @author Lucas Royackkers
 	 */
 	public List<SoftSkill> getSoftSkillByName(String name) {
