@@ -21,7 +21,8 @@ import fr.alten.ambroiseJEE.utils.routing.ParseRoutingFile;
 public class ConfigBusinessController {
 
 	/**
-	 *
+	 * Get the list of all menu items
+	 * 
 	 * @param role the user role
 	 * @return a json string containing every menu and submenu items
 	 * @author Camille Schnell
