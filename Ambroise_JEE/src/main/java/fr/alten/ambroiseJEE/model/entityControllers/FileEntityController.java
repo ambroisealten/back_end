@@ -29,7 +29,7 @@ public class FileEntityController {
 	 * @author Andy Chabalier
 	 */
 	public List<File> getFiles() {
-		return fileRepository.findAll();
+		return this.fileRepository.findAll();
 	}
 
 	/**
@@ -41,14 +41,14 @@ public class FileEntityController {
 	 *         database{@link CreatedException} if the document is created
 	 * @author Andy Chabalier
 	 */
-	public File pushDocument(String path, String extension) {
-		File file = new File();
+	public File pushDocument(final String path, final String extension) {
+		final File file = new File();
 		file.setPath(path);
 		file.setExtension(extension);
 		file.setDateOfCreation(System.currentTimeMillis());
 		try {
-			return fileRepository.save(file);
-		} catch (Exception e) {
+			return this.fileRepository.save(file);
+		} catch (final Exception e) {
 			throw new ConflictException();
 		}
 	}

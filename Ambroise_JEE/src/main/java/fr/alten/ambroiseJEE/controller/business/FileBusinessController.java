@@ -30,9 +30,9 @@ public class FileBusinessController {
 	 * @param role     the current logged user's role
 	 * @author Andy Chabalier
 	 */
-	public File createDocument(String filePath, String extension, UserRole role) {
+	public File createDocument(final String filePath, final String extension, final UserRole role) {
 		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
-			return fileEntityController.pushDocument(filePath, extension);
+			return this.fileEntityController.pushDocument(filePath, extension);
 		} else {
 			throw new ForbiddenException();
 		}
@@ -43,7 +43,7 @@ public class FileBusinessController {
 	 * @return the list of files
 	 * @author Andy Chabalier
 	 */
-	public List<File> getFiles(UserRole role) {
-		return fileEntityController.getFiles();
+	public List<File> getFiles(final UserRole role) {
+		return this.fileEntityController.getFiles();
 	}
 }

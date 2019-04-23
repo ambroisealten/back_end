@@ -25,35 +25,35 @@ public class File implements Serializable {
 	private long dateOfCreation;
 
 	public ObjectId get_id() {
-		return _id;
+		return this._id;
 	}
 
 	public long getDateOfCreation() {
-		return dateOfCreation;
-	}
-
-	public String getPath() {
-		return path;
-	}
-
-	public void set_id(ObjectId _id) {
-		this._id = _id;
-	}
-
-	public void setDateOfCreation(long dateOfAddition) {
-		this.dateOfCreation = dateOfAddition;
-	}
-
-	public void setPath(String uri) {
-		this.path = uri;
+		return this.dateOfCreation;
 	}
 
 	public String getExtension() {
-		return extension;
+		return this.extension;
 	}
 
-	public void setExtension(String extension) {
+	public String getPath() {
+		return this.path;
+	}
+
+	public void set_id(final ObjectId _id) {
+		this._id = _id;
+	}
+
+	public void setDateOfCreation(final long dateOfAddition) {
+		this.dateOfCreation = dateOfAddition;
+	}
+
+	public void setExtension(final String extension) {
 		this.extension = extension;
+	}
+
+	public void setPath(final String uri) {
+		this.path = uri;
 	}
 
 }

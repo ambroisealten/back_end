@@ -87,7 +87,8 @@ public class FileStorageBusinessController {
 	 * @return the name of the stored file
 	 * @author Andy Chabalier
 	 */
-	public HttpException storeFile(final MultipartFile file, String path, String fileName, final UserRole role) {
+	public HttpException storeFile(final MultipartFile file, final String path, final String fileName,
+			final UserRole role) {
 		if (!(UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)) {
 			throw new ForbiddenException();
 		}
@@ -99,10 +100,10 @@ public class FileStorageBusinessController {
 				throw new UnprocessableEntityException();
 			}
 
-			Path dirPath = Paths.get(this.fileStorageLocation.toAbsolutePath() + path);
+			final Path dirPath = Paths.get(this.fileStorageLocation.toAbsolutePath() + path);
 			Files.createDirectories(dirPath);
-			Path targetLocation = dirPath.resolve(fileName);
-			InputStream fileInputStream = file.getInputStream();
+			final Path targetLocation = dirPath.resolve(fileName);
+			final InputStream fileInputStream = file.getInputStream();
 			Files.copy(fileInputStream, targetLocation);
 			fileInputStream.close();
 			return new CreatedException();

@@ -53,7 +53,7 @@ public class FileRestController {
 	private final Gson gson;
 
 	public FileRestController() {
-		GsonBuilder builder = new GsonBuilder();
+		final GsonBuilder builder = new GsonBuilder();
 		this.gson = builder.create();
 	}
 
@@ -68,10 +68,10 @@ public class FileRestController {
 	 * @author Andy Chabalier
 	 */
 	@GetMapping("/file/{fileName}")
-	public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, @RequestParam("path") String path,
-			HttpServletRequest request, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) {
-		Resource resource = fileStorageBusinessController.loadFileAsResource(path + fileName);
+	public ResponseEntity<Resource> downloadFile(@PathVariable final String fileName,
+			@RequestParam("path") final String path, final HttpServletRequest request,
+			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
+		final Resource resource = this.fileStorageBusinessController.loadFileAsResource(path + fileName);
 
 		// Try to determine file's content type
 		String contentType = null;
@@ -80,7 +80,7 @@ public class FileRestController {
 			if (contentType == null) {
 				throw new NullPointerException();
 			}
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			// Set the default content type
 			contentType = "application/octet-stream";
 		}
@@ -99,8 +99,8 @@ public class FileRestController {
 	 * @author Andy Chabalier
 	 */
 	@GetMapping("/files")
-	public String getFiles(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
-		return gson.toJson(fileBusinessController.getFiles(role));
+	public String getFiles(@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
+		return this.gson.toJson(this.fileBusinessController.getFiles(role));
 	}
 
 	/**
@@ -112,7 +112,8 @@ public class FileRestController {
 	 * @author Andy Chabalier
 	 */
 	@GetMapping("/files/forum")
-	public String getFilesForum(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
+	public String getFilesForum(@RequestAttribute("mail") final String mail,
+			@RequestAttribute("role") final UserRole role) {
 		// TODO
 		return null;
 	}
@@ -133,13 +134,14 @@ public class FileRestController {
 	 * @author Andy Chabalier
 	 */
 	@PostMapping("/file")
-	public HttpException uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("path") String path,
-			@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
+	public HttpException uploadFile(@RequestParam("file") final MultipartFile file,
+			@RequestParam("path") final String path, @RequestAttribute("mail") final String mail,
+			@RequestAttribute("role") final UserRole role) {
 
 		if (file != null) {
-			File newFile = fileBusinessController.createDocument(path,
+			final File newFile = this.fileBusinessController.createDocument(path,
 					FilenameUtils.getExtension(file.getOriginalFilename()), role);
-			return fileStorageBusinessController.storeFile(file, newFile.getPath(),
+			return this.fileStorageBusinessController.storeFile(file, newFile.getPath(),
 					newFile.get_id() + "." + newFile.getExtension(), role);
 		} else {
 			return new UnprocessableEntityException();
@@ -158,9 +160,9 @@ public class FileRestController {
 	 * @author Andy Chabalier
 	 */
 	@PostMapping("/file/multiples")
-	public List<HttpException> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files,
-			@RequestParam("path") String path, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) {
+	public List<HttpException> uploadMultipleFiles(@RequestParam("files") final MultipartFile[] files,
+			@RequestParam("path") final String path, @RequestAttribute("mail") final String mail,
+			@RequestAttribute("role") final UserRole role) {
 		return Arrays.asList(files).stream().map(file -> uploadFile(file, path, mail, role))
 				.collect(Collectors.toList());
 	}
