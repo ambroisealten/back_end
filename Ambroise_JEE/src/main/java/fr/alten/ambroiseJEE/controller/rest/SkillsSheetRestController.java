@@ -46,27 +46,30 @@ public class SkillsSheetRestController {
 	/**
 	 *
 	 * @param params JsonNode containing post parameters from http request
-	 * @param mail   the user's mail
-	 * @param role   the user's role
-	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link UnprocessableEntityException} if the resource is not found
+	 * @param mail   the current logged user's mail
+	 * @param role   the current logged user's role
+	 * @return {@link HttpException} corresponding to the status of the request,
+	 *         {@link UnprocessableEntityException} if we can't create the resource,
+	 *         {@link ConflictException} if there is a conflict in the database,
+	 *         {@link ForbiddenException} if the current logged user hasn't the rights to perform this action
 	 *         and {@link CreatedException} if the skills sheet is created
-	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author Lucas Royackkers
 	 */
 	@PostMapping(value = "/skillsheet")
 	@ResponseBody
 	public HttpException createSkillsSheet(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws Exception {
-		return skillsSheetBusinessController.createSkillsSheet(params, role);
+		return (params.get("name") != null && params.get("mailPersonAttachedTo") != null && params.get("mailVersionAuthor") != null) ?
+				skillsSheetBusinessController.createSkillsSheet(params, role) : new UnprocessableEntityException();
 	}
 
 	/**
 	 *
-	 * @param mail the user's mail
-	 * @param role the user's role
+	 * @param mail the current logged user's mail
+	 * @param role the current logged user's role
 	 * @param name the name of the skills sheet
-	 * @return the list of all skills sheets given a name
+	 * @return the list of all skills sheets given a name (empty if there is no match)
+	 * @throws {@link ForbiddenException} if the current logged user hasn't the rights to perform this action
 	 * @author Lucas Royackkers
 	 */
 	@GetMapping(value = "/skillsheet/{name}")
@@ -82,6 +85,7 @@ public class SkillsSheetRestController {
 	 * @param mail the current logged user's mail
 	 * @param role the current logged user's role
 	 * @return a boolean showing if the mailPerson has been used in a skills sheet or not
+	 * @throws {@link ForbiddenException} if the current logged user hasn't the rights to perform this action
 	 * @author Lucas Royackkers
 	 */
 	@GetMapping(value = "/skillsheet?mail={mail}")
@@ -96,9 +100,10 @@ public class SkillsSheetRestController {
 	 *
 	 * @param sheetName     the name of the skills sheet
 	 * @param versionNumber the version number of the skills sheet
-	 * @param mail          the user's mail
-	 * @param role          the user's role
+	 * @param mail          the current logged user's mail
+	 * @param role          the current logged user's role
 	 * @return a skills sheet given its name and its versionNumber
+	 * @throws {@link RessourceNotFoundException} if the skills sheet hasn't been found, {@link ForbiddenException} if the current logged user hasn't the rights to perform this action
 	 * @author Lucas Royackkers
 	 */
 	@GetMapping(value = "/skillsheet/{name}/{versionNumber}")
@@ -118,9 +123,10 @@ public class SkillsSheetRestController {
 
 	/**
 	 *
-	 * @param mail the user's mail
-	 * @param role the user's role
-	 * @return the list of all skills sheets
+	 * @param mail the current logged user's mail
+	 * @param role the current logged user's role
+	 * @return the list of all skills sheets (empty if there is no match)
+	 * @throws {@link ForbiddenException} if the current logged user hasn't the rights to perform this action
 	 * @author Lucas Royackkers
 	 */
 	@GetMapping(value = "/skillsheets")
@@ -132,19 +138,20 @@ public class SkillsSheetRestController {
 	/**
 	 *
 	 * @param params JsonNode containing post parameters from http request
-	 * @param mail   the user's mail
-	 * @param role   the user's role
-	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link UnprocessableEntityException} if the resource is not found
+	 * @param mail   the current logged user's mail
+	 * @param role   the current logged user's role
+	 * @return {@link HttpException} corresponding to the status of the request,
+	 *         {@link UnprocessableEntityException} if we can't update the resource,
+	 *         {@link ForbiddenException} if the current logged user hasn't the rights to perform this action
 	 *         and {@link CreatedException} if the skills sheet is updated
-	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author Lucas Royackkers
 	 */
 	@PutMapping(value = "/skillsheet")
 	@ResponseBody
 	public HttpException updateSkillsSheet(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) {
-		return skillsSheetBusinessController.updateSkillsSheet(params, role);
+		return (params.get("versionNumber") != null && params.get("name") != null && params.get("mailPersonAttachedTo") != null && params.get("mailVersionAuthor") != null) ?
+					skillsSheetBusinessController.updateSkillsSheet(params, role) : new UnprocessableEntityException();
 	}
 
 }
