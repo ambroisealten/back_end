@@ -4,6 +4,7 @@
 package fr.alten.ambroiseJEE.controller.business;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,7 +21,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
+import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
@@ -45,11 +48,11 @@ public class FileStorageBusinessController {
 	 */
 	@PostConstruct
 	private void init() {
-		this.fileStorageLocation = Paths.get(ctx.getEnvironment().getProperty("file.upload.path")).toAbsolutePath()
+		this.fileStorageLocation = Paths.get(this.ctx.getEnvironment().getProperty("file.upload.path")).toAbsolutePath()
 				.normalize();
 		try {
 			Files.createDirectories(this.fileStorageLocation);
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			throw new ConflictException();
 		}
 	}
@@ -61,16 +64,16 @@ public class FileStorageBusinessController {
 	 * @return the ressource fetched
 	 * @author Andy Chabalier
 	 */
-	public Resource loadFileAsResource(String fileName) {
+	public Resource loadFileAsResource(final String fileName) {
 		try {
-			Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
-			Resource resource = new UrlResource(filePath.toUri());
+			final Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
+			final Resource resource = new UrlResource(filePath.toUri());
 			if (resource.exists()) {
 				return resource;
 			} else {
 				throw new RessourceNotFoundException();
 			}
-		} catch (MalformedURLException ex) {
+		} catch (final MalformedURLException ex) {
 			throw new RessourceNotFoundException();
 		}
 	}
@@ -82,22 +85,26 @@ public class FileStorageBusinessController {
 	 * @return the name of the stored file
 	 * @author Andy Chabalier
 	 */
-	public String storeFile(MultipartFile file) {
+	public String storeFile(final MultipartFile file, final UserRole role) {
+		if (!(UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)) {
+			throw new ForbiddenException();
+		}
 		// Normalize file name
-		String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+		final String fileName = StringUtils.cleanPath(file.getOriginalFilename());
 
 		try {
 			// Check if the file's name contains invalid characters
-			if (fileName.contains("..")) {
+			if (fileName.contains("['{}[\\]\\\\;':\",./?!@#$%&*()_+=-]")) {
 				throw new UnprocessableEntityException();
 			}
 
 			// Copy file to the target location (Replacing existing file with the same name)
-			Path targetLocation = this.fileStorageLocation.resolve(fileName);
-			Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
-
+			final Path targetLocation = this.fileStorageLocation.resolve(fileName);
+			InputStream fileInputStream = file.getInputStream();
+			Files.copy(fileInputStream, targetLocation, StandardCopyOption.REPLACE_EXISTING);
+			fileInputStream.close();
 			return "file/" + fileName;
-		} catch (IOException ex) {
+		} catch (final IOException ex) {
 			throw new UnprocessableEntityException();
 		}
 	}

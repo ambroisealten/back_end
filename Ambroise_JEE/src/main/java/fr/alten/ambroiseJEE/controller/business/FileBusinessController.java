@@ -43,10 +43,7 @@ public class FileBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public List<File> getFiles(UserRole role) {
-		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
-			return fileEntityController.getFiles();
-		}
-		throw new ForbiddenException();
+		return fileEntityController.getFiles();
 	}
 
 	/**
@@ -55,10 +52,7 @@ public class FileBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public List<File> getFilesForum(UserRole role) {
-		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
-			return fileEntityController.getFilesForum();
-		}
-		throw new ForbiddenException();
+		return fileEntityController.getFilesForum();
 	}
 
 }

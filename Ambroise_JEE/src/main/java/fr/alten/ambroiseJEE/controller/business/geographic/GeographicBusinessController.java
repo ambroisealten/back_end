@@ -47,7 +47,7 @@ public class GeographicBusinessController {
 	@Autowired
 	private PostalCodeBusinessController postalCodeBusinessController;
 
-	private Gson gson = (new GsonBuilder()).create();
+	private final Gson gson = new GsonBuilder().create();
 
 	/**
 	 * Create cities from a provided departement arrayList. This method will ask the
@@ -57,25 +57,25 @@ public class GeographicBusinessController {
 	 * @param role      the current logged user role
 	 * @author Andy Chabalier
 	 */
-	private void createCities(ArrayList<LinkedTreeMap> departements, UserRole role) {
+	private void createCities(final ArrayList<LinkedTreeMap> departements, final UserRole role) {
 
-		RestTemplate restTemplate = new RestTemplate();
-		for (LinkedTreeMap departement : departements) {
+		final RestTemplate restTemplate = new RestTemplate();
+		for (final LinkedTreeMap departement : departements) {
 			try {
 				ArrayList<LinkedTreeMap> citiesByDepartement = new ArrayList<LinkedTreeMap>();
-				String code = (String) departement.get("code");
-				URI urlCities = new URI("https://geo.api.gouv.fr/departements/" + code + "/communes");
-				citiesByDepartement = gson.fromJson(restTemplate.getForObject(urlCities, String.class),
+				final String code = (String) departement.get("code");
+				final URI urlCities = new URI("https://geo.api.gouv.fr/departements/" + code + "/communes");
+				citiesByDepartement = this.gson.fromJson(restTemplate.getForObject(urlCities, String.class),
 						ArrayList.class);
-				for (LinkedTreeMap city : citiesByDepartement) {
+				for (final LinkedTreeMap city : citiesByDepartement) {
 					try {
-						JsonNode jCity = JsonUtils.toJsonNode(gson.toJsonTree(city).getAsJsonObject());
-						cityBusinessController.createCity(jCity, role);
-					} catch (IOException e) {
+						final JsonNode jCity = JsonUtils.toJsonNode(this.gson.toJsonTree(city).getAsJsonObject());
+						this.cityBusinessController.createCity(jCity, role);
+					} catch (final IOException e) {
 						e.printStackTrace();
 					}
 				}
-			} catch (URISyntaxException e) {
+			} catch (final URISyntaxException e) {
 				e.printStackTrace();
 			}
 		}
@@ -88,12 +88,12 @@ public class GeographicBusinessController {
 	 * @param arrayList ArrayList of {@link LinkedTreeMap} with departements data
 	 * @author Andy Chabalier
 	 */
-	private void createDepartement(ArrayList<LinkedTreeMap> departementData, UserRole role) {
-		for (LinkedTreeMap departement : departementData) {
+	private void createDepartement(final ArrayList<LinkedTreeMap> departementData, final UserRole role) {
+		for (final LinkedTreeMap departement : departementData) {
 			try {
-				JsonNode jDepartement = JsonUtils.toJsonNode(gson.toJsonTree(departement).getAsJsonObject());
-				departementBusinessController.createDepartement(jDepartement, role);
-			} catch (IOException e) {
+				final JsonNode jDepartement = JsonUtils.toJsonNode(this.gson.toJsonTree(departement).getAsJsonObject());
+				this.departementBusinessController.createDepartement(jDepartement, role);
+			} catch (final IOException e) {
 				e.printStackTrace();
 			}
 		}
@@ -106,12 +106,12 @@ public class GeographicBusinessController {
 	 * @author Andy Chabalier
 	 * @return
 	 */
-	private void createRegion(ArrayList<LinkedTreeMap> regionData, UserRole role) {
-		for (LinkedTreeMap region : regionData) {
+	private void createRegion(final ArrayList<LinkedTreeMap> regionData, final UserRole role) {
+		for (final LinkedTreeMap region : regionData) {
 			try {
-				JsonNode jRegion = JsonUtils.toJsonNode(gson.toJsonTree(region).getAsJsonObject());
-				regionBusinessController.createRegion(jRegion, role);
-			} catch (IOException e) {
+				final JsonNode jRegion = JsonUtils.toJsonNode(this.gson.toJsonTree(region).getAsJsonObject());
+				this.regionBusinessController.createRegion(jRegion, role);
+			} catch (final IOException e) {
 				e.printStackTrace();
 			}
 		}
@@ -128,28 +128,25 @@ public class GeographicBusinessController {
 	 * @author Andy Chabalier
 	 */
 	private HashMap<String, ArrayList<LinkedTreeMap>> fetchData() {
-		HashMap<String, ArrayList<LinkedTreeMap>> data = new HashMap<String, ArrayList<LinkedTreeMap>>();
+		final HashMap<String, ArrayList<LinkedTreeMap>> data = new HashMap<String, ArrayList<LinkedTreeMap>>();
 
-		Thread dataFetchingThread = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
+		final Thread dataFetchingThread = new Thread(() -> {
+			try {
 
-					RestTemplate restTemplate = new RestTemplate();
+				final RestTemplate restTemplate = new RestTemplate();
 
-					URI urlDepartement = new URI("https://geo.api.gouv.fr/departements?fields=");
-					URI urlRegion = new URI("https://geo.api.gouv.fr/regions?fields=");
+				final URI urlDepartement = new URI("https://geo.api.gouv.fr/departements?fields=");
+				final URI urlRegion = new URI("https://geo.api.gouv.fr/regions?fields=");
 
-					data.put("region",
-							gson.fromJson(restTemplate.getForObject(urlRegion, String.class), ArrayList.class));
+				data.put("region", GeographicBusinessController.this.gson
+						.fromJson(restTemplate.getForObject(urlRegion, String.class), ArrayList.class));
 
-					ArrayList<LinkedTreeMap> departementsFetched = gson
-							.fromJson(restTemplate.getForObject(urlDepartement, String.class), ArrayList.class);
-					data.put("departement", departementsFetched);
+				final ArrayList<LinkedTreeMap> departementsFetched = GeographicBusinessController.this.gson
+						.fromJson(restTemplate.getForObject(urlDepartement, String.class), ArrayList.class);
+				data.put("departement", departementsFetched);
 
-				} catch (URISyntaxException e) {
-					e.printStackTrace();
-				}
+			} catch (final URISyntaxException e) {
+				e.printStackTrace();
 			}
 		});
 		dataFetchingThread.run();
@@ -168,26 +165,26 @@ public class GeographicBusinessController {
 	 * @throws RessourceNotFoundException()
 	 * @author Andy Chabalier
 	 */
-	public Optional<Geographic> getPlace(String placeName, String placeType) {
+	public Optional<Geographic> getPlace(final String placeName, final String placeType) {
 		Geographic place;
 		try {
 			switch (placeType.toLowerCase()) {
 			case "city":
-				place = cityBusinessController.getCity(placeName).get();
+				place = this.cityBusinessController.getCity(placeName).get();
 				break;
 			case "region":
-				place = regionBusinessController.getRegion(placeName).get();
+				place = this.regionBusinessController.getRegion(placeName).get();
 				break;
 			case "departement":
-				place = departementBusinessController.getDepartement(placeName).get();
+				place = this.departementBusinessController.getDepartement(placeName).get();
 				break;
 			case "postalCode":
-				place = postalCodeBusinessController.getPostalCode(placeName).get();
+				place = this.postalCodeBusinessController.getPostalCode(placeName).get();
 				break;
 			default:
 				throw new RessourceNotFoundException();
 			}
-		} catch (NoSuchElementException nsee) {
+		} catch (final NoSuchElementException nsee) {
 			return Optional.empty();
 		}
 		return Optional.ofNullable(place);
@@ -204,9 +201,9 @@ public class GeographicBusinessController {
 	 *         done
 	 * @author Andy Chabalier
 	 */
-	public HttpException synchronize(UserRole role) {
+	public HttpException synchronize(final UserRole role) {
 		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
-			HashMap<String, ArrayList<LinkedTreeMap>> data = fetchData();
+			final HashMap<String, ArrayList<LinkedTreeMap>> data = fetchData();
 
 			createRegion(data.get("region"), role);
 			createDepartement(data.get("departement"), role);

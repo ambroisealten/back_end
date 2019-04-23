@@ -4,6 +4,7 @@ import org.jose4j.jwk.RsaJsonWebKey;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
+import org.jose4j.jwt.MalformedClaimException;
 import org.jose4j.jwt.consumer.InvalidJwtException;
 import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
@@ -23,14 +24,16 @@ public class JWTokenUtility {
 	 * @param subject user data to encrypt in token
 	 * @return String generated token
 	 * @author Andy Chabalier
+	 * @throws MalformedClaimException
 	 */
-	public static Token buildJWT(String subject) {
+	public static Token buildJWT(String subject) throws MalformedClaimException {
 		RsaJsonWebKey rsaJsonWebKey = RsaKeyProducer.produce();
 
 		// création de la "charge utile" ou payload - la donnée Ã chiffrer, ici
 		// 'subject'
 		JwtClaims claims = new JwtClaims();
 		claims.setSubject(subject);
+		claims.setExpirationTimeMinutesInTheFuture(15);
 
 		// création de la signature
 		JsonWebSignature jws = new JsonWebSignature();
