@@ -42,7 +42,7 @@ public class CityEntityController {
 	public HttpException createCity(JsonNode jCity) {
 
 		City newCity = new City();
-		newCity.setName(jCity.get("nom").textValue());
+		newCity.setName(jCity.get("name").textValue());
 		newCity.setCode(jCity.get("code").textValue());
 		newCity.setCodeDepartement(jCity.get("codeDepartement").textValue());
 		newCity.setCodeRegion(jCity.get("codeRegion").textValue());
