@@ -6,7 +6,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
+import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 
 /**
  *
@@ -50,17 +50,17 @@ public class AngularModules {
 	 *
 	 * @param module : AngularModule of the filePath
 	 * @return filePath of the AngularModule Json associated
-	 * @throws RessourceNotFoundException
+	 * @throws ResourceNotFoundException
 	 */
-	public String getFileByAngularModule(AngularModule module) throws RessourceNotFoundException {
+	public String getFileByAngularModule(AngularModule module) throws ResourceNotFoundException {
 		for (Map.Entry<AngularModule, String> e : this.jsonLinks.entrySet()) {
 			if (e.getKey().equals(module)) {
-				logger.debug("Récuperation de la ressource suivante pour parsing : {}", e.getValue());
+				logger.debug("Récuperation de la resource suivante pour parsing : {}", e.getValue());
 				return e.getValue();
 			}
 		}
 
-		throw new RessourceNotFoundException();
+		throw new ResourceNotFoundException();
 	}
 
 }

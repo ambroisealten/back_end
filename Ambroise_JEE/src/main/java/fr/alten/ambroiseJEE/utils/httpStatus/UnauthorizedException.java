@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * @author Andy Chabalier
  *
  */
-@ResponseStatus(value = HttpStatus.UNAUTHORIZED, reason = "Une authentification est nécessaire pour accéder à la ressource.")
+@ResponseStatus(value = HttpStatus.UNAUTHORIZED, reason = "Une authentification est nécessaire pour accéder à la resource.")
 public class UnauthorizedException extends HttpException {
 
 	private static final long serialVersionUID = 900489820760681258L;
@@ -27,6 +27,6 @@ public class UnauthorizedException extends HttpException {
 
 	@Override
 	public String getLocalizedMessage() {
-		return "Accès refusé. Une authentification est nécessaire pour accéder à la ressource.";
+		return "Accès refusé. Une authentification est nécessaire pour accéder à la resource.";
 	}
 }

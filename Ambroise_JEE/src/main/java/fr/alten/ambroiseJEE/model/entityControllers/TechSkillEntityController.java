@@ -15,7 +15,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
-import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
+import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 
 /**
  * Tech skill controller for entity gestion rules
@@ -60,14 +60,14 @@ public class TechSkillEntityController {
 	 *
 	 * @param name the TechSkill name to fetch
 	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link RessourceNotFoundException} if the resource is not found and
+	 *         ({@link ResourceNotFoundException} if the resource is not found and
 	 *         {@link OkException} if the TechSkill is deactivated
 	 * @author Thomas Decamp
 	 */
 	public HttpException deleteTechSkill(JsonNode jTechSkill) {
 		List<TechSkill> techSkills = techSkillRepository.findByName(jTechSkill.get("name").textValue());
 		if (techSkills.isEmpty()) {
-			return new RessourceNotFoundException();
+			return new ResourceNotFoundException();
 		}
 		for (TechSkill techSkill : techSkills) {
 			techSkill.setName("deactivated" + System.currentTimeMillis());
@@ -113,14 +113,14 @@ public class TechSkillEntityController {
 	 * @param jTechSkill JsonNode with all TechSkill parameters and the old name to
 	 *                   perform the update even if the name is changed
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link RessourceNotFoundException} if the resource is not
+	 *         request ({@link ResourceNotFoundException} if the resource is not
 	 *         found and {@link CreatedException} if the TechSkill is updated
 	 * @author Thomas Decamp
 	 */
 	public HttpException updateTechSkill(JsonNode jTechSkill) {
 		List<TechSkill> techSkills = techSkillRepository.findByName(jTechSkill.get("oldName").textValue());
 		if (techSkills.isEmpty()) {
-			return new RessourceNotFoundException();
+			return new ResourceNotFoundException();
 		}
 		String newName = jTechSkill.get("name").textValue();
 		List<TechSkill> newTechSkills = techSkillRepository.findByName(newName);

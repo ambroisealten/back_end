@@ -17,7 +17,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
-import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
+import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 
 /**
  * @author Andy Chabalier
@@ -57,7 +57,7 @@ public class RegionEntityController {
 	 *
 	 * @param name the region name to fetch
 	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link RessourceNotFoundException} if the resource is not found and
+	 *         ({@link ResourceNotFoundException} if the resource is not found and
 	 *         {@link OkException} if the region is deactivated
 	 * @author Andy Chabalier
 	 */
@@ -69,7 +69,7 @@ public class RegionEntityController {
 			region.setName("deactivated" + System.currentTimeMillis());
 			regionRepository.save(region);
 		} else {
-			throw new RessourceNotFoundException();
+			throw new ResourceNotFoundException();
 		}
 		return new OkException();
 	}
@@ -91,7 +91,7 @@ public class RegionEntityController {
 	 * @param jRegion JsonNode with all region parameters and the old name to
 	 *                perform the update even if the name is changed
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link RessourceNotFoundException} if the resource is not
+	 *         request ({@link ResourceNotFoundException} if the resource is not
 	 *         found and {@link CreatedException} if the region is updated
 	 * @author Andy Chabalier
 	 */
@@ -104,7 +104,7 @@ public class RegionEntityController {
 
 			regionRepository.save(region);
 		} else {
-			throw new RessourceNotFoundException();
+			throw new ResourceNotFoundException();
 		}
 		return new OkException();
 	}

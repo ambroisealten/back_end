@@ -21,7 +21,7 @@ import fr.alten.ambroiseJEE.model.beans.SkillsSheet;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
-import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
+import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
@@ -103,7 +103,7 @@ public class SkillsSheetRestController {
 	 * @param mail          the current logged user's mail
 	 * @param role          the current logged user's role
 	 * @return a skills sheet given its name and its versionNumber
-	 * @throws {@link RessourceNotFoundException} if the skills sheet hasn't been found, {@link ForbiddenException} if the current logged user hasn't the rights to perform this action
+	 * @throws {@link ResourceNotFoundException} if the skills sheet hasn't been found, {@link ForbiddenException} if the current logged user hasn't the rights to perform this action
 	 * @author Lucas Royackkers
 	 */
 	@GetMapping(value = "/skillsheet/{name}/{versionNumber}")
@@ -117,7 +117,7 @@ public class SkillsSheetRestController {
 		if (optionalSkillSheet.isPresent()) {
 			return gson.toJson(optionalSkillSheet.get());
 		}
-		throw new RessourceNotFoundException();
+		throw new ResourceNotFoundException();
 
 	}
 

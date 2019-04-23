@@ -17,7 +17,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
-import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
+import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 
 /**
  * @author MAQUINGHEN MAXIME
@@ -34,7 +34,7 @@ public class ForumEntityController {
 	 *
 	 * @param jForum contain the forum name, the date and the place to create
 	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link ConflictException} if the ressource cannot be create
+	 *         ({@link ConflictException} if the resource cannot be create
 	 *         {@link CreatedException} if the forum is create
 	 * @author MAQUINGHEN MAXIME
 	 */
@@ -65,7 +65,7 @@ public class ForumEntityController {
 	 *
 	 * @param params contain the name, date and place of the forum to delete
 	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link RessourceNotFoundException} if the ressource cannot be found
+	 *         ({@link ResourceNotFoundException} if the resource cannot be found
 	 *         {@link OkException} if the forum is deleted
 	 * @author MAQUINGHEN MAXIME
 	 */
@@ -77,7 +77,7 @@ public class ForumEntityController {
 			Forum forum = forumOptional.get();
 			forumRepository.delete(forum);
 		} else {
-			return new RessourceNotFoundException();
+			return new ResourceNotFoundException();
 		}
 		return new OkException();
 	}
@@ -110,7 +110,7 @@ public class ForumEntityController {
 	 *
 	 * @param params contain the forum oldname, olddate and oldplace to update
 	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link RessourceNotFoundException} if the ressource cannot be found
+	 *         ({@link ResourceNotFoundException} if the resource cannot be found
 	 *         {@link OkException} if the forum is updated
 	 * @author MAQUINGHEN MAXIME
 	 */
@@ -138,7 +138,7 @@ public class ForumEntityController {
 				return new ConflictException();
 			}
 		} else {
-			return new RessourceNotFoundException();
+			return new ResourceNotFoundException();
 		}
 		return new OkException();
 	}

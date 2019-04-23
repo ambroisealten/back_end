@@ -15,7 +15,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
-import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
+import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 
 /**
  * Employer controller for business rules
@@ -52,7 +52,7 @@ public class EmployerBusinessController {
 	 * @param params the Json containing all Employer parameters
 	 * @param role   the user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link RessourceNotFoundException} if the resource is not
+	 *         request ({@link ResourceNotFoundException} if the resource is not
 	 *         found and {@link OkException} if the employer is deactivated
 	 * @author Lucas Royackkers
 	 */
@@ -84,7 +84,7 @@ public class EmployerBusinessController {
 	 * @param params the Json containing all Employer parameters
 	 * @param role   the user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link RessourceNotFoundException} if the resource is not
+	 *         request ({@link ResourceNotFoundException} if the resource is not
 	 *         found and {@link OkException} if the employer is updated
 	 * @author Lucas Royackkers
 	 */
