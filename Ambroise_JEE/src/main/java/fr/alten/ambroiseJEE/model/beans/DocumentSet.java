@@ -27,28 +27,20 @@ public class DocumentSet implements Serializable {
 	@Indexed(unique= true)
 	private String name;
 	
-	List<Pair<String, Integer>> files;
-	/**
-	 * @return the name
-	 */
+	private List<Pair<String, Integer>> files;
+
 	public String getName() {
 		return name;
 	}
-	/**
-	 * @param name the name to set
-	 */
+	
 	public void setName(String name) {
 		this.name = name;
 	}
-	/**
-	 * @return the files
-	 */
+	
 	public List<Pair<String, Integer>> getFiles() {
 		return files;
 	}
-	/**
-	 * @param files the files to set
-	 */
+	
 	public void setFiles(List<Pair<String, Integer>> files) {
 		this.files = files;
 	}

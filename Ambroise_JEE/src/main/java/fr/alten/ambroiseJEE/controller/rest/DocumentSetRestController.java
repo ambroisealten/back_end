@@ -4,6 +4,7 @@
 package fr.alten.ambroiseJEE.controller.rest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
@@ -49,7 +50,20 @@ public class DocumentSetRestController {
 			@RequestAttribute("role") UserRole role) {
 		return documentSetBusinessController.updateDocumentSet(JDocumentSet, role);
 	}
-//	/**
+
+	@GetMapping("/documentset")
+	@ResponseBody
+	public String getDocumentSet(@RequestBody JsonNode JDocumentSet, @RequestAttribute("role") UserRole role) {
+		return gson.toJson(documentSetBusinessController.getDocumentSet(JDocumentSet, role));
+	}
+
+	@GetMapping("/documentset/admin")
+	@ResponseBody
+	public String getDocumentSetAdmin(@RequestAttribute("role") UserRole role) {
+		return gson.toJson(documentSetBusinessController.getDocumentSetAdmin(role));
+	}
+
+	// /**
 //	 * 
 //	 * @param appVersion
 //	 * @param role
