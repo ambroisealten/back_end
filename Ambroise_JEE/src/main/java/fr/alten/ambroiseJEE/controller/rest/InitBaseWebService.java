@@ -678,8 +678,9 @@ public class InitBaseWebService {
 		SkillsSheet newFirst = new SkillsSheet();
 		newFirst.setName("JTE-mmm-AAA");
 		newFirst.setMailPersonAttachedTo("jc.test@gmail.com");
-		newFirst.setMailVersionAuthor("tempUserAdminManager@mail.com");
 		newFirst.setRolePersonAttachedTo("consultant");
+		newFirst.setMailVersionAuthor("tempUserAdminManager@mail.com");
+		
 
 		List<TechSkill> newListTechSkill = new ArrayList<TechSkill>();
 		List<SoftSkill> newLisftSoftSkill = new ArrayList<SoftSkill>();
@@ -726,8 +727,9 @@ public class InitBaseWebService {
 		SkillsSheet newSecond = new SkillsSheet();
 		newSecond.setName("PTE-mmm-AAA");
 		newSecond.setMailPersonAttachedTo("paul.test@gmail.com");
-		newSecond.setMailVersionAuthor("tempUserAdminManager@mail.com");
 		newSecond.setRolePersonAttachedTo("applicant");
+		newSecond.setMailVersionAuthor("tempUserAdminManager@mail.com");
+		
 
 		List<TechSkill> newListTechSkillBis = new ArrayList<TechSkill>();
 		List<SoftSkill> newLisftSoftSkillBis = new ArrayList<SoftSkill>();
