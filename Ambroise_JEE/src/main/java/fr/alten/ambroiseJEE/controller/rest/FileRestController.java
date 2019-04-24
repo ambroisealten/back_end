@@ -3,17 +3,21 @@
  */
 package fr.alten.ambroiseJEE.controller.rest;
 
+import java.io.IOException;
+import java.nio.file.NoSuchFileException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,7 +35,9 @@ import fr.alten.ambroiseJEE.model.beans.File;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.InternalServerErrorException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
+import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
@@ -54,6 +60,23 @@ public class FileRestController {
 	public FileRestController() {
 		final GsonBuilder builder = new GsonBuilder();
 		this.gson = builder.create();
+	}
+
+	@DeleteMapping("/file")
+	public HttpException deleteFile(@RequestParam("_id") final String _id, @RequestParam("path") final String path,
+			@RequestParam("extension") final String extension, @RequestAttribute("mail") final String mail,
+			@RequestAttribute("role") final UserRole role) {
+		if (ObjectId.isValid(_id)) {
+			try {
+				this.fileStorageBusinessController.deleteFile(_id, path, extension, role);
+			} catch (final NoSuchFileException e) {
+				return new ResourceNotFoundException();
+			} catch (SecurityException | IOException e) {
+				return new InternalServerErrorException();
+			}
+			return this.fileBusinessController.deleteFile(_id, role);
+		}
+		return new UnprocessableEntityException();
 	}
 
 	/**

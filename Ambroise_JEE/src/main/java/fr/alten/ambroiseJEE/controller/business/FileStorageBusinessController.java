@@ -6,7 +6,9 @@ package fr.alten.ambroiseJEE.controller.business;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -25,6 +27,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.InternalServerErrorException;
+import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
@@ -41,6 +44,33 @@ public class FileStorageBusinessController {
 	private ApplicationContext ctx;
 
 	private Path fileStorageLocation;
+
+	/**
+	 * @param _id       the id of file to delete
+	 * @param path      the path of file to delete
+	 * @param extension the extension of file to delete
+	 * @param role      the current loggend user's role
+	 * @author Andy Chabalier
+	 * @throws {@link NoSuchFileException} - if the file does not exist (optional
+	 *         specific exception) {@link DirectoryNotEmptyException} - if the file
+	 *         is a directory and could not otherwise be deleted because the
+	 *         directory is not empty (optional specific exception)
+	 *         {@link IOException} - if an I/O error occurs SecurityException - In
+	 *         the case of the default provider, and a security manager is
+	 *         installed, the SecurityManager.checkDelete(String) method is invoked
+	 *         to check delete access to the file {@link ForbiddenException} if user
+	 *         don't have the right role
+	 */
+	public HttpException deleteFile(final String _id, final String path, final String extension, final UserRole role)
+			throws NoSuchFileException, DirectoryNotEmptyException, IOException, SecurityException {
+		if (!(UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)) {
+			return new ForbiddenException();
+		}
+		final Path dirPath = Paths.get(this.fileStorageLocation.toAbsolutePath() + path);
+		final Path targetLocation = dirPath.resolve(_id + "." + extension);
+		Files.delete(targetLocation);
+		return new OkException();
+	}
 
 	/**
 	 * Initialise the controller with the application properties of file path

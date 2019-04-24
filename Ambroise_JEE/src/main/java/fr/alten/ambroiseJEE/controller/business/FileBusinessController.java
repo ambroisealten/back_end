@@ -12,6 +12,7 @@ import fr.alten.ambroiseJEE.model.beans.File;
 import fr.alten.ambroiseJEE.model.entityControllers.FileEntityController;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
+import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 
 /**
  * @author Andy Chabalier
@@ -36,6 +37,18 @@ public class FileBusinessController {
 		} else {
 			throw new ForbiddenException();
 		}
+	}
+
+	/**
+	 * delete a file
+	 *
+	 * @param _id  the id of file to delete
+	 * @param role the current logged user's role
+	 * @author Andy Chabalier
+	 */
+	public HttpException deleteFile(final String _id, final UserRole role) {
+		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role ? this.fileEntityController.deleteFile(_id)
+				: new ForbiddenException();
 	}
 
 	/**

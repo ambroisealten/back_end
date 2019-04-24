@@ -37,6 +37,10 @@ public class File implements Serializable {
 		return this.extension;
 	}
 
+	public String getName() {
+		return this.name;
+	}
+
 	public String getPath() {
 		return this.path;
 	}
@@ -53,16 +57,12 @@ public class File implements Serializable {
 		this.extension = extension;
 	}
 
+	public void setName(final String name) {
+		this.name = name;
+	}
+
 	public void setPath(final String uri) {
 		this.path = uri;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 }
