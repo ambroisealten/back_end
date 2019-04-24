@@ -95,7 +95,30 @@ public class DocumentSetEntityController {
 		return new RessourceNotFoundException();
 	}
 
-	public List<DocumentSet> getDocumentSet(JsonNode jDocumentSet) {
+	public List<Pair<String, Integer>> getDocumentSet(JsonNode jDocumentSet) {
+		
+		String name = jDocumentSet.get("name").textValue();
+		Optional<DocumentSet> documentSetOptional = documentSetRepository.findByName(name);
+		if (documentSetOptional.isPresent()) {
+			DocumentSet documentSet = documentSetOptional.get();
+			documentSet.setName(jDocumentSet.get("name").textValue());
+			List<Pair<String, Integer>> files = new ArrayList<Pair<String, Integer>>();
+			for (JsonNode document : jDocumentSet.get("files")) {
+				Integer order = Integer.valueOf(document.get("order").asInt());
+				String uri = document.get("uri").textValue();
+				files.add(Pair.of(uri, order));
+			}
+			//documentSet.setFiles(files);
+			try {
+				return files; 
+			} catch (Exception e) {
+				throw new ConflictException();
+			}
+		}
+		throw new RessourceNotFoundException();
+		
+		/*
+		
 		String name = jDocumentSet.get("name").textValue();
 		Optional<DocumentSet> documentSetOptional = documentSetRepository.findByName(name);
 		if (documentSetOptional.isPresent()) {
@@ -106,11 +129,10 @@ public class DocumentSetEntityController {
 				String uri = document.get("uri").textValue();
 				files.add(Pair.of(uri, order));
 				System.out.println(files + "  lol " + " MDr " + documentSet);
-				
 			}
 			return null;
 		}
-		return null;
+		return null;*/
 	}
 
 	public List<DocumentSet> getDocumentSetAdmin() {
