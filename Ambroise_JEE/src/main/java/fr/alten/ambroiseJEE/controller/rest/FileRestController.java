@@ -133,16 +133,16 @@ public class FileRestController {
 	 * @author Andy Chabalier
 	 */
 	@PostMapping("/file")
-	public HttpException uploadFile(@RequestParam("file") final MultipartFile file,
-			@RequestParam("path") final String path, @RequestAttribute("mail") final String mail,
-			@RequestAttribute("role") final UserRole role) {
+	public File uploadFile(@RequestParam("file") final MultipartFile file, @RequestParam("path") final String path,
+			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
 
 		if (file != null) {
 			final File newFile = this.fileBusinessController.createDocument(path, file.getOriginalFilename(), role);
-			return this.fileStorageBusinessController.storeFile(file, newFile.getPath(),
+			this.fileStorageBusinessController.storeFile(file, newFile.getPath(),
 					newFile.get_id() + "." + newFile.getExtension(), role);
+			return newFile;
 		} else {
-			return new UnprocessableEntityException();
+			throw new UnprocessableEntityException();
 		}
 	}
 
@@ -158,7 +158,7 @@ public class FileRestController {
 	 * @author Andy Chabalier
 	 */
 	@PostMapping("/file/multiples")
-	public List<HttpException> uploadMultipleFiles(@RequestParam("files") final MultipartFile[] files,
+	public List<File> uploadMultipleFiles(@RequestParam("files") final MultipartFile[] files,
 			@RequestParam("path") final String path, @RequestAttribute("mail") final String mail,
 			@RequestAttribute("role") final UserRole role) {
 		return Arrays.asList(files).stream().map(file -> uploadFile(file, path, mail, role))

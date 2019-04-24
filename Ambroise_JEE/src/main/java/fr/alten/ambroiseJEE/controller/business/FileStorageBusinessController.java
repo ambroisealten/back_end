@@ -108,7 +108,7 @@ public class FileStorageBusinessController {
 			fileInputStream.close();
 			return new CreatedException();
 		} catch (final IOException ex) {
-			return new InternalServerErrorException();
+			throw new InternalServerErrorException();
 		}
 	}
 }
