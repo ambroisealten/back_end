@@ -41,7 +41,7 @@ public class SkillForumRestController {
 		this.gson = builder.create();
 	}
 
-	@PostMapping(value = "/skill")
+	@PostMapping(value = "/forum/skill")
 	@ResponseBody
 	public HttpException createSkill(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws Exception {
@@ -49,7 +49,7 @@ public class SkillForumRestController {
 				: new UnprocessableEntityException();
 	}
 
-	@DeleteMapping(value = "/skill")
+	@DeleteMapping(value = "/forum/skill")
 	@ResponseBody
 	public HttpException deleteSkill(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws Exception {
@@ -57,13 +57,13 @@ public class SkillForumRestController {
 				: new UnprocessableEntityException();
 	}
 
-	@GetMapping(value = "/skills")
+	@GetMapping(value = "/forum/skills")
 	@ResponseBody
 	public String getSkills(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
 		return gson.toJson(skillForumBusinessController.getSkillsForum(role));
 	}
 
-	@PutMapping(value = "/skill")
+	@PutMapping(value = "/forum/skill")
 	@ResponseBody
 	public HttpException updateSkill(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws Exception {
