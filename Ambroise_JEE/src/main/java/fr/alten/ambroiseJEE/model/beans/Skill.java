@@ -24,7 +24,6 @@ public class Skill implements Serializable {
 	private transient ObjectId _id;
 	private double grade;
 
-	@Indexed(unique = true)
 	private String name;
 	
 	private String isSoft;
