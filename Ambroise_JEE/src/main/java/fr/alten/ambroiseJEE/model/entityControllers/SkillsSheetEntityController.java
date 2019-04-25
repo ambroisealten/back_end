@@ -14,13 +14,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import fr.alten.ambroiseJEE.model.beans.Person;
 import fr.alten.ambroiseJEE.model.beans.Skill;
 import fr.alten.ambroiseJEE.model.beans.SkillsSheet;
-import fr.alten.ambroiseJEE.model.beans.SoftSkill;
-import fr.alten.ambroiseJEE.model.beans.TechSkill;
 import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.model.dao.SkillsSheetRepository;
 import fr.alten.ambroiseJEE.utils.PersonRole;
-import fr.alten.ambroiseJEE.utils.SoftSkillGrade;
-import fr.alten.ambroiseJEE.utils.TechSkillGrade;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
@@ -36,10 +32,7 @@ public class SkillsSheetEntityController {
 	private PersonEntityController personEntityController;
 
 	@Autowired
-	private SoftSkillEntityController softSkillEntityController;
-
-	@Autowired
-	private TechSkillEntityController techSkillEntityController;
+	private SkillEntityController skillEntityController;
 
 	@Autowired
 	private UserEntityController userEntityController;
@@ -75,8 +68,7 @@ public class SkillsSheetEntityController {
 		}		
 		newSkillsSheet.setRolePersonAttachedTo(status);
 		// Get all skills given several lists of skills (tech and soft)
-		newSkillsSheet.setSoftSkillsList(this.getAllSoftSkills(jSkillsSheet.get("softSkillsList")));
-		newSkillsSheet.setTechSkillsList(this.getAllTechSkills(jSkillsSheet.get("techSkillsList")));
+		newSkillsSheet.setSkillsList(this.getAllSkills(jSkillsSheet.get("skillsList")));
 
 		// Set an Id and a Version Number on this skills sheet (initialization to 1 for the version number)
 		newSkillsSheet.setVersionNumber(1);
@@ -108,19 +100,19 @@ public class SkillsSheetEntityController {
 	 * @return A List of Skill (might be empty if there is no match)
 	 * @author Lucas Royackkers
 	 */
-	public List<Skill> getAllSoftSkills(JsonNode jSkills) {
-		List<Skill> allSoftSkills = new ArrayList<Skill>();
+	public List<Skill> getAllSkills(JsonNode jSkills) {
+		List<Skill> allSkills = new ArrayList<Skill>();
 
-		for (JsonNode softSkill : jSkills) {
-			Optional<Skill> newSoftSkill = softSkillEntityController.getSoftSkillByNameAndGrade(
-					softSkill.get("name").textValue(), Double.parseDouble((softSkill.get("grade").textValue()));
+		for (JsonNode skill : jSkills) {
+			Optional<Skill> newSkillOptional = skillEntityController.getSkill(skill);
 			// Get a specific soft skill by its name in the JsonNode
-			if (newSoftSkill.isPresent()) {
-				allSoftSkills.add(newSoftSkill.get());
+			if (newSkillOptional.isPresent()) {
+				Skill newSkill = newSkillOptional.get(); 
+				newSkill.setGrade(Double.parseDouble(skill.get("grade").textValue()));
+				allSkills.add(newSkill);
 			}
 		}
-
-		return allSoftSkills;
+		return allSkills;
 	}
 
 

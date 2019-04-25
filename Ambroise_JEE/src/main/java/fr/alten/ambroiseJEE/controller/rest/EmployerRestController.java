@@ -1,7 +1,5 @@
 package fr.alten.ambroiseJEE.controller.rest;
 
-import static fr.alten.ambroiseJEE.utils.JsonUtils.checkJsonIntegrity;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,9 +16,12 @@ import com.google.gson.GsonBuilder;
 
 import fr.alten.ambroiseJEE.controller.business.EmployerBusinessController;
 import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.utils.JsonUtils;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
+import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
@@ -105,6 +106,11 @@ public class EmployerRestController {
 	public HttpException updateEmployer(@RequestBody JsonNode params, @RequestAttribute("role") UserRole role) {
 		return (checkJsonIntegrity(params,"name","oldName")) ? 
 				employerBusinessController.updateEmployer(params, role) : new UnprocessableEntityException();
+	}
+	
+	
+	public static boolean checkJsonIntegrity(JsonNode params, String... fields) {
+		return JsonUtils.checkJsonIntegrity(params, fields);
 	}
 
 }
