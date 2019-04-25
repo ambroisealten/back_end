@@ -572,7 +572,7 @@ public class InitBaseWebService {
 		newSoftSkill2.setIsSoft("true");
 
 		final Skill newSkill = new Skill();
-		newSkill.setName("C++");
+		newSkill.setName("JavaScript");
 		newSkill.setGrade(4);
 		newSkill.setIsSoft(null);
 
@@ -617,9 +617,14 @@ public class InitBaseWebService {
 		newSoftSkill1Bis.setName("Gestion de projet");
 		newSoftSkill1Bis.setGrade(1.5);
 		newSoftSkill1Bis.setIsSoft("true");
+		
+		final Skill newSoftSkill2Bis = new Skill();
+		newSoftSkill2Bis.setName("Communication");
+		newSoftSkill2Bis.setGrade(3.5);
+		newSoftSkill2Bis.setIsSoft("true");
 
 		final Skill newSkillBis = new Skill();
-		newSkillBis.setName("C++");
+		newSkillBis.setName("C#");
 		newSkillBis.setGrade(4);
 		newSkillBis.setIsSoft(null);
 
