@@ -15,21 +15,18 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * @author Thomas Decamp
  *
  */
-@Document(collection = "skill")
-public class Skill implements Serializable {
+@Document(collection = "skillforum")
+public class SkillForum implements Serializable {
 
 	private static final long serialVersionUID = -4597432921266925981L;
 
 	@Id
 	private transient ObjectId _id;
-	private double grade;
 
 	@Indexed(unique = true)
 	private String name;
-	
-	private String isSoft;
 
-	public Skill() {
+	public SkillForum() {
 		super();
 	}
 
@@ -37,28 +34,12 @@ public class Skill implements Serializable {
 		return _id;
 	}
 
-	public double getGrade() {
-		return grade;
-	}
-
 	public String getName() {
 		return name;
 	}
 
-	public String getIsSoft() {
-		return isSoft;
-	}
-
-	public void setIsSoft(String isSoft) {
-		this.isSoft = isSoft;
-	}
-	
 	public void set_id(ObjectId _id) {
 		this._id = _id;
-	}
-
-	public void setGrade(double grade) {
-		this.grade = grade;
 	}
 
 	public void setName(String name) {

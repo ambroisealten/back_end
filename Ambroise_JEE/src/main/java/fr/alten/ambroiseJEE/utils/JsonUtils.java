@@ -12,6 +12,8 @@ import com.google.gson.JsonObject;
 
 /**
  * @author Andy Chabalier
+ * @author Thomas Decamp
+ * @author Kylian Gehier
  *
  */
 public class JsonUtils {

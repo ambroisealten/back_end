@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.mongodb.DuplicateKeyException;
 
 import fr.alten.ambroiseJEE.model.beans.Skill;
 import fr.alten.ambroiseJEE.model.dao.SkillRepository;
@@ -43,13 +44,18 @@ public class SkillEntityController {
 
 		Skill newSkill = new Skill();
 		newSkill.setName(jSkill.get("name").textValue());
-
+		if (jSkill.get("isSoft").textValue() != null)
+			newSkill.setIsSoft(jSkill.get("isSoft").textValue());
 		try {
 			skillRepository.save(newSkill);
 		} catch (Exception e) {
-			return new ConflictException();
+			if (!DuplicateKeyException.class.isInstance(e)) {
+				e.printStackTrace();
+			} else
+				return new ConflictException();
 		}
 		return new CreatedException();
+
 	}
 
 	/**
@@ -60,21 +66,40 @@ public class SkillEntityController {
 	 *         {@link OkException} if the skill is deactivated
 	 * @author Thomas Decamp
 	 */
-	public HttpException deleteSkill(String name) {
-		Optional<Skill> skillOptionnal = skillRepository.findByName(name);
-
-		if (skillOptionnal.isPresent()) {
-			Skill skill = skillOptionnal.get();
-			skill.setName("deactivated" + System.currentTimeMillis());
-			skillRepository.save(skill);
-		} else {
-			throw new ResourceNotFoundException();
-		}
-		return new OkException();
+	public HttpException deleteSkill(JsonNode jSkill) {
+		return skillRepository.findByName(jSkill.get("name").textValue())
+				// optional is present
+				.map(skill -> {
+					skill.setName("deactivated" + System.currentTimeMillis());
+					skill.setIsSoft(null);
+					skillRepository.save(skill);
+					return (HttpException) new OkException();
+				})
+				// optional isn't present
+				.orElse(new ResourceNotFoundException());
 	}
 
-	public Optional<Skill> getSkill(String name) {
-		return skillRepository.findByName(name);
+	/**
+	 * 
+	 *
+	 * @param name
+	 * @return
+	 * @author Thomas Decamp
+	 */
+	public Optional<Skill> getSkill(JsonNode jSkill) {
+		return skillRepository.findByName(jSkill.get("name").textValue());
+	}
+
+	/**
+	 * Try to fetch a soft skill by its name and grade
+	 *
+	 * @param name  the soft skill's name to fetch
+	 * @param grade the soft skill's grade to fetch
+	 * @return An Optional with the corresponding soft skill or not.
+	 * @author Lucas Royackkers
+	 */
+	public Optional<Skill> getSkillByNameAndGrade(JsonNode jSkill) {
+		return skillRepository.findByNameAndGrade(jSkill.get("name").textValue(), jSkill.get("grade").doubleValue());
 	}
 
 	/**
@@ -95,17 +120,26 @@ public class SkillEntityController {
 	 * @author Thomas Decamp
 	 */
 	public HttpException updateSkill(JsonNode jSkill) {
-		Optional<Skill> skillOptionnal = skillRepository.findByName(jSkill.get("oldName").textValue());
-
-		if (skillOptionnal.isPresent()) {
-			Skill skill = skillOptionnal.get();
-			skill.setName(jSkill.get("name").textValue());
-
-			skillRepository.save(skill);
-		} else {
-			throw new ResourceNotFoundException();
-		}
-		return new OkException();
+		return skillRepository.findByName(jSkill.get("name").textValue())
+				// optional is present
+				.map(skill -> {
+					skill.setName(jSkill.get("name").textValue());
+					if (jSkill.get("isSoft").textValue() != null)
+						skill.setIsSoft(jSkill.get("isSoft").textValue());
+					else
+						skill.setIsSoft(null);
+					try {
+						skillRepository.save(skill);
+					} catch (Exception e) {
+						if (!DuplicateKeyException.class.isInstance(e)) {
+							e.printStackTrace();
+						} else
+							return (HttpException) new ConflictException();
+					}
+					return (HttpException) new OkException();
+				})
+				// optional isn't present
+				.orElse(new ResourceNotFoundException());
 	}
 
 }
