@@ -175,7 +175,7 @@ public class PersonEntityController {
 	 * @author Camille Schnell
 	 */
 	public Person getPersonByMail(String mail) {
-		return personRepository.findByMail(mail).orElse(new Person());
+		return personRepository.findByMail(mail).orElseThrow(ResourceNotFoundException::new);
 	}
 
 	/**

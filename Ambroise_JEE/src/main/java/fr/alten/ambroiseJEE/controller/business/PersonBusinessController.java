@@ -10,6 +10,7 @@ import fr.alten.ambroiseJEE.model.entityControllers.PersonEntityController;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.security.UserRoleLists;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
+import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 
 /**
  * Person controller for business rules.
@@ -36,7 +37,12 @@ public class PersonBusinessController {
 	 */
 	public Person getPerson(String mail, UserRole role) {
 		if (roles.isAdmin(role) || roles.isManagerOrCdr(role)) {
-			return personEntityController.getPersonByMail(mail);
+			try {
+				return personEntityController.getPersonByMail(mail);
+			}
+			catch(ResourceNotFoundException e) {
+				return new Person();
+			}
 		}
 		throw new ForbiddenException();
 	}
