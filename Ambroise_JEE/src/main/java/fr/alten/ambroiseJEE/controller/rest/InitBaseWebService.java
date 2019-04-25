@@ -559,26 +559,32 @@ public class InitBaseWebService {
 		final Skill newSoftSkill = new Skill();
 		newSoftSkill.setName("Cycle en V");
 		newSoftSkill.setGrade(2);
+		newSoftSkill.setIsSoft("true");
 
 		final Skill newSoftSkill1 = new Skill();
 		newSoftSkill1.setName("Gestion de projet");
 		newSoftSkill1.setGrade(3);
+		newSoftSkill1.setIsSoft("true");
 
 		final Skill newSoftSkill2 = new Skill();
 		newSoftSkill2.setName("Communication");
 		newSoftSkill2.setGrade(2);
+		newSoftSkill2.setIsSoft("true");
 
 		final Skill newSkill = new Skill();
 		newSkill.setName("C++");
 		newSkill.setGrade(4);
+		newSkill.setIsSoft(null);
 
 		final Skill newSkill1 = new Skill();
 		newSkill1.setName("Angular");
 		newSkill1.setGrade(2);
+		newSkill1.setIsSoft(null);
 
 		final Skill newSkill2 = new Skill();
 		newSkill2.setName("C++");
 		newSkill2.setGrade(2.5);
+		newSkill2.setIsSoft(null);
 
 		newListSkill.add(newSoftSkill);
 		newListSkill.add(newSoftSkill1);
@@ -605,30 +611,30 @@ public class InitBaseWebService {
 		final Skill newSoftSkillBis = new Skill();
 		newSoftSkillBis.setName("Cycle en V");
 		newSoftSkillBis.setGrade(3);
+		newSoftSkillBis.setIsSoft("true");
 
 		final Skill newSoftSkill1Bis = new Skill();
 		newSoftSkill1Bis.setName("Gestion de projet");
 		newSoftSkill1Bis.setGrade(1.5);
-
-		final Skill newSoftSkill2Bis = new Skill();
-		newSoftSkill2Bis.setName("Communication");
-		newSoftSkill2Bis.setGrade(2);
+		newSoftSkill1Bis.setIsSoft("true");
 
 		final Skill newSkillBis = new Skill();
 		newSkillBis.setName("C++");
 		newSkillBis.setGrade(4);
+		newSkillBis.setIsSoft(null);
 
 		final Skill newSkill1Bis = new Skill();
 		newSkill1Bis.setName("Angular");
 		newSkill1Bis.setGrade(2);
+		newSkill1Bis.setIsSoft(null);
 
 		final Skill newSkill2Bis = new Skill();
 		newSkill2Bis.setName("C++");
 		newSkill2Bis.setGrade(3);
+		newSkill2Bis.setIsSoft(null);
 
 		newListSkillBis.add(newSoftSkillBis);
 		newListSkillBis.add(newSoftSkill1Bis);
-		newListSkillBis.add(newSoftSkill2Bis);
 
 		newListSkillBis.add(newSkillBis);
 		newListSkillBis.add(newSkill1Bis);
@@ -650,24 +656,47 @@ public class InitBaseWebService {
 	private void createSkills() throws IOException {
 		final Skill newCpp = new Skill();
 		newCpp.setName("C++");
+		newCpp.setIsSoft(null);
 		final JsonNode newCppJsonNode = JsonUtils.toJsonNode(this.gson.toJsonTree(newCpp).getAsJsonObject());
 		this.skillBusinessController.createSkill(newCppJsonNode, UserRole.MANAGER_ADMIN);
 
 		final Skill newAngular = new Skill();
 		newAngular.setName("Angular");
+		newAngular.setIsSoft(null);
 		final JsonNode newAngularJsonNode = JsonUtils.toJsonNode(this.gson.toJsonTree(newAngular).getAsJsonObject());
 		this.skillBusinessController.createSkill(newAngularJsonNode, UserRole.MANAGER_ADMIN);
 
 		final Skill newCSharp = new Skill();
 		newCSharp.setName("C#");
+		newCSharp.setIsSoft(null);
 		final JsonNode newCSharpJsonNode = JsonUtils.toJsonNode(this.gson.toJsonTree(newCSharp).getAsJsonObject());
 		this.skillBusinessController.createSkill(newCSharpJsonNode, UserRole.MANAGER_ADMIN);
 
 		final Skill newJS = new Skill();
 		newJS.setName("JavaScript");
+		newJS.setIsSoft(null);
 		final JsonNode newJSJsonNode = JsonUtils.toJsonNode(this.gson.toJsonTree(newJS).getAsJsonObject());
 		this.skillBusinessController.createSkill(newJSJsonNode, UserRole.MANAGER_ADMIN);
 
+		final Skill newCycle = new Skill();
+		newCycle.setName("Cycle en V");
+		newCycle.setIsSoft("true");
+		final JsonNode newCycleJsonNode = JsonUtils.toJsonNode(this.gson.toJsonTree(newCycle).getAsJsonObject());
+		this.skillBusinessController.createSkill(newCycleJsonNode, UserRole.MANAGER_ADMIN);
+		
+		
+		final Skill newProjet = new Skill();
+		newProjet.setName("Gestion de projet");
+		newProjet.setIsSoft("true");
+		final JsonNode newProjetJsonNode = JsonUtils.toJsonNode(this.gson.toJsonTree(newProjet).getAsJsonObject());
+		this.skillBusinessController.createSkill(newProjetJsonNode, UserRole.MANAGER_ADMIN);
+		
+		final Skill newCommunication = new Skill();
+		newCommunication.setName("Communication");
+		newCommunication.setIsSoft("true");
+		final JsonNode newCommunicationJsonNode = JsonUtils.toJsonNode(this.gson.toJsonTree(newCommunication).getAsJsonObject());
+		this.skillBusinessController.createSkill(newCommunicationJsonNode, UserRole.MANAGER_ADMIN);
+		
 	}
 
 	/**
