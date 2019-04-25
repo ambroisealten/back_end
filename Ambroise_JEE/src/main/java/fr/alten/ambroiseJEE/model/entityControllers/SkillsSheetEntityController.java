@@ -2,6 +2,7 @@ package fr.alten.ambroiseJEE.model.entityControllers;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -104,17 +105,29 @@ public class SkillsSheetEntityController {
 		List<Skill> allSkills = new ArrayList<Skill>();
 
 		for (JsonNode skill : jSkills) {
-			Optional<Skill> newSkillOptional = skillEntityController.getSkill(skill);
+			Optional<Skill> newSkillOptional = skillEntityController.getSkill(skill.get("name").textValue());
 			// Get a specific soft skill by its name in the JsonNode
 			if (newSkillOptional.isPresent()) {
 				Skill newSkill = newSkillOptional.get(); 
-				newSkill.setGrade(skill.get("grade").asDouble());
-				allSkills.add(newSkill);
+				if(this.checkGrade(skill.get("grade").asDouble())) {
+					allSkills.add(newSkill);
+				}
 			}
 		}
 		return allSkills;
 	}
 
+	/**
+	 *  Checks if a Skill has a grade (Double) in a good format
+	 * @param d the skill's grade (a Double)
+	 * @return a boolean if the grade is in a good format
+	 * @author Thomas Decamp
+	 */
+    private boolean checkGrade(double d) {
+        if (d == 1 || d == 2 || d == 2.5 || d == 3 || d == 3.5 || d == 4)
+            return true;
+        return false;
+    }
 
 	/**
 	 * Try to fetch an skills sheet by its name and its versionNumber
@@ -227,6 +240,42 @@ public class SkillsSheetEntityController {
 	public boolean checkIfSkillsWithMailExists(String mailPerson) {
 		List<SkillsSheet> listSkillsSheet = skillsSheetRepository.findByMailPersonAttachedTo(mailPerson);
 		return (listSkillsSheet.size() > 0);
+	}
+
+	/**
+	 * Get all Skills Sheets that match the given filters 
+	 * 
+	 * @param identity the filters about the Person (name, surname, job, etc.)
+	 * @param skills the filters about Skills (name)
+	 * @return a List of Skills Sheets that match the query
+	 * @author Lucas Royackkers
+	 */
+	public List<SkillsSheet> getSkillsSheetsByIdentityAndSkills(String identity, String skills) {
+		String[] identitiesList = identity.split(",");
+		String[] skillsList = skills.split(",");
+		
+		List<Skill> filteredSkills = new ArrayList<Skill>();
+		List<Person> filteredPersons = new ArrayList<Person>();
+		HashMap<String,Person> mailToPerson = new HashMap<String,Person>();
+		
+		for(String identityFilter : identitiesList) {
+			filteredPersons.addAll(personEntityController.getPersonsByName(identityFilter));
+			filteredPersons.addAll(personEntityController.getPersonsBySurname(identityFilter));
+			filteredPersons.addAll(personEntityController.getPersonsByHighestDiploma(identityFilter));
+			filteredPersons.addAll(personEntityController.getPersonsByJob(identityFilter));
+		}
+		
+		for(Person filteredPerson : filteredPersons) {
+			mailToPerson.put(filteredPerson.getMail(), filteredPerson);
+		}
+		
+		for(String skillFilter : skillsList) {
+			filteredSkills.add(skillEntityController.getSkill(skillFilter).get());
+		}
+		
+		// Do the matching
+		
+		return null;
 	}
 
 }

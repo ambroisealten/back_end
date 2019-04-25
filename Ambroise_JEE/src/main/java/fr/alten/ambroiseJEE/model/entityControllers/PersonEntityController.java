@@ -167,10 +167,10 @@ public class PersonEntityController {
 	}
 
 	/**
-	 * Try to fetch a person by its mail
+	 * Try to fetch persons by a mail
 	 *
 	 * @param mail the person's mail to fetch
-	 * @return An Optional with the corresponding person or not.
+	 * @return A List of Person that match the searched mail (can be empty).
 	 * @author Lucas Royackkers
 	 * @author Camille Schnell
 	 */
@@ -190,12 +190,58 @@ public class PersonEntityController {
 	}
 
 	/**
+	 * Get a List of Person given a role
+	 * 
 	 * @param role the type of persons that are searched
 	 * @return the list of all persons
 	 * @author Lucas Royackkers
 	 */
 	public List<Person> getPersonsByRole(PersonRole role) {
 		return personRepository.findAllByRole(role);
+	}
+	
+	/**
+	 * Get a List of Person given a name
+	 * 
+	 * @param name the name of the person
+	 * @return the list of all persons
+	 * @author Lucas Royackkers
+	 */
+	public List<Person> getPersonsByName(String name){
+		return personRepository.findByName(name);
+	}
+	
+	/**
+	 * Get a List of Person given a surname
+	 * 
+	 * @param surname the surname of the person
+	 * @return the list of all persons
+	 * @author Lucas Royackkers
+	 */
+	public List<Person> getPersonsBySurname(String surname){
+		return personRepository.findBySurname(surname);
+	}
+	
+	/**
+	 * Get a List of Person given a Diploma
+	 * 
+	 * @param highestDiploma the highest Diploma of the person
+	 * @return the list of all persons
+	 * @author Lucas Royackkers
+	 */
+	public List<Person> getPersonsByHighestDiploma(String highestDiploma){
+		return personRepository.findByHighestDiploma(highestDiploma);
+	}
+	
+	/**
+	 * Get a List of Person given a Job
+	 * 
+	 * @param job the job of the person
+	 * @return the list of all persons
+	 * @author Lucas Royackkers
+	 */
+	public List<Person> getPersonsByJob(String job){
+		return personRepository.findByJob(job);
 	}
 
 	/**
