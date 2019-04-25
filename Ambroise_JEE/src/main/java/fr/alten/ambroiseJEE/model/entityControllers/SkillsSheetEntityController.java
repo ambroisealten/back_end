@@ -108,7 +108,7 @@ public class SkillsSheetEntityController {
 			// Get a specific soft skill by its name in the JsonNode
 			if (newSkillOptional.isPresent()) {
 				Skill newSkill = newSkillOptional.get(); 
-				newSkill.setGrade(Double.parseDouble(skill.get("grade").textValue()));
+				newSkill.setGrade(skill.get("grade").asDouble());
 				allSkills.add(newSkill);
 			}
 		}
@@ -218,7 +218,7 @@ public class SkillsSheetEntityController {
 	}
 
 	/**
-	 * Check if a
+	 * Check if a mail has already been used for a skills sheet
 	 * 
 	 * @param mailPerson the mail of a person linked (or not) to a skills sheet
 	 * @return a boolean if the person has been linked to a skills sheet
