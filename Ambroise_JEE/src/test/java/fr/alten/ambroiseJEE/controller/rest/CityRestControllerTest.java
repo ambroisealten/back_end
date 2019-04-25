@@ -8,19 +8,23 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fr.alten.ambroiseJEE.controller.business.geographic.CityBusinessController;
 import fr.alten.ambroiseJEE.model.beans.City;
 import fr.alten.ambroiseJEE.security.UserRole;
-import fr.alten.ambroiseJEE.utils.JsonUtils;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
@@ -32,19 +36,37 @@ import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CityRestControllerTest {
-
+	
 	@InjectMocks
 	@Spy
 	private final CityRestController cityRestController = new CityRestController();;
+	
+	@SpyBean
+	private City spiedCity = new City();
+	@Spy
+	private JsonNode spiedJsonNode;
 
 	@Mock
 	private CityBusinessController cityBusinessController;
 	@Mock
-	private JsonNode mockedjsonNode;
+	private JsonNode mockedJsonNode;
 	@Mock
 	private HttpException mockedHttpException;
-	@Mock
-	private JsonUtils test;
+	
+	private ObjectMapper mapper = new ObjectMapper();
+
+	//@Before
+	public void setup() {
+		this.setupSpiedCity();
+	}
+	
+	public void setupSpiedCity() {
+		this.spiedCity.setName("name");
+		this.spiedCity.setCode("code");
+		this.spiedCity.setCodeDepartement("codeDepartement");
+		this.spiedCity.setCodePostaux("codePostaux");
+		this.spiedCity.setCodeRegion("codeRegion");
+	}
 	
 	/**
 	 * @test create a {@link City}
@@ -56,11 +78,11 @@ public class CityRestControllerTest {
 	public void createCity_with_rightParam() {
 
 		// setup
-		doReturn(true).when(cityRestController).checkJsonIntegrity((any(JsonNode.class)), anyString());
-		when(cityBusinessController.createCity(mockedjsonNode, UserRole.CDR_ADMIN)).thenReturn(mockedHttpException);
+		doReturn(true).when(cityRestController).checkJsonIntegrity((any(JsonNode.class)), ArgumentMatchers.<String>any());
+		when(cityBusinessController.createCity(mockedJsonNode, UserRole.CDR_ADMIN)).thenReturn(mockedHttpException);
 
 		// assert
-		assertThat(cityRestController.createCity(mockedjsonNode, "mail", UserRole.CDR_ADMIN))
+		assertThat(cityRestController.createCity(mockedJsonNode, "mail", UserRole.CDR_ADMIN))
 			.isEqualTo(mockedHttpException);
 	}
 
@@ -74,10 +96,10 @@ public class CityRestControllerTest {
 	public void createCity_with_wrongParam() {
 
 		// setup
-		doReturn(false).when(cityRestController).checkJsonIntegrity((any(JsonNode.class)), anyString());
+		doReturn(false).when(cityRestController).checkJsonIntegrity((any(JsonNode.class)), ArgumentMatchers.<String>any());
 
 		// assert
-		assertThat(cityRestController.createCity(mockedjsonNode, "mail", UserRole.CDR_ADMIN))
+		assertThat(cityRestController.createCity(mockedJsonNode, "mail", UserRole.CDR_ADMIN))
 			.isInstanceOf(UnprocessableEntityException.class);
 	}
 
@@ -91,11 +113,11 @@ public class CityRestControllerTest {
 	public void deleteCity_with_rightParam() {
 
 		// setup
-		doReturn(true).when(cityRestController).checkJsonIntegrity((any(JsonNode.class)), anyString());
-		when(cityBusinessController.deleteCity(mockedjsonNode, UserRole.CDR_ADMIN)).thenReturn(mockedHttpException);
+		doReturn(true).when(cityRestController).checkJsonIntegrity((any(JsonNode.class)), ArgumentMatchers.<String>any());
+		when(cityBusinessController.deleteCity(mockedJsonNode, UserRole.CDR_ADMIN)).thenReturn(mockedHttpException);
 
 		// assert
-		assertThat(cityRestController.deleteCity(mockedjsonNode, "mail", UserRole.CDR_ADMIN))
+		assertThat(cityRestController.deleteCity(mockedJsonNode, "mail", UserRole.CDR_ADMIN))
 			.isEqualTo(mockedHttpException);
 	}
 
@@ -109,10 +131,10 @@ public class CityRestControllerTest {
 	public void deleteCity_with_wrongParam() {
 
 		// setup
-		doReturn(false).when(cityRestController).checkJsonIntegrity((any(JsonNode.class)), anyString());
+		doReturn(false).when(cityRestController).checkJsonIntegrity((any(JsonNode.class)), ArgumentMatchers.<String>any());
 
 		// assert
-		assertThat(cityRestController.deleteCity(mockedjsonNode, "mail", UserRole.CDR_ADMIN))
+		assertThat(cityRestController.deleteCity(mockedJsonNode, "mail", UserRole.CDR_ADMIN))
 				.isInstanceOf(UnprocessableEntityException.class);
 	}
 
@@ -144,12 +166,12 @@ public class CityRestControllerTest {
 	public void updateCity_with_rightParam() {
 
 		// setup
-		doReturn(true).when(cityRestController).checkJsonIntegrity((any(JsonNode.class)), anyString());
-		when(cityBusinessController.updateCity(mockedjsonNode, UserRole.CDR_ADMIN))
+		doReturn(true).when(cityRestController).checkJsonIntegrity((any(JsonNode.class)), ArgumentMatchers.<String>any());
+		when(cityBusinessController.updateCity(mockedJsonNode, UserRole.CDR_ADMIN))
 			.thenReturn(mockedHttpException);
 
 		// assert
-		assertThat(cityRestController.updateCity(mockedjsonNode, "mail", UserRole.CDR_ADMIN))
+		assertThat(cityRestController.updateCity(mockedJsonNode, "mail", UserRole.CDR_ADMIN))
 			.isEqualTo(mockedHttpException);
 
 	}
@@ -164,11 +186,24 @@ public class CityRestControllerTest {
 	public void updateCity_with_wrongParam() {
 
 		// setup
-		doReturn(false).when(cityRestController).checkJsonIntegrity((any(JsonNode.class)), anyString());
+		doReturn(false).when(cityRestController).checkJsonIntegrity((any(JsonNode.class)), ArgumentMatchers.<String>any());
 
 		// assert
-		assertThat(cityRestController.updateCity(mockedjsonNode, "mail", UserRole.CDR_ADMIN))
+		assertThat(cityRestController.updateCity(mockedJsonNode, "mail", UserRole.CDR_ADMIN))
 			.isInstanceOf(UnprocessableEntityException.class);
 
+	}
+	
+	@Test
+	public void createCity_checkJsonIntegrity() {
+		
+		// globalSetup
+		doReturn(1).when(cityBusinessController.createCity(spiedJsonNode, any(UserRole.class)));
+		
+		//setup valid
+		spiedJsonNode = mapper.valueToTree(spiedCity);
+		// assert valid
+		assertThat(cityRestController.createCity(spiedJsonNode, "mail", UserRole.CDR))
+			.isEqualTo(1);
 	}
 }
