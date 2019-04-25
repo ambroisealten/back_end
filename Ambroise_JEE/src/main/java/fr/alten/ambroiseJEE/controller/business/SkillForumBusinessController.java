@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import fr.alten.ambroiseJEE.model.beans.Skill;
-import fr.alten.ambroiseJEE.model.entityControllers.SkillEntityController;
+import fr.alten.ambroiseJEE.model.beans.SkillForum;
+import fr.alten.ambroiseJEE.model.entityControllers.SkillForumEntityController;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.security.UserRoleLists;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
@@ -28,12 +28,12 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
  *
  */
 @Service
-public class SkillBusinessController {
+public class SkillForumBusinessController {
 
 	private UserRoleLists roles = UserRoleLists.getInstance();
 	
 	@Autowired
-	private SkillEntityController skillEntityController;
+	private SkillForumEntityController skillForumEntityController;
 
 	/**
 	 * Method to delegate skill creation
@@ -44,9 +44,9 @@ public class SkillBusinessController {
 	 *         database and {@link CreatedException} if the skill is created
 	 * @author Thomas Decamp
 	 */
-	public HttpException createSkill(JsonNode jSkill, UserRole role) {
+	public HttpException createSkillForum(JsonNode jSkillForum, UserRole role) {
 		return (roles.isAdmin(role))
-				? skillEntityController.createSkill(jSkill)
+				? skillForumEntityController.createSkillForum(jSkillForum)
 				: new ForbiddenException();
 	}
 
@@ -59,28 +59,24 @@ public class SkillBusinessController {
 	 *         {@link CreatedException} if the skill is deleted
 	 * @author Thomas Decamp
 	 */
-	public HttpException deleteSkill(JsonNode jSkill, UserRole role) {
+	public HttpException deleteSkillForum(JsonNode params, UserRole role) {
 		return (roles.isAdmin(role))
-				? skillEntityController.deleteSkill(jSkill)
+				? skillForumEntityController.deleteSkillForum(params.get("name").textValue())
 				: new ForbiddenException();
 	}
 
-	public List<Skill> getSkill(String name) {
-		return skillEntityController.getSkill(name);
+	public Optional<SkillForum> getSkillForum(String name) {
+		return skillForumEntityController.getSkillForum(name);
 	}
 
-	public Optional<Skill> getSkillByNameAndGrade(String name, float grade) {
-		return SkillEntityController.getSkillByNameAndGrade(name, grade);
-	}
-	
 	/**
 	 * @param role the user role
 	 * @return the list of all skills
 	 * @author Thomas Decamp
 	 */
-	public List<Skill> getSkills(UserRole role) {
+	public List<SkillForum> getSkillsForum(UserRole role) {
 		if (roles.isAdmin(role)) {
-			return skillEntityController.getSkills();
+			return skillForumEntityController.getSkillsForum();
 		}
 		throw new ForbiddenException();
 	}
@@ -95,9 +91,9 @@ public class SkillBusinessController {
 	 *         found and {@link CreatedException} if the skill is updated
 	 * @author Thomas Decamp
 	 */
-	public HttpException updateSkill(JsonNode jSkill, UserRole role) {
+	public HttpException updateSkillForum(JsonNode jSkillForum, UserRole role) {
 		return (roles.isAdmin(role))
-				? skillEntityController.updateSkill(jSkill)
+				? skillForumEntityController.updateSkillForum(jSkillForum)
 				: new ForbiddenException();
 	}
 

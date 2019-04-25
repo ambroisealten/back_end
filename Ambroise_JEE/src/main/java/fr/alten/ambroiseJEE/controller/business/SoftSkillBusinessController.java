@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import fr.alten.ambroiseJEE.model.beans.SoftSkill;
 import fr.alten.ambroiseJEE.model.entityControllers.SoftSkillEntityController;
 import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.security.UserRoleLists;
 import fr.alten.ambroiseJEE.utils.SoftSkillGrade;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
@@ -30,6 +31,8 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 @Service
 public class SoftSkillBusinessController {
 
+	private UserRoleLists roles = UserRoleLists.getInstance();
+	
 	@Autowired
 	private SoftSkillEntityController softSkillEntityController;
 
@@ -43,7 +46,7 @@ public class SoftSkillBusinessController {
 	 * @author Thomas Decamp
 	 */
 	public HttpException createSoftSkill(JsonNode jSoftSkill, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)
+		return (roles.isAdmin(role))
 				? softSkillEntityController.createSoftSkillAndGrade(jSoftSkill)
 				: new ForbiddenException();
 	}
@@ -58,7 +61,7 @@ public class SoftSkillBusinessController {
 	 * @author Thomas Decamp
 	 */
 	public HttpException deleteSoftSkill(JsonNode jSoftSkill, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)
+		return (roles.isAdmin(role))
 				? softSkillEntityController.deleteSoftSkill(jSoftSkill)
 				: new ForbiddenException();
 	}
@@ -77,7 +80,7 @@ public class SoftSkillBusinessController {
 	 * @author Thomas Decamp
 	 */
 	public List<SoftSkill> getSoftSkills(UserRole role) {
-		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
+		if (roles.isAdmin(role)) {
 			return softSkillEntityController.getSoftSkills();
 		}
 		throw new ForbiddenException();
@@ -94,7 +97,7 @@ public class SoftSkillBusinessController {
 	 * @author Thomas Decamp
 	 */
 	public HttpException updateSoftSkill(JsonNode jSoftSkill, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)
+		return (roles.isAdmin(role))
 				? softSkillEntityController.updateSoftSkill(jSoftSkill)
 				: new ForbiddenException();
 	}
