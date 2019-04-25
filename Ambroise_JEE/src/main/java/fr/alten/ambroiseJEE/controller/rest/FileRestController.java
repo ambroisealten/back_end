@@ -136,8 +136,7 @@ public class FileRestController {
 	@GetMapping("/files/forum")
 	public String getFilesForum(@RequestAttribute("mail") final String mail,
 			@RequestAttribute("role") final UserRole role) {
-		// TODO
-		return null;
+		return this.gson.toJson(this.fileBusinessController.getFilesForum(role));
 	}
 
 	/**

@@ -52,11 +52,27 @@ public class FileBusinessController {
 	}
 
 	/**
+	 * Fetch the list of all files
+	 * 
 	 * @param role the current logged user's role
 	 * @return the list of files
 	 * @author Andy Chabalier
 	 */
 	public List<File> getFiles(final UserRole role) {
 		return this.fileEntityController.getFiles();
+	}
+
+	/**
+	 * Fetch the list of all forum's filess
+	 * 
+	 * @param role the current logged user's role
+	 * @return the list of file forum
+	 * @author Andy Chabalier
+	 */
+	public List<File> getFilesForum(UserRole role) {
+		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
+			return this.fileEntityController.getFilesForum();
+		}
+		throw new ForbiddenException();
 	}
 }

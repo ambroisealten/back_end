@@ -8,6 +8,9 @@ import java.util.List;
 import org.apache.commons.io.FilenameUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers;
 import org.springframework.stereotype.Service;
 
 import fr.alten.ambroiseJEE.model.beans.File;
@@ -52,6 +55,28 @@ public class FileEntityController {
 	 */
 	public List<File> getFiles() {
 		return this.fileRepository.findAll();
+	}
+
+	/**
+	 * Use an file example with the path /forum/ to fetch files with path starting
+	 * with /forum/
+	 *
+	 * @return the list of forum files
+	 * @author Andy Chabalier
+	 */
+	public List<File> getFilesForum() {
+
+		final File fileExemple = new File();
+		fileExemple.setPath("/forum/");
+
+		// Create a matcher for this file Example. We want to focus only on path, then
+		// we ignore null value and dateOfCreation wich is a long value and can't be
+		// null
+		final ExampleMatcher matcher = ExampleMatcher.matching()
+				.withMatcher("path", GenericPropertyMatchers.startsWith()).withIgnoreNullValues()
+				.withIgnorePaths("dateOfCreation");
+
+		return this.fileRepository.findAll(Example.of(fileExemple, matcher));
 	}
 
 	/**
