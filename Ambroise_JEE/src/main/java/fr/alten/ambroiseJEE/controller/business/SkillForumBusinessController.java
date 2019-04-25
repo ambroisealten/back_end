@@ -61,12 +61,16 @@ public class SkillForumBusinessController {
 	 */
 	public HttpException deleteSkillForum(JsonNode params, UserRole role) {
 		return (roles.isAdmin(role))
-				? skillForumEntityController.deleteSkillForum(params.get("name").textValue())
+				? skillForumEntityController.deleteSkillForum(params)
 				: new ForbiddenException();
 	}
 
-	public Optional<SkillForum> getSkillForum(String name) {
-		return skillForumEntityController.getSkillForum(name);
+	
+	public Optional<SkillForum> getSkillForum(JsonNode params, UserRole role) {
+		if (roles.isAdmin(role)) {
+			return skillForumEntityController.getSkillForum(params);
+		}
+		throw new ForbiddenException();
 	}
 
 	/**
@@ -96,5 +100,4 @@ public class SkillForumBusinessController {
 				? skillForumEntityController.updateSkillForum(jSkillForum)
 				: new ForbiddenException();
 	}
-
 }

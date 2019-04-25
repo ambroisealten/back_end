@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.mongodb.DuplicateKeyException;
 
+import fr.alten.ambroiseJEE.model.beans.Skill;
 import fr.alten.ambroiseJEE.model.beans.SkillForum;
 import fr.alten.ambroiseJEE.model.dao.SkillForumRepository;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
@@ -43,8 +45,14 @@ public class SkillForumEntityController {
 
 		SkillForum newSkillForum = new SkillForum();
 		newSkillForum.setName(jSkillForum.get("name").textValue());
-
-		skillForumRepository.save(newSkillForum);
+		try {
+			skillForumRepository.save(newSkillForum);
+		} catch (Exception e) {
+			if (!DuplicateKeyException.class.isInstance(e)) {
+				e.printStackTrace();
+			} else
+				return new ConflictException();
+		}
 		return new CreatedException();
 	}
 
@@ -56,21 +64,20 @@ public class SkillForumEntityController {
 	 *         {@link OkException} if the skill is deactivated
 	 * @author Thomas Decamp
 	 */
-	public HttpException deleteSkillForum(String name) {
-		Optional<SkillForum> skillForumOptionnal = skillForumRepository.findByName(name);
-
-		if (skillForumOptionnal.isPresent()) {
-			SkillForum skillForum = skillForumOptionnal.get();
-			skillForum.setName("deactivated" + System.currentTimeMillis());
-			skillForumRepository.save(skillForum);
-		} else {
-			throw new ResourceNotFoundException();
-		}
-		return new OkException();
+	public HttpException deleteSkillForum(JsonNode jSkillForum) {
+		return skillForumRepository.findByName(jSkillForum.get("name").textValue())
+				// optional is present
+				.map(skillForum -> {
+					skillForum.setName("deactivated" + System.currentTimeMillis());
+					skillForumRepository.save(skillForum);
+					return (HttpException) new OkException();
+				})
+				// optional isn't present
+				.orElse(new ResourceNotFoundException());
 	}
 
-	public Optional<SkillForum> getSkillForum(String name) {
-		return skillForumRepository.findByName(name);
+	public Optional<SkillForum> getSkillForum(JsonNode jSkillForum) {
+		return skillForumRepository.findByName(jSkillForum.get("name").textValue());
 	}
 
 	/**
@@ -91,17 +98,22 @@ public class SkillForumEntityController {
 	 * @author Thomas Decamp
 	 */
 	public HttpException updateSkillForum(JsonNode jSkillForum) {
-		Optional<SkillForum> skillForumOptionnal = skillForumRepository.findByName(jSkillForum.get("oldName").textValue());
-
-		if (skillForumOptionnal.isPresent()) {
-			SkillForum skillForum = skillForumOptionnal.get();
-			skillForum.setName(jSkillForum.get("name").textValue());
-
-			skillForumRepository.save(skillForum);
-		} else {
-			throw new ResourceNotFoundException();
-		}
-		return new OkException();
+		return skillForumRepository.findByName(jSkillForum.get("oldName").textValue())
+				// optional is present
+				.map(skillForum -> {
+					skillForum.setName(jSkillForum.get("name").textValue());
+					try {
+						skillForumRepository.save(skillForum);
+					} catch (Exception e) {
+						if (!DuplicateKeyException.class.isInstance(e)) {
+							e.printStackTrace();
+						} else
+							return (HttpException) new ConflictException();
+					}
+					return (HttpException) new OkException();
+				})
+				// optional isn't present
+				.orElse(new ResourceNotFoundException());
 	}
 
 }
