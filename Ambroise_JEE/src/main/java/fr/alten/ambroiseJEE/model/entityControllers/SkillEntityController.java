@@ -44,7 +44,7 @@ public class SkillEntityController {
 
 		Skill newSkill = new Skill();
 		newSkill.setName(jSkill.get("name").textValue());
-		if (jSkill.get("isSoft").textValue() != null)
+		if (jSkill.hasNonNull("isSoft"))
 			newSkill.setIsSoft(jSkill.get("isSoft").textValue());
 		try {
 			skillRepository.save(newSkill);
@@ -124,7 +124,7 @@ public class SkillEntityController {
 				// optional is present
 				.map(skill -> {
 					skill.setName(jSkill.get("name").textValue());
-					if (jSkill.get("isSoft").textValue() != null)
+					if (jSkill.hasNonNull("isSoft"))
 						skill.setIsSoft(jSkill.get("isSoft").textValue());
 					else
 						skill.setIsSoft(null);
