@@ -36,7 +36,7 @@ public class CityRestControllerTest {
 
 	@InjectMocks
 	@Spy
-	private final CityRestController cityRestController = new CityRestController();;
+	private final CityRestController cityRestController = new CityRestController();
 
 	@SpyBean
 	private City spiedCity = new City();
