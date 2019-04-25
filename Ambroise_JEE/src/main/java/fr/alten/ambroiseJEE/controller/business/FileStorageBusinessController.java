@@ -6,11 +6,13 @@ package fr.alten.ambroiseJEE.controller.business;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 import javax.annotation.PostConstruct;
 
@@ -51,6 +53,9 @@ public class FileStorageBusinessController {
 	 * @param extension the extension of file to delete
 	 * @param role      the current loggend user's role
 	 * @author Andy Chabalier
+	 * @return an {@link HttpException} corresponding to the statut
+	 *         ({@link ForbiddenException} if user don't have the right role,
+	 *         {@link OkException} if the file is deleted)
 	 * @throws {@link NoSuchFileException} - if the file does not exist (optional
 	 *         specific exception) {@link DirectoryNotEmptyException} - if the file
 	 *         is a directory and could not otherwise be deleted because the
@@ -58,8 +63,7 @@ public class FileStorageBusinessController {
 	 *         {@link IOException} - if an I/O error occurs SecurityException - In
 	 *         the case of the default provider, and a security manager is
 	 *         installed, the SecurityManager.checkDelete(String) method is invoked
-	 *         to check delete access to the file {@link ForbiddenException} if user
-	 *         don't have the right role
+	 *         to check delete access to the file
 	 */
 	public HttpException deleteFile(final String _id, final String path, final String extension, final UserRole role)
 			throws NoSuchFileException, DirectoryNotEmptyException, IOException, SecurityException {
@@ -110,24 +114,89 @@ public class FileStorageBusinessController {
 	}
 
 	/**
+	 * Move a file to a new path
+	 *
+	 * @param fileName the name of the file to move
+	 * @param oldPath  full relative source path of file
+	 * @param newPath  full relative target path of file
+	 * @param role     the current logged user's role
+	 * @return an {@link HttpException} corresponding to the statut
+	 *         ({@link ForbiddenException} if user don't have the right role,
+	 *         {@link OkException} if the file is moved)
+	 * @throws IOException                     - if an I/O error occurs
+	 * @throws SecurityException               - in the case of the default
+	 *                                         provider, and a security manager is
+	 *                                         installed, the checkWrite method is
+	 *                                         invoked prior to attempting to create
+	 *                                         a directory and its checkRead is
+	 *                                         invoked for each parent directory
+	 *                                         that is checked. If dir is not an
+	 *                                         absolute path then its toAbsolutePath
+	 *                                         may need to be invoked to get its
+	 *                                         absolute path. This may invoke the
+	 *                                         security manager's
+	 *                                         checkPropertyAccess method to check
+	 *                                         access to the system property
+	 *                                         user.dir. - In the case of the
+	 *                                         default provider, and a security
+	 *                                         manager is installed, the checkWrite
+	 *                                         method is invoked to check write
+	 *                                         access to both the source and target
+	 *                                         file.
+	 * @throws UnsupportedOperationException   - if the array contains an attribute
+	 *                                         that cannot be set atomically when
+	 *                                         creating the directory
+	 * @throws AtomicMoveNotSupportedException
+	 * @author Andy Chabalier
+	 */
+	public HttpException moveFile(final String fileName, final String oldPath, final String newPath,
+			final UserRole role) throws DirectoryNotEmptyException, IOException, SecurityException,
+			UnsupportedOperationException, AtomicMoveNotSupportedException {
+		if (!(UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)) {
+			throw new ForbiddenException();
+		}
+
+		// Check if the file's name contains invalid characters or path doesn't end with
+		// "/"
+		if (fileName.contains("['{}[\\]\\\\;':\",./?!@#$%&*()_+=-]") || !newPath.endsWith("/")) {
+			return new UnprocessableEntityException();
+		}
+
+		final Path oldDirPath = Paths.get(this.fileStorageLocation.toAbsolutePath() + oldPath);
+		final Path oldLocation = oldDirPath.resolve(fileName);
+
+		final Path newDirPath = Paths.get(this.fileStorageLocation.toAbsolutePath() + newPath);
+		Files.createDirectories(newDirPath);
+		final Path targetLocation = newDirPath.resolve(fileName);
+		Files.move(oldLocation, targetLocation, StandardCopyOption.ATOMIC_MOVE);
+		return new OkException();
+	}
+
+	/**
 	 * Store a file
 	 *
-	 * @param file     file to store
-	 * @param fullPath full relative path of file
-	 * @return the name of the stored file
+	 * @param file     the file to store
+	 * @param path     full relative path of file
+	 * @param fileName the file name
+	 * @param role     the current logged user's role
+	 * @return an {@link HttpException} corresponding to the status
+	 *         ({@link ForbiddenException} if the user is not allowed,
+	 *         {@link UnprocessableEntityException} if the filename contain
+	 *         unauthorized characters,{@link InternalServerErrorException} if some
+	 *         IO problems occur and {@link CreatedException} if the file is stored)
 	 * @author Andy Chabalier
 	 */
 	public HttpException storeFile(final MultipartFile file, final String path, final String fileName,
 			final UserRole role) {
 		if (!(UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)) {
-			throw new ForbiddenException();
+			return new ForbiddenException();
 		}
 
 		try {
 			// Check if the file's name contains invalid characters or path doesn't end with
 			// "/"
 			if (fileName.contains("['{}[\\]\\\\;':\",./?!@#$%&*()_+=-]") || !path.endsWith("/")) {
-				throw new UnprocessableEntityException();
+				return new UnprocessableEntityException();
 			}
 
 			final Path dirPath = Paths.get(this.fileStorageLocation.toAbsolutePath() + path);
@@ -138,7 +207,8 @@ public class FileStorageBusinessController {
 			fileInputStream.close();
 			return new CreatedException();
 		} catch (final IOException ex) {
-			throw new InternalServerErrorException();
+			return new InternalServerErrorException();
 		}
 	}
+
 }

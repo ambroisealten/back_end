@@ -4,6 +4,7 @@
 package fr.alten.ambroiseJEE.model.entityControllers;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.io.FilenameUtils;
 import org.bson.types.ObjectId;
@@ -109,6 +110,27 @@ public class FileEntityController {
 		} catch (final Exception e) {
 			throw new ConflictException();
 		}
+	}
+
+	/**
+	 * Method to update a file
+	 *
+	 * @param _id         the id of file to update
+	 * @param path        the path to update
+	 * @param displayName the display name to update
+	 * @return the @see {@link HttpException} corresponding to the status of the
+	 *         request ({@link ResourceNotFoundException} if the document is not
+	 *         found {@link OkException} if the document is updated
+	 * @author Andy Chabalier
+	 */
+	public HttpException updateFile(final String _id, final String path, final String displayName) {
+		final Optional<File> fileOptionnal = this.fileRepository.findBy_id(new ObjectId(_id));
+		return fileOptionnal.map(file -> {
+			file.setName(displayName);
+			file.setPath(path);
+			this.fileRepository.save(file);
+			return (HttpException) new OkException();
+		}).orElse(new ResourceNotFoundException());
 	}
 
 }
