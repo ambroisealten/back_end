@@ -20,6 +20,10 @@ import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
+//
+//class Pair<String, Integer> {
+//	
+//}
 
 /**
  * @author MAQUINGHEN MAXIME
@@ -95,8 +99,7 @@ public class DocumentSetEntityController {
 		return new RessourceNotFoundException();
 	}
 
-	public List<Pair<String, Integer>> getDocumentSet(JsonNode jDocumentSet) {
-		
+	public List<DocumentSet> getDocumentSet(JsonNode jDocumentSet) {
 		String name = jDocumentSet.get("name").textValue();
 		Optional<DocumentSet> documentSetOptional = documentSetRepository.findByName(name);
 		if (documentSetOptional.isPresent()) {
@@ -104,35 +107,30 @@ public class DocumentSetEntityController {
 			documentSet.setName(jDocumentSet.get("name").textValue());
 			List<Pair<String, Integer>> files = new ArrayList<Pair<String, Integer>>();
 			for (JsonNode document : jDocumentSet.get("files")) {
-				Integer order = Integer.valueOf(document.get("order").asInt());
-				String uri = document.get("uri").textValue();
-				files.add(Pair.of(uri, order));
+				System.out.println(document.equals(document));
 			}
-			//documentSet.setFiles(files);
+			documentSet.setFiles(files);
 			try {
-				return files; 
+				return documentSetRepository.findAll();
 			} catch (Exception e) {
 				throw new ConflictException();
 			}
 		}
 		throw new RessourceNotFoundException();
-		
-		/*
-		
-		String name = jDocumentSet.get("name").textValue();
-		Optional<DocumentSet> documentSetOptional = documentSetRepository.findByName(name);
-		if (documentSetOptional.isPresent()) {
-			DocumentSet documentSet = documentSetOptional.get();
-			List<Pair<String, Integer>> files = new ArrayList<Pair<String, Integer>>();
-			for (JsonNode document : jDocumentSet.get("files")) {
-				Integer order = Integer.valueOf(document.get("order").asInt());
-				String uri = document.get("uri").textValue();
-				files.add(Pair.of(uri, order));
-				System.out.println(files + "  lol " + " MDr " + documentSet);
-			}
-			return null;
-		}
-		return null;*/
+//		
+//		Optional<DocumentSet> documentSetOptional = documentSetRepository.findByName(name);
+//		if (documentSetOptional.isPresent()) {
+//			DocumentSet documentSet = documentSetOptional.get();
+//			List<Pair<String, Integer>> files = new ArrayList<Pair<String, Integer>>();
+//			for (JsonNode document : jDocumentSet.get("files")) {
+//				Integer order = Integer.valueOf(document.get("order").asInt());
+//				String uri = document.get("uri").textValue();
+//				files.add(Pair.of(uri, order));
+//				System.out.println(files + "  lol " + " MDr " + documentSet);
+//			}
+//			return null;
+//		}
+//		return null;
 	}
 
 	public List<DocumentSet> getDocumentSetAdmin() {

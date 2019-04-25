@@ -6,7 +6,6 @@ package fr.alten.ambroiseJEE.controller.business;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -39,7 +38,7 @@ public class DocumentSetBusinessController {
 						: new ForbiddenException();
 	}
 
-	public List<Pair<String, Integer>> getDocumentSet(JsonNode jDocumentSet, UserRole role) {
+	public List<DocumentSet> getDocumentSet(JsonNode jDocumentSet, UserRole role) {
 		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role
 				|| UserRole.CDR == role) {
 			return documentSetEntityController.getDocumentSet(jDocumentSet);

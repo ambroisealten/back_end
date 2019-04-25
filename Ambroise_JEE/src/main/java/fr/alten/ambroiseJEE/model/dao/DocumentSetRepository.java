@@ -16,4 +16,6 @@ public interface DocumentSetRepository extends MongoRepository<DocumentSet, Long
 	
 	Optional<DocumentSet> findByName(String name);
 
+	//Optional<DocumentSet> findByUri(String textValue);
+
 }

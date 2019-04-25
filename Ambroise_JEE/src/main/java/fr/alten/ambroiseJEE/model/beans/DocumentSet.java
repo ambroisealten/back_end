@@ -44,6 +44,7 @@ public class DocumentSet implements Serializable {
 	public void setFiles(List<Pair<String, Integer>> files) {
 		this.files = files;
 	}
+
 	
 	
 }
