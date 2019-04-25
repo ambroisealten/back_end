@@ -11,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -43,6 +44,9 @@ public class CityBusinessControllerTest {
 	private JsonNode mockedJCity;
 	@Mock
 	private List<City> mockedCityList;
+	
+	@MockBean
+	private City mockedCity;
 
 	/**
 	 * @test create a {@link City}
@@ -150,10 +154,9 @@ public class CityBusinessControllerTest {
 	@Test
 	public void getCity() {
 		// setup
-		Optional<City> cityOptional = Optional.of(new City());
-		when(cityEntityController.getCity("name")).thenReturn(cityOptional);
+		when(cityEntityController.getCity("name")).thenReturn(mockedCity);
 		// assert
-		assertThat(cityBusinessController.getCity("name")).isEqualTo(cityOptional);
+		assertThat(cityBusinessController.getCity("name")).isEqualTo(mockedCity);
 	}
 
 	/**
