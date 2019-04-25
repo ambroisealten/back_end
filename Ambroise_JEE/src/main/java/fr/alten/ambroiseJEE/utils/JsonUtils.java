@@ -45,7 +45,7 @@ public class JsonUtils {
 		ObjectMapper mapper = new ObjectMapper();
 		return mapper.convertValue(map, JsonNode.class);
 	}
-
+	
 	/**
 	 * 
 	 *
@@ -64,5 +64,4 @@ public class JsonUtils {
 		}
 		return true;
 	}
-
 }

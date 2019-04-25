@@ -16,9 +16,12 @@ import com.google.gson.GsonBuilder;
 
 import fr.alten.ambroiseJEE.controller.business.EmployerBusinessController;
 import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.utils.JsonUtils;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
+import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
@@ -54,7 +57,7 @@ public class EmployerRestController {
 	@PostMapping("/employer")
 	@ResponseBody
 	public HttpException createEmployer(@RequestBody JsonNode params, @RequestAttribute("role") UserRole role) {
-		return (params.get("name") != null) ? employerBusinessController.createEmployer(params, role) : new UnprocessableEntityException();
+		return (checkJsonIntegrity(params,"name")) ? employerBusinessController.createEmployer(params, role) : new UnprocessableEntityException();
 	}
 
 	/**
@@ -71,7 +74,7 @@ public class EmployerRestController {
 	@DeleteMapping("/employer")
 	@ResponseBody
 	public HttpException deleteEmployer(@RequestBody JsonNode params, @RequestAttribute("role") UserRole role) {
-		return (params.get("name") != null) ? employerBusinessController.deleteEmployer(params, role) : new UnprocessableEntityException();
+		return (checkJsonIntegrity(params,"name")) ? employerBusinessController.deleteEmployer(params, role) : new UnprocessableEntityException();
 	}
 
 	/**
@@ -101,8 +104,13 @@ public class EmployerRestController {
 	@PutMapping("/employer")
 	@ResponseBody
 	public HttpException updateEmployer(@RequestBody JsonNode params, @RequestAttribute("role") UserRole role) {
-		return (params.get("name") != null && params.get("oldName") != null) ? 
+		return (checkJsonIntegrity(params,"name","oldName")) ? 
 				employerBusinessController.updateEmployer(params, role) : new UnprocessableEntityException();
+	}
+	
+	
+	public static boolean checkJsonIntegrity(JsonNode params, String... fields) {
+		return JsonUtils.checkJsonIntegrity(params, fields);
 	}
 
 }

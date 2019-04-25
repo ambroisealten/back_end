@@ -1,5 +1,7 @@
 package fr.alten.ambroiseJEE.controller.rest;
 
+import static fr.alten.ambroiseJEE.utils.JsonUtils.checkJsonIntegrity;
+
 import java.text.ParseException;
 import java.util.Optional;
 
@@ -61,7 +63,7 @@ public class ApplicantRestController {
 	@ResponseBody
 	public HttpException createApplicant(@RequestBody JsonNode params, @RequestAttribute("role") UserRole role)
 			throws Exception {
-		return applicantBusinessController.createApplicant(params, role);
+		return (checkJsonIntegrity(params,"mail")) ? applicantBusinessController.createApplicant(params, role) : new UnprocessableEntityException();
 	}
 
 	/**
@@ -78,7 +80,7 @@ public class ApplicantRestController {
 	@ResponseBody
 	public HttpException deleteApplicant(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) {
-		return params.get("mail") != null ? applicantBusinessController.deleteApplicant(params, role)
+		return (checkJsonIntegrity(params,"mail")) ? applicantBusinessController.deleteApplicant(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -129,7 +131,7 @@ public class ApplicantRestController {
 	@ResponseBody
 	public HttpException updateApplicant(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws ParseException {
-		return params.get("mail") != null ? applicantBusinessController.updateApplicant(params, role)
+		return (checkJsonIntegrity(params,"mail")) ? applicantBusinessController.updateApplicant(params, role)
 				: new UnprocessableEntityException();
 	}
 }

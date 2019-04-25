@@ -24,8 +24,7 @@ public class SkillsSheet implements Serializable {
 	private String rolePersonAttachedTo;
 	private String mailVersionAuthor;
 	private long versionNumber;
-	private List<TechSkill> techSkillsList;
-	private List<SoftSkill> softSkillsList;
+	private List<Skill> skillsList; 
 	private String versionDate;
 
 	public SkillsSheet() {
@@ -46,14 +45,6 @@ public class SkillsSheet implements Serializable {
 
 	public String getName() {
 		return name;
-	}
-
-	public List<SoftSkill> getSoftSkillsList() {
-		return softSkillsList;
-	}
-
-	public List<TechSkill> getTechSkillsList() {
-		return techSkillsList;
 	}
 
 	public String getVersionDate() {
@@ -79,15 +70,6 @@ public class SkillsSheet implements Serializable {
 	public void setName(String name) {
 		this.name = name;
 	}
-
-	public void setSoftSkillsList(List<SoftSkill> softSkillsList) {
-		this.softSkillsList = softSkillsList;
-	}
-
-	public void setTechSkillsList(List<TechSkill> techSkillsList) {
-		this.techSkillsList = techSkillsList;
-	}
-
 	public void setVersionDate(String versionDate) {
 		this.versionDate = versionDate;
 	}
@@ -103,4 +85,13 @@ public class SkillsSheet implements Serializable {
 	public void setRolePersonAttachedTo(String rolePersonAttachedTo) {
 		this.rolePersonAttachedTo = rolePersonAttachedTo;
 	}
+
+	public List<Skill> getSkillsList() {
+		return skillsList;
+	}
+
+	public void setSkillsList(List<Skill> skillsList) {
+		this.skillsList = skillsList;
+	}
+	
 }

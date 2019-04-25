@@ -24,6 +24,7 @@ import fr.alten.ambroiseJEE.model.beans.Mobility;
 import fr.alten.ambroiseJEE.model.beans.Skill;
 import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.model.dao.ApplicantForumRepository;
+import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.Nationality;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
@@ -141,7 +142,7 @@ public class ApplicantForumEntityController {
 		List<String> skills = new ArrayList<String>();
 		JsonNode skillNode = jApplicant.get("skills");
 		for (JsonNode skill : skillNode) {
-			Optional<Skill> SkillOptional = skillBusinessController.getSkill(skill.get("name").textValue());
+			Optional<Skill> SkillOptional = skillBusinessController.getSkill(skill,UserRole.MANAGER_ADMIN);
 			if (SkillOptional.isPresent()) {
 				skills.add(SkillOptional.get().getName());
 			}
@@ -311,7 +312,7 @@ public class ApplicantForumEntityController {
 			List<String> skills = new ArrayList<String>();
 			JsonNode skillNode = jApplicant.get("skills");
 			for (JsonNode skill : skillNode) {
-				Optional<Skill> SkillOptional = skillBusinessController.getSkill(skill.get("name").textValue());
+				Optional<Skill> SkillOptional = skillBusinessController.getSkill(skill,UserRole.MANAGER_ADMIN);
 				if (SkillOptional.isPresent()) {
 					skills.add(SkillOptional.get().getName());
 				}
