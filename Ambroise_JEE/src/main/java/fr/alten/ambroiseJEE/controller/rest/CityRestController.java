@@ -19,6 +19,7 @@ import com.google.gson.GsonBuilder;
 
 import fr.alten.ambroiseJEE.controller.business.geographic.CityBusinessController;
 import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.utils.JsonUtils;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
@@ -59,7 +60,7 @@ public class CityRestController {
 	@ResponseBody
 	public HttpException createCity(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) {
-		return params.get("name") != null ? cityBusinessController.createCity(params, role)
+		return checkJsonIntegrity(params, "name") ? cityBusinessController.createCity(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -79,7 +80,7 @@ public class CityRestController {
 	@ResponseBody
 	public HttpException deleteCity(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) {
-		return params.get("name") != null ? cityBusinessController.deleteCity(params, role)
+		return checkJsonIntegrity(params, "name") ? cityBusinessController.deleteCity(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -113,7 +114,11 @@ public class CityRestController {
 	@ResponseBody
 	public HttpException updateCity(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) {
-		return params.get("name") != null ? cityBusinessController.updateCity(params, role)
+		return this.checkJsonIntegrity(params, "name") ? cityBusinessController.updateCity(params, role)
 				: new UnprocessableEntityException();
+	}
+	
+	public boolean checkJsonIntegrity(JsonNode params,String... fields) {
+		return JsonUtils.checkJsonIntegrity(params, fields);
 	}
 }

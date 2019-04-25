@@ -3,7 +3,6 @@
  */
 package fr.alten.ambroiseJEE.controller.business.geographic;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,6 +14,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import fr.alten.ambroiseJEE.model.beans.City;
 import fr.alten.ambroiseJEE.model.entityControllers.CityEntityController;
 import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.security.UserRoleLists;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
@@ -31,6 +31,8 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 @Service
 public class CityBusinessController {
 
+	private UserRoleLists roles = UserRoleLists.getInstance();
+	
 	@Autowired
 	private CityEntityController cityEntityController;
 
@@ -44,7 +46,7 @@ public class CityBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException createCity(JsonNode jCity, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) ? cityEntityController.createCity(jCity)
+		return (isAdmin(role)) ? cityEntityController.createCity(jCity)
 				: new ForbiddenException();
 	}
 
@@ -59,8 +61,8 @@ public class CityBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException deleteCity(JsonNode params, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)
-				? cityEntityController.deleteCity(params.get("name").textValue())
+		return (isAdmin(role))
+				? cityEntityController.deleteCity(params)
 				: new ForbiddenException();
 	}
 
@@ -72,20 +74,20 @@ public class CityBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public List<City> getCities(UserRole role) {
-		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
+		if (isAdmin(role)) {
 			return cityEntityController.getCities();
 		}
 		throw new ForbiddenException();
 	}
 
 	/**
-	 * Fetch a city
+	 * Fetch a city | Used by GeographicBusinessController
 	 *
 	 * @param name the city name to fetch
 	 * @return an optional with the requested city or empty if not found
 	 * @author Andy Chabalier
 	 */
-	public Optional<City> getCity(String name) {
+	public City getCity(String name) {
 		return cityEntityController.getCity(name);
 	}
 
@@ -101,8 +103,12 @@ public class CityBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException updateCity(JsonNode jCity, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) ? cityEntityController.updateCity(jCity)
+		return (isAdmin(role)) ? cityEntityController.updateCity(jCity)
 				: new ForbiddenException();
+	}
+	
+	public boolean isAdmin(UserRole role) {
+		return roles.isAdmin(role);
 	}
 
 }

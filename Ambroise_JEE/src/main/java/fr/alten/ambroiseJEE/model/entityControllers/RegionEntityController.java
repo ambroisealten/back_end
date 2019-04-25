@@ -74,8 +74,8 @@ public class RegionEntityController {
 		return new OkException();
 	}
 
-	public Optional<Region> getRegion(String name) {
-		return regionRepository.findByName(name);
+	public Region getRegion(String name) {
+		return regionRepository.findByName(name).orElseThrow(ResourceNotFoundException::new);
 	}
 
 	/**

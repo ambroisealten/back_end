@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.mongodb.DuplicateKeyException;
 
 import fr.alten.ambroiseJEE.model.beans.City;
 import fr.alten.ambroiseJEE.model.dao.CityRepository;
@@ -51,7 +52,8 @@ public class CityEntityController {
 		try {
 			cityRepository.save(newCity);
 		} catch (Exception e) {
-			return new ConflictException();
+			if(!DuplicateKeyException.class.isInstance(e)) e.printStackTrace();
+			else return new ConflictException();
 		}
 		return new CreatedException();
 	}
@@ -64,8 +66,8 @@ public class CityEntityController {
 	 *         {@link OkException} if the city is deactivated
 	 * @author Andy Chabalier
 	 */
-	public HttpException deleteCity(String name) {
-		Optional<City> cityOptionnal = cityRepository.findByName(name);
+	public HttpException deleteCity(JsonNode jCity) {
+		Optional<City> cityOptionnal = cityRepository.findByName(jCity.get("name").textValue());
 
 		if (cityOptionnal.isPresent()) {
 			City city = cityOptionnal.get();
@@ -85,8 +87,8 @@ public class CityEntityController {
 		return cityRepository.findAll();
 	}
 
-	public Optional<City> getCity(String name) {
-		return cityRepository.findByName(name);
+	public City getCity(String name) {
+		return cityRepository.findByName(name).orElseThrow(ResourceNotFoundException::new);
 	}
 
 	/**

@@ -75,8 +75,8 @@ public class DepartementEntityController {
 		return new OkException();
 	}
 
-	public Optional<Departement> getDepartement(String name) {
-		return departementRepository.findByName(name);
+	public Departement getDepartement(String name) {
+		return departementRepository.findByName(name).orElseThrow(ResourceNotFoundException::new);
 	}
 
 	/**

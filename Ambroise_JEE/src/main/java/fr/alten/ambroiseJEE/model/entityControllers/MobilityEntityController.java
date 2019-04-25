@@ -16,6 +16,7 @@ import fr.alten.ambroiseJEE.model.dao.MobilityRepository;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 
 /**
  * @author Lucas Royackkers
@@ -52,30 +53,30 @@ public class MobilityEntityController {
 		String geographicType = jMobility.get("type").textValue();
 		switch (geographicType) {
 		case "city":
-			Optional<City> city = cityEntityController.getCity(jMobility.get("place").textValue());
-			if (city.isPresent()) {
-				newMobility.setPlaceName(city.get().getName());
-			}
+			try{
+				City city = cityEntityController.getCity(jMobility.get("place").textValue());
+				newMobility.setPlaceName(city.getName());
+			}catch(ResourceNotFoundException rnfe) {}
 			break;
 		case "departement":
-			Optional<Departement> departement = departementEntityController
+			Departement departement = departementEntityController
 					.getDepartement(jMobility.get("place").textValue());
-			if (departement.isPresent()) {
-				newMobility.setPlaceName(departement.get().getName());
-			}
+			try {
+				newMobility.setPlaceName(departement.getName());
+			}catch(ResourceNotFoundException rnfe) {}
 			break;
 		case "postalCode":
-			Optional<PostalCode> postalCode = postalCodeEntityController
+			PostalCode postalCode = postalCodeEntityController
 					.getPostalCode(jMobility.get("place").textValue());
-			if (postalCode.isPresent()) {
-				newMobility.setPlaceName(postalCode.get().getName());
-			}
+			try {
+				newMobility.setPlaceName(postalCode.getName());
+			}catch(ResourceNotFoundException rnfe) {}
 			break;
 		case "region":
-			Optional<Region> region = regionEntityController.getRegion(jMobility.get("place").textValue());
-			if (region.isPresent()) {
-				newMobility.setPlaceName(region.get().getName());
-			}
+			Region region = regionEntityController.getRegion(jMobility.get("place").textValue());
+			try {
+				newMobility.setPlaceName(region.getName());
+			}catch(ResourceNotFoundException rnfe) {}
 			break;
 		default:
 			break;

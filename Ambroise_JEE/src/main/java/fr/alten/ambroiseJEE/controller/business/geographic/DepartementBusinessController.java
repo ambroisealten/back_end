@@ -71,7 +71,7 @@ public class DepartementBusinessController {
 	 * @return an optional with the fetched value or empty if it's not found
 	 * @author Andy Chabalier
 	 */
-	public Optional<Departement> getDepartement(String name) {
+	public Departement getDepartement(String name) {
 		return departementEntityController.getDepartement(name);
 	}
 
