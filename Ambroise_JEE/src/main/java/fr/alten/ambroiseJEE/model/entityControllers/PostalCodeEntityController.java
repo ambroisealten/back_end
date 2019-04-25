@@ -73,8 +73,8 @@ public class PostalCodeEntityController {
 		return new OkException();
 	}
 
-	public Optional<PostalCode> getPostalCode(String name) {
-		return postalCodeRepository.findByName(name);
+	public PostalCode getPostalCode(String name) {
+		return postalCodeRepository.findByName(name).orElseThrow(ResourceNotFoundException::new);
 	}
 
 	/**

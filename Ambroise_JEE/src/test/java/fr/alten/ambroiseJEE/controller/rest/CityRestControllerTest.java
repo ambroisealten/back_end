@@ -2,6 +2,7 @@ package fr.alten.ambroiseJEE.controller.rest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
@@ -11,6 +12,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -18,6 +20,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import fr.alten.ambroiseJEE.controller.business.geographic.CityBusinessController;
 import fr.alten.ambroiseJEE.model.beans.City;
 import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.utils.JsonUtils;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
@@ -31,7 +34,8 @@ import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 public class CityRestControllerTest {
 
 	@InjectMocks
-	private CityRestController cityRestController;
+	@Spy
+	private final CityRestController cityRestController = new CityRestController();;
 
 	@Mock
 	private CityBusinessController cityBusinessController;
@@ -39,7 +43,9 @@ public class CityRestControllerTest {
 	private JsonNode mockedjsonNode;
 	@Mock
 	private HttpException mockedHttpException;
-
+	@Mock
+	private JsonUtils test;
+	
 	/**
 	 * @test create a {@link City}
 	 * @context {@link JsonNode} params containing field "name"
@@ -50,7 +56,7 @@ public class CityRestControllerTest {
 	public void createCity_with_rightParam() {
 
 		// setup
-		doReturn(mockedjsonNode).when(mockedjsonNode).get("name");
+		doReturn(true).when(cityRestController).checkJsonIntegrity((any(JsonNode.class)), anyString());
 		when(cityBusinessController.createCity(mockedjsonNode, UserRole.CDR_ADMIN)).thenReturn(mockedHttpException);
 
 		// assert
@@ -68,7 +74,7 @@ public class CityRestControllerTest {
 	public void createCity_with_wrongParam() {
 
 		// setup
-		doReturn(null).when(mockedjsonNode).get("name");
+		doReturn(false).when(cityRestController).checkJsonIntegrity((any(JsonNode.class)), anyString());
 
 		// assert
 		assertThat(cityRestController.createCity(mockedjsonNode, "mail", UserRole.CDR_ADMIN))
@@ -85,7 +91,7 @@ public class CityRestControllerTest {
 	public void deleteCity_with_rightParam() {
 
 		// setup
-		doReturn(mockedjsonNode).when(mockedjsonNode).get("name");
+		doReturn(true).when(cityRestController).checkJsonIntegrity((any(JsonNode.class)), anyString());
 		when(cityBusinessController.deleteCity(mockedjsonNode, UserRole.CDR_ADMIN)).thenReturn(mockedHttpException);
 
 		// assert
@@ -103,7 +109,7 @@ public class CityRestControllerTest {
 	public void deleteCity_with_wrongParam() {
 
 		// setup
-		doReturn(null).when(mockedjsonNode).get("name");
+		doReturn(false).when(cityRestController).checkJsonIntegrity((any(JsonNode.class)), anyString());
 
 		// assert
 		assertThat(cityRestController.deleteCity(mockedjsonNode, "mail", UserRole.CDR_ADMIN))
@@ -138,7 +144,7 @@ public class CityRestControllerTest {
 	public void updateCity_with_rightParam() {
 
 		// setup
-		doReturn(mockedjsonNode).when(mockedjsonNode).get("name");
+		doReturn(true).when(cityRestController).checkJsonIntegrity((any(JsonNode.class)), anyString());
 		when(cityBusinessController.updateCity(mockedjsonNode, UserRole.CDR_ADMIN))
 			.thenReturn(mockedHttpException);
 
@@ -158,7 +164,7 @@ public class CityRestControllerTest {
 	public void updateCity_with_wrongParam() {
 
 		// setup
-		doReturn(null).when(mockedjsonNode).get("name");
+		doReturn(false).when(cityRestController).checkJsonIntegrity((any(JsonNode.class)), anyString());
 
 		// assert
 		assertThat(cityRestController.updateCity(mockedjsonNode, "mail", UserRole.CDR_ADMIN))

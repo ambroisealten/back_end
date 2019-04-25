@@ -71,7 +71,7 @@ public class RegionBusinessController {
 	 * @return an optional with the fetched value or empy if the region is not found
 	 * @author Andy Chabalier
 	 */
-	public Optional<Region> getRegion(String name) {
+	public Region getRegion(String name) {
 		return regionEntityController.getRegion(name);
 	}
 

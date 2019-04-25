@@ -71,7 +71,7 @@ public class PostalCodeBusinessController {
 	 * @return an optional with the requested postal code or empty if not found
 	 * @author Andy Chabalier
 	 */
-	public Optional<PostalCode> getPostalCode(String name) {
+	public PostalCode getPostalCode(String name) {
 		return postalCodeEntityController.getPostalCode(name);
 	}
 
