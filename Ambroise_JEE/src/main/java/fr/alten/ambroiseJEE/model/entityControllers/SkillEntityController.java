@@ -86,10 +86,11 @@ public class SkillEntityController {
 	 * @return
 	 * @author Thomas Decamp
 	 */
-	public Optional<Skill> getSkill(JsonNode jSkill) {
-		return skillRepository.findByName(jSkill.get("name").textValue());
+	public Optional<Skill> getSkill(String name) {
+		return skillRepository.findByName(name);
 	}
 
+	
 	/**
 	 * Try to fetch a soft skill by its name and grade
 	 *

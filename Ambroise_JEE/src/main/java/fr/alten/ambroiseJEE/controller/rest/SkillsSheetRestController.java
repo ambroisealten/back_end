@@ -80,6 +80,23 @@ public class SkillsSheetRestController {
 	}
 	
 	/**
+	 * Get a JsonNode of Skills Sheets matching the specified queries in Identity and Skills fields
+	 * 
+	 * @param identity a String containing all filters about the identity of a person
+	 * @param skills a String containing all filters about the skills contained in a Skills Sheet
+	 * @param role the current logged user's role
+	 * @return the list of all skills sheets given the filters submitted
+	 * @throws {@link ForbiddenException} if the current logged user hasn't the rights to perform this action
+	 * @author Lucas Royackkers
+	 */
+	@GetMapping(value = "/skillsheetSearch/{identity}/{skills}")
+	@ResponseBody
+	public String getSkillsSheetByIdentityAndSkills(@PathVariable("identity") String identity, @PathVariable("skills") String skills,
+			@RequestAttribute("role") UserRole role) {
+		return gson.toJson(skillsSheetBusinessController.getSkillsSheetsByIdentityAndSkills(identity,skills,role));
+	}
+	
+	/**
 	 * 
 	 * @param mailPerson a person's mail that we need to check whether it has been used in a skills sheet or not 
 	 * @param mail the current logged user's mail

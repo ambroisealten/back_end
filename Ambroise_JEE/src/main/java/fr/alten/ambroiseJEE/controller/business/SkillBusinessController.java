@@ -65,9 +65,10 @@ public class SkillBusinessController {
 				: new ForbiddenException();
 	}
 
+	
 	public Optional<Skill> getSkill(JsonNode jSkill, UserRole role) {
 		if (roles.isAdmin(role)) {
-			return skillEntityController.getSkill(jSkill);
+			return skillEntityController.getSkill(jSkill.get("name").textValue());
 		}
 		throw new ForbiddenException();
 	}

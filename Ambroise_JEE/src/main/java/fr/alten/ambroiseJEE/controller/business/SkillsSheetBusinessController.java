@@ -124,4 +124,21 @@ public class SkillsSheetBusinessController {
 		throw new ForbiddenException();
 	}
 
+	/**
+	 * Get all Skills Sheets given identity (on the Person object) and skills (on Skill objects) filters
+	 * 
+	 * @param identity the filters about a Person (name, job, etc.)
+	 * @param skills the filters about a Skill (name)
+	 * @param role the current logged user's role 
+	 * @return a List of SkillsSheet that match the query (can be empty)
+	 * @throws {@link ForbiddenException} if the current logged user hasn't the rights to perform this action
+	 * @author Lucas Royackkers
+	 */
+	public List<SkillsSheet> getSkillsSheetsByIdentityAndSkills(String identity, String skills, UserRole role) {
+		if(UserRole.MANAGER == role || UserRole.MANAGER_ADMIN == role) {
+			return skillsSheetEntityController.getSkillsSheetsByIdentityAndSkills(identity,skills);
+		}
+		throw new ForbiddenException();
+	}
+
 }
