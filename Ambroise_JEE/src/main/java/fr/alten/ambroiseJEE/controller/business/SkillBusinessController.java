@@ -65,12 +65,18 @@ public class SkillBusinessController {
 				: new ForbiddenException();
 	}
 
-	public List<Skill> getSkill(String name) {
-		return skillEntityController.getSkill(name);
+	public Optional<Skill> getSkill(JsonNode jSkill, UserRole role) {
+		if (roles.isAdmin(role)) {
+			return skillEntityController.getSkill(jSkill);
+		}
+		throw new ForbiddenException();
 	}
 
-	public Optional<Skill> getSkillByNameAndGrade(String name, float grade) {
-		return SkillEntityController.getSkillByNameAndGrade(name, grade);
+	public Optional<Skill> getSkillByNameAndGrade(JsonNode jSkill, UserRole role) {
+		if (roles.isAdmin(role)) {
+			return skillEntityController.getSkillByNameAndGrade(jSkill);
+		}
+		throw new ForbiddenException();
 	}
 	
 	/**

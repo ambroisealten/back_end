@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.Optionals;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -45,6 +44,8 @@ public class SkillEntityController {
 
 		Skill newSkill = new Skill();
 		newSkill.setName(jSkill.get("name").textValue());
+		if (jSkill.get("isSoft").textValue() != null)
+			newSkill.setIsSoft(jSkill.get("isSoft").textValue());
 		try {
 			skillRepository.save(newSkill);
 		} catch (Exception e) {
@@ -55,15 +56,6 @@ public class SkillEntityController {
 		}
 		return new CreatedException();
 
-	}
-
-	public HttpException saveNewSkill(JsonNode jSkill) {
-
-		Skill newSkill = new Skill();
-		newSkill.setName(jSkill.get("name").textValue());
-		skillRepository.save(newSkill);
-
-		return new CreatedException();
 	}
 
 	/**
@@ -79,6 +71,7 @@ public class SkillEntityController {
 				// optional is present
 				.map(skill -> {
 					skill.setName("deactivated" + System.currentTimeMillis());
+					skill.setIsSoft(null);
 					skillRepository.save(skill);
 					return (HttpException) new OkException();
 				})
@@ -86,8 +79,15 @@ public class SkillEntityController {
 				.orElse(new ResourceNotFoundException());
 	}
 
-	public Optional<Skill> getSkill(String name) {
-		return skillRepository.findByName(name);
+	/**
+	 * 
+	 *
+	 * @param name
+	 * @return
+	 * @author Thomas Decamp
+	 */
+	public Optional<Skill> getSkill(JsonNode jSkill) {
+		return skillRepository.findByName(jSkill.get("name").textValue());
 	}
 
 	/**
@@ -98,8 +98,8 @@ public class SkillEntityController {
 	 * @return An Optional with the corresponding soft skill or not.
 	 * @author Lucas Royackkers
 	 */
-	public Optional<Skill> getSkillByNameAndGrade(String name, float grade) {
-		return skillRepository.findByNameAndGrade(name, grade);
+	public Optional<Skill> getSkillByNameAndGrade(JsonNode jSkill) {
+		return skillRepository.findByNameAndGrade(jSkill.get("name").textValue(), jSkill.get("grade").doubleValue());
 	}
 
 	/**
@@ -124,20 +124,22 @@ public class SkillEntityController {
 				// optional is present
 				.map(skill -> {
 					skill.setName(jSkill.get("name").textValue());
-					skillRepository.save(skill);
+					if (jSkill.get("isSoft").textValue() != null)
+						skill.setIsSoft(jSkill.get("isSoft").textValue());
+					else
+						skill.setIsSoft(null);
+					try {
+						skillRepository.save(skill);
+					} catch (Exception e) {
+						if (!DuplicateKeyException.class.isInstance(e)) {
+							e.printStackTrace();
+						} else
+							return (HttpException) new ConflictException();
+					}
 					return (HttpException) new OkException();
 				})
 				// optional isn't present
 				.orElse(new ResourceNotFoundException());
-		
-		/*Optional<Skill> skillOptionnal = skillRepository.findByName(jSkill.get("oldName").textValue());
-
-		if (!skillOptionnal.isPresent()) {
-			return new ResourceNotFoundException();
-		}
-		skillOptionnal.setName(jSkill.get("name").textValue());
-		skillRepository.save(skillOptionnal);
-		return new OkException();*/
 	}
 
 }

@@ -49,7 +49,7 @@ public class SkillRestController {
 	@ResponseBody
 	public HttpException createSkill(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("mail") != null ? skillBusinessController.createSkill(params, role)
+		return (checkJsonIntegrity(params, "mail")) ? skillBusinessController.createSkill(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -57,10 +57,17 @@ public class SkillRestController {
 	@ResponseBody
 	public HttpException deleteSkill(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("mail") != null ? skillBusinessController.deleteSkill(params, role)
+		return (checkJsonIntegrity(params, "mail")) ? skillBusinessController.deleteSkill(params, role)
 				: new UnprocessableEntityException();
 	}
 
+	@GetMapping(value = "/skill")
+	@ResponseBody
+	public String getSkill(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
+			@RequestAttribute("role") UserRole role) throws Exception {
+		return gson.toJson(skillBusinessController.getSkill(params, role));
+	}
+	
 	@GetMapping(value = "/skills")
 	@ResponseBody
 	public String getSkills(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {

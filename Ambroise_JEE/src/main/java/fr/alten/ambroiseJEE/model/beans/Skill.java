@@ -27,7 +27,7 @@ public class Skill implements Serializable {
 	@Indexed(unique = true)
 	private String name;
 	
-	private byte isSoft;
+	private String isSoft;
 
 	public Skill() {
 		super();
@@ -45,6 +45,14 @@ public class Skill implements Serializable {
 		return name;
 	}
 
+	public String getIsSoft() {
+		return isSoft;
+	}
+
+	public void setIsSoft(String isSoft) {
+		this.isSoft = isSoft;
+	}
+	
 	public void set_id(ObjectId _id) {
 		this._id = _id;
 	}
