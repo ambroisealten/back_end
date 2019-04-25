@@ -1,5 +1,7 @@
 package fr.alten.ambroiseJEE.controller.rest;
 
+import static fr.alten.ambroiseJEE.utils.JsonUtils.checkJsonIntegrity;
+
 import java.text.ParseException;
 import java.util.Optional;
 
@@ -26,6 +28,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
+import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
  * Rest Controller for Consultant
@@ -60,7 +63,7 @@ public class ConsultantRestController {
 	@ResponseBody
 	public HttpException createConsultant(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws Exception {
-		return consultantBusinessController.createConsultant(params, role);
+		return (checkJsonIntegrity(params,"mail")) ? consultantBusinessController.createConsultant(params, role) : new UnprocessableEntityException();
 	}
 
 	/**
@@ -77,7 +80,7 @@ public class ConsultantRestController {
 	@ResponseBody
 	public HttpException deleteConsultant(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) {
-		return consultantBusinessController.deleteConsultant(params, role);
+		return (checkJsonIntegrity(params,"mail")) ? consultantBusinessController.deleteConsultant(params, role) : new UnprocessableEntityException();
 	}
 
 	/**
@@ -126,7 +129,7 @@ public class ConsultantRestController {
 	@ResponseBody
 	public HttpException updateConsultant(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws ParseException {
-		return consultantBusinessController.updateConsultant(params, role);
+		return (checkJsonIntegrity(params,"mail","oldMail")) ?  consultantBusinessController.updateConsultant(params, role) : new UnprocessableEntityException();
 	}
 
 }

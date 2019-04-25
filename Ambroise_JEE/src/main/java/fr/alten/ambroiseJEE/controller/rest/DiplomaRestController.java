@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
+import static fr.alten.ambroiseJEE.utils.JsonUtils.checkJsonIntegrity;
 import fr.alten.ambroiseJEE.controller.business.DiplomaBusinessController;
 import fr.alten.ambroiseJEE.model.beans.Diploma;
 import fr.alten.ambroiseJEE.security.UserRole;
@@ -61,7 +61,7 @@ public class DiplomaRestController {
 	@ResponseBody
 	public HttpException createDiploma(@RequestBody JsonNode params, @RequestAttribute("role") UserRole role)
 			throws ParseException {
-		return (params.get("name") != null && params.get("yearOfResult") != null) ?
+		return (checkJsonIntegrity(params,"name","yearOfResult")) ?
 				diplomaBusinessController.createDiploma(params, role) : new UnprocessableEntityException();
 	}
 
@@ -79,7 +79,7 @@ public class DiplomaRestController {
 	@DeleteMapping("/diploma")
 	@ResponseBody
 	public HttpException deleteDiploma(@RequestBody JsonNode params, @RequestAttribute("role") UserRole role) {
-		return (params.get("name") != null && params.get("yearOfResult") != null) ?
+		return (checkJsonIntegrity(params,"name","yearOfResult")) ?
 				diplomaBusinessController.deleteDiploma(params, role) : new UnprocessableEntityException();
 	}
 
@@ -127,7 +127,7 @@ public class DiplomaRestController {
 	@ResponseBody
 	public HttpException updateDiploma(@RequestBody JsonNode params, @RequestAttribute("role") UserRole role)
 			throws ParseException {
-		return (params.get("name") != null && params.get("oldName") != null && params.get("oldYearOfResult") != null && params.get("yearOfResult") != null) ?
+		return (checkJsonIntegrity(params,"name","yearOfResult","oldName","oldYearOfResult")) ?
 				diplomaBusinessController.updateDiploma(params, role) : new UnprocessableEntityException();
 	}
 

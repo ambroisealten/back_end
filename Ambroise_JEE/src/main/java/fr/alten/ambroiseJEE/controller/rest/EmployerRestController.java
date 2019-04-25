@@ -1,5 +1,7 @@
 package fr.alten.ambroiseJEE.controller.rest;
 
+import static fr.alten.ambroiseJEE.utils.JsonUtils.checkJsonIntegrity;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -54,7 +56,7 @@ public class EmployerRestController {
 	@PostMapping("/employer")
 	@ResponseBody
 	public HttpException createEmployer(@RequestBody JsonNode params, @RequestAttribute("role") UserRole role) {
-		return (params.get("name") != null) ? employerBusinessController.createEmployer(params, role) : new UnprocessableEntityException();
+		return (checkJsonIntegrity(params,"name")) ? employerBusinessController.createEmployer(params, role) : new UnprocessableEntityException();
 	}
 
 	/**
@@ -71,7 +73,7 @@ public class EmployerRestController {
 	@DeleteMapping("/employer")
 	@ResponseBody
 	public HttpException deleteEmployer(@RequestBody JsonNode params, @RequestAttribute("role") UserRole role) {
-		return (params.get("name") != null) ? employerBusinessController.deleteEmployer(params, role) : new UnprocessableEntityException();
+		return (checkJsonIntegrity(params,"name")) ? employerBusinessController.deleteEmployer(params, role) : new UnprocessableEntityException();
 	}
 
 	/**
@@ -101,7 +103,7 @@ public class EmployerRestController {
 	@PutMapping("/employer")
 	@ResponseBody
 	public HttpException updateEmployer(@RequestBody JsonNode params, @RequestAttribute("role") UserRole role) {
-		return (params.get("name") != null && params.get("oldName") != null) ? 
+		return (checkJsonIntegrity(params,"name","oldName")) ? 
 				employerBusinessController.updateEmployer(params, role) : new UnprocessableEntityException();
 	}
 
