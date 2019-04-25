@@ -52,8 +52,23 @@ public class FileBusinessController {
 	}
 
 	/**
+	 * Fetch the list of all collection's files
+	 *
+	 * @param path the collection path
+	 * @param role the current logged user's role
+	 * @return the list of the collection file
+	 * @author Andy Chabalier
+	 */
+	public List<File> getCollectionFiles(final String path, final UserRole role) {
+		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
+			return this.fileEntityController.getCollectionFiles(path);
+		}
+		throw new ForbiddenException();
+	}
+
+	/**
 	 * Fetch the list of all files
-	 * 
+	 *
 	 * @param role the current logged user's role
 	 * @return the list of files
 	 * @author Andy Chabalier
@@ -64,12 +79,12 @@ public class FileBusinessController {
 
 	/**
 	 * Fetch the list of all forum's filess
-	 * 
+	 *
 	 * @param role the current logged user's role
 	 * @return the list of file forum
 	 * @author Andy Chabalier
 	 */
-	public List<File> getFilesForum(UserRole role) {
+	public List<File> getFilesForum(final UserRole role) {
 		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
 			return this.fileEntityController.getFilesForum();
 		}
@@ -77,17 +92,19 @@ public class FileBusinessController {
 	}
 
 	/**
-	 * Fetch the list of all collection's files
-	 * 
-	 * @param path the collection path
-	 * @param role the current logged user's role
-	 * @return the list of the collection file
+	 * Update a file
+	 *
+	 * @param _id         the id of file to update
+	 * @param path        the path to update
+	 * @param displayName the display name to update
+	 * @param role        the current logged user's role
+	 * @return
 	 * @author Andy Chabalier
 	 */
-	public List<File> getCollectionFiles(String path, UserRole role) {
-		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
-			return this.fileEntityController.getCollectionFiles(path);
-		}
-		throw new ForbiddenException();
+	public HttpException updateDocument(final String _id, final String path, final String displayName,
+			final UserRole role) {
+		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role
+				? this.fileEntityController.updateFile(_id, path, displayName)
+				: new ForbiddenException();
 	}
 }

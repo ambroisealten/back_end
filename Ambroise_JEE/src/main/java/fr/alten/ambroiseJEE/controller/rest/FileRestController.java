@@ -4,6 +4,8 @@
 package fr.alten.ambroiseJEE.controller.rest;
 
 import java.io.IOException;
+import java.nio.file.AtomicMoveNotSupportedException;
+import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.NoSuchFileException;
 import java.util.Arrays;
 import java.util.List;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -62,6 +65,21 @@ public class FileRestController {
 		this.gson = builder.create();
 	}
 
+	/**
+	 * Delete a file from the database and the file system
+	 *
+	 * @param _id       the id of the file to delete
+	 * @param path      the path of the file to delete
+	 * @param extension the extension of the file to delete
+	 * @param mail      the current logged user's mail
+	 * @param role      the current logged user's role
+	 * @return {@link HttpException} corresponding to the status of the request
+	 *         ({@link UnprocessableEntityException} if the provided _id is not a
+	 *         valid id, ({@link ResourceNotFoundException} if the file is not
+	 *         found, {@link InternalServerErrorException} if a security or Io
+	 *         problem occur and {@link OkException} if the file is deleted
+	 * @author Andy Chabalier
+	 */
 	@DeleteMapping("/file")
 	public HttpException deleteFile(@RequestParam("_id") final String _id, @RequestParam("path") final String path,
 			@RequestParam("extension") final String extension, @RequestAttribute("mail") final String mail,
@@ -113,6 +131,20 @@ public class FileRestController {
 	}
 
 	/**
+	 * Fetch the list of specific collection's document
+	 *
+	 * @param mail the current logged user's mail
+	 * @param role the current logged user's role
+	 * @return the list of the documents
+	 * @author Andy Chabalier
+	 */
+	@GetMapping("/files/collection")
+	public String getCollectionFiles(@RequestParam("path") final String path,
+			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
+		return this.gson.toJson(this.fileBusinessController.getCollectionFiles(path, role));
+	}
+
+	/**
 	 * Fetch the list of documents
 	 *
 	 * @param mail the current logged user's mail
@@ -140,17 +172,36 @@ public class FileRestController {
 	}
 
 	/**
-	 * Fetch the list of specific collection's document
 	 *
-	 * @param mail the current logged user's mail
-	 * @param role the current logged user's role
-	 * @return the list of the documents
+	 * @param _id         the id of the file to update
+	 * @param displayName the display name of the file to update
+	 * @param path        the path of the file to update
+	 * @param mail        the current logged user's mail
+	 * @param role        the current logged user's role
+	 * @return {@link HttpException} corresponding to the status of the request
+	 *         ({@link UnprocessableEntityException} if the resource is not found,
+	 *         ({@link ResourceNotFoundException} if the file is not found,
+	 *         {@link InternalServerErrorException} if a security internal error
+	 *         occur and {@link OkException} if the file is moved and updated
 	 * @author Andy Chabalier
 	 */
-	@GetMapping("/files/collection")
-	public String getCollectionFiles(@RequestParam("path") String path, @RequestAttribute("mail") final String mail,
-			@RequestAttribute("role") final UserRole role) {
-		return this.gson.toJson(this.fileBusinessController.getCollectionFiles(path, role));
+	@PutMapping("/file")
+	public HttpException updateFile(@RequestParam("_id") final String _id,
+			@RequestParam("extension") final String extension, @RequestParam("displayName") final String displayName,
+			@RequestParam("newPath") final String newPath, @RequestParam("oldPath") final String oldPath,
+			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
+		if (ObjectId.isValid(_id)) {
+			try {
+				this.fileStorageBusinessController.moveFile(_id + "." + extension, oldPath, newPath, role);
+			} catch (SecurityException | UnsupportedOperationException | AtomicMoveNotSupportedException
+					| DirectoryNotEmptyException e) {
+				return new InternalServerErrorException();
+			} catch (final IOException e) {
+				return new ResourceNotFoundException();
+			}
+			return this.fileBusinessController.updateDocument(_id, newPath, displayName, role);
+		}
+		return new UnprocessableEntityException();
 	}
 
 	/**
@@ -161,11 +212,8 @@ public class FileRestController {
 	 * @param mail the current logged user's mail
 	 * @param role the current logged user's role
 	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link UnprocessableEntityException} if the resource is not found,
-	 *         ({@link OkException} if there is a conflict in the database (that
-	 *         mean file already exist and then it's an upload. But no change to
-	 *         make in base and {@link CreatedException} if the file is stored and
-	 *         created
+	 *         ({@link UnprocessableEntityException} if the provided file is null,
+	 *         and {@link CreatedException} if the file is stored and created
 	 * @author Andy Chabalier
 	 */
 	@PostMapping("/file")
