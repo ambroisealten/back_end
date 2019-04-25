@@ -8,6 +8,8 @@ import java.io.Serializable;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.mongodb.lang.NonNull;
+
 /**
  *
  * @author Andy Chabalier
@@ -19,10 +21,12 @@ public class City extends Geographic implements Serializable {
 	private static final long serialVersionUID = 7473150851064346366L;
 
 	@Indexed(unique = true)
+	@NonNull
 	private String code;
 	private String codeDepartement;
 	private String codeRegion;
 	private String codePostaux;
+	@NonNull
 	private String name;
 
 	public City() {

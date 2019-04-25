@@ -57,9 +57,8 @@ public class JsonUtils {
 	 * @author Kylian Gehier
 	 */
 	public static boolean checkJsonIntegrity(JsonNode params, String... fields) {
-
-		for (int i = 0; i < fields.length; i++) {
-			if (params.get(fields[i]).isNull())
+		for (String f : fields) {
+			if (!params.has(f))
 				return false;
 		}
 		return true;
