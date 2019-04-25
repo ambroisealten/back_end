@@ -18,7 +18,9 @@ import com.google.gson.GsonBuilder;
 
 import fr.alten.ambroiseJEE.controller.business.DocumentSetBusinessController;
 import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.utils.JsonUtils;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
  * @author MAQUINGHEN MAXIME
@@ -37,14 +39,14 @@ public class DocumentSetRestController {
 		this.gson = builder.create();
 	}
 
-	@PostMapping("/documentset")
+	@PostMapping("/admin/documentset")
 	@ResponseBody
 	public HttpException createDocumentSet(@RequestBody JsonNode JDocumentSet,
 			@RequestAttribute("role") UserRole role) {
 		return documentSetBusinessController.createDocumentSet(JDocumentSet, role);
 	}
 
-	@PutMapping("/documentset")
+	@PutMapping("/admin/documentset")
 	@ResponseBody
 	public HttpException updateDocumentSet(@RequestBody JsonNode JDocumentSet,
 			@RequestAttribute("role") UserRole role) {
@@ -54,52 +56,17 @@ public class DocumentSetRestController {
 	@GetMapping("/documentset")
 	@ResponseBody
 	public String getDocumentSet(@RequestBody JsonNode JDocumentSet, @RequestAttribute("role") UserRole role) {
-		return gson.toJson(documentSetBusinessController.getDocumentSet(JDocumentSet, role));
+		if(!checkJsonIntegrity(JDocumentSet, "name", "files")) throw new UnprocessableEntityException();
+		else return gson.toJson(documentSetBusinessController.getDocumentSet(JDocumentSet, role));	
 	}
 
-	@GetMapping("/documentset/admin")
+	@GetMapping("/admin/documentset")
 	@ResponseBody
 	public String getDocumentSetAdmin(@RequestAttribute("role") UserRole role) {
 		return gson.toJson(documentSetBusinessController.getDocumentSetAdmin(role));
 	}
-
-	// /**
-//	 * 
-//	 * @param appVersion
-//	 * @param role
-//	 * @return
-//	 * @author MAQUINGHEN MAXIME
-//	 */
-//	@PostMapping("/version")
-//	@ResponseBody
-//	public HashMap<String, List<String>> getAppStatut(@RequestBody JsonNode appVersion,
-//			@RequestAttribute("role") UserRole role) {
-//		return documentSetBusinessController.synchroAppMobile(appVersion, role);
-//	}
-//
-//	@PostMapping("/fileversion")
-//	@ResponseBody
-//	public HttpException addFile(@RequestBody JsonNode params, @RequestAttribute("role") UserRole role) {
-//		return documentSetBusinessController.newFileVersion(params, role);
-//	}
-//	
-//	@GetMapping("/version")
-//	@ResponseBody
-//	public List<DocumentSet> setAppStatut(@RequestAttribute("role") UserRole role) {
-//		return documentSetBusinessController.setAppVersion(role);
-//	}
-//	
-//	@PutMapping("/version")
-//	@ResponseBody
-//	public HttpException updateAppData(@RequestBody JsonNode appVersion,
-//			@RequestAttribute("role") UserRole role) {
-//		return documentSetBusinessController.updateDataVersion(appVersion, role);
-//	}
-//
-//	@GetMapping("/appversion")
-//	@ResponseBody
-//	public String getAppData(@RequestAttribute("role") UserRole role) {
-//		return gson.toJson(documentSetBusinessController.setAppVersion(role));
-//	}
-
+	
+	public boolean checkJsonIntegrity(JsonNode params, String... fields) {
+		return JsonUtils.checkJsonIntegrity(params, fields);
+	}
 }

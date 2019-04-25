@@ -12,6 +12,8 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.util.Pair;
 
+import fr.alten.ambroiseJEE.model.beans.mobileDoc.MobileDoc;
+
 /**
  * @author MAQUINGHEN MAXIME
  *
@@ -26,8 +28,7 @@ public class DocumentSet implements Serializable {
 	
 	@Indexed(unique= true)
 	private String name;
-	
-	private List<Pair<String, Integer>> files;
+	private List<MobileDoc> mobileDoc;
 
 	public String getName() {
 		return name;
@@ -37,14 +38,14 @@ public class DocumentSet implements Serializable {
 		this.name = name;
 	}
 	
-	public List<Pair<String, Integer>> getFiles() {
-		return files;
+	public List<MobileDoc> getMobileDocs() {
+		return mobileDoc;
 	}
 	
-	public void setFiles(List<Pair<String, Integer>> files) {
-		this.files = files;
+	public void setMobileDocs(List<MobileDoc> mobileDoc) {
+		this.mobileDoc = mobileDoc;
 	}
+	
 
-	
 	
 }
