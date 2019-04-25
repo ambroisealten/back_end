@@ -196,7 +196,7 @@ public class SkillsSheetEntityController {
 	public HttpException updateSkillsSheet(JsonNode jSkillsSheet) {
 		// We retrieve the latest version number of the skills sheet, in order to
 		// increment it later
-		long latestVersionNumber = Long.parseLong(jSkillsSheet.get("versionNumber").textValue());
+		long latestVersionNumber = jSkillsSheet.get("versionNumber").longValue();
 		Optional<SkillsSheet> skillsSheetOptional = this
 				.getSkillsSheetByNameAndVersionNumber(jSkillsSheet.get("name").textValue(), latestVersionNumber);
 		// If we find the skills sheet, with its name and its version (the Front part
