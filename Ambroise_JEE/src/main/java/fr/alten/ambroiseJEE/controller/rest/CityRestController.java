@@ -60,7 +60,7 @@ public class CityRestController {
 	@ResponseBody
 	public HttpException createCity(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) {
-		return checkJsonIntegrity(params, "name", "code", "codeDepartement", "codeRegion", "codePostaux") ? cityBusinessController.createCity(params, role)
+		return checkJsonIntegrity(params, "name", "code") ? cityBusinessController.createCity(params, role)
 				: new UnprocessableEntityException();
 	}
 
