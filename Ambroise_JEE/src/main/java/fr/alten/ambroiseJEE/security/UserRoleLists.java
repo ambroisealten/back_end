@@ -60,7 +60,17 @@ public class UserRoleLists {
 	 * @author Kylian Gehier
 	 */
 	public boolean isAdmin(UserRole role) {
-		return (this.adminUsers.contains(role)) ? true : false;
+		return (this.adminUsers.contains(role));
+	}
+	
+	/**
+	 * 
+	 * @param role {@link UserRole} to test if he is Cdr or Manager
+	 * @return true if Cdr or Manager, otherwise false
+	 * @author Kylian Gehier
+	 */
+	public boolean isManagerOrCdr(UserRole role) {
+		return (role==UserRole.CDR || role==UserRole.MANAGER);
 	}
 
 }

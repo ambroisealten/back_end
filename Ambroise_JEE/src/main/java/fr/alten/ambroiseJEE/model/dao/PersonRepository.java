@@ -26,7 +26,7 @@ public interface PersonRepository extends MongoRepository<Person, Long> {
 	 * @return An Optional with the corresponding persons or not.
 	 * @author Royackkers Lucas
 	 */
-	List<Person> findByMail(String mail);
+	Optional<Person> findByMail(String mail);
 
 	/**
 	 * @param mail the person's mail
