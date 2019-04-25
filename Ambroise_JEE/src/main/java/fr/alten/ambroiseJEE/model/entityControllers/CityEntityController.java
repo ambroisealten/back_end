@@ -52,8 +52,10 @@ public class CityEntityController {
 		try {
 			cityRepository.save(newCity);
 		} catch (Exception e) {
-			if(!DuplicateKeyException.class.isInstance(e)) e.printStackTrace();
-			else return new ConflictException();
+			if (!DuplicateKeyException.class.isInstance(e))
+				e.printStackTrace();
+			else
+				return new ConflictException();
 		}
 		return new CreatedException();
 	}
@@ -67,16 +69,24 @@ public class CityEntityController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException deleteCity(JsonNode jCity) {
-		Optional<City> cityOptionnal = cityRepository.findByName(jCity.get("name").textValue());
 
-		if (cityOptionnal.isPresent()) {
-			City city = cityOptionnal.get();
-			city.setName("deactivated" + System.currentTimeMillis());
-			cityRepository.save(city);
-		} else {
-			throw new ResourceNotFoundException();
-		}
-		return new OkException();
+		return cityRepository.findByName(jCity.get("name").textValue())
+				// optional is present
+				.map(city -> {
+					city.setName("deactivated" + System.currentTimeMillis());
+					try {
+						cityRepository.save(city);
+					} catch (Exception e) {
+						if (!DuplicateKeyException.class.isInstance(e))
+							e.printStackTrace();
+						else
+							return new ConflictException();
+					}
+					return (HttpException) new OkException();
+
+					// optional isn't present
+				}).orElse(new ResourceNotFoundException());
+
 	}
 
 	/**
@@ -101,17 +111,23 @@ public class CityEntityController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException updateCity(JsonNode jCity) {
-		Optional<City> cityOptionnal = cityRepository.findByName(jCity.get("oldName").textValue());
 
-		if (cityOptionnal.isPresent()) {
-			City city = cityOptionnal.get();
-			city.setName(jCity.get("name").textValue());
+		return cityRepository.findByName(jCity.get("name").textValue())
+				// optional is present
+				.map(city -> {
+					city.setName(jCity.get("name").textValue());
+					try {
+						cityRepository.save(city);
+					} catch (Exception e) {
+						if (!DuplicateKeyException.class.isInstance(e))
+							e.printStackTrace();
+						else
+							return new ConflictException();
+					}
+					return (HttpException) new OkException();
 
-			cityRepository.save(city);
-		} else {
-			throw new ResourceNotFoundException();
-		}
-		return new OkException();
+					// optional isn't present
+				}).orElse(new ResourceNotFoundException());
 	}
 
 }
