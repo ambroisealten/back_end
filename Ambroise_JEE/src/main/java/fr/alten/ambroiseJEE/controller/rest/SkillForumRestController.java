@@ -17,6 +17,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import static fr.alten.ambroiseJEE.utils.JsonUtils.checkJsonIntegrity;
+
 import fr.alten.ambroiseJEE.controller.business.SkillForumBusinessController;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
@@ -45,7 +47,7 @@ public class SkillForumRestController {
 	@ResponseBody
 	public HttpException createSkill(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("mail") != null ? skillForumBusinessController.createSkillForum(params, role)
+		return (checkJsonIntegrity(params, "mail")) ? skillForumBusinessController.createSkillForum(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -53,10 +55,17 @@ public class SkillForumRestController {
 	@ResponseBody
 	public HttpException deleteSkill(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("mail") != null ? skillForumBusinessController.deleteSkillForum(params, role)
+		return (checkJsonIntegrity(params, "mail")) ? skillForumBusinessController.deleteSkillForum(params, role)
 				: new UnprocessableEntityException();
 	}
 
+	@GetMapping(value = "/forum/skill")
+	@ResponseBody
+	public String getSkill(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
+			@RequestAttribute("role") UserRole role) throws Exception {
+		return gson.toJson(skillForumBusinessController.getSkillForum(params, role));
+	}
+	
 	@GetMapping(value = "/forum/skills")
 	@ResponseBody
 	public String getSkills(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
@@ -67,7 +76,7 @@ public class SkillForumRestController {
 	@ResponseBody
 	public HttpException updateSkill(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("mail") != null ? skillForumBusinessController.createSkillForum(params, role)
+		return (checkJsonIntegrity(params, "mail")) ? skillForumBusinessController.createSkillForum(params, role)
 				: new UnprocessableEntityException();
 	}
 }

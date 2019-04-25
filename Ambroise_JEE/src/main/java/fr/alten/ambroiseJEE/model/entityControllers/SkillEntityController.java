@@ -120,7 +120,7 @@ public class SkillEntityController {
 	 * @author Thomas Decamp
 	 */
 	public HttpException updateSkill(JsonNode jSkill) {
-		return skillRepository.findByName(jSkill.get("name").textValue())
+		return skillRepository.findByName(jSkill.get("oldName").textValue())
 				// optional is present
 				.map(skill -> {
 					skill.setName(jSkill.get("name").textValue());
