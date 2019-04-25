@@ -13,6 +13,7 @@ import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import fr.alten.ambroiseJEE.model.dao.CityRepository;
+import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 
 /**
  * 
@@ -28,5 +29,9 @@ public class CityEntityControllerTest {
 	
 	@Mock
 	private CityRepository cityRepository;
+	@Mock
+	private HttpException mockedHttpException;
+	
+	
 	
 }
