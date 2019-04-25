@@ -140,6 +140,20 @@ public class FileRestController {
 	}
 
 	/**
+	 * Fetch the list of specific collection's document
+	 *
+	 * @param mail the current logged user's mail
+	 * @param role the current logged user's role
+	 * @return the list of the documents
+	 * @author Andy Chabalier
+	 */
+	@GetMapping("/files/collection")
+	public String getCollectionFiles(@RequestParam("path") String path, @RequestAttribute("mail") final String mail,
+			@RequestAttribute("role") final UserRole role) {
+		return this.gson.toJson(this.fileBusinessController.getCollectionFiles(path, role));
+	}
+
+	/**
 	 * upload a file. This delegate the stockage of file and his subscription in the
 	 * document's database collection HTTP Method : POST
 	 *

@@ -50,6 +50,27 @@ public class FileEntityController {
 	}
 
 	/**
+	 * Fetch the list of document of the collection
+	 *
+	 * @param path the collection path
+	 * @return the list of the collection file
+	 * @author Andy Chabalier
+	 */
+	public List<File> getCollectionFiles(final String path) {
+		final File fileExemple = new File();
+		fileExemple.setPath(path);
+
+		// Create a matcher for this file Example. We want to focus only on path, then
+		// we ignore null value and dateOfCreation wich is a long value and can't be
+		// null
+		final ExampleMatcher matcher = ExampleMatcher.matching()
+				.withMatcher("path", GenericPropertyMatchers.startsWith()).withIgnoreNullValues()
+				.withIgnorePaths("dateOfCreation");
+
+		return this.fileRepository.findAll(Example.of(fileExemple, matcher));
+	}
+
+	/**
 	 * @return the list of files
 	 * @author Andy Chabalier
 	 */
@@ -65,18 +86,7 @@ public class FileEntityController {
 	 * @author Andy Chabalier
 	 */
 	public List<File> getFilesForum() {
-
-		final File fileExemple = new File();
-		fileExemple.setPath("/forum/");
-
-		// Create a matcher for this file Example. We want to focus only on path, then
-		// we ignore null value and dateOfCreation wich is a long value and can't be
-		// null
-		final ExampleMatcher matcher = ExampleMatcher.matching()
-				.withMatcher("path", GenericPropertyMatchers.startsWith()).withIgnoreNullValues()
-				.withIgnorePaths("dateOfCreation");
-
-		return this.fileRepository.findAll(Example.of(fileExemple, matcher));
+		return getCollectionFiles("/forum");
 	}
 
 	/**

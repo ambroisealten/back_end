@@ -75,4 +75,19 @@ public class FileBusinessController {
 		}
 		throw new ForbiddenException();
 	}
+
+	/**
+	 * Fetch the list of all collection's files
+	 * 
+	 * @param path the collection path
+	 * @param role the current logged user's role
+	 * @return the list of the collection file
+	 * @author Andy Chabalier
+	 */
+	public List<File> getCollectionFiles(String path, UserRole role) {
+		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
+			return this.fileEntityController.getCollectionFiles(path);
+		}
+		throw new ForbiddenException();
+	}
 }
