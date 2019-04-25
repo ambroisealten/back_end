@@ -17,9 +17,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import static fr.alten.ambroiseJEE.utils.JsonUtils.checkJsonIntegrity;
-
-import fr.alten.ambroiseJEE.controller.business.SkillBusinessController;
+import fr.alten.ambroiseJEE.controller.business.SkillForumBusinessController;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
@@ -31,16 +29,14 @@ import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
  *
  */
 @Controller
-public class SkillRestController {
+public class SkillForumRestController {
 
-	
-	
 	@Autowired
-	private SkillBusinessController skillBusinessController;
+	private SkillForumBusinessController skillForumBusinessController;
 
 	private final Gson gson;
 
-	public SkillRestController() {
+	public SkillForumRestController() {
 		GsonBuilder builder = new GsonBuilder();
 		this.gson = builder.create();
 	}
@@ -49,7 +45,7 @@ public class SkillRestController {
 	@ResponseBody
 	public HttpException createSkill(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws Exception {
-		return (checkJsonIntegrity(params, "mail")) ? skillBusinessController.createSkill(params, role)
+		return params.get("mail") != null ? skillForumBusinessController.createSkillForum(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -57,29 +53,21 @@ public class SkillRestController {
 	@ResponseBody
 	public HttpException deleteSkill(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws Exception {
-		return (checkJsonIntegrity(params, "mail")) ? skillBusinessController.deleteSkill(params, role)
+		return params.get("mail") != null ? skillForumBusinessController.deleteSkillForum(params, role)
 				: new UnprocessableEntityException();
 	}
 
-	@GetMapping(value = "/skill")
-	@ResponseBody
-	public String getSkill(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) throws Exception {
-		return gson.toJson(skillBusinessController.getSkill(params, role));
-	}
-	
 	@GetMapping(value = "/skills")
 	@ResponseBody
 	public String getSkills(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
-		return gson.toJson(skillBusinessController.getSkills(role));
+		return gson.toJson(skillForumBusinessController.getSkillsForum(role));
 	}
 
 	@PutMapping(value = "/skill")
 	@ResponseBody
 	public HttpException updateSkill(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
 			@RequestAttribute("role") UserRole role) throws Exception {
-		return (checkJsonIntegrity(params, "name", "oldName", "mail")) ? skillBusinessController.createSkill(params, role)
+		return params.get("mail") != null ? skillForumBusinessController.createSkillForum(params, role)
 				: new UnprocessableEntityException();
 	}
-	
 }

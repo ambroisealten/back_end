@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import fr.alten.ambroiseJEE.model.beans.Skill;
 import fr.alten.ambroiseJEE.model.entityControllers.SkillEntityController;
 import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.security.UserRoleLists;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
@@ -29,6 +30,8 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 @Service
 public class SkillBusinessController {
 
+	private UserRoleLists roles = UserRoleLists.getInstance();
+	
 	@Autowired
 	private SkillEntityController skillEntityController;
 
@@ -42,7 +45,7 @@ public class SkillBusinessController {
 	 * @author Thomas Decamp
 	 */
 	public HttpException createSkill(JsonNode jSkill, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)
+		return (roles.isAdmin(role))
 				? skillEntityController.createSkill(jSkill)
 				: new ForbiddenException();
 	}
@@ -56,23 +59,33 @@ public class SkillBusinessController {
 	 *         {@link CreatedException} if the skill is deleted
 	 * @author Thomas Decamp
 	 */
-	public HttpException deleteSkill(JsonNode params, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)
-				? skillEntityController.deleteSkill(params.get("name").textValue())
+	public HttpException deleteSkill(JsonNode jSkill, UserRole role) {
+		return (roles.isAdmin(role))
+				? skillEntityController.deleteSkill(jSkill)
 				: new ForbiddenException();
 	}
 
-	public Optional<Skill> getSkill(String name) {
-		return skillEntityController.getSkill(name);
+	public Optional<Skill> getSkill(JsonNode jSkill, UserRole role) {
+		if (roles.isAdmin(role)) {
+			return skillEntityController.getSkill(jSkill);
+		}
+		throw new ForbiddenException();
 	}
 
+	public Optional<Skill> getSkillByNameAndGrade(JsonNode jSkill, UserRole role) {
+		if (roles.isAdmin(role)) {
+			return skillEntityController.getSkillByNameAndGrade(jSkill);
+		}
+		throw new ForbiddenException();
+	}
+	
 	/**
 	 * @param role the user role
 	 * @return the list of all skills
 	 * @author Thomas Decamp
 	 */
 	public List<Skill> getSkills(UserRole role) {
-		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
+		if (roles.isAdmin(role)) {
 			return skillEntityController.getSkills();
 		}
 		throw new ForbiddenException();
@@ -89,7 +102,7 @@ public class SkillBusinessController {
 	 * @author Thomas Decamp
 	 */
 	public HttpException updateSkill(JsonNode jSkill, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)
+		return (roles.isAdmin(role))
 				? skillEntityController.updateSkill(jSkill)
 				: new ForbiddenException();
 	}

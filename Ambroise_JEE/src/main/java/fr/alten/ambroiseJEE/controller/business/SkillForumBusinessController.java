@@ -11,11 +11,10 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import fr.alten.ambroiseJEE.model.beans.SoftSkill;
-import fr.alten.ambroiseJEE.model.entityControllers.SoftSkillEntityController;
+import fr.alten.ambroiseJEE.model.beans.SkillForum;
+import fr.alten.ambroiseJEE.model.entityControllers.SkillForumEntityController;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.security.UserRoleLists;
-import fr.alten.ambroiseJEE.utils.SoftSkillGrade;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
@@ -23,82 +22,78 @@ import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 
 /**
- * SoftSkill controller for business rules.
+ * Skill controller for business rules.
  *
  * @author Thomas Decamp
  *
  */
 @Service
-public class SoftSkillBusinessController {
+public class SkillForumBusinessController {
 
 	private UserRoleLists roles = UserRoleLists.getInstance();
 	
 	@Autowired
-	private SoftSkillEntityController softSkillEntityController;
+	private SkillForumEntityController skillForumEntityController;
 
 	/**
-	 * Method to delegate softSkill creation
+	 * Method to delegate skill creation
 	 *
-	 * @param jUser JsonNode with all softSkill parameters
+	 * @param jUser JsonNode with all skill parameters
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ConflictException} if there is a conflict in the
-	 *         database and {@link CreatedException} if the softSkill is created
+	 *         database and {@link CreatedException} if the skill is created
 	 * @author Thomas Decamp
 	 */
-	public HttpException createSoftSkill(JsonNode jSoftSkill, UserRole role) {
+	public HttpException createSkillForum(JsonNode jSkillForum, UserRole role) {
 		return (roles.isAdmin(role))
-				? softSkillEntityController.createSoftSkillAndGrade(jSoftSkill)
+				? skillForumEntityController.createSkillForum(jSkillForum)
 				: new ForbiddenException();
 	}
 
 	/**
 	 *
-	 * @param params the softSkill name to delete
+	 * @param params the skill name to delete
 	 * @param role   the user role
 	 * @return @see {@link HttpException} corresponding to the status of the request
 	 *         ({@link ForbiddenException} if the resource is not found and
-	 *         {@link CreatedException} if the softSkill is deleted
+	 *         {@link CreatedException} if the skill is deleted
 	 * @author Thomas Decamp
 	 */
-	public HttpException deleteSoftSkill(JsonNode jSoftSkill, UserRole role) {
+	public HttpException deleteSkillForum(JsonNode params, UserRole role) {
 		return (roles.isAdmin(role))
-				? softSkillEntityController.deleteSoftSkill(jSoftSkill)
+				? skillForumEntityController.deleteSkillForum(params.get("name").textValue())
 				: new ForbiddenException();
 	}
 
-	public List<SoftSkill> getSoftSkill(String name) {
-		return softSkillEntityController.getSoftSkillByName(name);
-	}
-
-	public Optional<SoftSkill> getSoftSkillByNameAndGrade(String name, SoftSkillGrade grade) {
-		return softSkillEntityController.getSoftSkillByNameAndGrade(name, grade);
+	public Optional<SkillForum> getSkillForum(String name) {
+		return skillForumEntityController.getSkillForum(name);
 	}
 
 	/**
 	 * @param role the user role
-	 * @return the list of all softSkills
+	 * @return the list of all skills
 	 * @author Thomas Decamp
 	 */
-	public List<SoftSkill> getSoftSkills(UserRole role) {
+	public List<SkillForum> getSkillsForum(UserRole role) {
 		if (roles.isAdmin(role)) {
-			return softSkillEntityController.getSoftSkills();
+			return skillForumEntityController.getSkillsForum();
 		}
 		throw new ForbiddenException();
 	}
 
 	/**
 	 *
-	 * @param jSoftSkill JsonNode with all softSkill parameters and the old name to
-	 *                   perform the update even if the name is changed
-	 * @param role       user role
+	 * @param jSkill JsonNode with all skill parameters and the old name to perform
+	 *               the update even if the name is changed
+	 * @param role   user role
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ResourceNotFoundException} if the resource is not
-	 *         found and {@link CreatedException} if the softSkill is updated
+	 *         found and {@link CreatedException} if the skill is updated
 	 * @author Thomas Decamp
 	 */
-	public HttpException updateSoftSkill(JsonNode jSoftSkill, UserRole role) {
+	public HttpException updateSkillForum(JsonNode jSkillForum, UserRole role) {
 		return (roles.isAdmin(role))
-				? softSkillEntityController.updateSoftSkill(jSoftSkill)
+				? skillForumEntityController.updateSkillForum(jSkillForum)
 				: new ForbiddenException();
 	}
 

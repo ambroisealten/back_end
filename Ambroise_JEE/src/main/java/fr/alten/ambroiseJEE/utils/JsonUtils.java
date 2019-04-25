@@ -12,6 +12,8 @@ import com.google.gson.JsonObject;
 
 /**
  * @author Andy Chabalier
+ * @author Thomas Decamp
+ * @author Kylian Gehier
  *
  */
 public class JsonUtils {
@@ -43,4 +45,24 @@ public class JsonUtils {
 		ObjectMapper mapper = new ObjectMapper();
 		return mapper.convertValue(map, JsonNode.class);
 	}
+
+	/**
+	 * 
+	 *
+	 * @param params {@link JsonNode} which integrity has to be checked
+	 * @param fields all String fields that has to be checked in the {@link JsonNode}
+	 * @return	true if all fields are present
+	 * 			false otherwise
+	 * @author Thomas Decamp
+	 * @author Kylian Gehier
+	 */
+	public static boolean checkJsonIntegrity(JsonNode params, String... fields) {
+
+		for (int i = 0; i < fields.length; i++) {
+			if (params.get(fields[i]).isNull())
+				return false;
+		}
+		return true;
+	}
+
 }
