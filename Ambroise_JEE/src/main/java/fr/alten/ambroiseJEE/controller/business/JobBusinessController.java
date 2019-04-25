@@ -30,11 +30,12 @@ public class JobBusinessController {
 	/**
 	 * Method to delegate Job creation
 	 *
-	 * @param params the JsonNode containing all Job parameters
-	 * @param role   the user's role
+	 * @param params the JsonNode containing all Job parameters (only its title, e.g title = "Ingénieur système")
+	 * @param role the current logged user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ConflictException} if there is a conflict in the
 	 *         database and {@link CreatedException} if the job is created
+	 * @throws {@link ForbiddenException} if the current logged user hasn't the rights to perform this action
 	 * @author Lucas Royackkers
 	 */
 	public HttpException createJob(JsonNode params, UserRole role) {
@@ -47,12 +48,13 @@ public class JobBusinessController {
 	/**
 	 * Method to delegate Job deletion
 	 *
-	 * @param params the JsonNode containing all Job parameters
-	 * @param role   the user's role
+	 * @param params the JsonNode containing all Job parameters (only its title, e.g title = "Ingénieur système")
+	 * @param role the user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ResourceNotFoundException} if the resource hasn't
 	 *         been found in the database and {@link OkException} if the job is
-	 *         deactivated
+	 *         deleted
+	 * @throws {@link ForbiddenException} if the current logged user hasn't the rights to perform this action
 	 * @author Lucas Royackkers
 	 */
 	public HttpException deleteJob(JsonNode params, UserRole role) {
@@ -63,9 +65,11 @@ public class JobBusinessController {
 	}
 
 	/**
+	 * Get all Jobs
 	 *
 	 * @param role the user's role
-	 * @return a List of Job objects
+	 * @return a List of Job objects (can be empty)
+	 * @throws {@link ForbiddenException} if the current logged user hasn't the rights to perform this action
 	 * @author Lucas Royackkers
 	 */
 	public List<Job> getJobs(UserRole role) {
@@ -85,6 +89,7 @@ public class JobBusinessController {
 	 *         request ({@link ResourceNotFoundException} if the resource hasn't
 	 *         been found in the database and {@link OkException} if the job is
 	 *         updated
+	 * @throws {@link ForbiddenException} if the current logged user hasn't the rights to perform this action
 	 * @author Lucas Royackkers
 	 */
 	public HttpException updateJob(JsonNode params, UserRole role) {

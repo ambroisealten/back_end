@@ -7,7 +7,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
- *
+ * Defines what a Diploma is in our app
  *
  * @author Lucas Royackkers
  *

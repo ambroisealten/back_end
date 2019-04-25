@@ -37,6 +37,7 @@ public class EmployerBusinessController {
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ConflictException} if there is a conflict in the
 	 *         database and {@link CreatedException} if the employer is created
+	 * @throws {@link ForbiddenException} if the current logged user hasn't the rights to perform this action
 	 * @author Lucas Royackkers
 	 */
 	public HttpException createEmployer(JsonNode params, UserRole role) {
@@ -54,6 +55,7 @@ public class EmployerBusinessController {
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ResourceNotFoundException} if the resource is not
 	 *         found and {@link OkException} if the employer is deactivated
+	 * @throws {@link ForbiddenException} if the current logged user hasn't the rights to perform this action
 	 * @author Lucas Royackkers
 	 */
 	public HttpException deleteEmployer(JsonNode params, UserRole role) {
@@ -67,7 +69,8 @@ public class EmployerBusinessController {
 	 * Get all employers within the database
 	 *
 	 * @param role the user's role
-	 * @return a List of Employer objects
+	 * @return a List of Employer objects (can be empty)
+	 * @throws {@link ForbiddenException} if the current logged user hasn't the rights to perform this action
 	 * @author Lucas Royackkers
 	 */
 	public List<Employer> getEmployers(UserRole role) {
@@ -86,6 +89,7 @@ public class EmployerBusinessController {
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ResourceNotFoundException} if the resource is not
 	 *         found and {@link OkException} if the employer is updated
+	 * @throws {@link ForbiddenException} if the current logged user hasn't the rights to perform this action
 	 * @author Lucas Royackkers
 	 */
 	public HttpException updateEmployer(JsonNode params, UserRole role) {

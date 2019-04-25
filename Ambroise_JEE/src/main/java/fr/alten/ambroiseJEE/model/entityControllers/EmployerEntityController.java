@@ -17,6 +17,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 
 /**
+ * Entity controller for the Employer
  * @author Lucas Royackkers
  *
  */
@@ -36,12 +37,6 @@ public class EmployerEntityController {
 	 * @author Lucas Royackkers
 	 */
 	public HttpException createEmployer(JsonNode jEmployer) {
-
-		Optional<Employer> employerOptional = employerRepository.findByName(jEmployer.get("name").textValue());
-		if (employerOptional.isPresent()) {
-			return new ConflictException();
-		}
-
 		Employer newEmployer = new Employer();
 		newEmployer.setName(jEmployer.get("name").textValue());
 
@@ -54,6 +49,7 @@ public class EmployerEntityController {
 	}
 
 	/**
+	 * Method to delete an Employer
 	 *
 	 * @param jEmployer JsonNode with all employer parameters
 	 * @return {@link HttpException} corresponding to the status of the request
@@ -75,15 +71,27 @@ public class EmployerEntityController {
 		return new OkException();
 	}
 
+	/**
+	 * Get an Employer by its name
+	 * @param name the employer's name
+	 * @return an Optional with the matched employer (can be empty)
+	 * @author Lucas Royackkers
+	 */
 	public Optional<Employer> getEmployer(String name) {
 		return employerRepository.findByName(name);
 	}
 
+	/**
+	 * Get all Employers in the database
+	 * @return a List containing all Employers in the database (can be empty)
+	 * @author Lucas Royackkers
+	 */
 	public List<Employer> getEmployers() {
 		return employerRepository.findAll();
 	}
 
 	/**
+	 * Method to update an Employer
 	 *
 	 * @param jEmployer JsonNode with all employer parameters and the old name to
 	 *                  perform the update even if the name is changed
