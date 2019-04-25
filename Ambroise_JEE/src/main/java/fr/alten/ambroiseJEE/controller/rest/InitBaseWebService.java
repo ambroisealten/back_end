@@ -640,6 +640,7 @@ public class InitBaseWebService {
 
 		newListSkillBis.add(newSoftSkillBis);
 		newListSkillBis.add(newSoftSkill1Bis);
+		newListSkillBis.add(newSoftSkill2Bis);
 
 		newListSkillBis.add(newSkillBis);
 		newListSkillBis.add(newSkill1Bis);
@@ -833,9 +834,6 @@ public class InitBaseWebService {
 		// peupler la base de données des compétences (Skill)
 		createSkills();
 
-		// peupler la base de données des compétences soft (SoftSkill)
-		// createSoftSkills();
-
 		// peupler la base de données Géographiques
 		createAgencies();
 
@@ -848,6 +846,7 @@ public class InitBaseWebService {
 		// peupler la base de données des matrices de compétences
 		createSkillsSheets();
 
+		// peupler la base de données des candidats sur un forum
 		createApplicantForum();
 
 		LoggerFactory.getLogger(InitBaseWebService.class).info(String.valueOf(System.currentTimeMillis() - start));
