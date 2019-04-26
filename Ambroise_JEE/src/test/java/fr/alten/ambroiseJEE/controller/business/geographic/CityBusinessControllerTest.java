@@ -136,6 +136,12 @@ public class CityBusinessControllerTest {
 		assertThat(cityBusinessController.getCities(UserRole.DEACTIVATED)).isEqualTo(mockedCityList);
 	}
 
+	/**
+	 * @test get all {@link City}
+	 * @context as non admin user
+	 * @expected throw a {@link ForbiddenException}
+	 * @author Kylian Gehier
+	 */
 	@Test(expected = ForbiddenException.class)
 	public void getCities_as_nonAdminUser() {
 

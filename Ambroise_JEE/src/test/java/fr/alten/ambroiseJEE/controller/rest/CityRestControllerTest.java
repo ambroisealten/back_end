@@ -177,6 +177,11 @@ public class CityRestControllerTest {
 
 	}
 
+	/**
+	 * @test testing several Json for integrity when createCity
+	 * @expected sucess for all json test cases
+	 * @author Kylian Gehier
+	 */
 	@Test
 	public void createCity_checkJsonIntegrity() throws IOException {
 
@@ -209,6 +214,11 @@ public class CityRestControllerTest {
 
 	}
 
+	/**
+	 * @test testing several Json for integrity when deleteCity
+	 * @expected sucess for all json test cases
+	 * @author Kylian Gehier
+	 */
 	@Test
 	public void deleteCity_checkJsonIntegrity() throws IOException {
 
@@ -233,6 +243,11 @@ public class CityRestControllerTest {
 
 	}
 
+	/**
+	 * @test testing several Json for integrity when updateCity
+	 * @expected sucess for all json test cases
+	 * @author Kylian Gehier
+	 */
 	@Test
 	public void updateCity_checkJsonIntegrity() throws IOException {
 
