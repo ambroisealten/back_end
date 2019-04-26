@@ -92,18 +92,6 @@ public class SkillEntityController {
 
 	
 	/**
-	 * Try to fetch a soft skill by its name and grade
-	 *
-	 * @param name  the soft skill's name to fetch
-	 * @param grade the soft skill's grade to fetch
-	 * @return An Optional with the corresponding soft skill or not.
-	 * @author Lucas Royackkers
-	 */
-	public Optional<Skill> getSkillByNameAndGrade(JsonNode jSkill) {
-		return skillRepository.findByNameAndGrade(jSkill.get("name").textValue(), jSkill.get("grade").doubleValue());
-	}
-
-	/**
 	 * @return the list of all skills
 	 * @author Thomas Decamp
 	 */

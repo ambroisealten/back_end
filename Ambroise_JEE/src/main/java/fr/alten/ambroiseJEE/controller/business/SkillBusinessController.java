@@ -72,13 +72,6 @@ public class SkillBusinessController {
 		}
 		throw new ForbiddenException();
 	}
-
-	public Optional<Skill> getSkillByNameAndGrade(JsonNode jSkill, UserRole role) {
-		if (roles.isAdmin(role)) {
-			return skillEntityController.getSkillByNameAndGrade(jSkill);
-		}
-		throw new ForbiddenException();
-	}
 	
 	/**
 	 * @param role the user role
