@@ -28,6 +28,7 @@ import fr.alten.ambroiseJEE.model.beans.City;
 import fr.alten.ambroiseJEE.model.dao.CityRepository;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
+import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 
@@ -56,6 +57,13 @@ public class CityEntityControllerTest {
 	@MockBean
 	private City mockedCity;
 
+	/**
+	 * @test create a {@link City}
+	 * @context sucess
+	 * @expected {@link CreatedException}
+	 * 			 save() call only once
+	 * @author Kylian Gehier
+	 */
 	@Test
 	public void createCity_with_success() {
 
@@ -68,6 +76,13 @@ public class CityEntityControllerTest {
 		verify(cityRepository, times(1)).save(any(City.class));
 	}
 
+	/**
+	 * @test create a {@link City}
+	 * @context {@link City} already existing in base
+	 * @expected {@link ConflictException}
+	 * 			 save() call only once
+	 * @author Kylian Gehier
+	 */
 	@Test
 	public void createCity_with_conflict() {
 
@@ -80,6 +95,13 @@ public class CityEntityControllerTest {
 		verify(cityRepository, times(1)).save(any(City.class));
 	}
 
+	/**
+	 * @test delete a {@link City}
+	 * @context success
+	 * @expected {@link OkException}
+	 * 			 save() call only once
+	 * @author Kylian Gehier
+	 */
 	@Test
 	public void deleteCity_with_success() {
 
@@ -94,6 +116,13 @@ public class CityEntityControllerTest {
 		verify(cityRepository, times(1)).save(any(City.class));
 	}
 
+	/**
+	 * @test delete a {@link City}
+	 * @context {@link City} already existing in base
+	 * @expected {@link ConflictException}
+	 * 			 save() call only once
+	 * @author Kylian Gehier
+	 */
 	@Test
 	public void deleteCity_with_Conflict() {
 
@@ -109,6 +138,13 @@ public class CityEntityControllerTest {
 		verify(cityRepository, times(1)).save(any(City.class));
 	}
 
+	/**
+	 * @test delete a {@link City}
+	 * @context {@link City} not found in base
+	 * @expected {@link ResourceNotFoundException}
+	 * 			 save() never called
+	 * @author Kylian Gehier
+	 */
 	@Test
 	public void deleteCity_with_resourceNotFound() {
 
@@ -123,6 +159,12 @@ public class CityEntityControllerTest {
 		verify(cityRepository, never()).save(any(City.class));
 	}
 
+	/**
+	 * @test get all {@link City}
+	 * @expected return instance of {@link List}
+	 * 			 save() call only once
+	 * @author Kylian Gehier
+	 */
 	@Test
 	public void getCities() {
 
@@ -132,6 +174,12 @@ public class CityEntityControllerTest {
 		verify(cityRepository, times(1)).findAll();
 	}
 
+	/**
+	 * @test get a {@link City} by name
+	 * @context success
+	 * @expected return instance of {@link City}
+	 * @author Kylian Gehier
+	 */
 	@Test
 	public void getCity_with_success() {
 
@@ -144,6 +192,12 @@ public class CityEntityControllerTest {
 		verify(cityRepository, times(1)).findByName("name");
 	}
 
+	/**
+	 * @test get a {@link City} by name
+	 * @context {@link City} not found in base
+	 * @expected {@link ResourceNotFoundException}
+	 * @author Kylian Gehier
+	 */
 	@Test(expected = ResourceNotFoundException.class)
 	public void getCity_with_ResourceNotFound() {
 
@@ -154,6 +208,13 @@ public class CityEntityControllerTest {
 		cityEntityController.getCity("name");
 	}
 
+	/**
+	 * @test update a {@link City}
+	 * @context success
+	 * @expected {@link OkException}
+	 * 			 save() call only once
+	 * @author Kylian Gehier
+	 */
 	@Test
 	public void updateCity_with_success() {
 
@@ -168,6 +229,13 @@ public class CityEntityControllerTest {
 		verify(cityRepository, times(1)).save(any(City.class));
 	}
 
+	/**
+	 * @test update a {@link City}
+	 * @context {@link City} already existing in base
+	 * @expected {@link ConflictException}
+	 * 			 save() call only once
+	 * @author Kylian Gehier
+	 */
 	@Test
 	public void updateCity_with_Conflict() {
 
@@ -183,6 +251,13 @@ public class CityEntityControllerTest {
 		verify(cityRepository, times(1)).save(any(City.class));
 	}
 
+	/**
+	 * @test update a {@link City}
+	 * @context {@link City} not found in base
+	 * @expected {@link ResourceNotFoundException}
+	 * 			 save() never called
+	 * @author Kylian Gehier
+	 */
 	@Test
 	public void updateCity_with_resourceNotFound() {
 
