@@ -3,7 +3,6 @@ package fr.alten.ambroiseJEE.model.entityControllers;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -83,12 +82,11 @@ public class SkillsSheetEntityController {
 			Person personAttachedTo;
 			switch (status) {
 			case "consultant":
-				personAttachedTo = this.personEntityController.getPersonByMailAndType(personMail, PersonRole.CONSULTANT)
-						.orElseThrow(ResourceNotFoundException::new);
+				personAttachedTo = this.personEntityController.getPersonByMailAndType(personMail,
+						PersonRole.CONSULTANT);
 				break;
 			default:
-				personAttachedTo = this.personEntityController.getPersonByMailAndType(personMail, PersonRole.APPLICANT)
-						.orElseThrow(ResourceNotFoundException::new);
+				personAttachedTo = this.personEntityController.getPersonByMailAndType(personMail, PersonRole.APPLICANT);
 				;
 				break;
 			}
@@ -106,8 +104,7 @@ public class SkillsSheetEntityController {
 			newSkillsSheet.setVersionNumber(1);
 
 			final String authorMail = jSkillsSheet.get("mailVersionAuthor").textValue();
-			final User userAuthor = this.userEntityController.getUserByMail(authorMail)
-					.orElseThrow(ResourceNotFoundException::new);
+			final User userAuthor = this.userEntityController.getUserByMail(authorMail);
 			newSkillsSheet.setMailVersionAuthor(userAuthor.getMail());
 
 			newSkillsSheet.setVersionDate(String.valueOf(System.currentTimeMillis()));
@@ -154,8 +151,9 @@ public class SkillsSheetEntityController {
 	 * @return An Optional with the corresponding skills sheet or not.
 	 * @author Lucas Royackkers
 	 */
-	public Optional<SkillsSheet> getSkillsSheetByNameAndVersionNumber(final String name, final long versionNumber) {
-		return this.skillsSheetRepository.findByNameAndVersionNumber(name, versionNumber);
+	public SkillsSheet getSkillsSheetByNameAndVersionNumber(final String name, final long versionNumber) {
+		return this.skillsSheetRepository.findByNameAndVersionNumber(name, versionNumber)
+				.orElseThrow(ResourceNotFoundException::new);
 	}
 
 	/**
@@ -243,8 +241,7 @@ public class SkillsSheetEntityController {
 				return new ConflictException();
 			}
 
-			final SkillsSheet skillsSheet = getSkillsSheetByNameAndVersionNumber(skillSheetName, latestVersionNumber)
-					.orElseThrow(ResourceNotFoundException::new);
+			final SkillsSheet skillsSheet = getSkillsSheetByNameAndVersionNumber(skillSheetName, latestVersionNumber);
 			// If we find the skills sheet, with its name and its version (the Front part
 			// will have to send the latest version number)
 
@@ -252,12 +249,11 @@ public class SkillsSheetEntityController {
 			final String status = jSkillsSheet.get("rolePersonAttachedTo").textValue();
 			switch (status) {
 			case "consultant":
-				personAttachedTo = this.personEntityController.getPersonByMailAndType(personMail, PersonRole.CONSULTANT)
-						.orElseThrow(ResourceNotFoundException::new);
+				personAttachedTo = this.personEntityController.getPersonByMailAndType(personMail,
+						PersonRole.CONSULTANT);
 				break;
 			default:
-				personAttachedTo = this.personEntityController.getPersonByMailAndType(personMail, PersonRole.APPLICANT)
-						.orElseThrow(ResourceNotFoundException::new);
+				personAttachedTo = this.personEntityController.getPersonByMailAndType(personMail, PersonRole.APPLICANT);
 				break;
 			}
 			skillsSheet.setMailPersonAttachedTo(personAttachedTo.getMail());
@@ -268,8 +264,7 @@ public class SkillsSheetEntityController {
 			skillsSheet.setVersionNumber(latestVersionNumber + 1);
 
 			final String authorMail = jSkillsSheet.get("mailVersionAuthor").textValue();
-			final User userAuthor = this.userEntityController.getUserByMail(authorMail)
-					.orElseThrow(ResourceNotFoundException::new);
+			final User userAuthor = this.userEntityController.getUserByMail(authorMail);
 			skillsSheet.setMailVersionAuthor(userAuthor.getMail());
 
 			skillsSheet.setVersionDate(String.valueOf(System.currentTimeMillis()));

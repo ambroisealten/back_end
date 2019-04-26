@@ -4,7 +4,6 @@
 package fr.alten.ambroiseJEE.model.entityControllers;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -63,18 +62,27 @@ public class DepartementEntityController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException deleteDepartement(final String name) {
-		final Optional<Departement> departementOptionnal = this.departementRepository.findByName(name);
-
-		if (departementOptionnal.isPresent()) {
-			final Departement departement = departementOptionnal.get();
+		try {
+			final Departement departement = this.departementRepository.findByName(name)
+					.orElseThrow(ResourceNotFoundException::new);
 			departement.setName("deactivated" + System.currentTimeMillis());
 			this.departementRepository.save(departement);
-		} else {
-			throw new ResourceNotFoundException();
+		} catch (final ResourceNotFoundException rnfe) {
+			return rnfe;
+		} catch (final Exception e) {
+			return new ConflictException();
 		}
 		return new OkException();
 	}
 
+	/**
+	 * Fetch a departement
+	 *
+	 * @param name the name of departement to fetch
+	 * @return the fetched departement
+	 * @throws @{@link ResourceNotFoundException} if the ressource is not found
+	 * @author Andy Chabalier
+	 */
 	public Departement getDepartement(final String name) {
 		return this.departementRepository.findByName(name).orElseThrow(ResourceNotFoundException::new);
 	}
@@ -93,20 +101,19 @@ public class DepartementEntityController {
 	 *                     to perform the update even if the name is changed
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ResourceNotFoundException} if the resource is not
-	 *         found and {@link CreatedException} if the departement is updated
+	 *         found and {@link OkException} if the departement is updated
 	 * @author Andy Chabalier
 	 */
 	public HttpException updateDepartement(final JsonNode jDepartement) {
-		final Optional<Departement> departementOtionnal = this.departementRepository
-				.findByName(jDepartement.get("oldName").textValue());
-
-		if (departementOtionnal.isPresent()) {
-			final Departement departement = departementOtionnal.get();
+		try {
+			final Departement departement = this.departementRepository
+					.findByName(jDepartement.get("oldName").textValue()).orElseThrow(ResourceNotFoundException::new);
 			departement.setName(jDepartement.get("name").textValue());
-
 			this.departementRepository.save(departement);
-		} else {
-			throw new ResourceNotFoundException();
+		} catch (final ResourceNotFoundException rnfe) {
+			return rnfe;
+		} catch (final Exception e) {
+			return new ConflictException();
 		}
 		return new OkException();
 	}

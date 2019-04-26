@@ -4,7 +4,6 @@
 package fr.alten.ambroiseJEE.model.entityControllers;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -62,18 +61,26 @@ public class RegionEntityController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException deleteRegion(final String name) {
-		final Optional<Region> regionOptionnal = this.regionRepository.findByName(name);
-
-		if (regionOptionnal.isPresent()) {
-			final Region region = regionOptionnal.get();
+		try {
+			final Region region = this.regionRepository.findByName(name).orElseThrow(ResourceNotFoundException::new);
 			region.setName("deactivated" + System.currentTimeMillis());
 			this.regionRepository.save(region);
-		} else {
-			throw new ResourceNotFoundException();
+		} catch (final ResourceNotFoundException rnfe) {
+			return rnfe;
+		} catch (final Exception e) {
+			return new ConflictException();
 		}
 		return new OkException();
 	}
 
+	/**
+	 * Get a region
+	 *
+	 * @param name the region name to fetch
+	 * @return the asked region
+	 * @author Andy Chabalier
+	 * @throws {@link ResourceNotFoundException} if the ressource is not found
+	 */
 	public Region getRegion(final String name) {
 		return this.regionRepository.findByName(name).orElseThrow(ResourceNotFoundException::new);
 	}
@@ -92,19 +99,19 @@ public class RegionEntityController {
 	 *                perform the update even if the name is changed
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ResourceNotFoundException} if the resource is not
-	 *         found and {@link CreatedException} if the region is updated
+	 *         found and {@link OkException} if the region is updated
 	 * @author Andy Chabalier
 	 */
 	public HttpException updateRegion(final JsonNode jRegion) {
-		final Optional<Region> regionOptionnal = this.regionRepository.findByName(jRegion.get("oldName").textValue());
-
-		if (regionOptionnal.isPresent()) {
-			final Region region = regionOptionnal.get();
+		try {
+			final Region region = this.regionRepository.findByName(jRegion.get("oldName").textValue())
+					.orElseThrow(ResourceNotFoundException::new);
 			region.setName(jRegion.get("name").textValue());
-
 			this.regionRepository.save(region);
-		} else {
-			throw new ResourceNotFoundException();
+		} catch (final ResourceNotFoundException rnfe) {
+			throw rnfe;
+		} catch (final Exception e) {
+			return new ConflictException();
 		}
 		return new OkException();
 	}

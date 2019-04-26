@@ -3,8 +3,6 @@
  */
 package fr.alten.ambroiseJEE.controller.rest;
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -54,13 +52,11 @@ public class LoginRestController {
 		final String mail = params.get("mail").textValue();
 		final String pswd = params.get("pswd").textValue();
 
-		final Optional<String> subject = this.userBusinessController.checkIfCredentialIsValid(mail, pswd);
-		if (subject.isPresent()) {
-			// Si un sujet est present, alors l'utilisateur existe bien. On construit son
-			// token
-			final Token jsonResponse = JWTokenUtility.buildJWT(subject.get());
-			return this.gson.toJson(jsonResponse);
-		}
-		throw new ForbiddenException();
+		final String subject = this.userBusinessController.checkIfCredentialIsValid(mail, pswd)
+				.orElseThrow(ForbiddenException::new);
+		// Si un sujet est present, alors l'utilisateur existe bien. On construit son
+		// token
+		final Token jsonResponse = JWTokenUtility.buildJWT(subject);
+		return this.gson.toJson(jsonResponse);
 	}
 }

@@ -16,7 +16,7 @@ public interface PersonRepository extends MongoRepository<Person, Long> {
 
 	/**
 	 * Get a List of all Person given a role
-	 * 
+	 *
 	 * @param role the person's role
 	 * @return A List of Persons with the corresponding persons or not (can be
 	 *         empty).
@@ -26,7 +26,7 @@ public interface PersonRepository extends MongoRepository<Person, Long> {
 
 	/**
 	 * Get a List of Person given a diploma
-	 * 
+	 *
 	 * @param highestDiploma the person's diploma
 	 * @return A List of Person that match the given diploma (can be empty)
 	 * @author Lucas Royackkers
@@ -35,7 +35,7 @@ public interface PersonRepository extends MongoRepository<Person, Long> {
 
 	/**
 	 * Get a List of Person given a Job
-	 * 
+	 *
 	 * @param job the person's Job
 	 * @return A List of Person that match the given job (can be empty)
 	 * @author Lucas Royackkers

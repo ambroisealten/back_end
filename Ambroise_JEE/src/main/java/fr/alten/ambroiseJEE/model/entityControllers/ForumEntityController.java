@@ -39,20 +39,20 @@ public class ForumEntityController {
 	 * @author MAQUINGHEN MAXIME
 	 */
 	public HttpException createForum(final JsonNode jForum) {
-		final Optional<Forum> forumOptional = this.forumRepository.findByNameAndDateAndPlace(
-				jForum.get("name").textValue(), jForum.get("date").textValue(), jForum.get("place").textValue());
-
-		if (forumOptional.isPresent()) {
-			return new ConflictException();
-		}
-
-		final Forum newForum = new Forum();
-
-		newForum.setName(jForum.get("name").textValue());
-		newForum.setDate(jForum.get("date").textValue());
-		newForum.setPlace(jForum.get("place").textValue());
-
 		try {
+			final Optional<Forum> forumOptional = this.forumRepository.findByNameAndDateAndPlace(
+					jForum.get("name").textValue(), jForum.get("date").textValue(), jForum.get("place").textValue());
+
+			if (forumOptional.isPresent()) {
+				return new ConflictException();
+			}
+
+			final Forum newForum = new Forum();
+
+			newForum.setName(jForum.get("name").textValue());
+			newForum.setDate(jForum.get("date").textValue());
+			newForum.setPlace(jForum.get("place").textValue());
+
 			this.forumRepository.save(newForum);
 		} catch (final Exception e) {
 			return new ConflictException();
@@ -70,14 +70,15 @@ public class ForumEntityController {
 	 * @author MAQUINGHEN MAXIME
 	 */
 	public HttpException deleteForum(final JsonNode params) {
-		final Optional<Forum> forumOptional = this.forumRepository.findByNameAndDateAndPlace(
-				params.get("name").textValue(), params.get("date").textValue(), params.get("place").textValue());
-
-		if (forumOptional.isPresent()) {
-			final Forum forum = forumOptional.get();
+		try {
+			final Forum forum = this.forumRepository.findByNameAndDateAndPlace(params.get("name").textValue(),
+					params.get("date").textValue(), params.get("place").textValue())
+					.orElseThrow(ResourceNotFoundException::new);
 			this.forumRepository.delete(forum);
-		} else {
-			return new ResourceNotFoundException();
+		} catch (final ResourceNotFoundException rnfe) {
+			return rnfe;
+		} catch (final Exception e) {
+			return new ConflictException();
 		}
 		return new OkException();
 	}
@@ -91,8 +92,9 @@ public class ForumEntityController {
 	 * @return an Optional forum data
 	 * @author MAQUINGHEN MAXIME
 	 */
-	public Optional<Forum> getForum(final String name, final String date, final String place) {
-		return this.forumRepository.findByNameAndDateAndPlace(name, date, place);
+	public Forum getForum(final String name, final String date, final String place) {
+		return this.forumRepository.findByNameAndDateAndPlace(name, date, place)
+				.orElseThrow(ResourceNotFoundException::new);
 	}
 
 	/**
@@ -115,31 +117,20 @@ public class ForumEntityController {
 	 * @author MAQUINGHEN MAXIME
 	 */
 	public HttpException updateForum(final JsonNode params) {
-		final Optional<Forum> forumOptional = this.forumRepository.findByNameAndDateAndPlace(
-				params.get("oldname").textValue(), params.get("olddate").textValue(),
-				params.get("oldplace").textValue());
-
-		if (forumOptional.isPresent()) {
-			final Forum forum = forumOptional.get();
-
-			final Optional<Forum> newForumOptional = this.forumRepository.findByNameAndDateAndPlace(
-					params.get("name").textValue(), params.get("date").textValue(), params.get("place").textValue());
-			if (newForumOptional.isPresent()) {
-				return new ConflictException();
-			}
-
+		try {
+			final Forum forum = this.forumRepository.findByNameAndDateAndPlace(params.get("oldname").textValue(),
+					params.get("olddate").textValue(), params.get("oldplace").textValue())
+					.orElseThrow(ResourceNotFoundException::new);
 			forum.setName(params.get("name").textValue());
 			forum.setDate(params.get("date").textValue());
 			forum.setPlace(params.get("place").textValue());
 			this.forumRepository.save(forum);
 
-			try {
-				this.forumRepository.save(forum);
-			} catch (final Exception e) {
-				return new ConflictException();
-			}
-		} else {
-			return new ResourceNotFoundException();
+			this.forumRepository.save(forum);
+		} catch (final ResourceNotFoundException rnfe) {
+			return rnfe;
+		} catch (final Exception e) {
+			return new ConflictException();
 		}
 		return new OkException();
 	}

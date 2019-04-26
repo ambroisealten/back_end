@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import fr.alten.ambroiseJEE.controller.business.AgencyBusinessController;
 import fr.alten.ambroiseJEE.model.beans.Agency;
 import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.model.dao.UserRepository;
@@ -54,7 +53,7 @@ public class UserEntityController {
 	private UserRepository userRepository;
 
 	@Autowired
-	private AgencyBusinessController agencyEntityController;
+	private AgencyEntityController agencyEntityController;
 
 	/**
 	 * Method to create an user. User role are by default choosed by application
@@ -68,34 +67,30 @@ public class UserEntityController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException createUser(final JsonNode jUser) {
-
-		// if the mail don't match with the mail pattern
-		if (!UserEntityController.validateMail(jUser.get("mail").textValue())) {
-			return new UnprocessableEntityException();
-		}
-
-		final User newUser = new User();
-
-		newUser.setForname(jUser.get("forname").textValue());
-		newUser.setMail(jUser.get("mail").textValue());
-		newUser.setName(jUser.get("name").textValue());
-		newUser.setPswd(jUser.get("pswd").textValue());
-		UserRole newRole;
 		try {
-			newRole = UserRole.valueOf(jUser.get("role").textValue());
-		} catch (final Exception e) {
-			newRole = UserRole.CONSULTANT; // in case of wrong role input, we get the default role
-		}
-		newUser.setRole(newRole);
-		final Optional<Agency> agency = this.agencyEntityController.getAgency(jUser.get("agency").textValue());
-		if (agency.isPresent()) {
-			newUser.setAgency(agency.get().getName());
-		} else {
-			newUser.setAgency("");
-		}
+			// if the mail don't match with the mail pattern
+			if (!UserEntityController.validateMail(jUser.get("mail").textValue())) {
+				return new UnprocessableEntityException();
+			}
 
-		try {
+			final User newUser = new User();
+
+			newUser.setForname(jUser.get("forname").textValue());
+			newUser.setMail(jUser.get("mail").textValue());
+			newUser.setName(jUser.get("name").textValue());
+			newUser.setPswd(jUser.get("pswd").textValue());
+			UserRole newRole;
+			try {
+				newRole = UserRole.valueOf(jUser.get("role").textValue());
+			} catch (final Exception e) {
+				newRole = UserRole.CONSULTANT; // in case of wrong role input, we get the default role
+			}
+			newUser.setRole(newRole);
+			final Agency agency = this.agencyEntityController.getAgency(jUser.get("agency").textValue());
+			newUser.setAgency(agency.getName());
 			this.userRepository.save(newUser);
+		} catch (final ResourceNotFoundException rnfe) {
+			return rnfe;
 		} catch (final Exception e) {
 			return new ConflictException();
 		}
@@ -109,12 +104,11 @@ public class UserEntityController {
 	 *         ({@link ResourceNotFoundException} if the resource is not found and
 	 *         {@link CreatedException} if the user is deactivated
 	 * @author MAQUINGHEN MAXIME
+	 * @throws {@link ResourceNotFoundException} if the ressource can't be found
 	 */
 	public HttpException deleteUser(final String mail) {
-		final Optional<User> userOptionnal = this.userRepository.findByMail(mail);
-
-		if (userOptionnal.isPresent()) {
-			final User user = userOptionnal.get();
+		try {
+			final User user = this.userRepository.findByMail(mail).orElseThrow(ResourceNotFoundException::new);
 			user.setForname("");
 			user.setMail("deactivated" + System.currentTimeMillis());
 			user.setName("");
@@ -122,14 +116,22 @@ public class UserEntityController {
 			user.setRole(UserRole.DEACTIVATED);
 			user.setAgency(null);
 			this.userRepository.save(user);
-		} else {
-			throw new ResourceNotFoundException();
+		} catch (final ResourceNotFoundException rnfe) {
+			return rnfe;
+		} catch (final Exception e) {
+			return new ConflictException();
 		}
 		return new OkException();
 	}
 
-	public Optional<User> getUser(final String usermail) {
-		return this.userRepository.findByMail(usermail);
+	/**
+	 *
+	 * @param usermail
+	 * @return
+	 * @throws {@link ResourceNotFoundException} if the ressource can't be found
+	 */
+	public User getUser(final String usermail) {
+		return this.userRepository.findByMail(usermail).orElseThrow(ResourceNotFoundException::new);
 	}
 
 	/**
@@ -137,11 +139,12 @@ public class UserEntityController {
 	 *
 	 * @param mail the user's mail to fetch
 	 * @param pswd the user's password to fetch
-	 * @return An Optional with the corresponding user or not.
+	 * @return the corresponding user
 	 * @author Andy Chabalier
 	 */
 	public Optional<User> getUserByCredentials(final String mail, final String pswd) {
 		return this.userRepository.findByMailAndPswd(mail, pswd);
+
 	}
 
 	/**
@@ -150,9 +153,10 @@ public class UserEntityController {
 	 * @param mail the user mail to fetch
 	 * @return An Optional with the corresponding user or not.
 	 * @author Andy Chabalier
+	 * @throws {@link ResourceNotFoundException} if the ressource can't be found
 	 */
-	public Optional<User> getUserByMail(final String mail) {
-		return this.userRepository.findByMail(mail);
+	public User getUserByMail(final String mail) {
+		return this.userRepository.findByMail(mail).orElseThrow(ResourceNotFoundException::new);
 	}
 
 	/**
@@ -173,22 +177,21 @@ public class UserEntityController {
 	 *
 	 * @param mail the mail concerned by the password changement
 	 *
-	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link ResourceNotFoundException} if the resource is not found and
-	 *         {@link CreatedException} if the password is changed
+	 * @return {@link HttpException} corresponding to the status of the request and
+	 *         {@link OkException} if the password is changed
 	 * @author MAQUINGHEN MAXIME
 	 */
 	public HttpException resetUserPassword(final String mail) {
-		final Optional<User> userOptionnal = this.userRepository.findByMail(mail);
-
-		if (userOptionnal.isPresent()) {
-			final User user = userOptionnal.get();
+		final User user = this.userRepository.findByMail(mail).orElseThrow(ResourceNotFoundException::new);
+		try {
 			final String new_pass = RandomString.getAlphaNumericString(20);
 			user.setPswd(new_pass);
 			this.userRepository.save(user);
 			MailCreator.AdminUserResetPassword(new_pass); // TODO
-		} else {
-			throw new ResourceNotFoundException();
+		} catch (final ResourceNotFoundException rnfe) {
+			return rnfe;
+		} catch (final Exception e) {
+			return new ConflictException();
 		}
 		return new OkException();
 	}
@@ -200,14 +203,14 @@ public class UserEntityController {
 	 *              is changed
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ResourceNotFoundException} if the resource is not
-	 *         found and {@link CreatedException} if the user is updated
+	 *         found and {@link OkException} if the user is updated
 	 * @author MAQUINGHEN MAXIME
 	 */
 	public HttpException updateUser(final JsonNode jUser) {
-		final Optional<User> userOptionnal = this.userRepository.findByMail(jUser.get("oldMail").textValue());
+		try {
+			final User user = this.userRepository.findByMail(jUser.get("oldMail").textValue())
+					.orElseThrow(ResourceNotFoundException::new);
 
-		if (userOptionnal.isPresent()) {
-			final User user = userOptionnal.get();
 			user.setForname(jUser.get("forname").textValue());
 			user.setMail(jUser.get("mail").textValue());
 			user.setName(jUser.get("name").textValue());
@@ -217,15 +220,14 @@ public class UserEntityController {
 				newRole = UserRole.valueOf(jUser.get("role").textValue());
 				user.setRole(newRole);
 			} catch (final Exception e) {
-				// in case of wrong role input, we not change the role
 			}
-			final Optional<Agency> agency = this.agencyEntityController.getAgency(jUser.get("agency").textValue());
-			if (agency.isPresent()) {
-				user.setAgency(agency.get().getName());
-			}
+			final Agency agency = this.agencyEntityController.getAgency(jUser.get("agency").textValue());
+			user.setAgency(agency.getName());
 			this.userRepository.save(user);
-		} else {
-			throw new ResourceNotFoundException();
+		} catch (final ResourceNotFoundException rnfe) {
+			return rnfe;
+		} catch (final Exception e) {
+			return new ConflictException();
 		}
 		return new OkException();
 	}

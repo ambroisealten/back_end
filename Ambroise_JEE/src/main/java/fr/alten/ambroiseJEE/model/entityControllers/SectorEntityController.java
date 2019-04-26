@@ -92,13 +92,12 @@ public class SectorEntityController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException updateSector(final JsonNode jSector) {
-		final Optional<Sector> sectorOptionnal = this.sectorRepository.findByName(jSector.get("oldName").textValue());
-
-		if (sectorOptionnal.isPresent()) {
-			final Sector sector = sectorOptionnal.get();
+		try {
+			final Sector sector = this.sectorRepository.findByName(jSector.get("oldName").textValue())
+					.orElseThrow(ResourceNotFoundException::new);
 			this.sectorRepository.save(sector);
-		} else {
-			throw new ResourceNotFoundException();
+		} catch (final ResourceNotFoundException rnfe) {
+			return rnfe;
 		}
 		return new OkException();
 	}

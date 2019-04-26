@@ -4,7 +4,6 @@
 package fr.alten.ambroiseJEE.controller.business;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -63,7 +62,7 @@ public class SkillForumBusinessController {
 				: new ForbiddenException();
 	}
 
-	public Optional<SkillForum> getSkillForum(final JsonNode params, final UserRole role) {
+	public SkillForum getSkillForum(final JsonNode params, final UserRole role) {
 		if (this.roles.isAdmin(role)) {
 			return this.skillForumEntityController.getSkillForum(params);
 		}

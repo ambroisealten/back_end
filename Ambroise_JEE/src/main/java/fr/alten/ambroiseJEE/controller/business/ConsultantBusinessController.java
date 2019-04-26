@@ -2,7 +2,6 @@ package fr.alten.ambroiseJEE.controller.business;
 
 import java.text.ParseException;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -73,7 +72,7 @@ public class ConsultantBusinessController {
 	 * @author Lucas Royackkers
 	 * @throws ForbiddenException (if the user hasn't the right to do so)
 	 */
-	public Optional<Person> getConsultant(final String mail, final UserRole role) {
+	public Person getConsultant(final String mail, final UserRole role) {
 		if (UserRole.MANAGER == role || UserRole.MANAGER_ADMIN == role || UserRole.CDR_ADMIN == role
 				|| UserRole.CDR == role) {
 			return this.personEntityController.getPersonByMailAndType(mail, PersonRole.CONSULTANT);

@@ -138,12 +138,10 @@ public class SkillEntityController {
 					}
 					try {
 						this.skillRepository.save(skill);
+					} catch (final DuplicateKeyException dke) {
+						return new ConflictException();
 					} catch (final Exception e) {
-						if (!DuplicateKeyException.class.isInstance(e)) {
-							e.printStackTrace();
-						} else {
-							return (HttpException) new ConflictException();
-						}
+						e.printStackTrace();
 					}
 					return (HttpException) new OkException();
 				})

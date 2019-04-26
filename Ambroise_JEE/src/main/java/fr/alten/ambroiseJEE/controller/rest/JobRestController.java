@@ -85,7 +85,7 @@ public class JobRestController {
 
 	/**
 	 * Get all Jobs
-	 * 
+	 *
 	 * @param role the current logged user's role
 	 * @return a String representing a JsonNode with all jobs contained in the
 	 *         database (can be empty)

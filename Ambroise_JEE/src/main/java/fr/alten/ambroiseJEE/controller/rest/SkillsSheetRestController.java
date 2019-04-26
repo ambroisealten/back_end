@@ -1,7 +1,5 @@
 package fr.alten.ambroiseJEE.controller.rest;
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,13 +15,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import fr.alten.ambroiseJEE.controller.business.SkillsSheetBusinessController;
-import fr.alten.ambroiseJEE.model.beans.SkillsSheet;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
-import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
@@ -145,14 +141,8 @@ public class SkillsSheetRestController {
 	public String getSkillsSheetByNameAndVersion(@PathVariable("name") final String sheetName,
 			@PathVariable("versionNumber") final String versionNumber, @RequestAttribute("mail") final String mail,
 			@RequestAttribute("role") final UserRole role) {
-		final Optional<SkillsSheet> optionalSkillSheet = this.skillsSheetBusinessController.getSkillsSheet(sheetName,
-				Long.parseLong(versionNumber), role);
-
-		if (optionalSkillSheet.isPresent()) {
-			return this.gson.toJson(optionalSkillSheet.get());
-		}
-		throw new ResourceNotFoundException();
-
+		return this.gson.toJson(
+				this.skillsSheetBusinessController.getSkillsSheet(sheetName, Long.parseLong(versionNumber), role));
 	}
 
 	/**

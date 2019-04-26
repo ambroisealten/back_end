@@ -3,7 +3,6 @@ package fr.alten.ambroiseJEE.model.entityControllers;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -77,50 +76,51 @@ public class PersonEntityController {
 	 * @author Lucas Royackkers
 	 */
 	public HttpException createPerson(final JsonNode jPerson, final PersonRole type) throws ParseException {
-		// if the mail don't match with the mail pattern
-		if (!PersonEntityController.validateMail(jPerson.get("mail").textValue())) {
-			return new UnprocessableEntityException();
-		}
-
-		final Person newPerson = new Person();
-		newPerson.setSurname(jPerson.get("surname").textValue());
-		newPerson.setName(jPerson.get("name").textValue());
-		newPerson.setMonthlyWage(Float.parseFloat(jPerson.get("monthlyWage").textValue()));
-		newPerson.setRole(type);
-		newPerson.setMail(jPerson.get("mail").textValue());
-		final List<String> docList = new ArrayList<String>();
-		final JsonNode docNode = jPerson.get("urlDocs");
-		for (final JsonNode doc : docNode) {
-			docList.add(doc.get("url").textValue());
-		}
-		newPerson.setUrlDocs(docList);
-
-		final Optional<User> personInCharge = this.userEntityController
-				.getUserByMail(jPerson.get("personInChargeMail").textValue());
-		if (personInCharge.isPresent()) {
-			newPerson.setPersonInChargeMail(personInCharge.get().getMail());
-		}
-
-		final Optional<Diploma> diploma = this.diplomaEntityController.getDiplomaByNameAndYearOfResult(
-				jPerson.get("highestDiploma").textValue(), jPerson.get("highestDiplomaYear").textValue());
-		if (diploma.isPresent()) {
-			newPerson.setHighestDiploma(diploma.get().getName());
-			newPerson.setHighestDiplomaYear(diploma.get().getYearOfResult());
-		}
-
-		final Optional<Job> job = this.jobEntityController.getJob(jPerson.get("job").textValue());
-		if (job.isPresent()) {
-			newPerson.setJob(job.get().getTitle());
-		}
-
-		final Optional<Employer> employer = this.employerEntityController
-				.getEmployer(jPerson.get("employer").textValue());
-		if (employer.isPresent()) {
-			newPerson.setEmployer(employer.get().getName());
-		}
-
 		try {
+			// if the mail don't match with the mail pattern
+			if (!PersonEntityController.validateMail(jPerson.get("mail").textValue())) {
+				return new UnprocessableEntityException();
+			}
+
+			final Person newPerson = new Person();
+			newPerson.setSurname(jPerson.get("surname").textValue());
+			newPerson.setName(jPerson.get("name").textValue());
+			newPerson.setMonthlyWage(Float.parseFloat(jPerson.get("monthlyWage").textValue()));
+			newPerson.setRole(type);
+			newPerson.setMail(jPerson.get("mail").textValue());
+			final List<String> docList = new ArrayList<String>();
+			final JsonNode docNode = jPerson.get("urlDocs");
+			for (final JsonNode doc : docNode) {
+				docList.add(doc.get("url").textValue());
+			}
+			newPerson.setUrlDocs(docList);
+
+			final User personInCharge = this.userEntityController
+					.getUserByMail(jPerson.get("personInChargeMail").textValue());
+			newPerson.setPersonInChargeMail(personInCharge.getMail());
+
+			final String highestDiploma = jPerson.get("highestDiploma").textValue();
+			final String highestDiplomaYear = jPerson.get("highestDiplomaYear").textValue();
+			final Diploma diploma = this.diplomaEntityController
+					.getDiplomaByNameAndYearOfResult(highestDiploma, highestDiplomaYear)
+					.orElseGet(this.diplomaEntityController.createDiploma(highestDiploma, highestDiplomaYear));
+
+			newPerson.setHighestDiploma(diploma.getName());
+			newPerson.setHighestDiplomaYear(diploma.getYearOfResult());
+
+			final String jobName = jPerson.get("job").textValue();
+			final Job job = this.jobEntityController.getJob(jobName)
+					.orElseGet(this.jobEntityController.createJob(jobName));
+			newPerson.setJob(job.getTitle());
+
+			final String employerName = jPerson.get("employer").textValue();
+			final Employer employer = this.employerEntityController.getEmployer(employerName)
+					.orElseGet(this.employerEntityController.createEmployer(employerName));
+			newPerson.setEmployer(employer.getName());
+
 			this.personRepository.save(newPerson);
+		} catch (final ResourceNotFoundException rnfe) {
+			return rnfe;
 		} catch (final Exception e) {
 			return new ConflictException();
 		}
@@ -140,10 +140,10 @@ public class PersonEntityController {
 	 * @author Lucas Royackkers
 	 */
 	public HttpException deletePerson(final JsonNode jPerson, final PersonRole role) {
-		final Optional<Person> optionalPerson = this.personRepository.findByMailAndRole(jPerson.get("mail").textValue(),
-				role);
-		if (optionalPerson.isPresent()) {
-			final Person person = optionalPerson.get();
+		try {
+			final Person person = this.personRepository.findByMailAndRole(jPerson.get("mail").textValue(), role)
+					.orElseThrow(ResourceNotFoundException::new);
+
 			switch (role) {
 			case APPLICANT:
 				person.setSurname("Deactivated");
@@ -162,8 +162,10 @@ public class PersonEntityController {
 			person.setJob(null);
 
 			this.personRepository.save(person);
-		} else {
-			return new ResourceNotFoundException();
+		} catch (final ResourceNotFoundException rnfe) {
+			return rnfe;
+		} catch (final Exception e) {
+			return new ConflictException();
 		}
 		return new OkException();
 	}
@@ -173,6 +175,7 @@ public class PersonEntityController {
 	 *
 	 * @param mail the person's mail to fetch
 	 * @return A List of Person that match the searched mail (can be empty).
+	 * @throws @{@link ResourceNotFoundException} if the ressource is not found
 	 * @author Lucas Royackkers
 	 * @author Camille Schnell
 	 */
@@ -186,9 +189,12 @@ public class PersonEntityController {
 	 * @param mail the person's mail to fetch
 	 * @return An Optional with the corresponding person (of the given type) or not.
 	 * @author Lucas Royackkers
+	 * @throws {@link ResourceNotFoundException} if the ressource can't be found
+	 *
 	 */
-	public Optional<Person> getPersonByMailAndType(final String mail, final PersonRole type) {
-		return this.personRepository.findByMailAndRole(mail, type);
+	public Person getPersonByMailAndType(final String mail, final PersonRole type) {
+		return this.personRepository.findByMailAndRole(mail, type).orElseThrow(ResourceNotFoundException::new);
+
 	}
 
 	/**
@@ -260,10 +266,10 @@ public class PersonEntityController {
 	 * @author Lucas Royackkers
 	 */
 	public HttpException updatePerson(final JsonNode jPerson, final PersonRole role) throws ParseException {
-		final Optional<Person> optionalPerson = this.personRepository
-				.findByMailAndRole(jPerson.get("oldMail").textValue(), role);
-		if (optionalPerson.isPresent()) {
-			final Person person = optionalPerson.get();
+		try {
+			final Person person = this.personRepository.findByMailAndRole(jPerson.get("oldMail").textValue(), role)
+					.orElseThrow(ResourceNotFoundException::new);
+
 			person.setSurname(jPerson.get("surname").textValue());
 			person.setName(jPerson.get("name").textValue());
 			person.setMonthlyWage(Float.parseFloat(jPerson.get("monthlyWage").textValue()));
@@ -279,35 +285,34 @@ public class PersonEntityController {
 			}
 			person.setUrlDocs(docList);
 
-			final Optional<User> personInCharge = this.userEntityController
+			final User personInCharge = this.userEntityController
 					.getUserByMail(jPerson.get("personInChargeMail").textValue());
-			if (personInCharge.isPresent()) {
-				person.setPersonInChargeMail(personInCharge.get().getMail());
-			}
+			person.setPersonInChargeMail(personInCharge.getMail());
 
-			final Optional<Diploma> diploma = this.diplomaEntityController.getDiplomaByNameAndYearOfResult(
-					jPerson.get("highestDiploma").textValue(), jPerson.get("highestDiplomaYear").textValue());
-			if (diploma.isPresent()) {
-				person.setHighestDiploma(diploma.get().get_id().toString());
-			}
+			final String highestDiploma = jPerson.get("highestDiploma").textValue();
+			final String highestDiplomaYear = jPerson.get("highestDiplomaYear").textValue();
 
-			final Optional<Job> job = this.jobEntityController.getJob(jPerson.get("job").textValue());
-			if (job.isPresent()) {
-				person.setJob(job.get().getTitle());
-			}
+			final Diploma diploma = this.diplomaEntityController
+					.getDiplomaByNameAndYearOfResult(highestDiploma, highestDiplomaYear)
+					.orElseGet(this.diplomaEntityController.createDiploma(highestDiploma, highestDiplomaYear));
 
-			final Optional<Employer> employer = this.employerEntityController
-					.getEmployer(jPerson.get("employer").textValue());
-			if (employer.isPresent()) {
-				person.setEmployer(employer.get().getName());
-			}
-			try {
-				this.personRepository.save(person);
-			} catch (final Exception e) {
-				return new ConflictException();
-			}
-		} else {
-			return new ResourceNotFoundException();
+			person.setHighestDiploma(diploma.getName());
+			person.setHighestDiplomaYear(diploma.getYearOfResult());
+
+			final String jobName = jPerson.get("job").textValue();
+			final Job job = this.jobEntityController.getJob(jobName)
+					.orElseGet(this.jobEntityController.createJob(jobName));
+			person.setJob(job.getTitle());
+
+			final String employerName = jPerson.get("employer").textValue();
+			final Employer employer = this.employerEntityController.getEmployer(employerName)
+					.orElseGet(this.employerEntityController.createEmployer(employerName));
+			person.setEmployer(employer.getName());
+			this.personRepository.save(person);
+		} catch (final ResourceNotFoundException rnfe) {
+			return rnfe;
+		} catch (final Exception e) {
+			return new ConflictException();
 		}
 		return new OkException();
 	}

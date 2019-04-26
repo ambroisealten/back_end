@@ -85,10 +85,12 @@ public class UserBusinessController {
 	 * @return An Optional with the corresponding user or not.
 	 * @author Andy Chabalier
 	 */
-	public Optional<User> getUserByMail(final String mail, final UserRole role) {
-		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role
-				? this.userEntityController.getUserByMail(mail)
-				: Optional.empty();
+	public User getUserByMail(final String mail, final UserRole role) {
+		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
+			return this.userEntityController.getUserByMail(mail);
+		} else {
+			throw new ForbiddenException();
+		}
 	}
 
 	/**

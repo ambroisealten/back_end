@@ -1,7 +1,6 @@
 package fr.alten.ambroiseJEE.controller.rest;
 
 import java.text.ParseException;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,7 +18,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import fr.alten.ambroiseJEE.controller.business.ApplicantBusinessController;
-import fr.alten.ambroiseJEE.model.beans.Person;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.JsonUtils;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
@@ -98,11 +96,7 @@ public class ApplicantRestController {
 	@ResponseBody
 	public String getApplicant(@PathVariable("mail") final String applicantMail,
 			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
-		final Optional<Person> personOptional = this.applicantBusinessController.getApplicant(applicantMail, role);
-		if (personOptional.isPresent()) {
-			return this.gson.toJson(personOptional.get());
-		}
-		throw new ResourceNotFoundException();
+		return this.gson.toJson(this.applicantBusinessController.getApplicant(applicantMail, role));
 	}
 
 	/**

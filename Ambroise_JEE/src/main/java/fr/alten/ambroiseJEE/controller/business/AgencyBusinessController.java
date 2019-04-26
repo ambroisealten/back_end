@@ -4,7 +4,6 @@
 package fr.alten.ambroiseJEE.controller.business;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -87,7 +86,7 @@ public class AgencyBusinessController {
 	 *         foud
 	 * @author Andy Chabalier
 	 */
-	public Optional<Agency> getAgency(final String name) {
+	public Agency getAgency(final String name) {
 		return this.agencyEntityController.getAgency(name);
 	}
 

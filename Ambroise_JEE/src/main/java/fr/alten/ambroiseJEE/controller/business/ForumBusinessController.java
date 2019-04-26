@@ -4,7 +4,6 @@
 package fr.alten.ambroiseJEE.controller.business;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -72,7 +71,7 @@ public class ForumBusinessController {
 	 *         problem
 	 * @author MAQUINGHEN MAXIME
 	 */
-	public Optional<Forum> getForum(final String name, final String date, final String place, final UserRole role) {
+	public Forum getForum(final String name, final String date, final String place, final UserRole role) {
 		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.CDR == role
 				|| UserRole.MANAGER == role) {
 			return this.forumEntityController.getForum(name, date, place);

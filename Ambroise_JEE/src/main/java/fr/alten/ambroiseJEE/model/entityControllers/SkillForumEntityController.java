@@ -4,7 +4,6 @@
 package fr.alten.ambroiseJEE.model.entityControllers;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,12 +45,10 @@ public class SkillForumEntityController {
 		newSkillForum.setName(jSkillForum.get("name").textValue());
 		try {
 			this.skillForumRepository.save(newSkillForum);
+		} catch (final DuplicateKeyException dke) {
+			return new ConflictException();
 		} catch (final Exception e) {
-			if (!DuplicateKeyException.class.isInstance(e)) {
-				e.printStackTrace();
-			} else {
-				return new ConflictException();
-			}
+			e.printStackTrace();
 		}
 		return new CreatedException();
 	}
@@ -76,8 +73,9 @@ public class SkillForumEntityController {
 				.orElse(new ResourceNotFoundException());
 	}
 
-	public Optional<SkillForum> getSkillForum(final JsonNode jSkillForum) {
-		return this.skillForumRepository.findByName(jSkillForum.get("name").textValue());
+	public SkillForum getSkillForum(final JsonNode jSkillForum) {
+		return this.skillForumRepository.findByName(jSkillForum.get("name").textValue())
+				.orElseThrow(ResourceNotFoundException::new);
 	}
 
 	/**
@@ -104,12 +102,10 @@ public class SkillForumEntityController {
 					skillForum.setName(jSkillForum.get("name").textValue());
 					try {
 						this.skillForumRepository.save(skillForum);
+					} catch (final DuplicateKeyException dke) {
+						return new ConflictException();
 					} catch (final Exception e) {
-						if (!DuplicateKeyException.class.isInstance(e)) {
-							e.printStackTrace();
-						} else {
-							return (HttpException) new ConflictException();
-						}
+						e.printStackTrace();
 					}
 					return (HttpException) new OkException();
 				})

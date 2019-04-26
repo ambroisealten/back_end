@@ -102,12 +102,13 @@ public class MobilityEntityController {
 				mobilityToFind.getPlaceType(), mobilityToFind.getRadius(), mobilityToFind.getUnit());
 	}
 
-	public Optional<Mobility> getMobilityByName(final String placeName) {
-		return this.mobilityRepository.findByPlaceName(placeName);
+	public Mobility getMobilityByName(final String placeName) {
+		return this.mobilityRepository.findByPlaceName(placeName).orElseThrow(ResourceNotFoundException::new);
 	}
 
-	public Optional<Mobility> getMobilityByNameAndRadius(final String placeName, final int radius) {
-		return this.mobilityRepository.findByPlaceNameAndRadius(placeName, radius);
+	public Mobility getMobilityByNameAndRadius(final String placeName, final int radius) {
+		return this.mobilityRepository.findByPlaceNameAndRadius(placeName, radius)
+				.orElseThrow(ResourceNotFoundException::new);
 	}
 
 }

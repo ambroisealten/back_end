@@ -2,7 +2,6 @@ package fr.alten.ambroiseJEE.controller.business;
 
 import java.text.ParseException;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,7 +30,7 @@ public class SkillsSheetBusinessController {
 
 	/**
 	 * Check if a Person already has a Skills sheets with its mail in it
-	 * 
+	 *
 	 * @param mailPerson the mail of the person
 	 * @param role       the current logged user's role
 	 * @return a boolean whether the mail has been used or not
@@ -67,7 +66,7 @@ public class SkillsSheetBusinessController {
 
 	/**
 	 * Get all Skills Sheet
-	 * 
+	 *
 	 * @param role the user's role
 	 * @return the list of all skills sheets
 	 * @throws {@link ForbiddenException} if the current logged user hasn't the
@@ -92,15 +91,17 @@ public class SkillsSheetBusinessController {
 	 *         performs this action)
 	 * @author Lucas Royackkers
 	 */
-	public Optional<SkillsSheet> getSkillsSheet(final String name, final long versionNumber, final UserRole role) {
-		return UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role
-				? this.skillsSheetEntityController.getSkillsSheetByNameAndVersionNumber(name, versionNumber)
-				: Optional.empty();
+	public SkillsSheet getSkillsSheet(final String name, final long versionNumber, final UserRole role) {
+		if (UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role) {
+			return this.skillsSheetEntityController.getSkillsSheetByNameAndVersionNumber(name, versionNumber);
+		} else {
+			throw new ForbiddenException();
+		}
 	}
 
 	/**
 	 * Get all versions of a skills sheet
-	 * 
+	 *
 	 * @param role the current logged user's role
 	 * @param name the searched skills sheet's name
 	 * @return the list of all skills sheets given a name (might be empty if there

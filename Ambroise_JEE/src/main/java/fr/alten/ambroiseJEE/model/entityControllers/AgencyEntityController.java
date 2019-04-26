@@ -44,20 +44,19 @@ public class AgencyEntityController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException createAgency(final JsonNode jAgency) {
-
-		final Agency newAgency = new Agency();
-		newAgency.setName(jAgency.get("name").textValue());
-
-		final String placeType = jAgency.get("placeType").textValue();
-		final Optional<Geographic> place = this.geographicBusinessController.getPlace(jAgency.get("place").textValue(),
-				placeType);
-		if (place.isPresent()) {
-			newAgency.setPlace(place.get().getIdentifier());
-			newAgency.setPlaceType(placeType);
-		}
-
 		try {
+			final Agency newAgency = new Agency();
+			newAgency.setName(jAgency.get("name").textValue());
+
+			final String placeType = jAgency.get("placeType").textValue();
+			final Geographic place = this.geographicBusinessController
+					.getPlace(jAgency.get("place").textValue(), placeType).orElseThrow(ResourceNotFoundException::new);
+			newAgency.setPlace(place.getIdentifier());
+			newAgency.setPlaceType(placeType);
+
 			this.agencyRepository.save(newAgency);
+		} catch (final ResourceNotFoundException rnfe) {
+			return rnfe;
 		} catch (final Exception e) {
 			return new ConflictException();
 		}
@@ -73,15 +72,15 @@ public class AgencyEntityController {
 	 * @author MAQUINGHEN MAXIME
 	 */
 	public HttpException deleteAgency(final String name) {
-		final Optional<Agency> agencyOptionnal = this.agencyRepository.findByName(name);
-
-		if (agencyOptionnal.isPresent()) {
-			final Agency agency = agencyOptionnal.get();
+		try {
+			final Agency agency = this.agencyRepository.findByName(name).orElseThrow(ResourceNotFoundException::new);
 			agency.setName("deactivated" + System.currentTimeMillis());
 			agency.setPlace(null);
 			this.agencyRepository.save(agency);
-		} else {
-			throw new ResourceNotFoundException();
+		} catch (final ResourceNotFoundException rnfe) {
+			return rnfe;
+		} catch (final Exception e) {
+			return new ConflictException();
 		}
 		return new OkException();
 	}
@@ -94,8 +93,16 @@ public class AgencyEntityController {
 		return this.agencyRepository.findAll();
 	}
 
-	public Optional<Agency> getAgency(final String name) {
-		return this.agencyRepository.findByName(name);
+	/**
+	 * Fetch an agency
+	 *
+	 * @param name the name of the agency to fetch
+	 * @return the fetched agency
+	 * @throws @{@link ResourceNotFoundException} if the ressource is not found
+	 * @author Andy Chabalier
+	 */
+	public Agency getAgency(final String name) {
+		return this.agencyRepository.findByName(name).orElseThrow(ResourceNotFoundException::new);
 	}
 
 	/**
@@ -108,10 +115,9 @@ public class AgencyEntityController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException updateAgency(final JsonNode jAgency) {
-		final Optional<Agency> agencyOptionnal = this.agencyRepository.findByName(jAgency.get("oldName").textValue());
-
-		if (agencyOptionnal.isPresent()) {
-			final Agency agency = agencyOptionnal.get();
+		try {
+			final Agency agency = this.agencyRepository.findByName(jAgency.get("oldName").textValue())
+					.orElseThrow(ResourceNotFoundException::new);
 			agency.setName(jAgency.get("name").textValue());
 			final String placeType = jAgency.get("placeType").textValue();
 			final Optional<Geographic> place = this.geographicBusinessController
@@ -121,8 +127,10 @@ public class AgencyEntityController {
 				agency.setPlaceType(placeType);
 			}
 			this.agencyRepository.save(agency);
-		} else {
-			throw new ResourceNotFoundException();
+		} catch (final ResourceNotFoundException rnfe) {
+			return rnfe;
+		} catch (final Exception e) {
+			return new ConflictException();
 		}
 		return new OkException();
 	}

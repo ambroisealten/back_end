@@ -3,17 +3,20 @@ package fr.alten.ambroiseJEE.model.entityControllers;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.mongodb.DuplicateKeyException;
 
 import fr.alten.ambroiseJEE.model.beans.Diploma;
 import fr.alten.ambroiseJEE.model.dao.DiplomaRepository;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.InternalServerErrorException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 
@@ -55,6 +58,30 @@ public class DiplomaEntityController {
 	}
 
 	/**
+	 * Supplier for diploma creation
+	 *
+	 * @param name         the diploma name
+	 * @param yearOfResult the diploma year
+	 * @return the supplier of diploma
+	 * @author Andy Chabalier
+	 */
+	public Supplier<? extends Diploma> createDiploma(final String name, final String yearOfResult) {
+		return () -> {
+			Diploma newDiploma = new Diploma();
+			newDiploma.setName(name);
+			newDiploma.setYearOfResult(yearOfResult);
+			try {
+				newDiploma = this.diplomaRepository.save(newDiploma);
+			} catch (final DuplicateKeyException dke) {
+				throw new ConflictException();
+			} catch (final Exception e) {
+				throw new InternalServerErrorException();
+			}
+			return newDiploma;
+		};
+	}
+
+	/**
 	 *
 	 * @param jDiploma the JsonNode containing all diploma parameters (name,
 	 *                 yearOfResult)
@@ -64,23 +91,23 @@ public class DiplomaEntityController {
 	 * @author Lucas Royackkers
 	 */
 	public HttpException deleteDiploma(final JsonNode jDiploma) {
-		final Optional<Diploma> diplomaOptionnal = this.diplomaRepository
-				.findByNameAndYearOfResult(jDiploma.get("name").textValue(), jDiploma.get("yearOfResult").textValue());
-
-		if (diplomaOptionnal.isPresent()) {
-			final Diploma diploma = diplomaOptionnal.get();
+		try {
+			final Diploma diploma = this.diplomaRepository.findByNameAndYearOfResult(jDiploma.get("name").textValue(),
+					jDiploma.get("yearOfResult").textValue()).orElseThrow(ResourceNotFoundException::new);
 			diploma.setName("deactivated" + System.currentTimeMillis());
 			diploma.setYearOfResult(null);
 			this.diplomaRepository.save(diploma);
-		} else {
-			return new ResourceNotFoundException();
+		} catch (final ResourceNotFoundException rnfe) {
+			return rnfe;
+		} catch (final Exception e) {
+			return new ConflictException();
 		}
 		return new OkException();
 	}
 
 	/**
 	 * Get a List of Diplomas given their name
-	 * 
+	 *
 	 * @param name the searched name for this query
 	 * @return a List of Diplomas object (can be empty)
 	 * @author Lucas Royackkers
@@ -91,7 +118,7 @@ public class DiplomaEntityController {
 
 	/**
 	 * Get a specific Diploma
-	 * 
+	 *
 	 * @param name         the searched name for this query
 	 * @param yearOfResult the searched year of result for this diploma
 	 * @return an Optional with the corresponding Diploma or not
@@ -123,24 +150,26 @@ public class DiplomaEntityController {
 	 * @throws ParseException
 	 */
 	public HttpException updateDiploma(final JsonNode jDiploma) throws ParseException {
-		final Optional<Diploma> diplomaOptionnal = this.diplomaRepository.findByNameAndYearOfResult(
-				jDiploma.get("oldName").textValue(), jDiploma.get("oldYearOfResult").textValue());
-
-		if (diplomaOptionnal.isPresent()) {
-			final Diploma diploma = diplomaOptionnal.get();
-
+		try {
 			final Optional<Diploma> newDiplomaOptional = this.diplomaRepository.findByNameAndYearOfResult(
 					jDiploma.get("name").textValue(), jDiploma.get("yearOfResult").textValue());
 			if (newDiplomaOptional.isPresent()) {
 				return new ConflictException();
 			}
 
+			final Diploma diploma = this.diplomaRepository
+					.findByNameAndYearOfResult(jDiploma.get("oldName").textValue(),
+							jDiploma.get("oldYearOfResult").textValue())
+					.orElseThrow(ResourceNotFoundException::new);
+
 			diploma.setName(jDiploma.get("name").textValue());
 			diploma.setYearOfResult(jDiploma.get("yearOfResult").textValue());
 
 			this.diplomaRepository.save(diploma);
-		} else {
-			return new ResourceNotFoundException();
+		} catch (final ResourceNotFoundException rnfe) {
+			return rnfe;
+		} catch (final Exception e) {
+			return new ConflictException();
 		}
 		return new OkException();
 	}

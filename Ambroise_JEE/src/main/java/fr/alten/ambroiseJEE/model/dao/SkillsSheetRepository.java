@@ -16,7 +16,7 @@ public interface SkillsSheetRepository extends MongoRepository<SkillsSheet, Long
 	/**
 	 * Fetch skills sheets by mail (of the person attached to, i.e an applicant or a
 	 * consultant)
-	 * 
+	 *
 	 * @param mail
 	 * @return a list that contains all skills sheets given a mail (can be empty)
 	 * @author Lucas Royackkers

@@ -4,7 +4,6 @@
 package fr.alten.ambroiseJEE.model.entityControllers;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -61,18 +60,27 @@ public class PostalCodeEntityController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException deletePostalCode(final String name) {
-		final Optional<PostalCode> postalCodeOptionnal = this.postalCodeRepository.findByName(name);
-
-		if (postalCodeOptionnal.isPresent()) {
-			final PostalCode postalCode = postalCodeOptionnal.get();
+		try {
+			final PostalCode postalCode = this.postalCodeRepository.findByName(name)
+					.orElseThrow(ResourceNotFoundException::new);
 			postalCode.setName("deactivated" + System.currentTimeMillis());
 			this.postalCodeRepository.save(postalCode);
-		} else {
-			throw new ResourceNotFoundException();
+		} catch (final ResourceNotFoundException rnfe) {
+			return rnfe;
+		} catch (final Exception e) {
+			return new ConflictException();
 		}
 		return new OkException();
 	}
 
+	/**
+	 * Fetch a postal code from is name
+	 *
+	 * @param name the postal code name to fetch
+	 * @return the fetched postalcode
+	 * @throws @{@link ResourceNotFoundException} if the ressource is not found
+	 * @author Andy Chabalier
+	 */
 	public PostalCode getPostalCode(final String name) {
 		return this.postalCodeRepository.findByName(name).orElseThrow(ResourceNotFoundException::new);
 	}
@@ -95,16 +103,15 @@ public class PostalCodeEntityController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException updatePostalCode(final JsonNode jPostalCode) {
-		final Optional<PostalCode> postalCodeOptionnal = this.postalCodeRepository
-				.findByName(jPostalCode.get("oldName").textValue());
-
-		if (postalCodeOptionnal.isPresent()) {
-			final PostalCode postalCode = postalCodeOptionnal.get();
+		try {
+			final PostalCode postalCode = this.postalCodeRepository.findByName(jPostalCode.get("oldName").textValue())
+					.orElseThrow(ResourceNotFoundException::new);
 			postalCode.setName(jPostalCode.get("name").textValue());
-
 			this.postalCodeRepository.save(postalCode);
-		} else {
-			throw new ResourceNotFoundException();
+		} catch (final ResourceNotFoundException rnfe) {
+			return rnfe;
+		} catch (final Exception e) {
+			return new ConflictException();
 		}
 		return new OkException();
 	}
