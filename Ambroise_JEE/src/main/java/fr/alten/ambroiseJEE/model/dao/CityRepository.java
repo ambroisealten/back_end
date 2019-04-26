@@ -20,6 +20,6 @@ public interface CityRepository extends MongoRepository<City, Long> {
 	 * @return An Optional with the corresponding city or not.
 	 * @author Andy Chabalier
 	 */
-	Optional<City> findByName(String name);
+	Optional<City> findByNom(String name);
 
 }

@@ -55,7 +55,7 @@ public class MobilityEntityController {
 		case "city":
 			try{
 				City city = cityEntityController.getCity(jMobility.get("place").textValue());
-				newMobility.setPlaceName(city.getName());
+				newMobility.setPlaceName(city.getNom());
 			}catch(ResourceNotFoundException rnfe) {}
 			break;
 		case "departement":

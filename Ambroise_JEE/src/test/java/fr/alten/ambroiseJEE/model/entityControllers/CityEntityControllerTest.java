@@ -109,7 +109,7 @@ public class CityEntityControllerTest {
 		Optional<City> notEmptyCityOptional = Optional.of(new City());
 		doReturn(mockedJCity).when(mockedJCity).get(anyString());
 		doReturn("anyString").when(mockedJCity).textValue();
-		doReturn(notEmptyCityOptional).when(cityRepository).findByName(anyString());
+		doReturn(notEmptyCityOptional).when(cityRepository).findByNom(anyString());
 		// assert
 		assertThat(cityEntityController.deleteCity(mockedJCity)).isInstanceOf(OkException.class);
 		// verify
@@ -130,7 +130,7 @@ public class CityEntityControllerTest {
 		Optional<City> notEmptyCityOptional = Optional.of(new City());
 		doReturn(mockedJCity).when(mockedJCity).get(anyString());
 		doReturn("anyString").when(mockedJCity).textValue();
-		doReturn(notEmptyCityOptional).when(cityRepository).findByName(anyString());
+		doReturn(notEmptyCityOptional).when(cityRepository).findByNom(anyString());
 		when(cityRepository.save(any(City.class))).thenThrow(mockedDuplicateKeyException);
 		// assert
 		assertThat(cityEntityController.deleteCity(mockedJCity)).isInstanceOf(ConflictException.class);
@@ -152,7 +152,7 @@ public class CityEntityControllerTest {
 		Optional<City> emptyCityOptional = Optional.ofNullable(null);
 		doReturn(mockedJCity).when(mockedJCity).get(anyString());
 		doReturn("anyString").when(mockedJCity).textValue();
-		doReturn(emptyCityOptional).when(cityRepository).findByName(anyString());
+		doReturn(emptyCityOptional).when(cityRepository).findByNom(anyString());
 		// assert
 		assertThat(cityEntityController.deleteCity(mockedJCity)).isInstanceOf(ResourceNotFoundException.class);
 		// verify
@@ -185,11 +185,11 @@ public class CityEntityControllerTest {
 
 		// setup
 		Optional<City> notEmptyCityOptional = Optional.of(new City());
-		when(cityRepository.findByName("name")).thenReturn(notEmptyCityOptional);
+		when(cityRepository.findByNom("name")).thenReturn(notEmptyCityOptional);
 		// assert
 		assertThat(cityEntityController.getCity("name")).isInstanceOf(City.class);
 		// verify
-		verify(cityRepository, times(1)).findByName("name");
+		verify(cityRepository, times(1)).findByNom("name");
 	}
 
 	/**
@@ -203,7 +203,7 @@ public class CityEntityControllerTest {
 
 		// setup
 		Optional<City> emptyCityOptional = Optional.ofNullable(null);
-		when(cityRepository.findByName("name")).thenReturn(emptyCityOptional);
+		when(cityRepository.findByNom("name")).thenReturn(emptyCityOptional);
 		// throw
 		cityEntityController.getCity("name");
 	}
@@ -222,7 +222,7 @@ public class CityEntityControllerTest {
 		Optional<City> notEmptyCityOptional = Optional.of(new City());
 		doReturn(mockedJCity).when(mockedJCity).get(anyString());
 		doReturn("anyString").when(mockedJCity).textValue();
-		doReturn(notEmptyCityOptional).when(cityRepository).findByName(anyString());
+		doReturn(notEmptyCityOptional).when(cityRepository).findByNom(anyString());
 		// assert
 		assertThat(cityEntityController.updateCity(mockedJCity)).isInstanceOf(OkException.class);
 		// verify
@@ -243,7 +243,7 @@ public class CityEntityControllerTest {
 		Optional<City> notEmptyCityOptional = Optional.of(new City());
 		doReturn(mockedJCity).when(mockedJCity).get(anyString());
 		doReturn("anyString").when(mockedJCity).textValue();
-		doReturn(notEmptyCityOptional).when(cityRepository).findByName(anyString());
+		doReturn(notEmptyCityOptional).when(cityRepository).findByNom(anyString());
 		when(cityRepository.save(any(City.class))).thenThrow(mockedDuplicateKeyException);
 		// assert
 		assertThat(cityEntityController.updateCity(mockedJCity)).isInstanceOf(ConflictException.class);
@@ -265,7 +265,7 @@ public class CityEntityControllerTest {
 		Optional<City> emptyCityOptional = Optional.ofNullable(null);
 		doReturn(mockedJCity).when(mockedJCity).get(anyString());
 		doReturn("anyString").when(mockedJCity).textValue();
-		doReturn(emptyCityOptional).when(cityRepository).findByName(anyString());
+		doReturn(emptyCityOptional).when(cityRepository).findByNom(anyString());
 		// assert
 		assertThat(cityEntityController.updateCity(mockedJCity)).isInstanceOf(ResourceNotFoundException.class);
 		// verify
