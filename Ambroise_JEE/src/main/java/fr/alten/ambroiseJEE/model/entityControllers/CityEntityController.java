@@ -4,7 +4,6 @@
 package fr.alten.ambroiseJEE.model.entityControllers;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,22 +39,21 @@ public class CityEntityController {
 	 *         database and {@link CreatedException} if the city is created
 	 * @author Andy Chabalier
 	 */
-	public HttpException createCity(JsonNode jCity) {
+	public HttpException createCity(final JsonNode jCity) {
 
-		City newCity = new City();
-		newCity.setName(jCity.get("name").textValue());
+		final City newCity = new City();
+		newCity.setNom(jCity.get("nom").textValue());
 		newCity.setCode(jCity.get("code").textValue());
 		newCity.setCodeDepartement(jCity.get("codeDepartement").textValue());
 		newCity.setCodeRegion(jCity.get("codeRegion").textValue());
 		newCity.setCodePostaux(jCity.get("codesPostaux").textValue());
 
 		try {
-			cityRepository.save(newCity);
-		} catch (Exception e) {
-			if (!DuplicateKeyException.class.isInstance(e))
-				e.printStackTrace();
-			else
-				return new ConflictException();
+			this.cityRepository.save(newCity);
+		} catch (final DuplicateKeyException dke) {
+			return new ConflictException();
+		} catch (final Exception e) {
+
 		}
 		return new CreatedException();
 	}
@@ -68,21 +66,19 @@ public class CityEntityController {
 	 *         {@link OkException} if the city is deactivated
 	 * @author Andy Chabalier
 	 */
-	public HttpException deleteCity(JsonNode jCity) {
-
-		return cityRepository.findByName(jCity.get("name").textValue())
+	public HttpException deleteCity(final JsonNode jCity) {
+		return this.cityRepository.findByName(jCity.get("name").textValue())
 				// optional is present
 				.map(city -> {
-					city.setName("deactivated" + System.currentTimeMillis());
+					city.setNom("deactivated" + System.currentTimeMillis());
 					try {
-						cityRepository.save(city);
-					} catch (Exception e) {
-						if (!DuplicateKeyException.class.isInstance(e))
-							e.printStackTrace();
-						else
-							return new ConflictException();
+						this.cityRepository.save(city);
+					} catch (final DuplicateKeyException dke) {
+						return new ConflictException();
+					} catch (final Exception e) {
+						e.printStackTrace();
 					}
-					return (HttpException) new OkException();
+					return new OkException();
 
 					// optional isn't present
 				}).orElse(new ResourceNotFoundException());
@@ -94,11 +90,11 @@ public class CityEntityController {
 	 * @author Andy Chabalier
 	 */
 	public List<City> getCities() {
-		return cityRepository.findAll();
+		return this.cityRepository.findAll();
 	}
 
-	public City getCity(String name) {
-		return cityRepository.findByName(name).orElseThrow(ResourceNotFoundException::new);
+	public City getCity(final String name) {
+		return this.cityRepository.findByName(name).orElseThrow(ResourceNotFoundException::new);
 	}
 
 	/**
@@ -110,21 +106,19 @@ public class CityEntityController {
 	 *         found and {@link CreatedException} if the city is updated
 	 * @author Andy Chabalier
 	 */
-	public HttpException updateCity(JsonNode jCity) {
-
-		return cityRepository.findByName(jCity.get("name").textValue())
+	public HttpException updateCity(final JsonNode jCity) {
+		return this.cityRepository.findByName(jCity.get("oldName").textValue())
 				// optional is present
 				.map(city -> {
-					city.setName(jCity.get("name").textValue());
+					city.setNom(jCity.get("nom").textValue());
 					try {
-						cityRepository.save(city);
-					} catch (Exception e) {
-						if (!DuplicateKeyException.class.isInstance(e))
-							e.printStackTrace();
-						else
-							return new ConflictException();
+						this.cityRepository.save(city);
+					} catch (final DuplicateKeyException dke) {
+						return new ConflictException();
+					} catch (final Exception e) {
+						e.printStackTrace();
 					}
-					return (HttpException) new OkException();
+					return new OkException();
 
 					// optional isn't present
 				}).orElse(new ResourceNotFoundException());

@@ -40,13 +40,17 @@ public class CityRestController {
 	private final Gson gson;
 
 	public CityRestController() {
-		GsonBuilder builder = new GsonBuilder();
+		final GsonBuilder builder = new GsonBuilder();
 		this.gson = builder.create();
+	}
+
+	public boolean checkJsonIntegrity(final JsonNode params, final String... fields) {
+		return JsonUtils.checkJsonIntegrity(params, fields);
 	}
 
 	/**
 	 * Rest controller to create a city. HTTP Method : POST
-	 * 
+	 *
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the current logged user mail
 	 * @param role   the current logged user role
@@ -58,15 +62,15 @@ public class CityRestController {
 	 */
 	@PostMapping(value = "/city")
 	@ResponseBody
-	public HttpException createCity(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) {
-		return checkJsonIntegrity(params, "name", "code") ? cityBusinessController.createCity(params, role)
+	public HttpException createCity(@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
+			@RequestAttribute("role") final UserRole role) {
+		return checkJsonIntegrity(params, "nom", "code") ? this.cityBusinessController.createCity(params, role)
 				: new UnprocessableEntityException();
 	}
 
 	/**
 	 * Rest controller to delete a city. HTTP Method : DELETE
-	 * 
+	 *
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the current logged user mail
 	 * @param role   the current logged user role
@@ -78,15 +82,15 @@ public class CityRestController {
 	 */
 	@DeleteMapping(value = "/city")
 	@ResponseBody
-	public HttpException deleteCity(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) {
-		return checkJsonIntegrity(params, "name") ? cityBusinessController.deleteCity(params, role)
+	public HttpException deleteCity(@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
+			@RequestAttribute("role") final UserRole role) {
+		return checkJsonIntegrity(params, "nom") ? this.cityBusinessController.deleteCity(params, role)
 				: new UnprocessableEntityException();
 	}
 
 	/**
 	 * Rest controller to fetch all cities. HTTP Method : GET
-	 * 
+	 *
 	 * @param mail the current logged user mail
 	 * @param role the current logged user role
 	 * @return the list of all cities
@@ -94,13 +98,14 @@ public class CityRestController {
 	 */
 	@GetMapping(value = "/cities")
 	@ResponseBody
-	public String getCities(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
-		return gson.toJson(cityBusinessController.getCities(role));
+	public String getCities(@RequestAttribute("mail") final String mail,
+			@RequestAttribute("role") final UserRole role) {
+		return this.gson.toJson(this.cityBusinessController.getCities(role));
 	}
 
 	/**
 	 * Rest controller to update a city
-	 * 
+	 *
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the current logged user mail
 	 * @param role   the current logged user role
@@ -112,13 +117,9 @@ public class CityRestController {
 	 */
 	@PutMapping(value = "/city")
 	@ResponseBody
-	public HttpException updateCity(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) {
-		return this.checkJsonIntegrity(params, "name", "oldname") ? cityBusinessController.updateCity(params, role)
+	public HttpException updateCity(@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
+			@RequestAttribute("role") final UserRole role) {
+		return checkJsonIntegrity(params, "nom", "oldname") ? this.cityBusinessController.updateCity(params, role)
 				: new UnprocessableEntityException();
-	}
-	
-	public boolean checkJsonIntegrity(JsonNode params,String... fields) {
-		return JsonUtils.checkJsonIntegrity(params, fields);
 	}
 }

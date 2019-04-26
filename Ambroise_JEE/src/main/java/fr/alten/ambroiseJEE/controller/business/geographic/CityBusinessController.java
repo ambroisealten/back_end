@@ -4,7 +4,6 @@
 package fr.alten.ambroiseJEE.controller.business.geographic;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,8 +30,8 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 @Service
 public class CityBusinessController {
 
-	private UserRoleLists roles = UserRoleLists.getInstance();
-	
+	private final UserRoleLists roles = UserRoleLists.getInstance();
+
 	@Autowired
 	private CityEntityController cityEntityController;
 
@@ -45,9 +44,8 @@ public class CityBusinessController {
 	 *         database and {@link CreatedException} if the city is created
 	 * @author Andy Chabalier
 	 */
-	public HttpException createCity(JsonNode jCity, UserRole role) {
-		return (isAdmin(role)) ? cityEntityController.createCity(jCity)
-				: new ForbiddenException();
+	public HttpException createCity(final JsonNode jCity, final UserRole role) {
+		return isAdmin(role) ? this.cityEntityController.createCity(jCity) : new ForbiddenException();
 	}
 
 	/**
@@ -60,10 +58,8 @@ public class CityBusinessController {
 	 *         {@link OkException} if the city is deleted
 	 * @author Andy Chabalier
 	 */
-	public HttpException deleteCity(JsonNode params, UserRole role) {
-		return (isAdmin(role))
-				? cityEntityController.deleteCity(params)
-				: new ForbiddenException();
+	public HttpException deleteCity(final JsonNode params, final UserRole role) {
+		return isAdmin(role) ? this.cityEntityController.deleteCity(params) : new ForbiddenException();
 	}
 
 	/**
@@ -73,9 +69,9 @@ public class CityBusinessController {
 	 * @return the list of all cities
 	 * @author Andy Chabalier
 	 */
-	public List<City> getCities(UserRole role) {
+	public List<City> getCities(final UserRole role) {
 		if (isAdmin(role)) {
-			return cityEntityController.getCities();
+			return this.cityEntityController.getCities();
 		}
 		throw new ForbiddenException();
 	}
@@ -87,8 +83,12 @@ public class CityBusinessController {
 	 * @return an optional with the requested city or empty if not found
 	 * @author Andy Chabalier
 	 */
-	public City getCity(String name) {
-		return cityEntityController.getCity(name);
+	public City getCity(final String name) {
+		return this.cityEntityController.getCity(name);
+	}
+
+	public boolean isAdmin(final UserRole role) {
+		return this.roles.isAdmin(role);
 	}
 
 	/**
@@ -102,13 +102,8 @@ public class CityBusinessController {
 	 *         found and {@link OkException} if the city is updated
 	 * @author Andy Chabalier
 	 */
-	public HttpException updateCity(JsonNode jCity, UserRole role) {
-		return (isAdmin(role)) ? cityEntityController.updateCity(jCity)
-				: new ForbiddenException();
-	}
-	
-	public boolean isAdmin(UserRole role) {
-		return roles.isAdmin(role);
+	public HttpException updateCity(final JsonNode jCity, final UserRole role) {
+		return isAdmin(role) ? this.cityEntityController.updateCity(jCity) : new ForbiddenException();
 	}
 
 }
