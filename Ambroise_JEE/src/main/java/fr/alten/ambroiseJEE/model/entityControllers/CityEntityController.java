@@ -67,7 +67,7 @@ public class CityEntityController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException deleteCity(final JsonNode jCity) {
-		return this.cityRepository.findByName(jCity.get("name").textValue())
+		return this.cityRepository.findByNom(jCity.get("name").textValue())
 				// optional is present
 				.map(city -> {
 					city.setNom("deactivated" + System.currentTimeMillis());
@@ -94,7 +94,7 @@ public class CityEntityController {
 	}
 
 	public City getCity(final String name) {
-		return this.cityRepository.findByName(name).orElseThrow(ResourceNotFoundException::new);
+		return this.cityRepository.findByNom(name).orElseThrow(ResourceNotFoundException::new);
 	}
 
 	/**
@@ -107,7 +107,7 @@ public class CityEntityController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException updateCity(final JsonNode jCity) {
-		return this.cityRepository.findByName(jCity.get("oldName").textValue())
+		return this.cityRepository.findByNom(jCity.get("oldName").textValue())
 				// optional is present
 				.map(city -> {
 					city.setNom(jCity.get("nom").textValue());

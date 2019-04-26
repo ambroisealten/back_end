@@ -189,7 +189,7 @@ public class CityRestControllerTest {
 		doReturn(mockedHttpException).when(cityBusinessController).createCity(any(JsonNode.class), any(UserRole.class));
 
 		// setup : all needed fields present
-		String valid = "{\r\n" + "  \"name\":\"name\",\r\n" + "  \"code\":\"code\"\r\n" + "}";
+		String valid = "{\r\n" + "  \"nom\":\"name\",\r\n" + "  \"code\":\"code\"\r\n" + "}";
 
 		spiedJsonNode = mapper.readTree(valid);
 		// assert all field present
@@ -205,7 +205,7 @@ public class CityRestControllerTest {
 				.isInstanceOf(UnprocessableEntityException.class);
 
 		// setup : missing code
-		String missingCode = "{\r\n" + "  \"name\":\"name\"\r\n" + "}";
+		String missingCode = "{\r\n" + "  \"nom\":\"name\"\r\n" + "}";
 
 		spiedJsonNode = mapper.readTree(missingCode);
 		// assert missing code
@@ -226,7 +226,7 @@ public class CityRestControllerTest {
 		doReturn(mockedHttpException).when(cityBusinessController).deleteCity(any(JsonNode.class), any(UserRole.class));
 
 		// setup : all needed fields present
-		String valid = "{\r\n" + "  \"name\":\"name\"\r\n" + "}";
+		String valid = "{\r\n" + "  \"nom\":\"name\"\r\n" + "}";
 
 		spiedJsonNode = mapper.readTree(valid);
 		// assert all field present
@@ -255,7 +255,7 @@ public class CityRestControllerTest {
 		doReturn(mockedHttpException).when(cityBusinessController).updateCity(any(JsonNode.class), any(UserRole.class));
 
 		// setup : all needed fields present
-		String valid = "{\r\n" + "  \"name\":\"name\",\r\n" + "  \"oldname\":\"oldname\"\r\n" + "}";
+		String valid = "{\r\n" + "  \"nom\":\"name\",\r\n" + "  \"oldname\":\"oldname\"\r\n" + "}";
 
 		spiedJsonNode = mapper.readTree(valid);
 		// assert all field present
@@ -263,7 +263,7 @@ public class CityRestControllerTest {
 				.isNotInstanceOf(UnprocessableEntityException.class);
 
 		// setup : missing name
-		String missingName = "{\r\n" + "  \"oldname\":\"oldname\"\r\n" + "}";
+		String missingName = "{\r\n" + "  \"oldName\":\"oldname\"\r\n" + "}";
 
 		spiedJsonNode = mapper.readTree(missingName);
 		// assert missing name
@@ -271,7 +271,7 @@ public class CityRestControllerTest {
 				.isInstanceOf(UnprocessableEntityException.class);
 
 		// setup : missing name
-		String missingOldName = "{\r\n" + "  \"name\":\"name\"\r\n" + "}";
+		String missingOldName = "{\r\n" + "  \"nom\":\"name\"\r\n" + "}";
 
 		spiedJsonNode = mapper.readTree(missingOldName);
 		// assert missing name
