@@ -52,7 +52,6 @@ public class CityRestControllerTest {
 
 	private ObjectMapper mapper = new ObjectMapper();
 
-
 	/**
 	 * @test create a {@link City}
 	 * @context {@link JsonNode} params containing field "name"
@@ -182,113 +181,88 @@ public class CityRestControllerTest {
 	public void createCity_checkJsonIntegrity() throws IOException {
 
 		// globalSetup
-		doReturn(mockedHttpException).when(cityBusinessController)
-			.createCity(any(JsonNode.class), any(UserRole.class));
-		
+		doReturn(mockedHttpException).when(cityBusinessController).createCity(any(JsonNode.class), any(UserRole.class));
+
 		// setup : all needed fields present
-		String valid = "{\r\n" + 
-				"  \"name\":\"name\",\r\n" + 
-				"  \"code\":\"code\"\r\n" +  
-				"}";
-		
+		String valid = "{\r\n" + "  \"name\":\"name\",\r\n" + "  \"code\":\"code\"\r\n" + "}";
+
 		spiedJsonNode = mapper.readTree(valid);
 		// assert all field present
 		assertThat(cityRestController.createCity(spiedJsonNode, "mail", UserRole.CDR))
-			.isEqualTo(mockedHttpException);
+				.isNotInstanceOf(UnprocessableEntityException.class);
 
 		// setup : missing name
-		String missingName = "{\r\n" + 
-				"  \"code\":\"code\"\r\n" + 
-				"}";
-				
-				spiedJsonNode = mapper.readTree(missingName);
+		String missingName = "{\r\n" + "  \"code\":\"code\"\r\n" + "}";
+
+		spiedJsonNode = mapper.readTree(missingName);
 		// assert missing name
 		assertThat(cityRestController.createCity(spiedJsonNode, "mail", UserRole.CDR))
-			.isInstanceOf(UnprocessableEntityException.class);
+				.isInstanceOf(UnprocessableEntityException.class);
 
-		
 		// setup : missing code
-		String missingCode = "{\r\n" + 
-				"  \"name\":\"name\"\r\n" + 
-				"}";
-				
-				spiedJsonNode = mapper.readTree(missingCode);
+		String missingCode = "{\r\n" + "  \"name\":\"name\"\r\n" + "}";
+
+		spiedJsonNode = mapper.readTree(missingCode);
 		// assert missing code
 		assertThat(cityRestController.createCity(spiedJsonNode, "mail", UserRole.CDR))
-			.isInstanceOf(UnprocessableEntityException.class);
-		
+				.isInstanceOf(UnprocessableEntityException.class);
+
 	}
-	
+
 	@Test
 	public void deleteCity_checkJsonIntegrity() throws IOException {
 
 		// globalSetup
-		doReturn(mockedHttpException).when(cityBusinessController)
-			.deleteCity(any(JsonNode.class), any(UserRole.class));
-		
+		doReturn(mockedHttpException).when(cityBusinessController).deleteCity(any(JsonNode.class), any(UserRole.class));
+
 		// setup : all needed fields present
-		String valid = "{\r\n" + 
-				"  \"name\":\"name\"\r\n" + 
-				"}";
-		
+		String valid = "{\r\n" + "  \"name\":\"name\"\r\n" + "}";
+
 		spiedJsonNode = mapper.readTree(valid);
-		System.out.println(spiedJsonNode);
 		// assert all field present
 		assertThat(cityRestController.deleteCity(spiedJsonNode, "mail", UserRole.CDR))
-			.isEqualTo(mockedHttpException);
+				.isNotInstanceOf(UnprocessableEntityException.class);
 
 		// setup : missing name
 		String missingName = "{}";
-				
-				spiedJsonNode = mapper.readTree(missingName);
+
+		spiedJsonNode = mapper.readTree(missingName);
 		// assert missing name
 		assertThat(cityRestController.deleteCity(spiedJsonNode, "mail", UserRole.CDR))
-			.isInstanceOf(UnprocessableEntityException.class);
+				.isInstanceOf(UnprocessableEntityException.class);
 
-		
 	}
-	
+
 	@Test
 	public void updateCity_checkJsonIntegrity() throws IOException {
 
 		// globalSetup
-		doReturn(mockedHttpException).when(cityBusinessController)
-			.updateCity(any(JsonNode.class), any(UserRole.class));
-		
+		doReturn(mockedHttpException).when(cityBusinessController).updateCity(any(JsonNode.class), any(UserRole.class));
+
 		// setup : all needed fields present
-		String valid = "{\r\n" + 
-				"  \"name\":\"name\",\r\n" + 
-				"  \"oldname\":\"oldname\"\r\n" +
-				"}";
-		
+		String valid = "{\r\n" + "  \"name\":\"name\",\r\n" + "  \"oldname\":\"oldname\"\r\n" + "}";
+
 		spiedJsonNode = mapper.readTree(valid);
-		System.out.println(spiedJsonNode);
 		// assert all field present
 		assertThat(cityRestController.updateCity(spiedJsonNode, "mail", UserRole.CDR))
-			.isEqualTo(mockedHttpException);
+				.isNotInstanceOf(UnprocessableEntityException.class);
 
 		// setup : missing name
-		String missingName = "{\r\n" + 
-				"  \"oldname\":\"oldname\"\r\n" +
-				"}";
-				
-				spiedJsonNode = mapper.readTree(missingName);
-		// assert missing name
-		assertThat(cityRestController.updateCity(spiedJsonNode, "mail", UserRole.CDR))
-			.isInstanceOf(UnprocessableEntityException.class);
+		String missingName = "{\r\n" + "  \"oldname\":\"oldname\"\r\n" + "}";
 
-		
-		// setup : missing name
-		String missingOldName = "{\r\n" + 
-				"  \"name\":\"name\"\r\n" +
-				"}";
-				
-				spiedJsonNode = mapper.readTree(missingOldName);
+		spiedJsonNode = mapper.readTree(missingName);
 		// assert missing name
 		assertThat(cityRestController.updateCity(spiedJsonNode, "mail", UserRole.CDR))
-			.isInstanceOf(UnprocessableEntityException.class);
-		
+				.isInstanceOf(UnprocessableEntityException.class);
+
+		// setup : missing name
+		String missingOldName = "{\r\n" + "  \"name\":\"name\"\r\n" + "}";
+
+		spiedJsonNode = mapper.readTree(missingOldName);
+		// assert missing name
+		assertThat(cityRestController.updateCity(spiedJsonNode, "mail", UserRole.CDR))
+				.isInstanceOf(UnprocessableEntityException.class);
+
 	}
-
 
 }
