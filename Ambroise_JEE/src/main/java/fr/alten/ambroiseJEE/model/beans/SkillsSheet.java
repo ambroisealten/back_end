@@ -7,6 +7,8 @@ import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import fr.alten.ambroiseJEE.model.SkillGraduated;
+
 /**
  * Defines what a Skills Sheet is in our app
  *
@@ -24,7 +26,7 @@ public class SkillsSheet implements Serializable {
 	private String rolePersonAttachedTo;
 	private String mailVersionAuthor;
 	private long versionNumber;
-	private List<Skill> skillsList; 
+	private List<SkillGraduated> skillsList; 
 	private String versionDate;
 
 	public SkillsSheet() {
@@ -86,11 +88,11 @@ public class SkillsSheet implements Serializable {
 		this.rolePersonAttachedTo = rolePersonAttachedTo;
 	}
 
-	public List<Skill> getSkillsList() {
+	public List<SkillGraduated> getSkillsList() {
 		return skillsList;
 	}
 
-	public void setSkillsList(List<Skill> skillsList) {
+	public void setSkillsList(List<SkillGraduated> skillsList) {
 		this.skillsList = skillsList;
 	}
 	

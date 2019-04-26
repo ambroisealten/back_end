@@ -24,13 +24,4 @@ public interface SkillRepository extends MongoRepository<Skill, Long> {
 	 */
 	public Optional<Skill> findByName(String name);
 	
-	/**
-	 * Fetch skill by name and grade
-	 *
-	 * @param name
-	 * @param grade
-	 * @return An Optional with the corresponding skill or not.
-	 * @author Thomas Decamp
-	 */
-	public Optional<Skill> findByNameAndGrade(String name, double grade);
 }

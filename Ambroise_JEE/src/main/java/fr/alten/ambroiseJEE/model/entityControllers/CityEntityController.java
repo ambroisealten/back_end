@@ -103,7 +103,7 @@ public class CityEntityController {
 
 		if (cityOptionnal.isPresent()) {
 			City city = cityOptionnal.get();
-			city.setName(jCity.get("name").textValue());
+			city.setName(jCity.get("nom").textValue());
 
 			cityRepository.save(city);
 		} else {

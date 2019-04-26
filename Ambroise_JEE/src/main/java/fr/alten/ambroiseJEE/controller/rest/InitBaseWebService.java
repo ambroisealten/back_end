@@ -35,6 +35,7 @@ import fr.alten.ambroiseJEE.controller.business.SkillBusinessController;
 import fr.alten.ambroiseJEE.controller.business.SkillsSheetBusinessController;
 import fr.alten.ambroiseJEE.controller.business.UserBusinessController;
 import fr.alten.ambroiseJEE.controller.business.geographic.GeographicBusinessController;
+import fr.alten.ambroiseJEE.model.SkillGraduated;
 import fr.alten.ambroiseJEE.model.beans.Agency;
 import fr.alten.ambroiseJEE.model.beans.ApplicantForum;
 import fr.alten.ambroiseJEE.model.beans.Diploma;
@@ -554,45 +555,39 @@ public class InitBaseWebService {
 		newFirst.setRolePersonAttachedTo("consultant");
 		newFirst.setMailVersionAuthor("tempUserAdminManager@mail.com");
 
-		final List<Skill> newListSkill = new ArrayList<Skill>();
+		final List<SkillGraduated> newListSkill = new ArrayList<SkillGraduated>();
 		
 		final Skill newSoftSkill = new Skill();
 		newSoftSkill.setName("Cycle en V");
-		newSoftSkill.setGrade(2);
 		newSoftSkill.setIsSoft("true");
 
 		final Skill newSoftSkill1 = new Skill();
 		newSoftSkill1.setName("Gestion de projet");
-		newSoftSkill1.setGrade(3);
 		newSoftSkill1.setIsSoft("true");
 
 		final Skill newSoftSkill2 = new Skill();
 		newSoftSkill2.setName("Communication");
-		newSoftSkill2.setGrade(2);
 		newSoftSkill2.setIsSoft("true");
 
 		final Skill newSkill = new Skill();
 		newSkill.setName("JavaScript");
-		newSkill.setGrade(4);
 		newSkill.setIsSoft(null);
 
 		final Skill newSkill1 = new Skill();
 		newSkill1.setName("Angular");
-		newSkill1.setGrade(2);
 		newSkill1.setIsSoft(null);
 
 		final Skill newSkill2 = new Skill();
 		newSkill2.setName("C++");
-		newSkill2.setGrade(2.5);
 		newSkill2.setIsSoft(null);
 
-		newListSkill.add(newSoftSkill);
-		newListSkill.add(newSoftSkill1);
-		newListSkill.add(newSoftSkill2);
+		newListSkill.add(new SkillGraduated(newSoftSkill, 2));
+		newListSkill.add(new SkillGraduated(newSoftSkill1, 3));
+		newListSkill.add(new SkillGraduated(newSoftSkill2, 2));
 
-		newListSkill.add(newSkill);
-		newListSkill.add(newSkill1);
-		newListSkill.add(newSkill2);
+		newListSkill.add(new SkillGraduated(newSkill, 4));
+		newListSkill.add(new SkillGraduated(newSkill1, 2));
+		newListSkill.add(new SkillGraduated(newSkill2, 2.5));
 
 		newFirst.setSkillsList(newListSkill);
 
@@ -606,45 +601,39 @@ public class InitBaseWebService {
 		newSecond.setRolePersonAttachedTo("applicant");
 		newSecond.setMailVersionAuthor("tempUserAdminManager@mail.com");
 
-		final List<Skill> newListSkillBis = new ArrayList<Skill>();
+		final List<SkillGraduated> newListSkillBis = new ArrayList<SkillGraduated>();
 
 		final Skill newSoftSkillBis = new Skill();
 		newSoftSkillBis.setName("Cycle en V");
-		newSoftSkillBis.setGrade(3);
 		newSoftSkillBis.setIsSoft("true");
 
 		final Skill newSoftSkill1Bis = new Skill();
 		newSoftSkill1Bis.setName("Gestion de projet");
-		newSoftSkill1Bis.setGrade(1.5);
 		newSoftSkill1Bis.setIsSoft("true");
 		
 		final Skill newSoftSkill2Bis = new Skill();
 		newSoftSkill2Bis.setName("Communication");
-		newSoftSkill2Bis.setGrade(3.5);
 		newSoftSkill2Bis.setIsSoft("true");
 
 		final Skill newSkillBis = new Skill();
 		newSkillBis.setName("C#");
-		newSkillBis.setGrade(4);
 		newSkillBis.setIsSoft(null);
 
 		final Skill newSkill1Bis = new Skill();
 		newSkill1Bis.setName("Angular");
-		newSkill1Bis.setGrade(2);
 		newSkill1Bis.setIsSoft(null);
 
 		final Skill newSkill2Bis = new Skill();
 		newSkill2Bis.setName("C++");
-		newSkill2Bis.setGrade(3);
 		newSkill2Bis.setIsSoft(null);
 
-		newListSkillBis.add(newSoftSkillBis);
-		newListSkillBis.add(newSoftSkill1Bis);
-		newListSkillBis.add(newSoftSkill2Bis);
+		newListSkillBis.add(new SkillGraduated(newSoftSkillBis, 1));
+		newListSkillBis.add(new SkillGraduated(newSoftSkill1Bis, 3));
+		newListSkillBis.add(new SkillGraduated(newSoftSkill2Bis, 2.5));
 
-		newListSkillBis.add(newSkillBis);
-		newListSkillBis.add(newSkill1Bis);
-		newListSkillBis.add(newSkill2Bis);
+		newListSkillBis.add(new SkillGraduated(newSkillBis, 2.5));
+		newListSkillBis.add(new SkillGraduated(newSkill1Bis, 3.5));
+		newListSkillBis.add(new SkillGraduated(newSkill2Bis, 1));
 
 		newSecond.setSkillsList(newListSkillBis);
 
