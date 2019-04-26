@@ -20,9 +20,9 @@ public class CreatedException extends HttpException {
 
 	public CreatedException() {
 		super("Created");
-		StackTraceElement[] newStackTrace = { new StackTraceElement(this.getClass().getSimpleName(),
+		final StackTraceElement[] newStackTrace = { new StackTraceElement(this.getClass().getSimpleName(),
 				HttpStatus.CREATED.name(), "", HttpStatus.CREATED.value()) };
-		this.setStackTrace(newStackTrace);
+		setStackTrace(newStackTrace);
 	}
 
 	@Override

@@ -20,9 +20,9 @@ public class UnauthorizedException extends HttpException {
 
 	public UnauthorizedException() {
 		super("Unauthorized");
-		StackTraceElement[] newStackTrace = { new StackTraceElement(this.getClass().getSimpleName(),
+		final StackTraceElement[] newStackTrace = { new StackTraceElement(this.getClass().getSimpleName(),
 				HttpStatus.UNAUTHORIZED.name(), "", HttpStatus.UNAUTHORIZED.value()) };
-		this.setStackTrace(newStackTrace);
+		setStackTrace(newStackTrace);
 	}
 
 	@Override

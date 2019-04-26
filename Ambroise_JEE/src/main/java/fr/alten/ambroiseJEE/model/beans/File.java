@@ -7,7 +7,6 @@ import java.io.Serializable;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
@@ -20,42 +19,50 @@ public class File implements Serializable {
 	private static final long serialVersionUID = 2192182119022876865L;
 
 	@Id
-	private transient ObjectId _id;
-	@Indexed(unique = true)
-	private String uri;
-	private long dateOfModification;
-	private boolean isForForum;
+	private ObjectId _id;
+	private String path;
+	private String extension;
+	private long dateOfCreation;
+	private String name;
 
 	public ObjectId get_id() {
-		return _id;
+		return this._id;
 	}
 
-	public long getDateOfModification() {
-		return dateOfModification;
+	public long getDateOfCreation() {
+		return this.dateOfCreation;
 	}
 
-	public String getUri() {
-		return uri;
+	public String getExtension() {
+		return this.extension;
 	}
 
-	public boolean isForForum() {
-		return isForForum;
+	public String getName() {
+		return this.name;
 	}
 
-	public void set_id(ObjectId _id) {
+	public String getPath() {
+		return this.path;
+	}
+
+	public void set_id(final ObjectId _id) {
 		this._id = _id;
 	}
 
-	public void setDateOfModification(long dateOfAddition) {
-		this.dateOfModification = dateOfAddition;
+	public void setDateOfCreation(final long dateOfAddition) {
+		this.dateOfCreation = dateOfAddition;
 	}
 
-	public void setForForum(boolean isForForum) {
-		this.isForForum = isForForum;
+	public void setExtension(final String extension) {
+		this.extension = extension;
 	}
 
-	public void setUri(String uri) {
-		this.uri = uri;
+	public void setName(final String name) {
+		this.name = name;
+	}
+
+	public void setPath(final String uri) {
+		this.path = uri;
 	}
 
 }

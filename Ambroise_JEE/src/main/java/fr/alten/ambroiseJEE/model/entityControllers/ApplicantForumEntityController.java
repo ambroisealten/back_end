@@ -24,6 +24,7 @@ import fr.alten.ambroiseJEE.model.beans.Mobility;
 import fr.alten.ambroiseJEE.model.beans.Skill;
 import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.model.dao.ApplicantForumRepository;
+import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.Nationality;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
@@ -50,8 +51,8 @@ public class ApplicantForumEntityController {
 	 * @return true if the string match with the mail pattern
 	 * @author Andy Chabalier
 	 */
-	private static boolean validateMail(String emailStr) {
-		Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
+	private static boolean validateMail(final String emailStr) {
+		final Matcher matcher = ApplicantForumEntityController.VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
 		return matcher.find();
 	}
 
@@ -89,42 +90,44 @@ public class ApplicantForumEntityController {
 	 *                   format
 	 * @author Andy Chabalier
 	 */
-	public HttpException createApplicant(JsonNode jApplicant) throws ParseException {
+	public HttpException createApplicant(final JsonNode jApplicant) throws ParseException {
 		// if the mail don't match with the mail pattern
-		String applicantMail = jApplicant.get("mail").textValue();
-		if (!validateMail(applicantMail)) {
+		final String applicantMail = jApplicant.get("mail").textValue();
+		if (!ApplicantForumEntityController.validateMail(applicantMail)) {
 			return new UnprocessableEntityException();
 		}
 
-		ApplicantForum newApplicant = new ApplicantForum();
+		final ApplicantForum newApplicant = new ApplicantForum();
 		newApplicant.setName(jApplicant.get("name").textValue());
 		newApplicant.setSurname(jApplicant.get("surname").textValue());
 		newApplicant.setMonthlyWage(Integer.parseInt(jApplicant.get("monthlyWage").textValue()));
 		newApplicant.setMail(applicantMail);
-		List<String> docList = new ArrayList<String>();
-		JsonNode docNode = jApplicant.get("docs");
-		for (JsonNode doc : docNode) {
+		final List<String> docList = new ArrayList<String>();
+		final JsonNode docNode = jApplicant.get("docs");
+		for (final JsonNode doc : docNode) {
 			docList.add(doc.get("url").textValue());
 		}
 		newApplicant.setUrlDocs(docList);
 
-		Optional<User> personInCharge = userEntityController.getUserByMail(jApplicant.get("managerMail").textValue());
+		final Optional<User> personInCharge = this.userEntityController
+				.getUserByMail(jApplicant.get("managerMail").textValue());
 		if (personInCharge.isPresent()) {
 			newApplicant.setPersonInChargeMail(personInCharge.get().getMail());
 		}
 
-		Optional<Diploma> diploma = diplomaEntityController.getDiplomaByNameAndYearOfResult(
+		final Optional<Diploma> diploma = this.diplomaEntityController.getDiplomaByNameAndYearOfResult(
 				jApplicant.get("diplomaName").textValue(), jApplicant.get("diplomaYear").textValue());
 		if (diploma.isPresent()) {
 			newApplicant.setHighestDiploma(diploma.get().get_id().toString());
 		}
 
-		Optional<Job> job = jobEntityController.getJob(jApplicant.get("job").textValue());
+		final Optional<Job> job = this.jobEntityController.getJob(jApplicant.get("job").textValue());
 		if (job.isPresent()) {
 			newApplicant.setJob(job.get().getTitle());
 		}
 
-		Optional<Employer> employer = employerEntityController.getEmployer(jApplicant.get("employer").textValue());
+		final Optional<Employer> employer = this.employerEntityController
+				.getEmployer(jApplicant.get("employer").textValue());
 		if (employer.isPresent()) {
 			newApplicant.setEmployer(employer.get().getName());
 		}
@@ -138,10 +141,10 @@ public class ApplicantForumEntityController {
 		newApplicant.setContractType(jApplicant.get("contractType").textValue());
 		newApplicant.setContractDuration(jApplicant.get("contractDuration").textValue());
 
-		List<String> skills = new ArrayList<String>();
-		JsonNode skillNode = jApplicant.get("skills");
-		for (JsonNode skill : skillNode) {
-			Optional<Skill> SkillOptional = skillBusinessController.getSkill(skill.get("name").textValue());
+		final List<String> skills = new ArrayList<String>();
+		final JsonNode skillNode = jApplicant.get("skills");
+		for (final JsonNode skill : skillNode) {
+			final Optional<Skill> SkillOptional = this.skillBusinessController.getSkill(skill, UserRole.MANAGER_ADMIN);
 			if (SkillOptional.isPresent()) {
 				skills.add(SkillOptional.get().getName());
 			}
@@ -150,12 +153,12 @@ public class ApplicantForumEntityController {
 
 		newApplicant.setVehicule(Boolean.getBoolean(jApplicant.get("hasVehicule").textValue()));
 		newApplicant.setDriverLicense(Boolean.getBoolean(jApplicant.get("hasPermis").textValue()));
-		JsonNode nationality = jApplicant.get("nationality");
+		final JsonNode nationality = jApplicant.get("nationality");
 		newApplicant.setNationality(Nationality.valueOf(nationality.isNull() ? "NONE" : nationality.textValue()));
 
 		try {
-			applicantForumRepository.save(newApplicant);
-		} catch (Exception e) {
+			this.applicantForumRepository.save(newApplicant);
+		} catch (final Exception e) {
 			return new ConflictException();
 		}
 		return new CreatedException();
@@ -172,11 +175,11 @@ public class ApplicantForumEntityController {
 	 *         the database and {@link OkException} if the applicant is deleted
 	 * @author Andy Chabalier
 	 */
-	public HttpException deleteApplicant(JsonNode jApplicant) {
-		Optional<ApplicantForum> optionalApplicant = applicantForumRepository
+	public HttpException deleteApplicant(final JsonNode jApplicant) {
+		final Optional<ApplicantForum> optionalApplicant = this.applicantForumRepository
 				.findByMail(jApplicant.get("mail").textValue());
 		if (optionalApplicant.isPresent()) {
-			ApplicantForum applicant = optionalApplicant.get();
+			final ApplicantForum applicant = optionalApplicant.get();
 			applicant.setName("Demissionaire");
 			applicant.setSurname(null);
 			applicant.setMail("deactivated" + System.currentTimeMillis() + "@deactivated.com");
@@ -198,7 +201,7 @@ public class ApplicantForumEntityController {
 			applicant.setDriverLicense(false);
 			applicant.setNationality(Nationality.NONE);
 
-			applicantForumRepository.save(applicant);
+			this.applicantForumRepository.save(applicant);
 		} else {
 			throw new ResourceNotFoundException();
 		}
@@ -214,16 +217,16 @@ public class ApplicantForumEntityController {
 	 * @return A List of Mobility
 	 * @author Lucas Royackkers
 	 */
-	private List<String> getAllMobilities(JsonNode jMobilities) {
-		List<String> allMobilities = new ArrayList<String>();
-		for (JsonNode mobility : jMobilities) {
-			Mobility mobilityToFind = new Mobility();
+	private List<String> getAllMobilities(final JsonNode jMobilities) {
+		final List<String> allMobilities = new ArrayList<String>();
+		for (final JsonNode mobility : jMobilities) {
+			final Mobility mobilityToFind = new Mobility();
 			mobilityToFind.setPlaceName(mobility.get("placeName").textValue());
 			mobilityToFind.setPlaceType(mobility.get("placeType").textValue());
 			mobilityToFind.setRadius(Integer.parseInt(mobility.get("radius").textValue()));
 			mobilityToFind.setUnit(mobility.get("unit").textValue());
 
-			Optional<Mobility> optionalMobility = mobilityEntityController.getMobility(mobilityToFind);
+			final Optional<Mobility> optionalMobility = this.mobilityEntityController.getMobility(mobilityToFind);
 			if (optionalMobility.isPresent()) {
 				allMobilities.add(optionalMobility.get().get_id().toString());
 			}
@@ -236,8 +239,8 @@ public class ApplicantForumEntityController {
 	 * @return the optional with the applicant fetched
 	 * @author Andy Chabalier
 	 */
-	public Optional<ApplicantForum> getApplicantByMail(String mail) {
-		return applicantForumRepository.findByMail(mail);
+	public Optional<ApplicantForum> getApplicantByMail(final String mail) {
+		return this.applicantForumRepository.findByMail(mail);
 	}
 
 	/**
@@ -245,7 +248,7 @@ public class ApplicantForumEntityController {
 	 * @author Andy Chabalier
 	 */
 	public List<ApplicantForum> getApplicants() {
-		return applicantForumRepository.findAll();
+		return this.applicantForumRepository.findAll();
 	}
 
 	/**
@@ -259,42 +262,43 @@ public class ApplicantForumEntityController {
 	 * @throws ParseException
 	 * @author Andy Chabalier
 	 */
-	public HttpException updateApplicant(JsonNode jApplicant) throws ParseException {
-		Optional<ApplicantForum> optionalApplicant = applicantForumRepository
+	public HttpException updateApplicant(final JsonNode jApplicant) throws ParseException {
+		final Optional<ApplicantForum> optionalApplicant = this.applicantForumRepository
 				.findByMail(jApplicant.get("oldMail").textValue());
 		if (optionalApplicant.isPresent()) {
-			ApplicantForum applicant = optionalApplicant.get();
+			final ApplicantForum applicant = optionalApplicant.get();
 			applicant.setName(jApplicant.get("name").textValue());
 			applicant.setSurname(jApplicant.get("surname").textValue());
 			applicant.setMonthlyWage(Integer.parseInt(jApplicant.get("wage").textValue()));
 
 			applicant.setMail(jApplicant.get("mail").textValue());
 
-			Optional<User> personInCharge = userEntityController
+			final Optional<User> personInCharge = this.userEntityController
 					.getUserByMail(jApplicant.get("managerMail").textValue());
 			if (personInCharge.isPresent()) {
 				applicant.setPersonInChargeMail(personInCharge.get().getMail());
 			}
 
-			Optional<Diploma> diploma = diplomaEntityController.getDiplomaByNameAndYearOfResult(
+			final Optional<Diploma> diploma = this.diplomaEntityController.getDiplomaByNameAndYearOfResult(
 					jApplicant.get("diplomaName").textValue(), jApplicant.get("diplomaYear").textValue());
 			if (diploma.isPresent()) {
 				applicant.setHighestDiploma(diploma.get().get_id().toString());
 			}
 
-			Optional<Job> job = jobEntityController.getJob(jApplicant.get("job").textValue());
+			final Optional<Job> job = this.jobEntityController.getJob(jApplicant.get("job").textValue());
 			if (job.isPresent()) {
 				applicant.setJob(job.get().getTitle());
 			}
 
-			Optional<Employer> employer = employerEntityController.getEmployer(jApplicant.get("employer").textValue());
+			final Optional<Employer> employer = this.employerEntityController
+					.getEmployer(jApplicant.get("employer").textValue());
 			if (employer.isPresent()) {
 				applicant.setEmployer(employer.get().getName());
 			}
 
-			List<String> docList = new ArrayList<String>();
-			JsonNode docNode = jApplicant.get("docs");
-			for (JsonNode doc : docNode) {
+			final List<String> docList = new ArrayList<String>();
+			final JsonNode docNode = jApplicant.get("docs");
+			for (final JsonNode doc : docNode) {
 				docList.add(doc.get("url").textValue());
 			}
 			applicant.setUrlDocs(docList);
@@ -308,10 +312,11 @@ public class ApplicantForumEntityController {
 			applicant.setContractType(jApplicant.get("contractType").textValue());
 			applicant.setContractDuration(jApplicant.get("contractDuration").textValue());
 
-			List<String> skills = new ArrayList<String>();
-			JsonNode skillNode = jApplicant.get("skills");
-			for (JsonNode skill : skillNode) {
-				Optional<Skill> SkillOptional = skillBusinessController.getSkill(skill.get("name").textValue());
+			final List<String> skills = new ArrayList<String>();
+			final JsonNode skillNode = jApplicant.get("skills");
+			for (final JsonNode skill : skillNode) {
+				final Optional<Skill> SkillOptional = this.skillBusinessController.getSkill(skill,
+						UserRole.MANAGER_ADMIN);
 				if (SkillOptional.isPresent()) {
 					skills.add(SkillOptional.get().getName());
 				}
@@ -322,7 +327,7 @@ public class ApplicantForumEntityController {
 			applicant.setDriverLicense(Boolean.getBoolean(jApplicant.get("hasPermis").textValue()));
 			applicant.setNationality(Nationality.valueOf(jApplicant.get("nationality").textValue()));
 
-			applicantForumRepository.save(applicant);
+			this.applicantForumRepository.save(applicant);
 		} else {
 			throw new ResourceNotFoundException();
 		}

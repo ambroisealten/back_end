@@ -7,6 +7,8 @@ import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import fr.alten.ambroiseJEE.model.SkillGraduated;
+
 /**
  * Defines what a Skills Sheet is in our app
  *
@@ -24,8 +26,7 @@ public class SkillsSheet implements Serializable {
 	private String rolePersonAttachedTo;
 	private String mailVersionAuthor;
 	private long versionNumber;
-	private List<TechSkill> techSkillsList;
-	private List<SoftSkill> softSkillsList;
+	private List<SkillGraduated> skillsList;
 	private String versionDate;
 
 	public SkillsSheet() {
@@ -33,74 +34,67 @@ public class SkillsSheet implements Serializable {
 	}
 
 	public ObjectId get_id() {
-		return _id;
+		return this._id;
 	}
 
 	public String getMailPersonAttachedTo() {
-		return mailPersonAttachedTo;
+		return this.mailPersonAttachedTo;
 	}
 
 	public String getMailVersionAuthor() {
-		return mailVersionAuthor;
+		return this.mailVersionAuthor;
 	}
 
 	public String getName() {
-		return name;
-	}
-
-	public List<SoftSkill> getSoftSkillsList() {
-		return softSkillsList;
-	}
-
-	public List<TechSkill> getTechSkillsList() {
-		return techSkillsList;
-	}
-
-	public String getVersionDate() {
-		return versionDate;
-	}
-
-	public long getVersionNumber() {
-		return versionNumber;
-	}
-
-	public void set_id(ObjectId _id) {
-		this._id = _id;
-	}
-
-	public void setMailPersonAttachedTo(String mailPersonAttachedTo) {
-		this.mailPersonAttachedTo = mailPersonAttachedTo;
-	}
-
-	public void setMailVersionAuthor(String mailVersionAuthor) {
-		this.mailVersionAuthor = mailVersionAuthor;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public void setSoftSkillsList(List<SoftSkill> softSkillsList) {
-		this.softSkillsList = softSkillsList;
-	}
-
-	public void setTechSkillsList(List<TechSkill> techSkillsList) {
-		this.techSkillsList = techSkillsList;
-	}
-
-	public void setVersionDate(String versionDate) {
-		this.versionDate = versionDate;
-	}
-
-	public void setVersionNumber(long versionNumber) {
-		this.versionNumber = versionNumber;
+		return this.name;
 	}
 
 	public String getRolePersonAttachedTo() {
-		return rolePersonAttachedTo;
+		return this.rolePersonAttachedTo;
 	}
 
-	public void setRolePersonAttachedTo(String rolePersonAttachedTo) {
+	public List<SkillGraduated> getSkillsList() {
+		return this.skillsList;
+	}
+
+	public String getVersionDate() {
+		return this.versionDate;
+	}
+
+	public long getVersionNumber() {
+		return this.versionNumber;
+	}
+
+	public void set_id(final ObjectId _id) {
+		this._id = _id;
+	}
+
+	public void setMailPersonAttachedTo(final String mailPersonAttachedTo) {
+		this.mailPersonAttachedTo = mailPersonAttachedTo;
+	}
+
+	public void setMailVersionAuthor(final String mailVersionAuthor) {
+		this.mailVersionAuthor = mailVersionAuthor;
+	}
+
+	public void setName(final String name) {
+		this.name = name;
+	}
+
+	public void setRolePersonAttachedTo(final String rolePersonAttachedTo) {
 		this.rolePersonAttachedTo = rolePersonAttachedTo;
 	}
+
+	public void setSkillsList(final List<SkillGraduated> skillsList) {
+		this.skillsList = skillsList;
+	}
+
+	public void setVersionDate(final String versionDate) {
+		this.versionDate = versionDate;
+	}
+
+	public void setVersionNumber(final long versionNumber) {
+		this.versionNumber = versionNumber;
+	}
+
 }

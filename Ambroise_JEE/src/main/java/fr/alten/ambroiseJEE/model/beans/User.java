@@ -39,58 +39,58 @@ public class User implements Serializable {
 	}
 
 	public ObjectId get_id() {
-		return _id;
+		return this._id;
 	}
 
 	public String getAgency() {
-		return agency;
+		return this.agency;
 	}
 
 	public String getForname() {
-		return forname;
+		return this.forname;
 	}
 
 	public String getMail() {
-		return mail;
+		return this.mail;
 	}
 
 	public String getName() {
-		return name;
+		return this.name;
 	}
 
 	public String getPswd() {
-		return pswd;
+		return this.pswd;
 	}
 
 	public UserRole getRole() {
-		return role;
+		return this.role;
 	}
 
-	public void set_id(ObjectId _id) {
+	public void set_id(final ObjectId _id) {
 		this._id = _id;
 	}
 
-	public void setAgency(String agency) {
+	public void setAgency(final String agency) {
 		this.agency = agency;
 	}
 
-	public void setForname(String forname) {
+	public void setForname(final String forname) {
 		this.forname = forname;
 	}
 
-	public void setMail(String mail) {
+	public void setMail(final String mail) {
 		this.mail = mail;
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
-	public void setPswd(String pswd) {
+	public void setPswd(final String pswd) {
 		this.pswd = pswd;
 	}
 
-	public void setRole(UserRole role) {
+	public void setRole(final UserRole role) {
 		this.role = role;
 	}
 }

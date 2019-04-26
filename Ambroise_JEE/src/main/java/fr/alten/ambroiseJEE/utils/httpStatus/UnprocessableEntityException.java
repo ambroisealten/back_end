@@ -20,9 +20,9 @@ public class UnprocessableEntityException extends HttpException {
 
 	public UnprocessableEntityException() {
 		super("Unprocessable Entity.");
-		StackTraceElement[] newStackTrace = { new StackTraceElement(this.getClass().getSimpleName(),
+		final StackTraceElement[] newStackTrace = { new StackTraceElement(this.getClass().getSimpleName(),
 				HttpStatus.UNPROCESSABLE_ENTITY.name(), "", HttpStatus.UNPROCESSABLE_ENTITY.value()) };
-		this.setStackTrace(newStackTrace);
+		setStackTrace(newStackTrace);
 	}
 
 	@Override

@@ -28,23 +28,23 @@ public class Region extends Geographic implements Serializable {
 	}
 
 	public String getCode() {
-		return code;
+		return this.code;
 	}
 
 	@Override
 	public String getIdentifier() {
-		return this.getCode();
+		return getCode();
 	}
 
 	public String getName() {
-		return name;
+		return this.name;
 	}
 
-	public void setCode(String code) {
+	public void setCode(final String code) {
 		this.code = code;
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 }

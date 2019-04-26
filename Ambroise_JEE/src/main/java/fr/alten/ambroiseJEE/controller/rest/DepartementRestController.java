@@ -39,13 +39,13 @@ public class DepartementRestController {
 	private final Gson gson;
 
 	public DepartementRestController() {
-		GsonBuilder builder = new GsonBuilder();
+		final GsonBuilder builder = new GsonBuilder();
 		this.gson = builder.create();
 	}
 
 	/**
 	 * Rest controller to create departement. HTTP Method : POST
-	 * 
+	 *
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the current logged user mail
 	 * @param role   the current logged user role
@@ -57,15 +57,15 @@ public class DepartementRestController {
 	 */
 	@PostMapping(value = "/departement")
 	@ResponseBody
-	public HttpException createDepartement(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("name") != null ? departementBusinessController.createDepartement(params, role)
+	public HttpException createDepartement(@RequestBody final JsonNode params,
+			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
+		return params.get("name") != null ? this.departementBusinessController.createDepartement(params, role)
 				: new UnprocessableEntityException();
 	}
 
 	/**
 	 * Rest controller to delete departement. HTTP Method : DELETE
-	 * 
+	 *
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the current logged user mail
 	 * @param role   the current logged user role
@@ -77,15 +77,15 @@ public class DepartementRestController {
 	 */
 	@DeleteMapping(value = "/departement")
 	@ResponseBody
-	public HttpException deleteDepartement(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("name") != null ? departementBusinessController.deleteDepartement(params, role)
+	public HttpException deleteDepartement(@RequestBody final JsonNode params,
+			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
+		return params.get("name") != null ? this.departementBusinessController.deleteDepartement(params, role)
 				: new UnprocessableEntityException();
 	}
 
 	/**
 	 * Rest controller to fetch all departements. HTTP Method : GET
-	 * 
+	 *
 	 * @param mail the current logged user mail
 	 * @param role the current logged user role
 	 * @return the list of all departements
@@ -93,13 +93,14 @@ public class DepartementRestController {
 	 */
 	@GetMapping(value = "/departements")
 	@ResponseBody
-	public String getDepartements(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
-		return gson.toJson(departementBusinessController.getDepartements(role));
+	public String getDepartements(@RequestAttribute("mail") final String mail,
+			@RequestAttribute("role") final UserRole role) {
+		return this.gson.toJson(this.departementBusinessController.getDepartements(role));
 	}
 
 	/**
 	 * Rest controller to update departement
-	 * 
+	 *
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the current logged user mail
 	 * @param role   the current logged user role
@@ -111,9 +112,9 @@ public class DepartementRestController {
 	 */
 	@PutMapping(value = "/departement")
 	@ResponseBody
-	public HttpException updateDepartement(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("name") != null ? departementBusinessController.updateDepartement(params, role)
+	public HttpException updateDepartement(@RequestBody final JsonNode params,
+			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
+		return params.get("name") != null ? this.departementBusinessController.updateDepartement(params, role)
 				: new UnprocessableEntityException();
 	}
 }

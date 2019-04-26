@@ -29,82 +29,87 @@ public class JobEntityController {
 	/**
 	 * Method to create a job.
 	 *
-	 * @param jJob JsonNode with all job parameters
+	 * @param jJob JsonNode with all job parameters (only the title)
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link ConflictException} if there is a conflict in the
+	 *         request, {@link ConflictException} if there is a conflict in the
 	 *         database and {@link CreatedException} if the job is created
 	 * @author Lucas Royackkers
 	 */
-	public HttpException createJob(JsonNode jJob) {
-		Optional<Job> jobOptional = jobRepository.findByTitle(jJob.get("title").textValue());
-
-		if (jobOptional.isPresent()) {
-			return new ConflictException();
-		}
-
-		Job newJob = new Job();
+	public HttpException createJob(final JsonNode jJob) {
+		final Job newJob = new Job();
 		newJob.setTitle(jJob.get("title").textValue());
 
 		try {
-			jobRepository.save(newJob);
-		} catch (Exception e) {
+			this.jobRepository.save(newJob);
+		} catch (final Exception e) {
 			return new ConflictException();
 		}
 		return new CreatedException();
 	}
 
 	/**
+	 * Method to delete a Job
 	 *
-	 * @param jJob JsonNode with all Job parameters
-	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link ResourceNotFoundException} if the resource is not found and
+	 * @param jJob JsonNode with all Job parameters (only the title)
+	 * @return {@link HttpException} corresponding to the status of the request,
+	 *         {@link ResourceNotFoundException} if the resource is not found and
 	 *         {@link OkException} if the Job is deactivated
 	 * @author Lucas Royackkers
 	 */
-	public HttpException deleteJob(JsonNode jJob) {
-		Optional<Job> JobOptionnal = jobRepository.findByTitle(jJob.get("title").textValue());
+	public HttpException deleteJob(final JsonNode jJob) {
+		final Optional<Job> JobOptionnal = this.jobRepository.findByTitle(jJob.get("title").textValue());
 
 		if (JobOptionnal.isPresent()) {
-			Job job = JobOptionnal.get();
+			final Job job = JobOptionnal.get();
 			job.setTitle("deactivated" + System.currentTimeMillis());
-			jobRepository.save(job);
+			this.jobRepository.save(job);
 		} else {
 			return new ResourceNotFoundException();
 		}
 		return new OkException();
 	}
 
-	public Optional<Job> getJob(String title) {
-		return jobRepository.findByTitle(title);
+	/**
+	 * Fetch a Job given its title
+	 * 
+	 * @param title the Job's title
+	 * @return an Optional with the corresponding Job or not
+	 * @author Lucas Royackkers
+	 */
+	public Optional<Job> getJob(final String title) {
+		return this.jobRepository.findByTitle(title);
 	}
 
 	/**
-	 * @return the list of all jobs
+	 * Get a List of all the jobs
+	 * 
+	 * @return the list of all jobs (can be empty)
 	 * @author Lucas Royackkers
 	 */
 	public List<Job> getJobs() {
-		return jobRepository.findAll();
+		return this.jobRepository.findAll();
 	}
 
 	/**
+	 * Method to update a Job
 	 *
-	 * @param jJob JsonNode with all Job parameters and the old name to perform the
-	 *             update even if the name is changed
+	 * @param jJob JsonNode with all Job parameters (the old title and the new one)
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link ResourceNotFoundException} if the resource is not
-	 *         found and {@link OkException} if the Job is updated
+	 *         request, {@link ResourceNotFoundException} if the resource is not
+	 *         found, {@link ConflictException} if there is a conflict in the
+	 *         database and {@link OkException} if the Job is updated
 	 * @author Lucas Royackkers
 	 */
-	public HttpException updateJob(JsonNode jJob) {
-		Optional<Job> JobOptionnal = jobRepository.findByTitle(jJob.get("oldTitle").textValue());
+	public HttpException updateJob(final JsonNode jJob) {
+		final Optional<Job> JobOptionnal = this.jobRepository.findByTitle(jJob.get("oldTitle").textValue());
 
 		if (JobOptionnal.isPresent()) {
-			Job job = JobOptionnal.get();
+			final Job job = JobOptionnal.get();
 			job.setTitle(jJob.get("title").textValue());
 
 			try {
-				jobRepository.save(job);
-			} catch (Exception e) {
+				this.jobRepository.save(job);
+			} catch (final Exception e) {
 				return new ConflictException();
 			}
 		} else {

@@ -14,7 +14,7 @@ import fr.alten.ambroiseJEE.model.beans.Diploma;
 public interface DiplomaRepository extends MongoRepository<Diploma, Long> {
 	/**
 	 * @param name the diploma's name
-	 * @return An Optional with the corresponding diploma or not.
+	 * @return A List of Diplomas given a name (can be empty)
 	 * @author Lucas Royackkers
 	 */
 	List<Diploma> findByName(String name);

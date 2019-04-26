@@ -4,7 +4,6 @@
 package fr.alten.ambroiseJEE.controller.business.geographic;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,9 +41,9 @@ public class RegionBusinessController {
 	 *         database and {@link CreatedException} if the region is created
 	 * @author Andy Chabalier
 	 */
-	public HttpException createRegion(JsonNode jRegion, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)
-				? regionEntityController.createRegion(jRegion)
+	public HttpException createRegion(final JsonNode jRegion, final UserRole role) {
+		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role
+				? this.regionEntityController.createRegion(jRegion)
 				: new ForbiddenException();
 	}
 
@@ -58,9 +57,9 @@ public class RegionBusinessController {
 	 *         {@link OkException} if the region is deleted
 	 * @author Andy Chabalier
 	 */
-	public HttpException deleteRegion(JsonNode params, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)
-				? regionEntityController.deleteRegion(params.get("name").textValue())
+	public HttpException deleteRegion(final JsonNode params, final UserRole role) {
+		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role
+				? this.regionEntityController.deleteRegion(params.get("name").textValue())
 				: new ForbiddenException();
 	}
 
@@ -71,8 +70,8 @@ public class RegionBusinessController {
 	 * @return an optional with the fetched value or empy if the region is not found
 	 * @author Andy Chabalier
 	 */
-	public Region getRegion(String name) {
-		return regionEntityController.getRegion(name);
+	public Region getRegion(final String name) {
+		return this.regionEntityController.getRegion(name);
 	}
 
 	/**
@@ -82,9 +81,9 @@ public class RegionBusinessController {
 	 * @return the list of all regions
 	 * @author Andy Chabalier
 	 */
-	public List<Region> getRegions(UserRole role) {
+	public List<Region> getRegions(final UserRole role) {
 		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
-			return regionEntityController.getRegions();
+			return this.regionEntityController.getRegions();
 		}
 		throw new ForbiddenException();
 	}
@@ -100,9 +99,9 @@ public class RegionBusinessController {
 	 *         found and {@link OkException} if the region is updated
 	 * @author Andy Chabalier
 	 */
-	public HttpException updateRegion(JsonNode jRegion, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)
-				? regionEntityController.updateRegion(jRegion)
+	public HttpException updateRegion(final JsonNode jRegion, final UserRole role) {
+		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role
+				? this.regionEntityController.updateRegion(jRegion)
 				: new ForbiddenException();
 	}
 

@@ -38,23 +38,23 @@ public class ForumEntityController {
 	 *         {@link CreatedException} if the forum is create
 	 * @author MAQUINGHEN MAXIME
 	 */
-	public HttpException createForum(JsonNode jForum) {
-		Optional<Forum> forumOptional = forumRepository.findByNameAndDateAndPlace(jForum.get("name").textValue(),
-				jForum.get("date").textValue(), jForum.get("place").textValue());
+	public HttpException createForum(final JsonNode jForum) {
+		final Optional<Forum> forumOptional = this.forumRepository.findByNameAndDateAndPlace(
+				jForum.get("name").textValue(), jForum.get("date").textValue(), jForum.get("place").textValue());
 
 		if (forumOptional.isPresent()) {
 			return new ConflictException();
 		}
 
-		Forum newForum = new Forum();
+		final Forum newForum = new Forum();
 
 		newForum.setName(jForum.get("name").textValue());
 		newForum.setDate(jForum.get("date").textValue());
 		newForum.setPlace(jForum.get("place").textValue());
 
 		try {
-			forumRepository.save(newForum);
-		} catch (Exception e) {
+			this.forumRepository.save(newForum);
+		} catch (final Exception e) {
 			return new ConflictException();
 		}
 		return new CreatedException();
@@ -69,13 +69,13 @@ public class ForumEntityController {
 	 *         {@link OkException} if the forum is deleted
 	 * @author MAQUINGHEN MAXIME
 	 */
-	public HttpException deleteForum(JsonNode params) {
-		Optional<Forum> forumOptional = forumRepository.findByNameAndDateAndPlace(params.get("name").textValue(),
-				params.get("date").textValue(), params.get("place").textValue());
+	public HttpException deleteForum(final JsonNode params) {
+		final Optional<Forum> forumOptional = this.forumRepository.findByNameAndDateAndPlace(
+				params.get("name").textValue(), params.get("date").textValue(), params.get("place").textValue());
 
 		if (forumOptional.isPresent()) {
-			Forum forum = forumOptional.get();
-			forumRepository.delete(forum);
+			final Forum forum = forumOptional.get();
+			this.forumRepository.delete(forum);
 		} else {
 			return new ResourceNotFoundException();
 		}
@@ -91,8 +91,8 @@ public class ForumEntityController {
 	 * @return an Optional forum data
 	 * @author MAQUINGHEN MAXIME
 	 */
-	public Optional<Forum> getForum(String name, String date, String place) {
-		return forumRepository.findByNameAndDateAndPlace(name, date, place);
+	public Optional<Forum> getForum(final String name, final String date, final String place) {
+		return this.forumRepository.findByNameAndDateAndPlace(name, date, place);
 	}
 
 	/**
@@ -102,7 +102,7 @@ public class ForumEntityController {
 	 * @author MAQUINGHEN MAXIME
 	 */
 	public List<Forum> getForums() {
-		return forumRepository.findAll();
+		return this.forumRepository.findAll();
 	}
 
 	/**
@@ -114,15 +114,16 @@ public class ForumEntityController {
 	 *         {@link OkException} if the forum is updated
 	 * @author MAQUINGHEN MAXIME
 	 */
-	public HttpException updateForum(JsonNode params) {
-		Optional<Forum> forumOptional = forumRepository.findByNameAndDateAndPlace(params.get("oldname").textValue(),
-				params.get("olddate").textValue(), params.get("oldplace").textValue());
+	public HttpException updateForum(final JsonNode params) {
+		final Optional<Forum> forumOptional = this.forumRepository.findByNameAndDateAndPlace(
+				params.get("oldname").textValue(), params.get("olddate").textValue(),
+				params.get("oldplace").textValue());
 
 		if (forumOptional.isPresent()) {
-			Forum forum = forumOptional.get();
+			final Forum forum = forumOptional.get();
 
-			Optional<Forum> newForumOptional = forumRepository.findByNameAndDateAndPlace(params.get("name").textValue(),
-					params.get("date").textValue(), params.get("place").textValue());
+			final Optional<Forum> newForumOptional = this.forumRepository.findByNameAndDateAndPlace(
+					params.get("name").textValue(), params.get("date").textValue(), params.get("place").textValue());
 			if (newForumOptional.isPresent()) {
 				return new ConflictException();
 			}
@@ -130,11 +131,11 @@ public class ForumEntityController {
 			forum.setName(params.get("name").textValue());
 			forum.setDate(params.get("date").textValue());
 			forum.setPlace(params.get("place").textValue());
-			forumRepository.save(forum);
+			this.forumRepository.save(forum);
 
 			try {
-				forumRepository.save(forum);
-			} catch (Exception e) {
+				this.forumRepository.save(forum);
+			} catch (final Exception e) {
 				return new ConflictException();
 			}
 		} else {

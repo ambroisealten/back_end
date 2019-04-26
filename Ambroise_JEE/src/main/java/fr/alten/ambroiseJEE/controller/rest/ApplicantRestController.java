@@ -21,6 +21,7 @@ import com.google.gson.GsonBuilder;
 import fr.alten.ambroiseJEE.controller.business.ApplicantBusinessController;
 import fr.alten.ambroiseJEE.model.beans.Person;
 import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.utils.JsonUtils;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
@@ -43,7 +44,7 @@ public class ApplicantRestController {
 	private final Gson gson;
 
 	public ApplicantRestController() {
-		GsonBuilder builder = new GsonBuilder();
+		final GsonBuilder builder = new GsonBuilder();
 		this.gson = builder.create();
 	}
 
@@ -59,9 +60,11 @@ public class ApplicantRestController {
 	 */
 	@PostMapping(value = "/applicant")
 	@ResponseBody
-	public HttpException createApplicant(@RequestBody JsonNode params, @RequestAttribute("role") UserRole role)
-			throws Exception {
-		return applicantBusinessController.createApplicant(params, role);
+	public HttpException createApplicant(@RequestBody final JsonNode params,
+			@RequestAttribute("role") final UserRole role) throws Exception {
+		return JsonUtils.checkJsonIntegrity(params, "mail")
+				? this.applicantBusinessController.createApplicant(params, role)
+				: new UnprocessableEntityException();
 	}
 
 	/**
@@ -76,9 +79,10 @@ public class ApplicantRestController {
 	 */
 	@DeleteMapping(value = "/applicant")
 	@ResponseBody
-	public HttpException deleteApplicant(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) {
-		return params.get("mail") != null ? applicantBusinessController.deleteApplicant(params, role)
+	public HttpException deleteApplicant(@RequestBody final JsonNode params,
+			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
+		return JsonUtils.checkJsonIntegrity(params, "mail")
+				? this.applicantBusinessController.deleteApplicant(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -92,11 +96,11 @@ public class ApplicantRestController {
 	 */
 	@GetMapping(value = "/applicant/{mail}")
 	@ResponseBody
-	public String getApplicant(@PathVariable("mail") String applicantMail, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) {
-		Optional<Person> personOptional = applicantBusinessController.getApplicant(applicantMail, role);
+	public String getApplicant(@PathVariable("mail") final String applicantMail,
+			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
+		final Optional<Person> personOptional = this.applicantBusinessController.getApplicant(applicantMail, role);
 		if (personOptional.isPresent()) {
-			return gson.toJson(personOptional.get());
+			return this.gson.toJson(personOptional.get());
 		}
 		throw new ResourceNotFoundException();
 	}
@@ -110,8 +114,9 @@ public class ApplicantRestController {
 	 */
 	@GetMapping(value = "/applicants")
 	@ResponseBody
-	public String getApplicants(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
-		return gson.toJson(applicantBusinessController.getApplicants(role));
+	public String getApplicants(@RequestAttribute("mail") final String mail,
+			@RequestAttribute("role") final UserRole role) {
+		return this.gson.toJson(this.applicantBusinessController.getApplicants(role));
 	}
 
 	/**
@@ -127,9 +132,11 @@ public class ApplicantRestController {
 	 */
 	@PutMapping(value = "/applicant")
 	@ResponseBody
-	public HttpException updateApplicant(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) throws ParseException {
-		return params.get("mail") != null ? applicantBusinessController.updateApplicant(params, role)
+	public HttpException updateApplicant(@RequestBody final JsonNode params,
+			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role)
+			throws ParseException {
+		return JsonUtils.checkJsonIntegrity(params, "mail")
+				? this.applicantBusinessController.updateApplicant(params, role)
 				: new UnprocessableEntityException();
 	}
 }

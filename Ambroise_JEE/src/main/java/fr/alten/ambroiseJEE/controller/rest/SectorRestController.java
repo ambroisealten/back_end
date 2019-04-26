@@ -39,7 +39,7 @@ public class SectorRestController {
 	private final Gson gson;
 
 	public SectorRestController() {
-		GsonBuilder builder = new GsonBuilder();
+		final GsonBuilder builder = new GsonBuilder();
 		this.gson = builder.create();
 	}
 
@@ -57,9 +57,9 @@ public class SectorRestController {
 	 */
 	@PostMapping(value = "/sector")
 	@ResponseBody
-	public HttpException createSector(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("name") != null ? sectorBusinessController.createSector(params, role)
+	public HttpException createSector(@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
+			@RequestAttribute("role") final UserRole role) throws Exception {
+		return params.get("name") != null ? this.sectorBusinessController.createSector(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -77,9 +77,9 @@ public class SectorRestController {
 	 */
 	@DeleteMapping(value = "/sector")
 	@ResponseBody
-	public HttpException deleteSector(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("name") != null ? sectorBusinessController.deleteSector(params, role)
+	public HttpException deleteSector(@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
+			@RequestAttribute("role") final UserRole role) throws Exception {
+		return params.get("name") != null ? this.sectorBusinessController.deleteSector(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -94,8 +94,9 @@ public class SectorRestController {
 	 */
 	@GetMapping(value = "/sector")
 	@ResponseBody
-	public String getSectors(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
-		return gson.toJson(sectorBusinessController.getSectors(role));
+	public String getSectors(@RequestAttribute("mail") final String mail,
+			@RequestAttribute("role") final UserRole role) {
+		return this.gson.toJson(this.sectorBusinessController.getSectors(role));
 	}
 
 	/**
@@ -112,9 +113,9 @@ public class SectorRestController {
 	 */
 	@PutMapping(value = "/sector")
 	@ResponseBody
-	public HttpException updateSector(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("name") != null ? sectorBusinessController.updateSector(params, role)
+	public HttpException updateSector(@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
+			@RequestAttribute("role") final UserRole role) throws Exception {
+		return params.get("name") != null ? this.sectorBusinessController.updateSector(params, role)
 				: new UnprocessableEntityException();
 	}
 }

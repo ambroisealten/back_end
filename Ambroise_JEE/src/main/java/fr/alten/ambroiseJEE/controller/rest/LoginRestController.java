@@ -35,7 +35,7 @@ public class LoginRestController {
 	private final Gson gson;
 
 	public LoginRestController() {
-		GsonBuilder builder = new GsonBuilder();
+		final GsonBuilder builder = new GsonBuilder();
 		this.gson = builder.create();
 	}
 
@@ -49,17 +49,17 @@ public class LoginRestController {
 	 */
 	@PostMapping(value = "/login")
 	@ResponseBody
-	public String login(@RequestBody JsonNode params) throws Exception {
+	public String login(@RequestBody final JsonNode params) throws Exception {
 
-		String mail = params.get("mail").textValue();
-		String pswd = params.get("pswd").textValue();
+		final String mail = params.get("mail").textValue();
+		final String pswd = params.get("pswd").textValue();
 
-		Optional<String> subject = userBusinessController.checkIfCredentialIsValid(mail, pswd);
+		final Optional<String> subject = this.userBusinessController.checkIfCredentialIsValid(mail, pswd);
 		if (subject.isPresent()) {
 			// Si un sujet est present, alors l'utilisateur existe bien. On construit son
 			// token
-			Token jsonResponse = JWTokenUtility.buildJWT(subject.get());
-			return gson.toJson(jsonResponse);
+			final Token jsonResponse = JWTokenUtility.buildJWT(subject.get());
+			return this.gson.toJson(jsonResponse);
 		}
 		throw new ForbiddenException();
 	}

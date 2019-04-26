@@ -39,13 +39,13 @@ public class AgencyRestController {
 	private final Gson gson;
 
 	public AgencyRestController() {
-		GsonBuilder builder = new GsonBuilder();
+		final GsonBuilder builder = new GsonBuilder();
 		this.gson = builder.create();
 	}
 
 	/**
 	 * Rest controller to create agency. HTTP Method : POST
-	 * 
+	 *
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the current logged user mail
 	 * @param role   the current logged user role
@@ -57,15 +57,15 @@ public class AgencyRestController {
 	 */
 	@PostMapping(value = "/agency")
 	@ResponseBody
-	public HttpException createAgency(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("name") != null ? agencyBusinessController.createAgency(params, role)
+	public HttpException createAgency(@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
+			@RequestAttribute("role") final UserRole role) throws Exception {
+		return params.get("name") != null ? this.agencyBusinessController.createAgency(params, role)
 				: new UnprocessableEntityException();
 	}
 
 	/**
 	 * Rest controller to delete agency. HTTP Method : DELETE
-	 * 
+	 *
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the current logged user mail
 	 * @param role   the current logged user role
@@ -77,15 +77,15 @@ public class AgencyRestController {
 	 */
 	@DeleteMapping(value = "/agency")
 	@ResponseBody
-	public HttpException deleteAgency(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("name") != null ? agencyBusinessController.deleteAgency(params, role)
+	public HttpException deleteAgency(@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
+			@RequestAttribute("role") final UserRole role) throws Exception {
+		return params.get("name") != null ? this.agencyBusinessController.deleteAgency(params, role)
 				: new UnprocessableEntityException();
 	}
 
 	/**
 	 * Rest controller to fetch all agencies. HTTP Method : GET
-	 * 
+	 *
 	 * @param mail the current logged user mail
 	 * @param role the current logged user role
 	 * @return the list of all agencies
@@ -93,13 +93,14 @@ public class AgencyRestController {
 	 */
 	@GetMapping(value = "/agencies")
 	@ResponseBody
-	public String getAgencies(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
-		return gson.toJson(agencyBusinessController.getAgencies(role));
+	public String getAgencies(@RequestAttribute("mail") final String mail,
+			@RequestAttribute("role") final UserRole role) {
+		return this.gson.toJson(this.agencyBusinessController.getAgencies(role));
 	}
 
 	/**
 	 * Rest controller to update an agency. HTTP Method : PUT
-	 * 
+	 *
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the current logged user mail
 	 * @param role   the current logged user role
@@ -111,9 +112,9 @@ public class AgencyRestController {
 	 */
 	@PutMapping(value = "/agency")
 	@ResponseBody
-	public HttpException updateAgency(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("name") != null ? agencyBusinessController.updateAgency(params, role)
+	public HttpException updateAgency(@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
+			@RequestAttribute("role") final UserRole role) throws Exception {
+		return params.get("name") != null ? this.agencyBusinessController.updateAgency(params, role)
 				: new UnprocessableEntityException();
 	}
 }

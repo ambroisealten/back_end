@@ -41,10 +41,10 @@ public class ApplicantBusinessController {
 	 * @author Lucas Royackkers
 	 * @throws ParseException, ForbiddenException
 	 */
-	public HttpException createApplicant(JsonNode jApplicant, UserRole role) throws ParseException {
+	public HttpException createApplicant(final JsonNode jApplicant, final UserRole role) throws ParseException {
 		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role
 				|| UserRole.CDR == role) {
-			return personEntityController.createPerson(jApplicant, PersonRole.APPLICANT);
+			return this.personEntityController.createPerson(jApplicant, PersonRole.APPLICANT);
 		}
 		throw new ForbiddenException();
 	}
@@ -61,9 +61,9 @@ public class ApplicantBusinessController {
 	 * @author Lucas Royackkers
 	 * @throws ForbiddenException
 	 */
-	public HttpException deleteApplicant(JsonNode params, UserRole role) {
+	public HttpException deleteApplicant(final JsonNode params, final UserRole role) {
 		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role) {
-			return personEntityController.deletePerson(params, PersonRole.APPLICANT);
+			return this.personEntityController.deletePerson(params, PersonRole.APPLICANT);
 		}
 		throw new ForbiddenException();
 	}
@@ -77,10 +77,10 @@ public class ApplicantBusinessController {
 	 * @author Lucas Royackkers
 	 * @throws ForbiddenException (if the user hasn't the right to do so)
 	 */
-	public Optional<Person> getApplicant(String mail, UserRole role) {
+	public Optional<Person> getApplicant(final String mail, final UserRole role) {
 		if (UserRole.CDR == role || UserRole.MANAGER == role || UserRole.MANAGER_ADMIN == role
 				|| UserRole.CDR_ADMIN == role) {
-			return personEntityController.getPersonByMailAndType(mail, PersonRole.APPLICANT);
+			return this.personEntityController.getPersonByMailAndType(mail, PersonRole.APPLICANT);
 		}
 		throw new ForbiddenException();
 	}
@@ -92,10 +92,10 @@ public class ApplicantBusinessController {
 	 * @author Lucas Royackkers
 	 * @throws ForbiddenException
 	 */
-	public List<Person> getApplicants(UserRole role) {
-		if ((UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role
-				|| UserRole.CDR == role)) {
-			return personEntityController.getPersonsByRole(PersonRole.APPLICANT);
+	public List<Person> getApplicants(final UserRole role) {
+		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role
+				|| UserRole.CDR == role) {
+			return this.personEntityController.getPersonsByRole(PersonRole.APPLICANT);
 		}
 		throw new ForbiddenException();
 	}
@@ -112,9 +112,9 @@ public class ApplicantBusinessController {
 	 * @author Lucas Royackkers
 	 * @throws ParseException, ForbiddenException
 	 */
-	public HttpException updateApplicant(JsonNode params, UserRole role) throws ParseException {
+	public HttpException updateApplicant(final JsonNode params, final UserRole role) throws ParseException {
 		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role) {
-			return personEntityController.updatePerson(params, PersonRole.APPLICANT);
+			return this.personEntityController.updatePerson(params, PersonRole.APPLICANT);
 		}
 		throw new ForbiddenException();
 	}

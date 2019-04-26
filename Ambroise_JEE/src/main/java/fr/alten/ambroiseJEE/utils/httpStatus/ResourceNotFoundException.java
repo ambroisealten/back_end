@@ -20,12 +20,12 @@ public class ResourceNotFoundException extends HttpException {
 
 	public ResourceNotFoundException() {
 		super("Not Found.");
-		StackTraceElement[] newStackTrace = { new StackTraceElement(this.getClass().getSimpleName(),
+		final StackTraceElement[] newStackTrace = { new StackTraceElement(this.getClass().getSimpleName(),
 				HttpStatus.NOT_FOUND.name(), "", HttpStatus.NOT_FOUND.value()) };
-		this.setStackTrace(newStackTrace);
+		setStackTrace(newStackTrace);
 	}
 
-	public ResourceNotFoundException(String message) {
+	public ResourceNotFoundException(final String message) {
 		super(message);
 	}
 

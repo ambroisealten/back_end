@@ -1,17 +1,15 @@
 package fr.alten.ambroiseJEE.controller.rest;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
-
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.mock.mockito.SpyBean;
@@ -26,7 +24,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
- * 
+ *
  * @author Kylian Gehier
  *
  */
@@ -39,7 +37,7 @@ public class CityRestControllerTest {
 	private final CityRestController cityRestController = new CityRestController();
 
 	@SpyBean
-	private City spiedCity = new City();
+	private final City spiedCity = new City();
 	@Spy
 	private JsonNode spiedJsonNode;
 
@@ -50,7 +48,45 @@ public class CityRestControllerTest {
 	@Mock
 	private HttpException mockedHttpException;
 
-	private ObjectMapper mapper = new ObjectMapper();
+	private final ObjectMapper mapper = new ObjectMapper();
+
+	/**
+	 * @test testing several Json for integrity when createCity
+	 * @expected sucess for all json test cases
+	 * @author Kylian Gehier
+	 */
+	@Test
+	public void createCity_checkJsonIntegrity() throws IOException {
+
+		// globalSetup
+		Mockito.doReturn(this.mockedHttpException).when(this.cityBusinessController)
+				.createCity(ArgumentMatchers.any(JsonNode.class), ArgumentMatchers.any(UserRole.class));
+
+		// setup : all needed fields present
+		final String valid = "{\r\n" + "  \"nom\":\"name\",\r\n" + "  \"code\":\"code\"\r\n" + "}";
+
+		this.spiedJsonNode = this.mapper.readTree(valid);
+		// assert all field present
+		Assertions.assertThat(this.cityRestController.createCity(this.spiedJsonNode, "mail", UserRole.CDR))
+				.isNotInstanceOf(UnprocessableEntityException.class);
+
+		// setup : missing name
+		final String missingName = "{\r\n" + "  \"code\":\"code\"\r\n" + "}";
+
+		this.spiedJsonNode = this.mapper.readTree(missingName);
+		// assert missing name
+		Assertions.assertThat(this.cityRestController.createCity(this.spiedJsonNode, "mail", UserRole.CDR))
+				.isInstanceOf(UnprocessableEntityException.class);
+
+		// setup : missing code
+		final String missingCode = "{\r\n" + "  \"nom\":\"name\"\r\n" + "}";
+
+		this.spiedJsonNode = this.mapper.readTree(missingCode);
+		// assert missing code
+		Assertions.assertThat(this.cityRestController.createCity(this.spiedJsonNode, "mail", UserRole.CDR))
+				.isInstanceOf(UnprocessableEntityException.class);
+
+	}
 
 	/**
 	 * @test create a {@link City}
@@ -63,12 +99,14 @@ public class CityRestControllerTest {
 	public void createCity_with_rightParam() {
 
 		// setup
-		doReturn(true).when(cityRestController).checkJsonIntegrity((any(JsonNode.class)), any());
-		when(cityBusinessController.createCity(mockedJsonNode, UserRole.CDR_ADMIN)).thenReturn(mockedHttpException);
+		Mockito.doReturn(true).when(this.cityRestController).checkJsonIntegrity(ArgumentMatchers.any(JsonNode.class),
+				ArgumentMatchers.any());
+		Mockito.when(this.cityBusinessController.createCity(this.mockedJsonNode, UserRole.CDR_ADMIN))
+				.thenReturn(this.mockedHttpException);
 
 		// assert
-		assertThat(cityRestController.createCity(mockedJsonNode, "mail", UserRole.CDR_ADMIN))
-				.isEqualTo(mockedHttpException);
+		Assertions.assertThat(this.cityRestController.createCity(this.mockedJsonNode, "mail", UserRole.CDR_ADMIN))
+				.isEqualTo(this.mockedHttpException);
 	}
 
 	/**
@@ -81,11 +119,42 @@ public class CityRestControllerTest {
 	public void createCity_with_wrongParam() {
 
 		// setup
-		doReturn(false).when(cityRestController).checkJsonIntegrity((any(JsonNode.class)), any());
+		Mockito.doReturn(false).when(this.cityRestController).checkJsonIntegrity(ArgumentMatchers.any(JsonNode.class),
+				ArgumentMatchers.any());
 
 		// assert
-		assertThat(cityRestController.createCity(mockedJsonNode, "mail", UserRole.CDR_ADMIN))
+		Assertions.assertThat(this.cityRestController.createCity(this.mockedJsonNode, "mail", UserRole.CDR_ADMIN))
 				.isInstanceOf(UnprocessableEntityException.class);
+	}
+
+	/**
+	 * @test testing several Json for integrity when deleteCity
+	 * @expected sucess for all json test cases
+	 * @author Kylian Gehier
+	 */
+	@Test
+	public void deleteCity_checkJsonIntegrity() throws IOException {
+
+		// globalSetup
+		Mockito.doReturn(this.mockedHttpException).when(this.cityBusinessController)
+				.deleteCity(ArgumentMatchers.any(JsonNode.class), ArgumentMatchers.any(UserRole.class));
+
+		// setup : all needed fields present
+		final String valid = "{\r\n" + "  \"nom\":\"name\"\r\n" + "}";
+
+		this.spiedJsonNode = this.mapper.readTree(valid);
+		// assert all field present
+		Assertions.assertThat(this.cityRestController.deleteCity(this.spiedJsonNode, "mail", UserRole.CDR))
+				.isNotInstanceOf(UnprocessableEntityException.class);
+
+		// setup : missing name
+		final String missingName = "{}";
+
+		this.spiedJsonNode = this.mapper.readTree(missingName);
+		// assert missing name
+		Assertions.assertThat(this.cityRestController.deleteCity(this.spiedJsonNode, "mail", UserRole.CDR))
+				.isInstanceOf(UnprocessableEntityException.class);
+
 	}
 
 	/**
@@ -99,12 +168,14 @@ public class CityRestControllerTest {
 	public void deleteCity_with_rightParam() {
 
 		// setup
-		doReturn(true).when(cityRestController).checkJsonIntegrity((any(JsonNode.class)), any());
-		when(cityBusinessController.deleteCity(mockedJsonNode, UserRole.CDR_ADMIN)).thenReturn(mockedHttpException);
+		Mockito.doReturn(true).when(this.cityRestController).checkJsonIntegrity(ArgumentMatchers.any(JsonNode.class),
+				ArgumentMatchers.any());
+		Mockito.when(this.cityBusinessController.deleteCity(this.mockedJsonNode, UserRole.CDR_ADMIN))
+				.thenReturn(this.mockedHttpException);
 
 		// assert
-		assertThat(cityRestController.deleteCity(mockedJsonNode, "mail", UserRole.CDR_ADMIN))
-				.isEqualTo(mockedHttpException);
+		Assertions.assertThat(this.cityRestController.deleteCity(this.mockedJsonNode, "mail", UserRole.CDR_ADMIN))
+				.isEqualTo(this.mockedHttpException);
 	}
 
 	/**
@@ -117,10 +188,11 @@ public class CityRestControllerTest {
 	public void deleteCity_with_wrongParam() {
 
 		// setup
-		doReturn(false).when(cityRestController).checkJsonIntegrity((any(JsonNode.class)), any());
+		Mockito.doReturn(false).when(this.cityRestController).checkJsonIntegrity(ArgumentMatchers.any(JsonNode.class),
+				ArgumentMatchers.any());
 
 		// assert
-		assertThat(cityRestController.deleteCity(mockedJsonNode, "mail", UserRole.CDR_ADMIN))
+		Assertions.assertThat(this.cityRestController.deleteCity(this.mockedJsonNode, "mail", UserRole.CDR_ADMIN))
 				.isInstanceOf(UnprocessableEntityException.class);
 	}
 
@@ -133,10 +205,49 @@ public class CityRestControllerTest {
 	public void getCities_expectingString() {
 
 		// setup
-		when(cityBusinessController.getCities(any(UserRole.class))).thenReturn(new ArrayList<City>());
+		Mockito.when(this.cityBusinessController.getCities(ArgumentMatchers.any(UserRole.class)))
+				.thenReturn(new ArrayList<City>());
 
 		// assert
-		assertThat(cityRestController.getCities("mail", UserRole.CDR_ADMIN)).isInstanceOf(String.class);
+		Assertions.assertThat(this.cityRestController.getCities("mail", UserRole.CDR_ADMIN)).isInstanceOf(String.class);
+	}
+
+	/**
+	 * @test testing several Json for integrity when updateCity
+	 * @expected sucess for all json test cases
+	 * @author Kylian Gehier
+	 */
+	@Test
+	public void updateCity_checkJsonIntegrity() throws IOException {
+
+		// globalSetup
+		Mockito.doReturn(this.mockedHttpException).when(this.cityBusinessController)
+				.updateCity(ArgumentMatchers.any(JsonNode.class), ArgumentMatchers.any(UserRole.class));
+
+		// setup : all needed fields present
+		final String valid = "{\r\n" + "  \"nom\":\"name\",\r\n" + "  \"oldname\":\"oldname\"\r\n" + "}";
+
+		this.spiedJsonNode = this.mapper.readTree(valid);
+		// assert all field present
+		Assertions.assertThat(this.cityRestController.updateCity(this.spiedJsonNode, "mail", UserRole.CDR))
+				.isNotInstanceOf(UnprocessableEntityException.class);
+
+		// setup : missing name
+		final String missingName = "{\r\n" + "  \"oldName\":\"oldname\"\r\n" + "}";
+
+		this.spiedJsonNode = this.mapper.readTree(missingName);
+		// assert missing name
+		Assertions.assertThat(this.cityRestController.updateCity(this.spiedJsonNode, "mail", UserRole.CDR))
+				.isInstanceOf(UnprocessableEntityException.class);
+
+		// setup : missing name
+		final String missingOldName = "{\r\n" + "  \"nom\":\"name\"\r\n" + "}";
+
+		this.spiedJsonNode = this.mapper.readTree(missingOldName);
+		// assert missing name
+		Assertions.assertThat(this.cityRestController.updateCity(this.spiedJsonNode, "mail", UserRole.CDR))
+				.isInstanceOf(UnprocessableEntityException.class);
+
 	}
 
 	/**
@@ -150,12 +261,14 @@ public class CityRestControllerTest {
 	public void updateCity_with_rightParam() {
 
 		// setup
-		doReturn(true).when(cityRestController).checkJsonIntegrity((any(JsonNode.class)), any());
-		when(cityBusinessController.updateCity(mockedJsonNode, UserRole.CDR_ADMIN)).thenReturn(mockedHttpException);
+		Mockito.doReturn(true).when(this.cityRestController).checkJsonIntegrity(ArgumentMatchers.any(JsonNode.class),
+				ArgumentMatchers.any());
+		Mockito.when(this.cityBusinessController.updateCity(this.mockedJsonNode, UserRole.CDR_ADMIN))
+				.thenReturn(this.mockedHttpException);
 
 		// assert
-		assertThat(cityRestController.updateCity(mockedJsonNode, "mail", UserRole.CDR_ADMIN))
-				.isEqualTo(mockedHttpException);
+		Assertions.assertThat(this.cityRestController.updateCity(this.mockedJsonNode, "mail", UserRole.CDR_ADMIN))
+				.isEqualTo(this.mockedHttpException);
 
 	}
 
@@ -169,113 +282,11 @@ public class CityRestControllerTest {
 	public void updateCity_with_wrongParam() {
 
 		// setup
-		doReturn(false).when(cityRestController).checkJsonIntegrity((any(JsonNode.class)), any());
+		Mockito.doReturn(false).when(this.cityRestController).checkJsonIntegrity(ArgumentMatchers.any(JsonNode.class),
+				ArgumentMatchers.any());
 
 		// assert
-		assertThat(cityRestController.updateCity(mockedJsonNode, "mail", UserRole.CDR_ADMIN))
-				.isInstanceOf(UnprocessableEntityException.class);
-
-	}
-
-	/**
-	 * @test testing several Json for integrity when createCity
-	 * @expected sucess for all json test cases
-	 * @author Kylian Gehier
-	 */
-	@Test
-	public void createCity_checkJsonIntegrity() throws IOException {
-
-		// globalSetup
-		doReturn(mockedHttpException).when(cityBusinessController).createCity(any(JsonNode.class), any(UserRole.class));
-
-		// setup : all needed fields present
-		String valid = "{\r\n" + "  \"nom\":\"name\",\r\n" + "  \"code\":\"code\"\r\n" + "}";
-
-		spiedJsonNode = mapper.readTree(valid);
-		// assert all field present
-		assertThat(cityRestController.createCity(spiedJsonNode, "mail", UserRole.CDR))
-				.isNotInstanceOf(UnprocessableEntityException.class);
-
-		// setup : missing name
-		String missingName = "{\r\n" + "  \"code\":\"code\"\r\n" + "}";
-
-		spiedJsonNode = mapper.readTree(missingName);
-		// assert missing name
-		assertThat(cityRestController.createCity(spiedJsonNode, "mail", UserRole.CDR))
-				.isInstanceOf(UnprocessableEntityException.class);
-
-		// setup : missing code
-		String missingCode = "{\r\n" + "  \"nom\":\"name\"\r\n" + "}";
-
-		spiedJsonNode = mapper.readTree(missingCode);
-		// assert missing code
-		assertThat(cityRestController.createCity(spiedJsonNode, "mail", UserRole.CDR))
-				.isInstanceOf(UnprocessableEntityException.class);
-
-	}
-
-	/**
-	 * @test testing several Json for integrity when deleteCity
-	 * @expected sucess for all json test cases
-	 * @author Kylian Gehier
-	 */
-	@Test
-	public void deleteCity_checkJsonIntegrity() throws IOException {
-
-		// globalSetup
-		doReturn(mockedHttpException).when(cityBusinessController).deleteCity(any(JsonNode.class), any(UserRole.class));
-
-		// setup : all needed fields present
-		String valid = "{\r\n" + "  \"nom\":\"name\"\r\n" + "}";
-
-		spiedJsonNode = mapper.readTree(valid);
-		// assert all field present
-		assertThat(cityRestController.deleteCity(spiedJsonNode, "mail", UserRole.CDR))
-				.isNotInstanceOf(UnprocessableEntityException.class);
-
-		// setup : missing name
-		String missingName = "{}";
-
-		spiedJsonNode = mapper.readTree(missingName);
-		// assert missing name
-		assertThat(cityRestController.deleteCity(spiedJsonNode, "mail", UserRole.CDR))
-				.isInstanceOf(UnprocessableEntityException.class);
-
-	}
-
-	/**
-	 * @test testing several Json for integrity when updateCity
-	 * @expected sucess for all json test cases
-	 * @author Kylian Gehier
-	 */
-	@Test
-	public void updateCity_checkJsonIntegrity() throws IOException {
-
-		// globalSetup
-		doReturn(mockedHttpException).when(cityBusinessController).updateCity(any(JsonNode.class), any(UserRole.class));
-
-		// setup : all needed fields present
-		String valid = "{\r\n" + "  \"nom\":\"name\",\r\n" + "  \"oldname\":\"oldname\"\r\n" + "}";
-
-		spiedJsonNode = mapper.readTree(valid);
-		// assert all field present
-		assertThat(cityRestController.updateCity(spiedJsonNode, "mail", UserRole.CDR))
-				.isNotInstanceOf(UnprocessableEntityException.class);
-
-		// setup : missing name
-		String missingName = "{\r\n" + "  \"oldName\":\"oldname\"\r\n" + "}";
-
-		spiedJsonNode = mapper.readTree(missingName);
-		// assert missing name
-		assertThat(cityRestController.updateCity(spiedJsonNode, "mail", UserRole.CDR))
-				.isInstanceOf(UnprocessableEntityException.class);
-
-		// setup : missing name
-		String missingOldName = "{\r\n" + "  \"nom\":\"name\"\r\n" + "}";
-
-		spiedJsonNode = mapper.readTree(missingOldName);
-		// assert missing name
-		assertThat(cityRestController.updateCity(spiedJsonNode, "mail", UserRole.CDR))
+		Assertions.assertThat(this.cityRestController.updateCity(this.mockedJsonNode, "mail", UserRole.CDR_ADMIN))
 				.isInstanceOf(UnprocessableEntityException.class);
 
 	}

@@ -39,13 +39,13 @@ public class PostalCodeRestController {
 	private final Gson gson;
 
 	public PostalCodeRestController() {
-		GsonBuilder builder = new GsonBuilder();
+		final GsonBuilder builder = new GsonBuilder();
 		this.gson = builder.create();
 	}
 
 	/**
 	 * Rest controller to create postal Code. HTTP Method : POST
-	 * 
+	 *
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the current logged user mail
 	 * @param role   the current logged user role
@@ -57,15 +57,16 @@ public class PostalCodeRestController {
 	 */
 	@PostMapping(value = "/postalCode")
 	@ResponseBody
-	public HttpException createPostalCode(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("name") != null ? postalCodeBusinessController.createPostalCode(params, role)
+	public HttpException createPostalCode(@RequestBody final JsonNode params,
+			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role)
+			throws Exception {
+		return params.get("name") != null ? this.postalCodeBusinessController.createPostalCode(params, role)
 				: new UnprocessableEntityException();
 	}
 
 	/**
 	 * Rest controller to delete postal code. HTTP Method : DELETE
-	 * 
+	 *
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the current logged user mail
 	 * @param role   the current logged user role
@@ -77,15 +78,16 @@ public class PostalCodeRestController {
 	 */
 	@DeleteMapping(value = "/postalCode")
 	@ResponseBody
-	public HttpException deletePostalCode(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("name") != null ? postalCodeBusinessController.deletePostalCode(params, role)
+	public HttpException deletePostalCode(@RequestBody final JsonNode params,
+			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role)
+			throws Exception {
+		return params.get("name") != null ? this.postalCodeBusinessController.deletePostalCode(params, role)
 				: new UnprocessableEntityException();
 	}
 
 	/**
 	 * Rest controller to fetch all postal codes. HTTP Method : GET
-	 * 
+	 *
 	 * @param mail the current logged user mail
 	 * @param role the current logged user role
 	 * @return the list of all postal codes
@@ -93,13 +95,14 @@ public class PostalCodeRestController {
 	 */
 	@GetMapping(value = "/postalCodes")
 	@ResponseBody
-	public String getPostalCodes(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
-		return gson.toJson(postalCodeBusinessController.getPostalCodes(role));
+	public String getPostalCodes(@RequestAttribute("mail") final String mail,
+			@RequestAttribute("role") final UserRole role) {
+		return this.gson.toJson(this.postalCodeBusinessController.getPostalCodes(role));
 	}
 
 	/**
 	 * Rest controller to update postal code. HTTP Method : PUT
-	 * 
+	 *
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the current logged user mail
 	 * @param role   the current logged user role
@@ -111,9 +114,10 @@ public class PostalCodeRestController {
 	 */
 	@PutMapping(value = "/postalCode")
 	@ResponseBody
-	public HttpException updatePostalCode(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) throws Exception {
-		return params.get("name") != null ? postalCodeBusinessController.updatePostalCode(params, role)
+	public HttpException updatePostalCode(@RequestBody final JsonNode params,
+			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role)
+			throws Exception {
+		return params.get("name") != null ? this.postalCodeBusinessController.updatePostalCode(params, role)
 				: new UnprocessableEntityException();
 	}
 }

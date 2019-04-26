@@ -4,7 +4,6 @@
 package fr.alten.ambroiseJEE.controller.business.geographic;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,9 +41,9 @@ public class DepartementBusinessController {
 	 *         database and {@link CreatedException} if the departement is created
 	 * @author Andy Chabalier
 	 */
-	public HttpException createDepartement(JsonNode jDepartement, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)
-				? departementEntityController.createDepartement(jDepartement)
+	public HttpException createDepartement(final JsonNode jDepartement, final UserRole role) {
+		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role
+				? this.departementEntityController.createDepartement(jDepartement)
 				: new ForbiddenException();
 	}
 
@@ -58,9 +57,9 @@ public class DepartementBusinessController {
 	 *         {@link OkException} if the departement is deleted
 	 * @author Andy Chabalier
 	 */
-	public HttpException deleteDepartement(JsonNode params, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)
-				? departementEntityController.deleteDepartement(params.get("name").textValue())
+	public HttpException deleteDepartement(final JsonNode params, final UserRole role) {
+		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role
+				? this.departementEntityController.deleteDepartement(params.get("name").textValue())
 				: new ForbiddenException();
 	}
 
@@ -71,8 +70,8 @@ public class DepartementBusinessController {
 	 * @return an optional with the fetched value or empty if it's not found
 	 * @author Andy Chabalier
 	 */
-	public Departement getDepartement(String name) {
-		return departementEntityController.getDepartement(name);
+	public Departement getDepartement(final String name) {
+		return this.departementEntityController.getDepartement(name);
 	}
 
 	/**
@@ -82,9 +81,9 @@ public class DepartementBusinessController {
 	 * @return the list of all departements
 	 * @author Andy Chabalier
 	 */
-	public List<Departement> getDepartements(UserRole role) {
+	public List<Departement> getDepartements(final UserRole role) {
 		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
-			return departementEntityController.getDepartements();
+			return this.departementEntityController.getDepartements();
 		}
 		throw new ForbiddenException();
 	}
@@ -100,9 +99,9 @@ public class DepartementBusinessController {
 	 *         found and {@link OkException} if the departement is updated
 	 * @author Andy Chabalier
 	 */
-	public HttpException updateDepartement(JsonNode jDepartement, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)
-				? departementEntityController.updateDepartement(jDepartement)
+	public HttpException updateDepartement(final JsonNode jDepartement, final UserRole role) {
+		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role
+				? this.departementEntityController.updateDepartement(jDepartement)
 				: new ForbiddenException();
 	}
 

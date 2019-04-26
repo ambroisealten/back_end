@@ -15,6 +15,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
+import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 
 /**
  * Job controller for business rules
@@ -27,19 +28,23 @@ public class JobBusinessController {
 
 	@Autowired
 	private JobEntityController jobEntityController;
+
 	/**
 	 * Method to delegate Job creation
 	 *
-	 * @param params the JsonNode containing all Job parameters
-	 * @param role   the user's role
+	 * @param params the JsonNode containing all Job parameters (only its title, e.g
+	 *               title = "Ingénieur système")
+	 * @param role   the current logged user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ConflictException} if there is a conflict in the
 	 *         database and {@link CreatedException} if the job is created
+	 * @throws {@link ForbiddenException} if the current logged user hasn't the
+	 *         rights to perform this action
 	 * @author Lucas Royackkers
 	 */
-	public HttpException createJob(JsonNode params, UserRole role) {
+	public HttpException createJob(final JsonNode params, final UserRole role) {
 		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
-			return jobEntityController.createJob(params);
+			return this.jobEntityController.createJob(params);
 		}
 		throw new ForbiddenException();
 	}
@@ -47,31 +52,37 @@ public class JobBusinessController {
 	/**
 	 * Method to delegate Job deletion
 	 *
-	 * @param params the JsonNode containing all Job parameters
+	 * @param params the JsonNode containing all Job parameters (only its title, e.g
+	 *               title = "Ingénieur système")
 	 * @param role   the user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ResourceNotFoundException} if the resource hasn't
 	 *         been found in the database and {@link OkException} if the job is
-	 *         deactivated
+	 *         deleted
+	 * @throws {@link ForbiddenException} if the current logged user hasn't the
+	 *         rights to perform this action
 	 * @author Lucas Royackkers
 	 */
-	public HttpException deleteJob(JsonNode params, UserRole role) {
+	public HttpException deleteJob(final JsonNode params, final UserRole role) {
 		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
-			return jobEntityController.deleteJob(params);
+			return this.jobEntityController.deleteJob(params);
 		}
 		throw new ForbiddenException();
 	}
 
 	/**
+	 * Get all Jobs
 	 *
 	 * @param role the user's role
-	 * @return a List of Job objects
+	 * @return a List of Job objects (can be empty)
+	 * @throws {@link ForbiddenException} if the current logged user hasn't the
+	 *         rights to perform this action
 	 * @author Lucas Royackkers
 	 */
-	public List<Job> getJobs(UserRole role) {
+	public List<Job> getJobs(final UserRole role) {
 		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.CDR == role
 				|| UserRole.MANAGER == role) {
-			return jobEntityController.getJobs();
+			return this.jobEntityController.getJobs();
 		}
 		throw new ForbiddenException();
 	}
@@ -85,11 +96,13 @@ public class JobBusinessController {
 	 *         request ({@link ResourceNotFoundException} if the resource hasn't
 	 *         been found in the database and {@link OkException} if the job is
 	 *         updated
+	 * @throws {@link ForbiddenException} if the current logged user hasn't the
+	 *         rights to perform this action
 	 * @author Lucas Royackkers
 	 */
-	public HttpException updateJob(JsonNode params, UserRole role) {
+	public HttpException updateJob(final JsonNode params, final UserRole role) {
 		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
-			return jobEntityController.updateJob(params);
+			return this.jobEntityController.updateJob(params);
 		}
 		throw new ForbiddenException();
 	}

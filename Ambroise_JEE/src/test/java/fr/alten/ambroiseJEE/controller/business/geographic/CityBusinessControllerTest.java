@@ -1,14 +1,15 @@
 package fr.alten.ambroiseJEE.controller.business.geographic;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
-import static org.mockito.ArgumentMatchers.any;
+import java.util.List;
+import java.util.Optional;
 
+import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -20,11 +21,9 @@ import fr.alten.ambroiseJEE.model.entityControllers.CityEntityController;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
-import java.util.List;
-import java.util.Optional;
 
 /**
- * 
+ *
  * @author Kylian Gehier
  *
  */
@@ -34,7 +33,7 @@ public class CityBusinessControllerTest {
 
 	@InjectMocks
 	@Spy
-	private CityBusinessController cityBusinessController = new CityBusinessController();
+	private final CityBusinessController cityBusinessController = new CityBusinessController();
 
 	@Mock
 	private CityEntityController cityEntityController;
@@ -44,7 +43,7 @@ public class CityBusinessControllerTest {
 	private JsonNode mockedJCity;
 	@Mock
 	private List<City> mockedCityList;
-	
+
 	@MockBean
 	private City mockedCity;
 
@@ -59,11 +58,11 @@ public class CityBusinessControllerTest {
 	public void createCity_as_adminUser() {
 
 		// setup
-		doReturn(true).when(cityBusinessController).isAdmin(any(UserRole.class));
-		when(cityEntityController.createCity(mockedJCity)).thenReturn(mockedHttpException);
+		Mockito.doReturn(true).when(this.cityBusinessController).isAdmin(ArgumentMatchers.any(UserRole.class));
+		Mockito.when(this.cityEntityController.createCity(this.mockedJCity)).thenReturn(this.mockedHttpException);
 		// assert
-		assertThat(cityBusinessController.createCity(mockedJCity, UserRole.DEACTIVATED))
-				.isEqualTo(mockedHttpException);
+		Assertions.assertThat(this.cityBusinessController.createCity(this.mockedJCity, UserRole.DEACTIVATED))
+				.isEqualTo(this.mockedHttpException);
 	}
 
 	/**
@@ -77,8 +76,8 @@ public class CityBusinessControllerTest {
 	public void createCity_as_nonAdminUser() {
 
 		// assert
-		doReturn(false).when(cityBusinessController).isAdmin(any(UserRole.class));
-		assertThat(cityBusinessController.createCity(mockedJCity, UserRole.MANAGER_ADMIN))
+		Mockito.doReturn(false).when(this.cityBusinessController).isAdmin(ArgumentMatchers.any(UserRole.class));
+		Assertions.assertThat(this.cityBusinessController.createCity(this.mockedJCity, UserRole.MANAGER_ADMIN))
 				.isInstanceOf(ForbiddenException.class);
 
 	}
@@ -94,11 +93,11 @@ public class CityBusinessControllerTest {
 	public void deleteCity_as_adminUser() {
 
 		// setup
-		doReturn(true).when(cityBusinessController).isAdmin(any(UserRole.class));
-		when(cityEntityController.deleteCity(mockedJCity)).thenReturn(mockedHttpException);
+		Mockito.doReturn(true).when(this.cityBusinessController).isAdmin(ArgumentMatchers.any(UserRole.class));
+		Mockito.when(this.cityEntityController.deleteCity(this.mockedJCity)).thenReturn(this.mockedHttpException);
 		// assert
-		assertThat(cityBusinessController.deleteCity(mockedJCity, UserRole.MANAGER))
-				.isEqualTo(mockedHttpException);
+		Assertions.assertThat(this.cityBusinessController.deleteCity(this.mockedJCity, UserRole.MANAGER))
+				.isEqualTo(this.mockedHttpException);
 	}
 
 	/**
@@ -112,9 +111,9 @@ public class CityBusinessControllerTest {
 	public void deleteCity_as_nonAdminUser() {
 
 		// setup
-		doReturn(false).when(cityBusinessController).isAdmin(any(UserRole.class));
+		Mockito.doReturn(false).when(this.cityBusinessController).isAdmin(ArgumentMatchers.any(UserRole.class));
 		// assert
-		assertThat(cityBusinessController.deleteCity(mockedJCity, UserRole.MANAGER_ADMIN))
+		Assertions.assertThat(this.cityBusinessController.deleteCity(this.mockedJCity, UserRole.MANAGER_ADMIN))
 				.isInstanceOf(ForbiddenException.class);
 
 	}
@@ -130,10 +129,11 @@ public class CityBusinessControllerTest {
 	public void getCities_as_adminUser() {
 
 		// setup
-		doReturn(true).when(cityBusinessController).isAdmin(any(UserRole.class));
-		when(cityEntityController.getCities()).thenReturn(mockedCityList);
+		Mockito.doReturn(true).when(this.cityBusinessController).isAdmin(ArgumentMatchers.any(UserRole.class));
+		Mockito.when(this.cityEntityController.getCities()).thenReturn(this.mockedCityList);
 		// assert
-		assertThat(cityBusinessController.getCities(UserRole.DEACTIVATED)).isEqualTo(mockedCityList);
+		Assertions.assertThat(this.cityBusinessController.getCities(UserRole.DEACTIVATED))
+				.isEqualTo(this.mockedCityList);
 	}
 
 	/**
@@ -146,9 +146,9 @@ public class CityBusinessControllerTest {
 	public void getCities_as_nonAdminUser() {
 
 		// setup
-		doReturn(false).when(cityBusinessController).isAdmin(any(UserRole.class));
+		Mockito.doReturn(false).when(this.cityBusinessController).isAdmin(ArgumentMatchers.any(UserRole.class));
 		// throw
-		cityBusinessController.getCities(UserRole.MANAGER_ADMIN);
+		this.cityBusinessController.getCities(UserRole.MANAGER_ADMIN);
 
 	}
 
@@ -160,9 +160,9 @@ public class CityBusinessControllerTest {
 	@Test
 	public void getCity() {
 		// setup
-		when(cityEntityController.getCity("name")).thenReturn(mockedCity);
+		Mockito.when(this.cityEntityController.getCity("name")).thenReturn(this.mockedCity);
 		// assert
-		assertThat(cityBusinessController.getCity("name")).isEqualTo(mockedCity);
+		Assertions.assertThat(this.cityBusinessController.getCity("name")).isEqualTo(this.mockedCity);
 	}
 
 	/**
@@ -176,11 +176,11 @@ public class CityBusinessControllerTest {
 	public void updateCity_as_adminUser() {
 
 		// setup
-		doReturn(true).when(cityBusinessController).isAdmin(any(UserRole.class));
-		when(cityEntityController.updateCity(mockedJCity)).thenReturn(mockedHttpException);
+		Mockito.doReturn(true).when(this.cityBusinessController).isAdmin(ArgumentMatchers.any(UserRole.class));
+		Mockito.when(this.cityEntityController.updateCity(this.mockedJCity)).thenReturn(this.mockedHttpException);
 		// assert
-		assertThat(cityBusinessController.updateCity(mockedJCity, UserRole.DEACTIVATED))
-				.isEqualTo(mockedHttpException);
+		Assertions.assertThat(this.cityBusinessController.updateCity(this.mockedJCity, UserRole.DEACTIVATED))
+				.isEqualTo(this.mockedHttpException);
 	}
 
 	/**
@@ -193,10 +193,10 @@ public class CityBusinessControllerTest {
 	@Test
 	public void updateCity_as_nonAdminUser() {
 
-		//setup
-		doReturn(false).when(cityBusinessController).isAdmin(any(UserRole.class));
+		// setup
+		Mockito.doReturn(false).when(this.cityBusinessController).isAdmin(ArgumentMatchers.any(UserRole.class));
 		// assert
-		assertThat(cityBusinessController.updateCity(mockedJCity, UserRole.MANAGER_ADMIN))
+		Assertions.assertThat(this.cityBusinessController.updateCity(this.mockedJCity, UserRole.MANAGER_ADMIN))
 				.isInstanceOf(ForbiddenException.class);
 
 	}

@@ -16,7 +16,7 @@ public class MailCreator {
 	 * @param new_pass
 	 * @author MAQUINGHEN MAXIME
 	 */
-	public static void AdminUserResetPassword(String new_pass) {
+	public static void AdminUserResetPassword(final String new_pass) {
 
 	}
 }

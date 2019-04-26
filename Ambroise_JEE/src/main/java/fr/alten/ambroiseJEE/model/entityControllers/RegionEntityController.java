@@ -39,15 +39,15 @@ public class RegionEntityController {
 	 *         database and {@link CreatedException} if the region is created
 	 * @author Andy Chabalier
 	 */
-	public HttpException createRegion(JsonNode jRegion) {
+	public HttpException createRegion(final JsonNode jRegion) {
 
-		Region newRegion = new Region();
+		final Region newRegion = new Region();
 		newRegion.setName(jRegion.get("nom").textValue());
 		newRegion.setCode(jRegion.get("code").textValue());
 
 		try {
-			regionRepository.save(newRegion);
-		} catch (Exception e) {
+			this.regionRepository.save(newRegion);
+		} catch (final Exception e) {
 			return new ConflictException();
 		}
 		return new CreatedException();
@@ -61,21 +61,21 @@ public class RegionEntityController {
 	 *         {@link OkException} if the region is deactivated
 	 * @author Andy Chabalier
 	 */
-	public HttpException deleteRegion(String name) {
-		Optional<Region> regionOptionnal = regionRepository.findByName(name);
+	public HttpException deleteRegion(final String name) {
+		final Optional<Region> regionOptionnal = this.regionRepository.findByName(name);
 
 		if (regionOptionnal.isPresent()) {
-			Region region = regionOptionnal.get();
+			final Region region = regionOptionnal.get();
 			region.setName("deactivated" + System.currentTimeMillis());
-			regionRepository.save(region);
+			this.regionRepository.save(region);
 		} else {
 			throw new ResourceNotFoundException();
 		}
 		return new OkException();
 	}
 
-	public Region getRegion(String name) {
-		return regionRepository.findByName(name).orElseThrow(ResourceNotFoundException::new);
+	public Region getRegion(final String name) {
+		return this.regionRepository.findByName(name).orElseThrow(ResourceNotFoundException::new);
 	}
 
 	/**
@@ -83,7 +83,7 @@ public class RegionEntityController {
 	 * @author Andy Chabalier
 	 */
 	public List<Region> getRegions() {
-		return regionRepository.findAll();
+		return this.regionRepository.findAll();
 	}
 
 	/**
@@ -95,14 +95,14 @@ public class RegionEntityController {
 	 *         found and {@link CreatedException} if the region is updated
 	 * @author Andy Chabalier
 	 */
-	public HttpException updateRegion(JsonNode jRegion) {
-		Optional<Region> regionOptionnal = regionRepository.findByName(jRegion.get("oldName").textValue());
+	public HttpException updateRegion(final JsonNode jRegion) {
+		final Optional<Region> regionOptionnal = this.regionRepository.findByName(jRegion.get("oldName").textValue());
 
 		if (regionOptionnal.isPresent()) {
-			Region region = regionOptionnal.get();
+			final Region region = regionOptionnal.get();
 			region.setName(jRegion.get("name").textValue());
 
-			regionRepository.save(region);
+			this.regionRepository.save(region);
 		} else {
 			throw new ResourceNotFoundException();
 		}

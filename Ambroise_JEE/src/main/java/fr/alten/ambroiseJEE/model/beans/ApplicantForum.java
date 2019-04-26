@@ -11,7 +11,7 @@ import fr.alten.ambroiseJEE.utils.Nationality;
 
 /**
  * Forum applicant. Extend {@link Person}
- * 
+ *
  * @author Andy Chabalier
  *
  */
@@ -33,90 +33,90 @@ public class ApplicantForum extends Person {
 	private Nationality nationality;
 
 	public String getCommentary() {
-		return commentary;
+		return this.commentary;
 	}
 
 	public String getContractDuration() {
-		return contractDuration;
+		return this.contractDuration;
 	}
 
 	public String getContractType() {
-		return contractType;
+		return this.contractType;
 	}
 
 	public String getGrade() {
-		return grade;
+		return this.grade;
 	}
 
 	public List<String> getMobilities() {
-		return mobilities;
+		return this.mobilities;
 	}
 
 	public Nationality getNationality() {
-		return nationality;
+		return this.nationality;
 	}
 
 	public String getPhoneNumber() {
-		return phoneNumber;
+		return this.phoneNumber;
 	}
 
 	public List<String> getSkills() {
-		return skills;
+		return this.skills;
 	}
 
 	public String getStartAt() {
-		return startAt;
+		return this.startAt;
 	}
 
 	public boolean isDriverLicense() {
-		return driverLicense;
+		return this.driverLicense;
 	}
 
 	public boolean isVehicule() {
-		return vehicule;
+		return this.vehicule;
 	}
 
-	public void setCommentary(String commentary) {
+	public void setCommentary(final String commentary) {
 		this.commentary = commentary;
 	}
 
-	public void setContractDuration(String contractDuration) {
+	public void setContractDuration(final String contractDuration) {
 		this.contractDuration = contractDuration;
 	}
 
-	public void setContractType(String contractType) {
+	public void setContractType(final String contractType) {
 		this.contractType = contractType;
 	}
 
-	public void setGrade(String grade) {
-		this.grade = grade;
-	}
-
-	public void setMobilities(List<String> mobilities) {
-		this.mobilities = mobilities;
-	}
-
-	public void setNationality(Nationality nationality) {
-		this.nationality = nationality;
-	}
-
-	public void setDriverLicense(boolean permis) {
+	public void setDriverLicense(final boolean permis) {
 		this.driverLicense = permis;
 	}
 
-	public void setPhoneNumber(String phoneNumber) {
+	public void setGrade(final String grade) {
+		this.grade = grade;
+	}
+
+	public void setMobilities(final List<String> mobilities) {
+		this.mobilities = mobilities;
+	}
+
+	public void setNationality(final Nationality nationality) {
+		this.nationality = nationality;
+	}
+
+	public void setPhoneNumber(final String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
 
-	public void setSkills(List<String> skills) {
+	public void setSkills(final List<String> skills) {
 		this.skills = skills;
 	}
 
-	public void setStartAt(String startAt) {
+	public void setStartAt(final String startAt) {
 		this.startAt = startAt;
 	}
 
-	public void setVehicule(boolean vehicule) {
+	public void setVehicule(final boolean vehicule) {
 		this.vehicule = vehicule;
 	}
 

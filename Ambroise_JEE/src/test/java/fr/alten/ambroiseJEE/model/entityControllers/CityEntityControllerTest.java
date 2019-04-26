@@ -1,22 +1,15 @@
 package fr.alten.ambroiseJEE.model.entityControllers;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import java.util.List;
 import java.util.Optional;
 
+import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -28,12 +21,11 @@ import fr.alten.ambroiseJEE.model.beans.City;
 import fr.alten.ambroiseJEE.model.dao.CityRepository;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
-import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 
 /**
- * 
+ *
  * @author Kylian Gehier
  *
  */
@@ -42,7 +34,7 @@ public class CityEntityControllerTest {
 
 	@InjectMocks
 	@Spy
-	private CityEntityController cityEntityController = new CityEntityController();
+	private final CityEntityController cityEntityController = new CityEntityController();
 
 	@Mock
 	private CityRepository cityRepository;
@@ -59,137 +51,119 @@ public class CityEntityControllerTest {
 
 	/**
 	 * @test create a {@link City}
-	 * @context sucess
-	 * @expected {@link CreatedException}
-	 * 			 save() call only once
-	 * @author Kylian Gehier
-	 */
-	@Test
-	public void createCity_with_success() {
-
-		// setup
-		doReturn(mockedJCity).when(mockedJCity).get(anyString());
-		doReturn(mockedCity).when(cityRepository).save(any(City.class));
-		// assert
-		assertThat(cityEntityController.createCity(mockedJCity)).isInstanceOf(CreatedException.class);
-		// verify
-		verify(cityRepository, times(1)).save(any(City.class));
-	}
-
-	/**
-	 * @test create a {@link City}
 	 * @context {@link City} already existing in base
-	 * @expected {@link ConflictException}
-	 * 			 save() call only once
+	 * @expected {@link ConflictException} save() call only once
 	 * @author Kylian Gehier
 	 */
 	@Test
 	public void createCity_with_conflict() {
 
 		// setup
-		doReturn(mockedJCity).when(mockedJCity).get(anyString());
-		doThrow(mockedDuplicateKeyException).when(cityRepository).save(any(City.class));
+		Mockito.doReturn(this.mockedJCity).when(this.mockedJCity).get(ArgumentMatchers.anyString());
+		Mockito.doThrow(this.mockedDuplicateKeyException).when(this.cityRepository)
+				.save(ArgumentMatchers.any(City.class));
 		// assert
-		assertThat(cityEntityController.createCity(mockedJCity)).isInstanceOf(ConflictException.class);
+		Assertions.assertThat(this.cityEntityController.createCity(this.mockedJCity))
+				.isInstanceOf(ConflictException.class);
 		// verify
-		verify(cityRepository, times(1)).save(any(City.class));
+		Mockito.verify(this.cityRepository, Mockito.times(1)).save(ArgumentMatchers.any(City.class));
 	}
 
 	/**
-	 * @test delete a {@link City}
-	 * @context success
-	 * @expected {@link OkException}
-	 * 			 save() call only once
+	 * @test create a {@link City}
+	 * @context sucess
+	 * @expected {@link CreatedException} save() call only once
 	 * @author Kylian Gehier
 	 */
 	@Test
-	public void deleteCity_with_success() {
+	public void createCity_with_success() {
 
 		// setup
-		Optional<City> notEmptyCityOptional = Optional.of(new City());
-		doReturn(mockedJCity).when(mockedJCity).get(anyString());
-		doReturn("anyString").when(mockedJCity).textValue();
-		doReturn(notEmptyCityOptional).when(cityRepository).findByNom(anyString());
+		Mockito.doReturn(this.mockedJCity).when(this.mockedJCity).get(ArgumentMatchers.anyString());
+		Mockito.doReturn(this.mockedCity).when(this.cityRepository).save(ArgumentMatchers.any(City.class));
 		// assert
-		assertThat(cityEntityController.deleteCity(mockedJCity)).isInstanceOf(OkException.class);
+		Assertions.assertThat(this.cityEntityController.createCity(this.mockedJCity))
+				.isInstanceOf(CreatedException.class);
 		// verify
-		verify(cityRepository, times(1)).save(any(City.class));
+		Mockito.verify(this.cityRepository, Mockito.times(1)).save(ArgumentMatchers.any(City.class));
 	}
 
 	/**
 	 * @test delete a {@link City}
 	 * @context {@link City} already existing in base
-	 * @expected {@link ConflictException}
-	 * 			 save() call only once
+	 * @expected {@link ConflictException} save() call only once
 	 * @author Kylian Gehier
 	 */
 	@Test
 	public void deleteCity_with_Conflict() {
 
 		// setup
-		Optional<City> notEmptyCityOptional = Optional.of(new City());
-		doReturn(mockedJCity).when(mockedJCity).get(anyString());
-		doReturn("anyString").when(mockedJCity).textValue();
-		doReturn(notEmptyCityOptional).when(cityRepository).findByNom(anyString());
-		when(cityRepository.save(any(City.class))).thenThrow(mockedDuplicateKeyException);
+		final Optional<City> notEmptyCityOptional = Optional.of(new City());
+		Mockito.doReturn(this.mockedJCity).when(this.mockedJCity).get(ArgumentMatchers.anyString());
+		Mockito.doReturn("anyString").when(this.mockedJCity).textValue();
+		Mockito.doReturn(notEmptyCityOptional).when(this.cityRepository).findByNom(ArgumentMatchers.anyString());
+		Mockito.when(this.cityRepository.save(ArgumentMatchers.any(City.class)))
+				.thenThrow(this.mockedDuplicateKeyException);
 		// assert
-		assertThat(cityEntityController.deleteCity(mockedJCity)).isInstanceOf(ConflictException.class);
+		Assertions.assertThat(this.cityEntityController.deleteCity(this.mockedJCity))
+				.isInstanceOf(ConflictException.class);
 		// verify
-		verify(cityRepository, times(1)).save(any(City.class));
+		Mockito.verify(this.cityRepository, Mockito.times(1)).save(ArgumentMatchers.any(City.class));
 	}
 
 	/**
 	 * @test delete a {@link City}
 	 * @context {@link City} not found in base
-	 * @expected {@link ResourceNotFoundException}
-	 * 			 save() never called
+	 * @expected {@link ResourceNotFoundException} save() never called
 	 * @author Kylian Gehier
 	 */
 	@Test
 	public void deleteCity_with_resourceNotFound() {
 
 		// setup
-		Optional<City> emptyCityOptional = Optional.ofNullable(null);
-		doReturn(mockedJCity).when(mockedJCity).get(anyString());
-		doReturn("anyString").when(mockedJCity).textValue();
-		doReturn(emptyCityOptional).when(cityRepository).findByNom(anyString());
+		final Optional<City> emptyCityOptional = Optional.ofNullable(null);
+		Mockito.doReturn(this.mockedJCity).when(this.mockedJCity).get(ArgumentMatchers.anyString());
+		Mockito.doReturn("anyString").when(this.mockedJCity).textValue();
+		Mockito.doReturn(emptyCityOptional).when(this.cityRepository).findByNom(ArgumentMatchers.anyString());
 		// assert
-		assertThat(cityEntityController.deleteCity(mockedJCity)).isInstanceOf(ResourceNotFoundException.class);
+		Assertions.assertThat(this.cityEntityController.deleteCity(this.mockedJCity))
+				.isInstanceOf(ResourceNotFoundException.class);
 		// verify
-		verify(cityRepository, never()).save(any(City.class));
+		Mockito.verify(this.cityRepository, Mockito.never()).save(ArgumentMatchers.any(City.class));
+	}
+
+	/**
+	 * @test delete a {@link City}
+	 * @context success
+	 * @expected {@link OkException} save() call only once
+	 * @author Kylian Gehier
+	 */
+	@Test
+	public void deleteCity_with_success() {
+
+		// setup
+		final Optional<City> notEmptyCityOptional = Optional.of(new City());
+		Mockito.doReturn(this.mockedJCity).when(this.mockedJCity).get(ArgumentMatchers.anyString());
+		Mockito.doReturn("anyString").when(this.mockedJCity).textValue();
+		Mockito.doReturn(notEmptyCityOptional).when(this.cityRepository).findByNom(ArgumentMatchers.anyString());
+		// assert
+		Assertions.assertThat(this.cityEntityController.deleteCity(this.mockedJCity)).isInstanceOf(OkException.class);
+		// verify
+		Mockito.verify(this.cityRepository, Mockito.times(1)).save(ArgumentMatchers.any(City.class));
 	}
 
 	/**
 	 * @test get all {@link City}
-	 * @expected return instance of {@link List}
-	 * 			 save() call only once
+	 * @expected return instance of {@link List} save() call only once
 	 * @author Kylian Gehier
 	 */
 	@Test
 	public void getCities() {
 
 		// assert
-		assertThat(cityEntityController.getCities()).isInstanceOf(List.class);
+		Assertions.assertThat(this.cityEntityController.getCities()).isInstanceOf(List.class);
 		// verify
-		verify(cityRepository, times(1)).findAll();
-	}
-
-	/**
-	 * @test get a {@link City} by name
-	 * @context success
-	 * @expected return instance of {@link City}
-	 * @author Kylian Gehier
-	 */
-	@Test
-	public void getCity_with_success() {
-
-		// setup
-		Optional<City> notEmptyCityOptional = Optional.of(new City());
-		when(cityRepository.findByNom("name")).thenReturn(notEmptyCityOptional);
-		// assert
-		assertThat(cityEntityController.getCity("name")).isInstanceOf(City.class);
-		// verify
-		verify(cityRepository, times(1)).findByNom("name");
+		Mockito.verify(this.cityRepository, Mockito.times(1)).findAll();
 	}
 
 	/**
@@ -202,74 +176,92 @@ public class CityEntityControllerTest {
 	public void getCity_with_ResourceNotFound() {
 
 		// setup
-		Optional<City> emptyCityOptional = Optional.ofNullable(null);
-		when(cityRepository.findByNom("name")).thenReturn(emptyCityOptional);
+		final Optional<City> emptyCityOptional = Optional.ofNullable(null);
+		Mockito.when(this.cityRepository.findByNom("name")).thenReturn(emptyCityOptional);
 		// throw
-		cityEntityController.getCity("name");
+		this.cityEntityController.getCity("name");
 	}
 
 	/**
-	 * @test update a {@link City}
+	 * @test get a {@link City} by name
 	 * @context success
-	 * @expected {@link OkException}
-	 * 			 save() call only once
+	 * @expected return instance of {@link City}
 	 * @author Kylian Gehier
 	 */
 	@Test
-	public void updateCity_with_success() {
+	public void getCity_with_success() {
 
 		// setup
-		Optional<City> notEmptyCityOptional = Optional.of(new City());
-		doReturn(mockedJCity).when(mockedJCity).get(anyString());
-		doReturn("anyString").when(mockedJCity).textValue();
-		doReturn(notEmptyCityOptional).when(cityRepository).findByNom(anyString());
+		final Optional<City> notEmptyCityOptional = Optional.of(new City());
+		Mockito.when(this.cityRepository.findByNom("name")).thenReturn(notEmptyCityOptional);
 		// assert
-		assertThat(cityEntityController.updateCity(mockedJCity)).isInstanceOf(OkException.class);
+		Assertions.assertThat(this.cityEntityController.getCity("name")).isInstanceOf(City.class);
 		// verify
-		verify(cityRepository, times(1)).save(any(City.class));
+		Mockito.verify(this.cityRepository, Mockito.times(1)).findByNom("name");
 	}
 
 	/**
 	 * @test update a {@link City}
 	 * @context {@link City} already existing in base
-	 * @expected {@link ConflictException}
-	 * 			 save() call only once
+	 * @expected {@link ConflictException} save() call only once
 	 * @author Kylian Gehier
 	 */
 	@Test
 	public void updateCity_with_Conflict() {
 
 		// setup
-		Optional<City> notEmptyCityOptional = Optional.of(new City());
-		doReturn(mockedJCity).when(mockedJCity).get(anyString());
-		doReturn("anyString").when(mockedJCity).textValue();
-		doReturn(notEmptyCityOptional).when(cityRepository).findByNom(anyString());
-		when(cityRepository.save(any(City.class))).thenThrow(mockedDuplicateKeyException);
+		final Optional<City> notEmptyCityOptional = Optional.of(new City());
+		Mockito.doReturn(this.mockedJCity).when(this.mockedJCity).get(ArgumentMatchers.anyString());
+		Mockito.doReturn("anyString").when(this.mockedJCity).textValue();
+		Mockito.doReturn(notEmptyCityOptional).when(this.cityRepository).findByNom(ArgumentMatchers.anyString());
+		Mockito.when(this.cityRepository.save(ArgumentMatchers.any(City.class)))
+				.thenThrow(this.mockedDuplicateKeyException);
 		// assert
-		assertThat(cityEntityController.updateCity(mockedJCity)).isInstanceOf(ConflictException.class);
+		Assertions.assertThat(this.cityEntityController.updateCity(this.mockedJCity))
+				.isInstanceOf(ConflictException.class);
 		// verify
-		verify(cityRepository, times(1)).save(any(City.class));
+		Mockito.verify(this.cityRepository, Mockito.times(1)).save(ArgumentMatchers.any(City.class));
 	}
 
 	/**
 	 * @test update a {@link City}
 	 * @context {@link City} not found in base
-	 * @expected {@link ResourceNotFoundException}
-	 * 			 save() never called
+	 * @expected {@link ResourceNotFoundException} save() never called
 	 * @author Kylian Gehier
 	 */
 	@Test
 	public void updateCity_with_resourceNotFound() {
 
 		// setup
-		Optional<City> emptyCityOptional = Optional.ofNullable(null);
-		doReturn(mockedJCity).when(mockedJCity).get(anyString());
-		doReturn("anyString").when(mockedJCity).textValue();
-		doReturn(emptyCityOptional).when(cityRepository).findByNom(anyString());
+		final Optional<City> emptyCityOptional = Optional.ofNullable(null);
+		Mockito.doReturn(this.mockedJCity).when(this.mockedJCity).get(ArgumentMatchers.anyString());
+		Mockito.doReturn("anyString").when(this.mockedJCity).textValue();
+		Mockito.doReturn(emptyCityOptional).when(this.cityRepository).findByNom(ArgumentMatchers.anyString());
 		// assert
-		assertThat(cityEntityController.updateCity(mockedJCity)).isInstanceOf(ResourceNotFoundException.class);
+		Assertions.assertThat(this.cityEntityController.updateCity(this.mockedJCity))
+				.isInstanceOf(ResourceNotFoundException.class);
 		// verify
-		verify(cityRepository, never()).save(any(City.class));
+		Mockito.verify(this.cityRepository, Mockito.never()).save(ArgumentMatchers.any(City.class));
+	}
+
+	/**
+	 * @test update a {@link City}
+	 * @context success
+	 * @expected {@link OkException} save() call only once
+	 * @author Kylian Gehier
+	 */
+	@Test
+	public void updateCity_with_success() {
+
+		// setup
+		final Optional<City> notEmptyCityOptional = Optional.of(new City());
+		Mockito.doReturn(this.mockedJCity).when(this.mockedJCity).get(ArgumentMatchers.anyString());
+		Mockito.doReturn("anyString").when(this.mockedJCity).textValue();
+		Mockito.doReturn(notEmptyCityOptional).when(this.cityRepository).findByNom(ArgumentMatchers.anyString());
+		// assert
+		Assertions.assertThat(this.cityEntityController.updateCity(this.mockedJCity)).isInstanceOf(OkException.class);
+		// verify
+		Mockito.verify(this.cityRepository, Mockito.times(1)).save(ArgumentMatchers.any(City.class));
 	}
 
 }

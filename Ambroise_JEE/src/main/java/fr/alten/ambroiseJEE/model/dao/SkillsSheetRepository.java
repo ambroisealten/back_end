@@ -14,6 +14,16 @@ import fr.alten.ambroiseJEE.model.beans.SkillsSheet;
 public interface SkillsSheetRepository extends MongoRepository<SkillsSheet, Long> {
 
 	/**
+	 * Fetch skills sheets by mail (of the person attached to, i.e an applicant or a
+	 * consultant)
+	 * 
+	 * @param mail
+	 * @return a list that contains all skills sheets given a mail (can be empty)
+	 * @author Lucas Royackkers
+	 */
+	public List<SkillsSheet> findByMailPersonAttachedTo(String mail);
+
+	/**
 	 * Fetch skills sheets by name
 	 *
 	 * @param name
@@ -21,6 +31,9 @@ public interface SkillsSheetRepository extends MongoRepository<SkillsSheet, Long
 	 * @author Lucas Royackkers
 	 */
 	public List<SkillsSheet> findByName(String name);
+
+	public Optional<SkillsSheet> findByNameAndMailPersonAttachedToAndVersionNumber(String skillsSheetName,
+			String personMail, long i);
 
 	/**
 	 * Fetch skills sheet by name and version number
@@ -31,13 +44,4 @@ public interface SkillsSheetRepository extends MongoRepository<SkillsSheet, Long
 	 * @author Lucas Royackkers
 	 */
 	public Optional<SkillsSheet> findByNameAndVersionNumber(String name, long versionNumber);
-	
-	
-	/**
-	 * Fetch skills sheets by mail (of the person attached to, i.e an applicant or a consultant)
-	 * @param mail
-	 * @return a list that contains all skills sheets given a mail (can be empty)
-	 * @author Lucas Royackkers
-	 */
-	public List<SkillsSheet> findByMailPersonAttachedTo(String mail);
 }

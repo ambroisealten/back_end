@@ -40,14 +40,14 @@ public class SectorEntityController {
 	 *         database and {@link CreatedException} if the sector is created
 	 * @author Andy Chabalier
 	 */
-	public HttpException createSector(JsonNode jSector) {
+	public HttpException createSector(final JsonNode jSector) {
 
-		Sector newSector = new Sector();
+		final Sector newSector = new Sector();
 
 		newSector.setName(jSector.get("name").textValue());
 		try {
-			sectorRepository.save(newSector);
-		} catch (Exception e) {
+			this.sectorRepository.save(newSector);
+		} catch (final Exception e) {
 			return new ConflictException();
 		}
 		return new CreatedException();
@@ -60,12 +60,12 @@ public class SectorEntityController {
 	 *         {@link OkException} if the sector is deleted *
 	 * @author Andy Chabalier
 	 */
-	public HttpException deleteSector(JsonNode jSector) {
-		Optional<Sector> sectorOptionnal = sectorRepository.findByName(jSector.get("name").textValue());
+	public HttpException deleteSector(final JsonNode jSector) {
+		final Optional<Sector> sectorOptionnal = this.sectorRepository.findByName(jSector.get("name").textValue());
 
 		if (sectorOptionnal.isPresent()) {
-			sectorRepository.delete(sectorOptionnal.get());
-			;
+			this.sectorRepository.delete(sectorOptionnal.get());
+
 		} else {
 			throw new ResourceNotFoundException();
 		}
@@ -79,7 +79,7 @@ public class SectorEntityController {
 	 * @author Andy Chabalier
 	 */
 	public List<Sector> getSectors() {
-		return sectorRepository.findAll();
+		return this.sectorRepository.findAll();
 	}
 
 	/**
@@ -91,12 +91,12 @@ public class SectorEntityController {
 	 *         found and {@link OkException} if the sector is updated
 	 * @author Andy Chabalier
 	 */
-	public HttpException updateSector(JsonNode jSector) {
-		Optional<Sector> sectorOptionnal = sectorRepository.findByName(jSector.get("oldName").textValue());
+	public HttpException updateSector(final JsonNode jSector) {
+		final Optional<Sector> sectorOptionnal = this.sectorRepository.findByName(jSector.get("oldName").textValue());
 
 		if (sectorOptionnal.isPresent()) {
-			Sector sector = sectorOptionnal.get();
-			sectorRepository.save(sector);
+			final Sector sector = sectorOptionnal.get();
+			this.sectorRepository.save(sector);
 		} else {
 			throw new ResourceNotFoundException();
 		}

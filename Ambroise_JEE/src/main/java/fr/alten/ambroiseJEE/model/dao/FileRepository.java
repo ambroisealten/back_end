@@ -3,9 +3,9 @@
  */
 package fr.alten.ambroiseJEE.model.dao;
 
-import java.util.List;
 import java.util.Optional;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import fr.alten.ambroiseJEE.model.beans.File;
@@ -17,18 +17,20 @@ import fr.alten.ambroiseJEE.model.beans.File;
 public interface FileRepository extends MongoRepository<File, Long> {
 
 	/**
-	 * @param isForforum true if we want the list of files of forum
-	 * @return the list of forum files
+	 * fetch a file by is id
+	 *
+	 * @param _id the id to fetch
+	 * @return an optional with the file or empty
 	 * @author Andy Chabalier
 	 */
-	List<File> findByIsForForum(boolean isForforum);
+	Optional<File> findBy_id(ObjectId _id);
 
 	/**
-	 * fetch file by uri
+	 * fetch file by path
 	 *
-	 * @param fileDownloadUri the uri to fetch
+	 * @param fileDownloadpath the path to fetch
 	 * @author Andy Chabalier
 	 */
-	Optional<File> findByUri(String fileDownloadUri);
+	Optional<File> findByPath(String fileDownloadpath);
 
 }

@@ -7,21 +7,18 @@ import java.util.Optional;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import fr.alten.ambroiseJEE.model.beans.Skill;
+import fr.alten.ambroiseJEE.model.beans.SkillForum;
 
 /**
  * @author Thomas Decamp
  *
  */
-public interface SkillRepository extends MongoRepository<Skill, Long> {
+public interface SkillForumRepository extends MongoRepository<SkillForum, Long> {
 
 	/**
-	 * Fetch skill by name
-	 *
-	 * @param name
+	 * @param name the skill name
 	 * @return An Optional with the corresponding skill or not.
 	 * @author Thomas Decamp
 	 */
-	public Optional<Skill> findByName(String name);
-
+	Optional<SkillForum> findByName(String name);
 }

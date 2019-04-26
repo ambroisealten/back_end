@@ -30,33 +30,53 @@ public class SkillsSheetBusinessController {
 	private SkillsSheetEntityController skillsSheetEntityController;
 
 	/**
+	 * Check if a Person already has a Skills sheets with its mail in it
+	 * 
+	 * @param mailPerson the mail of the person
+	 * @param role       the current logged user's role
+	 * @return a boolean whether the mail has been used or not
+	 * @throws {@link ForbiddenException} if the current logged user hasn't the
+	 *         rights to perform this action
+	 * @author Lucas Royackkers
+	 */
+	public boolean checkIfSkillsWithMailExists(final String mailPerson, final UserRole role) {
+		if (UserRole.MANAGER == role || UserRole.MANAGER_ADMIN == role) {
+			return this.skillsSheetEntityController.checkIfSkillsWithMailExists(mailPerson);
+		}
+		throw new ForbiddenException();
+	}
+
+	/**
 	 * Method to delegate skills sheet creation
 	 *
 	 * @param jSkillsSheet JsonNode with all skills sheet parameters
-	 * @param role the current logged user's role
-	 * @return the @see {@link HttpException} corresponding to the status of the request,
-	 *  	{@link ConflictException} if there is a conflict in the database,
-	 *  	{@link ForbiddenException} if the current logged user hasn't the rights to perform this action
-	 *  	and {@link CreatedException} if the skills sheet is created
+	 * @param role         the current logged user's role
+	 * @return the @see {@link HttpException} corresponding to the status of the
+	 *         request, {@link ConflictException} if there is a conflict in the
+	 *         database, {@link ForbiddenException} if the current logged user
+	 *         hasn't the rights to perform this action and {@link CreatedException}
+	 *         if the skills sheet is created
 	 * @author Lucas Royackkers
 	 * @throws ParseException
 	 */
-	public HttpException createSkillsSheet(JsonNode jSkillsSheet, UserRole role) {
-		return (UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role)
-				? skillsSheetEntityController.createSkillsSheet(jSkillsSheet)
+	public HttpException createSkillsSheet(final JsonNode jSkillsSheet, final UserRole role) {
+		return UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role
+				? this.skillsSheetEntityController.createSkillsSheet(jSkillsSheet)
 				: new ForbiddenException();
 	}
 
 	/**
 	 * Get all Skills Sheet
+	 * 
 	 * @param role the user's role
 	 * @return the list of all skills sheets
-	 * @throws {@link ForbiddenException} if the current logged user hasn't the rights to perform this action
+	 * @throws {@link ForbiddenException} if the current logged user hasn't the
+	 *         rights to perform this action
 	 * @author Lucas Royackkers
 	 */
-	public List<SkillsSheet> getAllSkillsSheets(UserRole role) {
+	public List<SkillsSheet> getAllSkillsSheets(final UserRole role) {
 		if (UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role) {
-			return skillsSheetEntityController.getSkillsSheets();
+			return this.skillsSheetEntityController.getSkillsSheets();
 		}
 		throw new ForbiddenException();
 	}
@@ -67,26 +87,51 @@ public class SkillsSheetBusinessController {
 	 * @param name          the searched skills sheet's name
 	 * @param versionNumber the searched skills sheet's number
 	 * @param role          the current logged user's role
-	 * @return a skills sheet given a name and a version number (Optional, might be empty if the resource isn't found or if the user hasn't the rights to performs this action)
+	 * @return a skills sheet given a name and a version number (Optional, might be
+	 *         empty if the resource isn't found or if the user hasn't the rights to
+	 *         performs this action)
 	 * @author Lucas Royackkers
 	 */
-	public Optional<SkillsSheet> getSkillsSheet(String name, long versionNumber, UserRole role) {
-		return (UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role)
-				? skillsSheetEntityController.getSkillsSheetByNameAndVersionNumber(name, versionNumber)
+	public Optional<SkillsSheet> getSkillsSheet(final String name, final long versionNumber, final UserRole role) {
+		return UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role
+				? this.skillsSheetEntityController.getSkillsSheetByNameAndVersionNumber(name, versionNumber)
 				: Optional.empty();
 	}
 
 	/**
-	 * Get all versions of a skills sheet 
+	 * Get all versions of a skills sheet
+	 * 
 	 * @param role the current logged user's role
 	 * @param name the searched skills sheet's name
-	 * @return the list of all skills sheets given a name (might be empty if there is no match)
-	 * @throws {@link ForbiddenException} if the current logged user hasn't the rights to perform this action
+	 * @return the list of all skills sheets given a name (might be empty if there
+	 *         is no match)
+	 * @throws {@link ForbiddenException} if the current logged user hasn't the
+	 *         rights to perform this action
 	 * @author Lucas Royackkers
 	 */
-	public List<SkillsSheet> getSkillsSheets(String name, UserRole role) {
+	public List<SkillsSheet> getSkillsSheets(final String name, final UserRole role) {
 		if (UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role) {
-			return skillsSheetEntityController.getSkillsSheetsByName(name);
+			return this.skillsSheetEntityController.getSkillsSheetsByName(name);
+		}
+		throw new ForbiddenException();
+	}
+
+	/**
+	 * Get all Skills Sheets given identity (on the Person object) and skills (on
+	 * Skill objects) filters
+	 *
+	 * @param identity the filters about a Person (name, job, etc.)
+	 * @param skills   the filters about a Skill (name)
+	 * @param role     the current logged user's role
+	 * @return a List of SkillsSheet that match the query (can be empty)
+	 * @throws {@link ForbiddenException} if the current logged user hasn't the
+	 *         rights to perform this action
+	 * @author Lucas Royackkers
+	 */
+	public List<SkillsSheet> getSkillsSheetsByIdentityAndSkills(final String identity, final String skills,
+			final UserRole role) {
+		if (UserRole.MANAGER == role || UserRole.MANAGER_ADMIN == role) {
+			return this.skillsSheetEntityController.getSkillsSheetsByIdentityAndSkills(identity, skills);
 		}
 		throw new ForbiddenException();
 	}
@@ -98,30 +143,16 @@ public class SkillsSheetBusinessController {
 	 * @param role         the current logged user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ConflictException} if there is a conflict in the
-	 *         database, {@link ForbiddenException} if the current logged user hasn't the rights to perform this action
-	 *         and {@link CreatedException} if the skills sheet is updated
+	 *         database, {@link ForbiddenException} if the current logged user
+	 *         hasn't the rights to perform this action and {@link CreatedException}
+	 *         if the skills sheet is updated
 	 * @author Lucas Royackkers
 	 * @throws ParseException
 	 */
-	public HttpException updateSkillsSheet(JsonNode jSkillsSheet, UserRole role) {
-		return (UserRole.MANAGER == role || UserRole.MANAGER_ADMIN == role)
-				? skillsSheetEntityController.updateSkillsSheet(jSkillsSheet)
+	public HttpException updateSkillsSheet(final JsonNode jSkillsSheet, final UserRole role) {
+		return UserRole.MANAGER == role || UserRole.MANAGER_ADMIN == role
+				? this.skillsSheetEntityController.updateSkillsSheet(jSkillsSheet)
 				: new ForbiddenException();
-	}
-
-	/**
-	 * Check if a Person already has a Skills sheets with its mail in it
-	 * @param mailPerson the mail of the person
-	 * @param role the current logged user's role
-	 * @return a boolean whether the mail has been used or not
-	 * @throws {@link ForbiddenException} if the current logged user hasn't the rights to perform this action
-	 * @author Lucas Royackkers
-	 */
-	public boolean checkIfSkillsWithMailExists(String mailPerson, UserRole role) {
-		if (UserRole.MANAGER == role || UserRole.MANAGER_ADMIN == role) { 
-				return skillsSheetEntityController.checkIfSkillsWithMailExists(mailPerson);
-		}
-		throw new ForbiddenException();
 	}
 
 }

@@ -24,13 +24,13 @@ public class RsaKeyProducer {
 	 * @author Andy Chabalier
 	 */
 	public static RsaJsonWebKey produce() {
-		if (theOne == null) {
+		if (RsaKeyProducer.theOne == null) {
 			try {
-				theOne = RsaJwkGenerator.generateJwk(2048);
-			} catch (JoseException ex) {
+				RsaKeyProducer.theOne = RsaJwkGenerator.generateJwk(2048);
+			} catch (final JoseException ex) {
 				Logger.getLogger(RsaKeyProducer.class.getName()).log(Level.SEVERE, null, ex);
 			}
 		}
-		return theOne;
+		return RsaKeyProducer.theOne;
 	}
 }

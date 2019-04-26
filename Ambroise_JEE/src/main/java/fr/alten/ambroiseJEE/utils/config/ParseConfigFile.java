@@ -33,35 +33,36 @@ public class ParseConfigFile {
 	 * @author Camille Schnell
 	 * @author Kylian Gehier
 	 */
-	public static String getJsonMenuItemsByRole(UserRole role) throws FileNotFoundException {
+	public static String getJsonMenuItemsByRole(final UserRole role) throws FileNotFoundException {
 
 		// read json config file
 		BufferedReader jsonFile = null;
 		try {
 			jsonFile = new BufferedReader(
 					new InputStreamReader(new FileInputStream("src/main/resources/modules.json"), "ISO-8859-1"));
-		} catch (UnsupportedEncodingException e1) {
+		} catch (final UnsupportedEncodingException e1) {
 			e1.printStackTrace();
 		}
-		JsonObject configObject = new JsonParser().parse(jsonFile).getAsJsonObject();
+		final JsonObject configObject = new JsonParser().parse(jsonFile).getAsJsonObject();
 
 		// get menuItems info from json
-		JsonObject menuElementJsonObject = configObject.get("menuItems").getAsJsonArray().get(0).getAsJsonObject();
+		final JsonObject menuElementJsonObject = configObject.get("menuItems").getAsJsonArray().get(0)
+				.getAsJsonObject();
 
 		// get access rights String for current UserRole
-		JsonArray accessRightsArray = (JsonArray) menuElementJsonObject.get("access");
-		String currentRoleRights = accessRightsArray.get(0).getAsJsonObject().get(role.name()).getAsString();
+		final JsonArray accessRightsArray = (JsonArray) menuElementJsonObject.get("access");
+		final String currentRoleRights = accessRightsArray.get(0).getAsJsonObject().get(role.name()).getAsString();
 
 		// get array containing menus for each module
-		JsonArray modulesArray = (JsonArray) menuElementJsonObject.get("modules");
+		final JsonArray modulesArray = (JsonArray) menuElementJsonObject.get("modules");
 
 		// create result Json
-		JsonObject resultJson = new JsonObject();
-		JsonArray resultModulesArray = new JsonArray();
+		final JsonObject resultJson = new JsonObject();
+		final JsonArray resultModulesArray = new JsonArray();
 
 		// put menus info into result Json
-		for (JsonElement module : modulesArray) {
-			String moduleName = module.getAsJsonObject().get("label").getAsString();
+		for (final JsonElement module : modulesArray) {
+			final String moduleName = module.getAsJsonObject().get("label").getAsString();
 			if (currentRoleRights.contains(moduleName)) {
 				resultModulesArray.add(module);
 			}
@@ -69,7 +70,7 @@ public class ParseConfigFile {
 
 		resultJson.add("modules", resultModulesArray);
 
-		return gson.toJson(resultJson);
+		return ParseConfigFile.gson.toJson(resultJson);
 	}
 
 }

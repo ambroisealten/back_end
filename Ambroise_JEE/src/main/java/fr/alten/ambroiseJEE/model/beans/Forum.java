@@ -31,55 +31,55 @@ public class Forum implements Serializable {
 	 * @return the _id
 	 */
 	public ObjectId get_id() {
-		return _id;
+		return this._id;
 	}
 
 	/**
 	 * @return the date
 	 */
 	public String getDate() {
-		return date;
+		return this.date;
 	}
 
 	/**
 	 * @return the name
 	 */
 	public String getName() {
-		return name;
+		return this.name;
 	}
 
 	/**
 	 * @return the place
 	 */
 	public String getPlace() {
-		return place;
+		return this.place;
 	}
 
 	/**
 	 * @param _id the _id to set
 	 */
-	public void set_id(ObjectId _id) {
+	public void set_id(final ObjectId _id) {
 		this._id = _id;
 	}
 
 	/**
 	 * @param date the date to set
 	 */
-	public void setDate(String date) {
+	public void setDate(final String date) {
 		this.date = date;
 	}
 
 	/**
 	 * @param name the name to set
 	 */
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
 	/**
 	 * @param place the place to set
 	 */
-	public void setPlace(String place) {
+	public void setPlace(final String place) {
 		this.place = place;
 	}
 }

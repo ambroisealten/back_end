@@ -20,7 +20,7 @@ import fr.alten.ambroiseJEE.filter.TokenFilter;
 @SpringBootApplication
 public class AmbroiseJeeApplication {
 
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		SpringApplication.run(AmbroiseJeeApplication.class, args);
 	}
 
@@ -32,8 +32,8 @@ public class AmbroiseJeeApplication {
 	 */
 	@Bean
 	public FilterRegistrationBean<TokenFilter> filterRegistrationBean() {
-		FilterRegistrationBean<TokenFilter> registrationBean = new FilterRegistrationBean<TokenFilter>();
-		TokenFilter tokenFilter = new TokenFilter();
+		final FilterRegistrationBean<TokenFilter> registrationBean = new FilterRegistrationBean<TokenFilter>();
+		final TokenFilter tokenFilter = new TokenFilter();
 
 		registrationBean.setFilter(tokenFilter);
 		registrationBean.addUrlPatterns("/*");
@@ -49,8 +49,8 @@ public class AmbroiseJeeApplication {
 	 */
 	@Bean
 	public FilterRegistrationBean<LocalhostFilter> filterRegistrationBeanLocalhost() {
-		FilterRegistrationBean<LocalhostFilter> registrationBean = new FilterRegistrationBean<LocalhostFilter>();
-		LocalhostFilter localhostFilter = new LocalhostFilter();
+		final FilterRegistrationBean<LocalhostFilter> registrationBean = new FilterRegistrationBean<LocalhostFilter>();
+		final LocalhostFilter localhostFilter = new LocalhostFilter();
 
 		registrationBean.setFilter(localhostFilter);
 		registrationBean.addUrlPatterns("/admin/init");
@@ -66,12 +66,13 @@ public class AmbroiseJeeApplication {
 	 * @author Andy Chabalier
 	 */
 	@Bean
-	public MongoTemplate mongoTemplate(MongoDbFactory mongoDbFactory, MongoMappingContext context) {
+	public MongoTemplate mongoTemplate(final MongoDbFactory mongoDbFactory, final MongoMappingContext context) {
 
-		MappingMongoConverter converter = new MappingMongoConverter(new DefaultDbRefResolver(mongoDbFactory), context);
+		final MappingMongoConverter converter = new MappingMongoConverter(new DefaultDbRefResolver(mongoDbFactory),
+				context);
 		converter.setTypeMapper(new DefaultMongoTypeMapper(null));
 
-		MongoTemplate mongoTemplate = new MongoTemplate(mongoDbFactory, converter);
+		final MongoTemplate mongoTemplate = new MongoTemplate(mongoDbFactory, converter);
 
 		return mongoTemplate;
 

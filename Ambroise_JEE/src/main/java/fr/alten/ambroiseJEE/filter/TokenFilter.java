@@ -19,15 +19,15 @@ import fr.alten.ambroiseJEE.security.UserRole;
 public class TokenFilter implements Filter {
 
 	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+	public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain)
 			throws IOException, ServletException {
 
-		HttpServletRequest httpRequest = (HttpServletRequest) request;
+		final HttpServletRequest httpRequest = (HttpServletRequest) request;
 
-		String token = httpRequest.getHeader("authorization");
+		final String token = httpRequest.getHeader("authorization");
 
-		String requestURI = httpRequest.getRequestURI();
-		String method = httpRequest.getMethod();
+		final String requestURI = httpRequest.getRequestURI();
+		final String method = httpRequest.getMethod();
 
 		// we check if the url don't end with /login. if it's the case, the filter don't
 		// have to applied.
@@ -37,9 +37,9 @@ public class TokenFilter implements Filter {
 				|| method.equals(HttpMethod.OPTIONS.toString()))) {
 			try {
 				// We try to validate the token. In our case, the subject is formed by mail|role
-				String[] tokenInfo = JWTokenUtility.validate(token).split("\\|");
-				String subject = tokenInfo[0];
-				UserRole role = UserRole.valueOf(tokenInfo[1]);
+				final String[] tokenInfo = JWTokenUtility.validate(token).split("\\|");
+				final String subject = tokenInfo[0];
+				final UserRole role = UserRole.valueOf(tokenInfo[1]);
 
 				// We put the decoded subject parameters in attribute to allow further use in
 				// the chain
@@ -48,7 +48,7 @@ public class TokenFilter implements Filter {
 
 				chain.doFilter(httpRequest, response);
 
-			} catch (InvalidJwtException e) {
+			} catch (final InvalidJwtException e) {
 				((HttpServletResponse) response).sendError(401, "Invalid token or token is expired");
 			}
 		} else {

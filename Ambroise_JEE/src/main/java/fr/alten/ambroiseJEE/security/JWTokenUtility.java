@@ -26,17 +26,17 @@ public class JWTokenUtility {
 	 * @author Andy Chabalier
 	 * @throws MalformedClaimException
 	 */
-	public static Token buildJWT(String subject) throws MalformedClaimException {
-		RsaJsonWebKey rsaJsonWebKey = RsaKeyProducer.produce();
+	public static Token buildJWT(final String subject) throws MalformedClaimException {
+		final RsaJsonWebKey rsaJsonWebKey = RsaKeyProducer.produce();
 
 		// création de la "charge utile" ou payload - la donnée Ã chiffrer, ici
 		// 'subject'
-		JwtClaims claims = new JwtClaims();
+		final JwtClaims claims = new JwtClaims();
 		claims.setSubject(subject);
 		claims.setExpirationTimeMinutesInTheFuture(15);
 
 		// création de la signature
-		JsonWebSignature jws = new JsonWebSignature();
+		final JsonWebSignature jws = new JsonWebSignature();
 		jws.setPayload(claims.toJson());
 		jws.setKey(rsaJsonWebKey.getPrivateKey());
 		jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.RSA_USING_SHA256);
@@ -45,7 +45,7 @@ public class JWTokenUtility {
 		String jwt = null;
 		try {
 			jwt = jws.getCompactSerialization();
-		} catch (JoseException ex) {
+		} catch (final JoseException ex) {
 			ex.printStackTrace();
 		}
 		return new Token(jwt);
@@ -59,16 +59,16 @@ public class JWTokenUtility {
 	 * @throws InvalidJwtException si le token n'est pas valide
 	 * @author Andy Chabalier
 	 */
-	public static String validate(String jwt) throws InvalidJwtException {
+	public static String validate(final String jwt) throws InvalidJwtException {
 		String subject = null;
-		RsaJsonWebKey rsaJsonWebKey = RsaKeyProducer.produce();
+		final RsaJsonWebKey rsaJsonWebKey = RsaKeyProducer.produce();
 
 		// construction du décodeur de JWT
-		JwtConsumer jwtConsumer = new JwtConsumerBuilder().setRequireSubject()
+		final JwtConsumer jwtConsumer = new JwtConsumerBuilder().setRequireSubject()
 				.setVerificationKey(rsaJsonWebKey.getKey()).build();
 
 		// validation du JWT et récupération du contenu
-		JwtClaims jwtClaims = jwtConsumer.processToClaims(jwt);
+		final JwtClaims jwtClaims = jwtConsumer.processToClaims(jwt);
 		subject = (String) jwtClaims.getClaimValue("sub");
 
 		return subject;

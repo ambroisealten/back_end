@@ -31,11 +31,11 @@ import fr.alten.ambroiseJEE.controller.business.EmployerBusinessController;
 import fr.alten.ambroiseJEE.controller.business.ForumBusinessController;
 import fr.alten.ambroiseJEE.controller.business.JobBusinessController;
 import fr.alten.ambroiseJEE.controller.business.SectorBusinessController;
+import fr.alten.ambroiseJEE.controller.business.SkillBusinessController;
 import fr.alten.ambroiseJEE.controller.business.SkillsSheetBusinessController;
-import fr.alten.ambroiseJEE.controller.business.SoftSkillBusinessController;
-import fr.alten.ambroiseJEE.controller.business.TechSkillBusinessController;
 import fr.alten.ambroiseJEE.controller.business.UserBusinessController;
 import fr.alten.ambroiseJEE.controller.business.geographic.GeographicBusinessController;
+import fr.alten.ambroiseJEE.model.SkillGraduated;
 import fr.alten.ambroiseJEE.model.beans.Agency;
 import fr.alten.ambroiseJEE.model.beans.ApplicantForum;
 import fr.alten.ambroiseJEE.model.beans.Diploma;
@@ -44,15 +44,12 @@ import fr.alten.ambroiseJEE.model.beans.Forum;
 import fr.alten.ambroiseJEE.model.beans.Job;
 import fr.alten.ambroiseJEE.model.beans.Person;
 import fr.alten.ambroiseJEE.model.beans.Sector;
+import fr.alten.ambroiseJEE.model.beans.Skill;
 import fr.alten.ambroiseJEE.model.beans.SkillsSheet;
-import fr.alten.ambroiseJEE.model.beans.SoftSkill;
-import fr.alten.ambroiseJEE.model.beans.TechSkill;
 import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.JsonUtils;
 import fr.alten.ambroiseJEE.utils.PersonRole;
-import fr.alten.ambroiseJEE.utils.SoftSkillGrade;
-import fr.alten.ambroiseJEE.utils.TechSkillGrade;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
@@ -91,10 +88,7 @@ public class InitBaseWebService {
 	private ConsultantBusinessController consultantBusinessController;
 
 	@Autowired
-	private TechSkillBusinessController techSkillBusinessController;
-
-	@Autowired
-	private SoftSkillBusinessController softSkillBusinessController;
+	private SkillBusinessController skillBusinessController;
 
 	@Autowired
 	private SkillsSheetBusinessController skillsSheetBusinessController;
@@ -113,52 +107,6 @@ public class InitBaseWebService {
 	public InitBaseWebService() {
 		final GsonBuilder builder = new GsonBuilder();
 		this.gson = builder.create();
-	}
-
-	/**
-	 * create forum applicant
-	 * 
-	 * @author Andy Chabalier
-	 * @throws IOException
-	 * @throws ParseException
-	 */
-	private void createApplicantForum() throws IOException, ParseException {
-		Map<String, String> skills = new HashMap<String, String>();
-		for (String skill : Arrays.asList("c++", "java", "c#", "javascript")) {
-			skills.put("name", skill);
-		}
-
-		// Remplissage d'une population de consultant
-		for (int i = 0; i < 10; i++) {
-			final ApplicantForum applicantForumi = new ApplicantForum();
-			applicantForumi.setMail("applicantForum" + i + "@mail.com");
-			applicantForumi.setName("applicantForumName");
-			applicantForumi.setSurname("applicantForumSurname");
-			applicantForumi.setJob("DevOps");
-			applicantForumi.setEmployer("ALTEN");
-			applicantForumi.setPhoneNumber("0000000000");
-			applicantForumi.setStartAt("11/11/11");
-			applicantForumi.setCommentary("Comentary for" + applicantForumi.getName());
-			applicantForumi.setContractDuration("infinity");
-			applicantForumi.setContractType("CDI");
-
-			final JsonNode applicantForumiJsonNode = JsonUtils
-					.toJsonNode(this.gson.toJsonTree(applicantForumi).getAsJsonObject());
-			((ObjectNode) applicantForumiJsonNode).put("diplomaName", "MASTER");
-			((ObjectNode) applicantForumiJsonNode).put("diplomaYear", "2019");
-			((ObjectNode) applicantForumiJsonNode).put("monthlyWage", "" + (i + 1) * 1000);
-			((ObjectNode) applicantForumiJsonNode).put("managerMail", "tempUserAdminManager@mail.com");
-			((ObjectNode) applicantForumiJsonNode).put("canStartAt", "11/11/11");
-			((ObjectNode) applicantForumiJsonNode).put("skills", JsonUtils.toJsonNode(skills).asText());
-			((ObjectNode) applicantForumiJsonNode).putNull("mobilities");
-			((ObjectNode) applicantForumiJsonNode).putNull("docs");
-			((ObjectNode) applicantForumiJsonNode).putNull("grade");
-			((ObjectNode) applicantForumiJsonNode).putNull("hasVehicule");
-			((ObjectNode) applicantForumiJsonNode).putNull("hasPermis");
-			((ObjectNode) applicantForumiJsonNode).putNull("nationality");
-
-			this.applicantForumBusinessController.createApplicant(applicantForumiJsonNode, UserRole.MANAGER_ADMIN);
-		}
 	}
 
 	/**
@@ -259,6 +207,52 @@ public class InitBaseWebService {
 		((ObjectNode) agencyNiceJsonNode).put("placeType", "city");
 		this.AgencyBusinessController.createAgency(agencyNiceJsonNode, UserRole.MANAGER_ADMIN);
 
+	}
+
+	/**
+	 * create forum applicant
+	 *
+	 * @author Andy Chabalier
+	 * @throws IOException
+	 * @throws ParseException
+	 */
+	private void createApplicantForum() throws IOException, ParseException {
+		final Map<String, String> skills = new HashMap<String, String>();
+		for (final String skill : Arrays.asList("c++", "java", "c#", "javascript")) {
+			skills.put("name", skill);
+		}
+
+		// Remplissage d'une population de consultant
+		for (int i = 0; i < 10; i++) {
+			final ApplicantForum applicantForumi = new ApplicantForum();
+			applicantForumi.setMail("applicantForum" + i + "@mail.com");
+			applicantForumi.setName("applicantForumName");
+			applicantForumi.setSurname("applicantForumSurname");
+			applicantForumi.setJob("DevOps");
+			applicantForumi.setEmployer("ALTEN");
+			applicantForumi.setPhoneNumber("0000000000");
+			applicantForumi.setStartAt("11/11/11");
+			applicantForumi.setCommentary("Comentary for" + applicantForumi.getName());
+			applicantForumi.setContractDuration("infinity");
+			applicantForumi.setContractType("CDI");
+
+			final JsonNode applicantForumiJsonNode = JsonUtils
+					.toJsonNode(this.gson.toJsonTree(applicantForumi).getAsJsonObject());
+			((ObjectNode) applicantForumiJsonNode).put("diplomaName", "MASTER");
+			((ObjectNode) applicantForumiJsonNode).put("diplomaYear", "2019");
+			((ObjectNode) applicantForumiJsonNode).put("monthlyWage", "" + (i + 1) * 1000);
+			((ObjectNode) applicantForumiJsonNode).put("managerMail", "tempUserAdminManager@mail.com");
+			((ObjectNode) applicantForumiJsonNode).put("canStartAt", "11/11/11");
+			((ObjectNode) applicantForumiJsonNode).put("skills", JsonUtils.toJsonNode(skills).asText());
+			((ObjectNode) applicantForumiJsonNode).putNull("mobilities");
+			((ObjectNode) applicantForumiJsonNode).putNull("docs");
+			((ObjectNode) applicantForumiJsonNode).putNull("grade");
+			((ObjectNode) applicantForumiJsonNode).putNull("hasVehicule");
+			((ObjectNode) applicantForumiJsonNode).putNull("hasPermis");
+			((ObjectNode) applicantForumiJsonNode).putNull("nationality");
+
+			this.applicantForumBusinessController.createApplicant(applicantForumiJsonNode, UserRole.MANAGER_ADMIN);
+		}
 	}
 
 	/**
@@ -549,6 +543,58 @@ public class InitBaseWebService {
 	}
 
 	/**
+	 * Create and populate Database with Skills
+	 *
+	 * @throws IOException
+	 * @author Lucas Royackkers
+	 */
+	private void createSkills() throws IOException {
+		final Skill newCpp = new Skill();
+		newCpp.setName("C++");
+		newCpp.setIsSoft(null);
+		final JsonNode newCppJsonNode = JsonUtils.toJsonNode(this.gson.toJsonTree(newCpp).getAsJsonObject());
+		this.skillBusinessController.createSkill(newCppJsonNode, UserRole.MANAGER_ADMIN);
+
+		final Skill newAngular = new Skill();
+		newAngular.setName("Angular");
+		newAngular.setIsSoft(null);
+		final JsonNode newAngularJsonNode = JsonUtils.toJsonNode(this.gson.toJsonTree(newAngular).getAsJsonObject());
+		this.skillBusinessController.createSkill(newAngularJsonNode, UserRole.MANAGER_ADMIN);
+
+		final Skill newCSharp = new Skill();
+		newCSharp.setName("C#");
+		newCSharp.setIsSoft(null);
+		final JsonNode newCSharpJsonNode = JsonUtils.toJsonNode(this.gson.toJsonTree(newCSharp).getAsJsonObject());
+		this.skillBusinessController.createSkill(newCSharpJsonNode, UserRole.MANAGER_ADMIN);
+
+		final Skill newJS = new Skill();
+		newJS.setName("JavaScript");
+		newJS.setIsSoft(null);
+		final JsonNode newJSJsonNode = JsonUtils.toJsonNode(this.gson.toJsonTree(newJS).getAsJsonObject());
+		this.skillBusinessController.createSkill(newJSJsonNode, UserRole.MANAGER_ADMIN);
+
+		final Skill newCycle = new Skill();
+		newCycle.setName("Cycle en V");
+		newCycle.setIsSoft("true");
+		final JsonNode newCycleJsonNode = JsonUtils.toJsonNode(this.gson.toJsonTree(newCycle).getAsJsonObject());
+		this.skillBusinessController.createSkill(newCycleJsonNode, UserRole.MANAGER_ADMIN);
+
+		final Skill newProjet = new Skill();
+		newProjet.setName("Gestion de projet");
+		newProjet.setIsSoft("true");
+		final JsonNode newProjetJsonNode = JsonUtils.toJsonNode(this.gson.toJsonTree(newProjet).getAsJsonObject());
+		this.skillBusinessController.createSkill(newProjetJsonNode, UserRole.MANAGER_ADMIN);
+
+		final Skill newCommunication = new Skill();
+		newCommunication.setName("Communication");
+		newCommunication.setIsSoft("true");
+		final JsonNode newCommunicationJsonNode = JsonUtils
+				.toJsonNode(this.gson.toJsonTree(newCommunication).getAsJsonObject());
+		this.skillBusinessController.createSkill(newCommunicationJsonNode, UserRole.MANAGER_ADMIN);
+
+	}
+
+	/**
 	 * Create and populate database with skills sheets.
 	 *
 	 * @throws IOException
@@ -561,43 +607,41 @@ public class InitBaseWebService {
 		newFirst.setRolePersonAttachedTo("consultant");
 		newFirst.setMailVersionAuthor("tempUserAdminManager@mail.com");
 
-		final List<TechSkill> newListTechSkill = new ArrayList<TechSkill>();
-		final List<SoftSkill> newLisftSoftSkill = new ArrayList<SoftSkill>();
+		final List<SkillGraduated> newListSkill = new ArrayList<SkillGraduated>();
 
-		final SoftSkill newSoftSkill = new SoftSkill();
+		final Skill newSoftSkill = new Skill();
 		newSoftSkill.setName("Cycle en V");
-		newSoftSkill.setGrade(SoftSkillGrade.THREE);
+		newSoftSkill.setIsSoft("true");
 
-		final SoftSkill newSoftSkill1 = new SoftSkill();
+		final Skill newSoftSkill1 = new Skill();
 		newSoftSkill1.setName("Gestion de projet");
-		newSoftSkill1.setGrade(SoftSkillGrade.ONEANDAHALF);
+		newSoftSkill1.setIsSoft("true");
 
-		final SoftSkill newSoftSkill2 = new SoftSkill();
+		final Skill newSoftSkill2 = new Skill();
 		newSoftSkill2.setName("Communication");
-		newSoftSkill2.setGrade(SoftSkillGrade.TWO);
+		newSoftSkill2.setIsSoft("true");
 
-		final TechSkill newTechSkill = new TechSkill();
-		newTechSkill.setName("C++");
-		newTechSkill.setGrade(TechSkillGrade.FOUR);
+		final Skill newSkill = new Skill();
+		newSkill.setName("JavaScript");
+		newSkill.setIsSoft(null);
 
-		final TechSkill newTechSkill1 = new TechSkill();
-		newTechSkill1.setName("Angular");
-		newTechSkill1.setGrade(TechSkillGrade.TWO);
+		final Skill newSkill1 = new Skill();
+		newSkill1.setName("Angular");
+		newSkill1.setIsSoft(null);
 
-		final TechSkill newTechSkill2 = new TechSkill();
-		newTechSkill2.setName("C++");
-		newTechSkill2.setGrade(TechSkillGrade.THREE);
+		final Skill newSkill2 = new Skill();
+		newSkill2.setName("C++");
+		newSkill2.setIsSoft(null);
 
-		newLisftSoftSkill.add(newSoftSkill);
-		newLisftSoftSkill.add(newSoftSkill1);
-		newLisftSoftSkill.add(newSoftSkill2);
+		newListSkill.add(new SkillGraduated(newSoftSkill, 2));
+		newListSkill.add(new SkillGraduated(newSoftSkill1, 3));
+		newListSkill.add(new SkillGraduated(newSoftSkill2, 2));
 
-		newListTechSkill.add(newTechSkill);
-		newListTechSkill.add(newTechSkill1);
-		newListTechSkill.add(newTechSkill2);
+		newListSkill.add(new SkillGraduated(newSkill, 4));
+		newListSkill.add(new SkillGraduated(newSkill1, 2));
+		newListSkill.add(new SkillGraduated(newSkill2, 2.5));
 
-		newFirst.setSoftSkillsList(newLisftSoftSkill);
-		newFirst.setTechSkillsList(newListTechSkill);
+		newFirst.setSkillsList(newListSkill);
 
 		final JsonNode newFirstJsonNode = JsonUtils.toJsonNode(this.gson.toJsonTree(newFirst).getAsJsonObject());
 		((ObjectNode) newFirstJsonNode).put("role", "consultant");
@@ -609,99 +653,45 @@ public class InitBaseWebService {
 		newSecond.setRolePersonAttachedTo("applicant");
 		newSecond.setMailVersionAuthor("tempUserAdminManager@mail.com");
 
-		final List<TechSkill> newListTechSkillBis = new ArrayList<TechSkill>();
-		final List<SoftSkill> newLisftSoftSkillBis = new ArrayList<SoftSkill>();
+		final List<SkillGraduated> newListSkillBis = new ArrayList<SkillGraduated>();
 
-		final SoftSkill newSoftSkillBis = new SoftSkill();
+		final Skill newSoftSkillBis = new Skill();
 		newSoftSkillBis.setName("Cycle en V");
-		newSoftSkillBis.setGrade(SoftSkillGrade.THREE);
+		newSoftSkillBis.setIsSoft("true");
 
-		final SoftSkill newSoftSkill1Bis = new SoftSkill();
+		final Skill newSoftSkill1Bis = new Skill();
 		newSoftSkill1Bis.setName("Gestion de projet");
-		newSoftSkill1Bis.setGrade(SoftSkillGrade.ONEANDAHALF);
+		newSoftSkill1Bis.setIsSoft("true");
 
-		final SoftSkill newSoftSkill2Bis = new SoftSkill();
+		final Skill newSoftSkill2Bis = new Skill();
 		newSoftSkill2Bis.setName("Communication");
-		newSoftSkill2Bis.setGrade(SoftSkillGrade.TWO);
+		newSoftSkill2Bis.setIsSoft("true");
 
-		final TechSkill newTechSkillBis = new TechSkill();
-		newTechSkillBis.setName("C++");
-		newTechSkillBis.setGrade(TechSkillGrade.FOUR);
+		final Skill newSkillBis = new Skill();
+		newSkillBis.setName("C#");
+		newSkillBis.setIsSoft(null);
 
-		final TechSkill newTechSkill1Bis = new TechSkill();
-		newTechSkill1Bis.setName("Angular");
-		newTechSkill1Bis.setGrade(TechSkillGrade.TWO);
+		final Skill newSkill1Bis = new Skill();
+		newSkill1Bis.setName("Angular");
+		newSkill1Bis.setIsSoft(null);
 
-		final TechSkill newTechSkill2Bis = new TechSkill();
-		newTechSkill2Bis.setName("C++");
-		newTechSkill2Bis.setGrade(TechSkillGrade.THREE);
+		final Skill newSkill2Bis = new Skill();
+		newSkill2Bis.setName("C++");
+		newSkill2Bis.setIsSoft(null);
 
-		newLisftSoftSkillBis.add(newSoftSkillBis);
-		newLisftSoftSkillBis.add(newSoftSkill1Bis);
-		newLisftSoftSkillBis.add(newSoftSkill2Bis);
+		newListSkillBis.add(new SkillGraduated(newSoftSkillBis, 1));
+		newListSkillBis.add(new SkillGraduated(newSoftSkill1Bis, 3));
+		newListSkillBis.add(new SkillGraduated(newSoftSkill2Bis, 2.5));
 
-		newListTechSkillBis.add(newTechSkillBis);
-		newListTechSkillBis.add(newTechSkill1Bis);
-		newListTechSkillBis.add(newTechSkill2Bis);
+		newListSkillBis.add(new SkillGraduated(newSkillBis, 2.5));
+		newListSkillBis.add(new SkillGraduated(newSkill1Bis, 3.5));
+		newListSkillBis.add(new SkillGraduated(newSkill2Bis, 1));
 
-		newSecond.setSoftSkillsList(newLisftSoftSkillBis);
-		newSecond.setTechSkillsList(newListTechSkillBis);
+		newSecond.setSkillsList(newListSkillBis);
 
 		final JsonNode newSecondJsonNode = JsonUtils.toJsonNode(this.gson.toJsonTree(newSecond).getAsJsonObject());
 		((ObjectNode) newSecondJsonNode).put("role", "applicant");
 		this.skillsSheetBusinessController.createSkillsSheet(newSecondJsonNode, UserRole.MANAGER_ADMIN);
-	}
-
-	/**
-	 * Create and populate Database with SoftSkills
-	 *
-	 * @throws IOException
-	 * @author Lucas Royackkers
-	 */
-	private void createSoftSkills() throws IOException {
-		final SoftSkill newVCycle = new SoftSkill();
-		newVCycle.setName("Cycle en V");
-		final JsonNode newVCycleJsonNode = JsonUtils.toJsonNode(this.gson.toJsonTree(newVCycle).getAsJsonObject());
-		this.softSkillBusinessController.createSoftSkill(newVCycleJsonNode, UserRole.MANAGER_ADMIN);
-
-		final SoftSkill newProjet = new SoftSkill();
-		newProjet.setName("Gestion de projet");
-		final JsonNode newProjetJsonNode = JsonUtils.toJsonNode(this.gson.toJsonTree(newProjet).getAsJsonObject());
-		this.softSkillBusinessController.createSoftSkill(newProjetJsonNode, UserRole.MANAGER_ADMIN);
-
-		final SoftSkill newCom = new SoftSkill();
-		newCom.setName("Communication");
-		final JsonNode newComJsonNode = JsonUtils.toJsonNode(this.gson.toJsonTree(newCom).getAsJsonObject());
-		this.softSkillBusinessController.createSoftSkill(newComJsonNode, UserRole.MANAGER_ADMIN);
-	}
-
-	/**
-	 * Create and populate Database with TechSkills
-	 *
-	 * @throws IOException
-	 * @author Lucas Royackkers
-	 */
-	private void createTechSkills() throws IOException {
-		final TechSkill newCpp = new TechSkill();
-		newCpp.setName("C++");
-		final JsonNode newCppJsonNode = JsonUtils.toJsonNode(this.gson.toJsonTree(newCpp).getAsJsonObject());
-		this.techSkillBusinessController.createTechSkill(newCppJsonNode, UserRole.MANAGER_ADMIN);
-
-		final TechSkill newAngular = new TechSkill();
-		newAngular.setName("Angular");
-		final JsonNode newAngularJsonNode = JsonUtils.toJsonNode(this.gson.toJsonTree(newAngular).getAsJsonObject());
-		this.techSkillBusinessController.createTechSkill(newAngularJsonNode, UserRole.MANAGER_ADMIN);
-
-		final TechSkill newCSharp = new TechSkill();
-		newCSharp.setName("C#");
-		final JsonNode newCSharpJsonNode = JsonUtils.toJsonNode(this.gson.toJsonTree(newCSharp).getAsJsonObject());
-		this.techSkillBusinessController.createTechSkill(newCSharpJsonNode, UserRole.MANAGER_ADMIN);
-
-		final TechSkill newJS = new TechSkill();
-		newJS.setName("JavaScript");
-		final JsonNode newJSJsonNode = JsonUtils.toJsonNode(this.gson.toJsonTree(newJS).getAsJsonObject());
-		this.techSkillBusinessController.createTechSkill(newJSJsonNode, UserRole.MANAGER_ADMIN);
-
 	}
 
 	/**
@@ -811,7 +801,7 @@ public class InitBaseWebService {
 	@PostMapping(value = "/admin/init")
 	@ResponseBody
 	public HttpException init() throws IOException, ParseException {
-		long start = System.currentTimeMillis();
+		final long start = System.currentTimeMillis();
 		// peupler la base de données des diplômes
 		createDiplomas();
 
@@ -830,11 +820,8 @@ public class InitBaseWebService {
 		// peupler la base de données secteud d'activité
 		createSectors();
 
-		// peupler la base de données des compétences techniques (TechSkill)
-		createTechSkills();
-
-		// peupler la base de données des compétences soft (SoftSkill)
-		createSoftSkills();
+		// peupler la base de données des compétences (Skill)
+		createSkills();
 
 		// peupler la base de données Géographiques
 		createAgencies();
@@ -848,6 +835,7 @@ public class InitBaseWebService {
 		// peupler la base de données des matrices de compétences
 		createSkillsSheets();
 
+		// peupler la base de données des candidats sur un forum
 		createApplicantForum();
 
 		LoggerFactory.getLogger(InitBaseWebService.class).info(String.valueOf(System.currentTimeMillis() - start));

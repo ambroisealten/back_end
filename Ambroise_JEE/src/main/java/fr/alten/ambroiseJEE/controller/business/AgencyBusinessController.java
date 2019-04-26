@@ -43,9 +43,9 @@ public class AgencyBusinessController {
 	 *         database and {@link CreatedException} if the agency is created
 	 * @author Andy Chabalier
 	 */
-	public HttpException createAgency(JsonNode jAgency, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)
-				? agencyEntityController.createAgency(jAgency)
+	public HttpException createAgency(final JsonNode jAgency, final UserRole role) {
+		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role
+				? this.agencyEntityController.createAgency(jAgency)
 				: new ForbiddenException();
 	}
 
@@ -59,9 +59,9 @@ public class AgencyBusinessController {
 	 *         {@link OkException} if the agency is deleted
 	 * @author Andy Chabalier
 	 */
-	public HttpException deleteAgency(JsonNode params, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)
-				? agencyEntityController.deleteAgency(params.get("name").textValue())
+	public HttpException deleteAgency(final JsonNode params, final UserRole role) {
+		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role
+				? this.agencyEntityController.deleteAgency(params.get("name").textValue())
 				: new ForbiddenException();
 	}
 
@@ -72,9 +72,9 @@ public class AgencyBusinessController {
 	 * @return the list of all agencies
 	 * @author Andy Chabalier
 	 */
-	public List<Agency> getAgencies(UserRole role) {
+	public List<Agency> getAgencies(final UserRole role) {
 		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
-			return agencyEntityController.getAgencies();
+			return this.agencyEntityController.getAgencies();
 		}
 		throw new ForbiddenException();
 	}
@@ -87,8 +87,8 @@ public class AgencyBusinessController {
 	 *         foud
 	 * @author Andy Chabalier
 	 */
-	public Optional<Agency> getAgency(String name) {
-		return agencyEntityController.getAgency(name);
+	public Optional<Agency> getAgency(final String name) {
+		return this.agencyEntityController.getAgency(name);
 	}
 
 	/**
@@ -103,9 +103,9 @@ public class AgencyBusinessController {
 	 *         found and {@link OkException} if the agency is updated
 	 * @author Andy Chabalier
 	 */
-	public HttpException updateAgency(JsonNode jAgency, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)
-				? agencyEntityController.updateAgency(jAgency)
+	public HttpException updateAgency(final JsonNode jAgency, final UserRole role) {
+		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role
+				? this.agencyEntityController.updateAgency(jAgency)
 				: new ForbiddenException();
 	}
 

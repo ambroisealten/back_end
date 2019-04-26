@@ -7,7 +7,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
- *
+ * Defines what a Diploma is in our app
  *
  * @author Lucas Royackkers
  *
@@ -26,26 +26,26 @@ public class Diploma implements Serializable {
 	}
 
 	public ObjectId get_id() {
-		return _id;
+		return this._id;
 	}
 
 	public String getName() {
-		return name;
+		return this.name;
 	}
 
 	public String getYearOfResult() {
-		return yearOfResult;
+		return this.yearOfResult;
 	}
 
-	public void set_id(ObjectId _id) {
+	public void set_id(final ObjectId _id) {
 		this._id = _id;
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
-	public void setYearOfResult(String yearOfResult) {
+	public void setYearOfResult(final String yearOfResult) {
 		this.yearOfResult = yearOfResult;
 	}
 

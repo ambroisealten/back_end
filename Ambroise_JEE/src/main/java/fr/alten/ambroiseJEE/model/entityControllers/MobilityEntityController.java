@@ -48,35 +48,39 @@ public class MobilityEntityController {
 	 *         database and {@link CreatedException} if the mobility is created
 	 * @author Lucas Royackkers
 	 */
-	public HttpException createMobility(JsonNode jMobility) {
-		Mobility newMobility = new Mobility();
-		String geographicType = jMobility.get("type").textValue();
+	public HttpException createMobility(final JsonNode jMobility) {
+		final Mobility newMobility = new Mobility();
+		final String geographicType = jMobility.get("type").textValue();
 		switch (geographicType) {
 		case "city":
-			try{
-				City city = cityEntityController.getCity(jMobility.get("place").textValue());
+			try {
+				final City city = this.cityEntityController.getCity(jMobility.get("place").textValue());
 				newMobility.setPlaceName(city.getNom());
-			}catch(ResourceNotFoundException rnfe) {}
+			} catch (final ResourceNotFoundException rnfe) {
+			}
 			break;
 		case "departement":
-			Departement departement = departementEntityController
+			final Departement departement = this.departementEntityController
 					.getDepartement(jMobility.get("place").textValue());
 			try {
 				newMobility.setPlaceName(departement.getName());
-			}catch(ResourceNotFoundException rnfe) {}
+			} catch (final ResourceNotFoundException rnfe) {
+			}
 			break;
 		case "postalCode":
-			PostalCode postalCode = postalCodeEntityController
+			final PostalCode postalCode = this.postalCodeEntityController
 					.getPostalCode(jMobility.get("place").textValue());
 			try {
 				newMobility.setPlaceName(postalCode.getName());
-			}catch(ResourceNotFoundException rnfe) {}
+			} catch (final ResourceNotFoundException rnfe) {
+			}
 			break;
 		case "region":
-			Region region = regionEntityController.getRegion(jMobility.get("place").textValue());
+			final Region region = this.regionEntityController.getRegion(jMobility.get("place").textValue());
 			try {
 				newMobility.setPlaceName(region.getName());
-			}catch(ResourceNotFoundException rnfe) {}
+			} catch (final ResourceNotFoundException rnfe) {
+			}
 			break;
 		default:
 			break;
@@ -85,25 +89,25 @@ public class MobilityEntityController {
 		newMobility.setUnit(jMobility.get("unit").textValue());
 
 		try {
-			mobilityRepository.save(newMobility);
-		} catch (Exception e) {
+			this.mobilityRepository.save(newMobility);
+		} catch (final Exception e) {
 			return new ConflictException();
 		}
 		return new CreatedException();
 	}
 
-	public Optional<Mobility> getMobility(Mobility mobilityToFind) {
+	public Optional<Mobility> getMobility(final Mobility mobilityToFind) {
 		// TODO Revoir le code pour optimiser les appels
-		return mobilityRepository.findByPlaceNameAndPlaceTypeAndRadiusAndUnit(mobilityToFind.getPlaceName(),
+		return this.mobilityRepository.findByPlaceNameAndPlaceTypeAndRadiusAndUnit(mobilityToFind.getPlaceName(),
 				mobilityToFind.getPlaceType(), mobilityToFind.getRadius(), mobilityToFind.getUnit());
 	}
 
-	public Optional<Mobility> getMobilityByName(String placeName) {
-		return mobilityRepository.findByPlaceName(placeName);
+	public Optional<Mobility> getMobilityByName(final String placeName) {
+		return this.mobilityRepository.findByPlaceName(placeName);
 	}
 
-	public Optional<Mobility> getMobilityByNameAndRadius(String placeName, int radius) {
-		return mobilityRepository.findByPlaceNameAndRadius(placeName, radius);
+	public Optional<Mobility> getMobilityByNameAndRadius(final String placeName, final int radius) {
+		return this.mobilityRepository.findByPlaceNameAndRadius(placeName, radius);
 	}
 
 }
