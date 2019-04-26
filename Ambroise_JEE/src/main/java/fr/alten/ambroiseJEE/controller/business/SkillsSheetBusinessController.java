@@ -2,13 +2,16 @@ package fr.alten.ambroiseJEE.controller.business;
 
 import java.text.ParseException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import fr.alten.ambroiseJEE.model.beans.Person;
 import fr.alten.ambroiseJEE.model.beans.SkillsSheet;
 import fr.alten.ambroiseJEE.model.entityControllers.SkillsSheetEntityController;
 import fr.alten.ambroiseJEE.security.UserRole;
@@ -134,7 +137,7 @@ public class SkillsSheetBusinessController {
 	 * @throws {@link ForbiddenException} if the current logged user hasn't the rights to perform this action
 	 * @author Lucas Royackkers
 	 */
-	public List<SkillsSheet> getSkillsSheetsByIdentityAndSkills(String identity, String skills, UserRole role) {
+	public Map<JsonNode, SkillsSheet> getSkillsSheetsByIdentityAndSkills(String identity, String skills, UserRole role) {
 		if(UserRole.MANAGER == role || UserRole.MANAGER_ADMIN == role) {
 			return skillsSheetEntityController.getSkillsSheetsByIdentityAndSkills(identity,skills);
 		}

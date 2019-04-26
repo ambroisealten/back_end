@@ -2,10 +2,16 @@ package fr.alten.ambroiseJEE.model.entityControllers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -16,6 +22,7 @@ import fr.alten.ambroiseJEE.model.beans.Skill;
 import fr.alten.ambroiseJEE.model.beans.SkillsSheet;
 import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.model.dao.SkillsSheetRepository;
+import fr.alten.ambroiseJEE.utils.JsonUtils;
 import fr.alten.ambroiseJEE.utils.PersonRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
@@ -176,32 +183,60 @@ public class SkillsSheetEntityController {
 	 * @return a List of Skills Sheets that match the query
 	 * @author Lucas Royackkers
 	 */
-	public List<SkillsSheet> getSkillsSheetsByIdentityAndSkills(final String identity, final String skills) {
+	public Map<JsonNode, SkillsSheet> getSkillsSheetsByIdentityAndSkills(final String identity, final String skills) {
 		final String[] identitiesList = identity.split(",");
 		final String[] skillsList = skills.split(",");
 
-		final List<Skill> filteredSkills = new ArrayList<Skill>();
-		final List<Person> filteredPersons = new ArrayList<Person>();
-		final HashMap<String, Person> mailToPerson = new HashMap<String, Person>();
+		final Set<Skill> filteredSkills = new HashSet<Skill>();
+		final Set<Person> filteredPersons = new HashSet<Person>();
 
 		for (final String identityFilter : identitiesList) {
-			filteredPersons.addAll(this.personEntityController.getPersonsByName(identityFilter));
-			filteredPersons.addAll(this.personEntityController.getPersonsBySurname(identityFilter));
-			filteredPersons.addAll(this.personEntityController.getPersonsByHighestDiploma(identityFilter));
-			filteredPersons.addAll(this.personEntityController.getPersonsByJob(identityFilter));
-		}
-
-		for (final Person filteredPerson : filteredPersons) {
-			mailToPerson.put(filteredPerson.getMail(), filteredPerson);
+			filteredPersons.addAll(new HashSet<Person>(personEntityController.getPersonsByName(identityFilter)));
+			filteredPersons.addAll(new HashSet<Person>(this.personEntityController.getPersonsBySurname(identityFilter)));
+			filteredPersons.addAll(new HashSet<Person>(this.personEntityController.getPersonsByHighestDiploma(identityFilter)));
+			filteredPersons.addAll(new HashSet<Person>(this.personEntityController.getPersonsByJob(identityFilter)));
 		}
 
 		for (final String skillFilter : skillsList) {
-			filteredSkills.add(this.skillEntityController.getSkill(skillFilter).get());
+			this.skillEntityController.getSkill(skillFilter).ifPresent(skill -> filteredSkills.add(skill));
 		}
 
-		// Do the matching
+		Set<SkillsSheet> result = new HashSet<SkillsSheet>();
+		Map<JsonNode,SkillsSheet> finalResult = new HashMap<JsonNode,SkillsSheet>();
+		
+		for (Person person : filteredPersons) {
+			SkillsSheet skillsSheetExample = new SkillsSheet();
+			skillsSheetExample.setMailPersonAttachedTo(person.getMail());
 
-		return null;
+			final ExampleMatcher matcher = ExampleMatcher.matching()
+					.withIgnoreNullValues()
+					.withMatcher("mailPersonAttachedTo", GenericPropertyMatchers.exact())
+					.withIgnorePaths("versionNumber");
+			List<SkillsSheet> personSkillSheet = this.skillsSheetRepository.findAll(Example.of(skillsSheetExample, matcher));
+			result.addAll(personSkillSheet);
+		}
+		
+		if(!filteredSkills.isEmpty()) {
+			for(SkillsSheet skillSheet : result) {
+				boolean skillsMatch = true;
+				for(Skill skill : filteredSkills) {
+					skillsMatch = skillsMatch && this.ifSkillsInSheet(skill, skillSheet);
+				}
+				//if(skillsMatch) finalResult.put(JsonUtils.toJsonNode(JsonUtils.toJson(this.personEntityController.getPersonByMail(skillSheet.getMailPersonAttachedTo())), skillSheet));
+			}
+		}
+		
+		return finalResult;
+	}
+	
+	
+	public boolean ifSkillsInSheet(Skill filterSkill,SkillsSheet skillSheet) {
+		for(SkillGraduated skillGraduated : skillSheet.getSkillsList()) {
+			if(skillGraduated.getSkill().getName().equals(filterSkill.getName())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**

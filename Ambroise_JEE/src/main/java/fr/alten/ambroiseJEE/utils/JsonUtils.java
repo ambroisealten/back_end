@@ -8,7 +8,11 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+
+import fr.alten.ambroiseJEE.model.beans.Person;
 
 /**
  * @author Andy Chabalier
@@ -63,5 +67,11 @@ public class JsonUtils {
 				return false;
 		}
 		return true;
+	}
+
+	public static String toJson(Object object) {
+		GsonBuilder builder = new GsonBuilder();
+		Gson gson = builder.create();
+		return gson.toJson(object);
 	}
 }
