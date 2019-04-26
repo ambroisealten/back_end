@@ -45,8 +45,8 @@ public class UserEntityController {
 	 * @param emailStr the string to validate
 	 * @return true if the string match with the mail pattern
 	 */
-	private static boolean validateMail(String emailStr) {
-		Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
+	private static boolean validateMail(final String emailStr) {
+		final Matcher matcher = UserEntityController.VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
 		return matcher.find();
 	}
 
@@ -67,14 +67,14 @@ public class UserEntityController {
 	 *         database and {@link CreatedException} if the user is created
 	 * @author Andy Chabalier
 	 */
-	public HttpException createUser(JsonNode jUser) {
+	public HttpException createUser(final JsonNode jUser) {
 
 		// if the mail don't match with the mail pattern
-		if (!validateMail(jUser.get("mail").textValue())) {
+		if (!UserEntityController.validateMail(jUser.get("mail").textValue())) {
 			return new UnprocessableEntityException();
 		}
 
-		User newUser = new User();
+		final User newUser = new User();
 
 		newUser.setForname(jUser.get("forname").textValue());
 		newUser.setMail(jUser.get("mail").textValue());
@@ -83,11 +83,11 @@ public class UserEntityController {
 		UserRole newRole;
 		try {
 			newRole = UserRole.valueOf(jUser.get("role").textValue());
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			newRole = UserRole.CONSULTANT; // in case of wrong role input, we get the default role
 		}
 		newUser.setRole(newRole);
-		Optional<Agency> agency = agencyEntityController.getAgency(jUser.get("agency").textValue());
+		final Optional<Agency> agency = this.agencyEntityController.getAgency(jUser.get("agency").textValue());
 		if (agency.isPresent()) {
 			newUser.setAgency(agency.get().getName());
 		} else {
@@ -95,8 +95,8 @@ public class UserEntityController {
 		}
 
 		try {
-			userRepository.save(newUser);
-		} catch (Exception e) {
+			this.userRepository.save(newUser);
+		} catch (final Exception e) {
 			return new ConflictException();
 		}
 		return new CreatedException();
@@ -110,26 +110,26 @@ public class UserEntityController {
 	 *         {@link CreatedException} if the user is deactivated
 	 * @author MAQUINGHEN MAXIME
 	 */
-	public HttpException deleteUser(String mail) {
-		Optional<User> userOptionnal = userRepository.findByMail(mail);
+	public HttpException deleteUser(final String mail) {
+		final Optional<User> userOptionnal = this.userRepository.findByMail(mail);
 
 		if (userOptionnal.isPresent()) {
-			User user = userOptionnal.get();
+			final User user = userOptionnal.get();
 			user.setForname("");
 			user.setMail("deactivated" + System.currentTimeMillis());
 			user.setName("");
 			user.setPswd("");
 			user.setRole(UserRole.DEACTIVATED);
 			user.setAgency(null);
-			userRepository.save(user);
+			this.userRepository.save(user);
 		} else {
 			throw new ResourceNotFoundException();
 		}
 		return new OkException();
 	}
 
-	public Optional<User> getUser(String usermail) {
-		return userRepository.findByMail(usermail);
+	public Optional<User> getUser(final String usermail) {
+		return this.userRepository.findByMail(usermail);
 	}
 
 	/**
@@ -140,8 +140,8 @@ public class UserEntityController {
 	 * @return An Optional with the corresponding user or not.
 	 * @author Andy Chabalier
 	 */
-	public Optional<User> getUserByCredentials(String mail, String pswd) {
-		return userRepository.findByMailAndPswd(mail, pswd);
+	public Optional<User> getUserByCredentials(final String mail, final String pswd) {
+		return this.userRepository.findByMailAndPswd(mail, pswd);
 	}
 
 	/**
@@ -151,8 +151,8 @@ public class UserEntityController {
 	 * @return An Optional with the corresponding user or not.
 	 * @author Andy Chabalier
 	 */
-	public Optional<User> getUserByMail(String mail) {
-		return userRepository.findByMail(mail);
+	public Optional<User> getUserByMail(final String mail) {
+		return this.userRepository.findByMail(mail);
 	}
 
 	/**
@@ -161,10 +161,10 @@ public class UserEntityController {
 	 * @author MAQUINGHEN MAXIME
 	 */
 	public List<User> getUsers() {
-		return userRepository.findAll();
+		return this.userRepository.findAll();
 	}
 
-	public HttpException newPasswordUser(String token) {
+	public HttpException newPasswordUser(final String token) {
 		// TODO creation de la partie de verification du token et url.
 		return null;
 	}
@@ -178,14 +178,14 @@ public class UserEntityController {
 	 *         {@link CreatedException} if the password is changed
 	 * @author MAQUINGHEN MAXIME
 	 */
-	public HttpException resetUserPassword(String mail) {
-		Optional<User> userOptionnal = userRepository.findByMail(mail);
+	public HttpException resetUserPassword(final String mail) {
+		final Optional<User> userOptionnal = this.userRepository.findByMail(mail);
 
 		if (userOptionnal.isPresent()) {
-			User user = userOptionnal.get();
-			String new_pass = RandomString.getAlphaNumericString(20);
+			final User user = userOptionnal.get();
+			final String new_pass = RandomString.getAlphaNumericString(20);
 			user.setPswd(new_pass);
-			userRepository.save(user);
+			this.userRepository.save(user);
 			MailCreator.AdminUserResetPassword(new_pass); // TODO
 		} else {
 			throw new ResourceNotFoundException();
@@ -203,11 +203,11 @@ public class UserEntityController {
 	 *         found and {@link CreatedException} if the user is updated
 	 * @author MAQUINGHEN MAXIME
 	 */
-	public HttpException updateUser(JsonNode jUser) {
-		Optional<User> userOptionnal = userRepository.findByMail(jUser.get("oldMail").textValue());
+	public HttpException updateUser(final JsonNode jUser) {
+		final Optional<User> userOptionnal = this.userRepository.findByMail(jUser.get("oldMail").textValue());
 
 		if (userOptionnal.isPresent()) {
-			User user = userOptionnal.get();
+			final User user = userOptionnal.get();
 			user.setForname(jUser.get("forname").textValue());
 			user.setMail(jUser.get("mail").textValue());
 			user.setName(jUser.get("name").textValue());
@@ -216,14 +216,14 @@ public class UserEntityController {
 			try {
 				newRole = UserRole.valueOf(jUser.get("role").textValue());
 				user.setRole(newRole);
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				// in case of wrong role input, we not change the role
 			}
-			Optional<Agency> agency = agencyEntityController.getAgency(jUser.get("agency").textValue());
+			final Optional<Agency> agency = this.agencyEntityController.getAgency(jUser.get("agency").textValue());
 			if (agency.isPresent()) {
 				user.setAgency(agency.get().getName());
 			}
-			userRepository.save(user);
+			this.userRepository.save(user);
 		} else {
 			throw new ResourceNotFoundException();
 		}

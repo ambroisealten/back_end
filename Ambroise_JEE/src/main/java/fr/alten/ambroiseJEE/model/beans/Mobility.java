@@ -28,42 +28,42 @@ public class Mobility implements Serializable {
 	}
 
 	public ObjectId get_id() {
-		return _id;
+		return this._id;
 	}
 
 	public String getPlaceName() {
-		return placeName;
+		return this.placeName;
 	}
 
 	public String getPlaceType() {
-		return placeType;
+		return this.placeType;
 	}
 
 	public int getRadius() {
-		return radius;
+		return this.radius;
 	}
 
 	public String getUnit() {
-		return unit;
+		return this.unit;
 	}
 
-	public void set_id(ObjectId _id) {
+	public void set_id(final ObjectId _id) {
 		this._id = _id;
 	}
 
-	public void setPlaceName(String placeName) {
+	public void setPlaceName(final String placeName) {
 		this.placeName = placeName;
 	}
 
-	public void setPlaceType(String placeType) {
+	public void setPlaceType(final String placeType) {
 		this.placeType = placeType;
 	}
 
-	public void setRadius(int radius) {
+	public void setRadius(final int radius) {
 		this.radius = radius;
 	}
 
-	public void setUnit(String unit) {
+	public void setUnit(final String unit) {
 		this.unit = unit;
 	}
 

@@ -43,21 +43,38 @@ public class SkillEntityController {
 	 *         database and {@link CreatedException} if the skill is created
 	 * @author Thomas Decamp
 	 */
-	public HttpException createSkill(JsonNode jSkill) {
+	public HttpException createSkill(final JsonNode jSkill) {
 
-		Skill newSkill = new Skill();
+		final Skill newSkill = new Skill();
 		newSkill.setName(jSkill.get("name").textValue());
-		if (jSkill.hasNonNull("isSoft"))
+		if (jSkill.hasNonNull("isSoft")) {
 			newSkill.setIsSoft(jSkill.get("isSoft").textValue());
+		}
 		try {
-			skillRepository.save(newSkill);
-		} catch (DuplicateKeyException dke) {
+			this.skillRepository.save(newSkill);
+		} catch (final DuplicateKeyException dke) {
 			return new ConflictException();
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 		return new CreatedException();
 
+	}
+
+	public Supplier<? extends Skill> createSkill(final String name, @Nullable final String isSoft) {
+		return () -> {
+			Skill newSkill = new Skill();
+			newSkill.setName(name);
+			newSkill.setIsSoft(isSoft);
+			try {
+				newSkill = this.skillRepository.save(newSkill);
+			} catch (final DuplicateKeyException dke) {
+				throw new ConflictException();
+			} catch (final Exception e) {
+				throw new InternalServerErrorException();
+			}
+			return newSkill;
+		};
 	}
 
 	/**
@@ -68,13 +85,13 @@ public class SkillEntityController {
 	 *         {@link OkException} if the skill is deactivated
 	 * @author Thomas Decamp
 	 */
-	public HttpException deleteSkill(JsonNode jSkill) {
-		return skillRepository.findByName(jSkill.get("name").textValue())
+	public HttpException deleteSkill(final JsonNode jSkill) {
+		return this.skillRepository.findByName(jSkill.get("name").textValue())
 				// optional is present
 				.map(skill -> {
 					skill.setName("deactivated" + System.currentTimeMillis());
 					skill.setIsSoft(null);
-					skillRepository.save(skill);
+					this.skillRepository.save(skill);
 					return (HttpException) new OkException();
 				})
 				// optional isn't present
@@ -82,14 +99,14 @@ public class SkillEntityController {
 	}
 
 	/**
-	 * 
+	 *
 	 *
 	 * @param name
 	 * @return
 	 * @author Thomas Decamp
 	 */
-	public Optional<Skill> getSkill(String name) {
-		return skillRepository.findByName(name);
+	public Optional<Skill> getSkill(final String name) {
+		return this.skillRepository.findByName(name);
 	}
 
 	/**
@@ -97,7 +114,7 @@ public class SkillEntityController {
 	 * @author Thomas Decamp
 	 */
 	public List<Skill> getSkills() {
-		return skillRepository.findAll();
+		return this.skillRepository.findAll();
 	}
 
 	/**
@@ -109,43 +126,29 @@ public class SkillEntityController {
 	 *         found and {@link CreatedException} if the skill is updated
 	 * @author Thomas Decamp
 	 */
-	public HttpException updateSkill(JsonNode jSkill) {
-		return skillRepository.findByName(jSkill.get("oldName").textValue())
+	public HttpException updateSkill(final JsonNode jSkill) {
+		return this.skillRepository.findByName(jSkill.get("oldName").textValue())
 				// optional is present
 				.map(skill -> {
 					skill.setName(jSkill.get("name").textValue());
-					if (jSkill.hasNonNull("isSoft"))
+					if (jSkill.hasNonNull("isSoft")) {
 						skill.setIsSoft(jSkill.get("isSoft").textValue());
-					else
+					} else {
 						skill.setIsSoft(null);
+					}
 					try {
-						skillRepository.save(skill);
-					} catch (Exception e) {
+						this.skillRepository.save(skill);
+					} catch (final Exception e) {
 						if (!DuplicateKeyException.class.isInstance(e)) {
 							e.printStackTrace();
-						} else
+						} else {
 							return (HttpException) new ConflictException();
+						}
 					}
 					return (HttpException) new OkException();
 				})
 				// optional isn't present
 				.orElse(new ResourceNotFoundException());
-	}
-
-	public Supplier<? extends Skill> createSkill(String name, @Nullable String isSoft) {
-		return () -> {
-			Skill newSkill = new Skill();
-			newSkill.setName(name);
-			newSkill.setIsSoft(isSoft);
-			try {
-				newSkill = skillRepository.save(newSkill);
-			} catch (DuplicateKeyException dke) {
-				throw new ConflictException();
-			} catch (Exception e) {
-				throw new InternalServerErrorException();
-			}
-			return newSkill;
-		};
 	}
 
 }

@@ -29,25 +29,26 @@ public class Skill implements Serializable {
 	}
 
 	public ObjectId get_id() {
-		return _id;
-	}
-
-	public String getName() {
-		return name;
+		return this._id;
 	}
 
 	public String getIsSoft() {
-		return isSoft;
+		return this.isSoft;
 	}
 
-	public void setIsSoft(String isSoft) {
-		this.isSoft = isSoft;
+	public String getName() {
+		return this.name;
 	}
-	
-	public void set_id(ObjectId _id) {
+
+	public void set_id(final ObjectId _id) {
 		this._id = _id;
 	}
-	public void setName(String name) {
+
+	public void setIsSoft(final String isSoft) {
+		this.isSoft = isSoft;
+	}
+
+	public void setName(final String name) {
 		this.name = name;
 	}
 }

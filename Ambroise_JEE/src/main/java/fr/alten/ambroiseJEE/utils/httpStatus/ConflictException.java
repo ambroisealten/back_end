@@ -20,9 +20,9 @@ public class ConflictException extends HttpException {
 
 	public ConflictException() {
 		super("Conflict");
-		StackTraceElement[] newStackTrace = { new StackTraceElement(this.getClass().getSimpleName(),
+		final StackTraceElement[] newStackTrace = { new StackTraceElement(this.getClass().getSimpleName(),
 				HttpStatus.CONFLICT.name(), "", HttpStatus.CONFLICT.value()) };
-		this.setStackTrace(newStackTrace);
+		setStackTrace(newStackTrace);
 	}
 
 	@Override

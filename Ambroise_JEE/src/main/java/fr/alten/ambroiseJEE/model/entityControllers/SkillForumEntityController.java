@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.mongodb.DuplicateKeyException;
 
-import fr.alten.ambroiseJEE.model.beans.Skill;
 import fr.alten.ambroiseJEE.model.beans.SkillForum;
 import fr.alten.ambroiseJEE.model.dao.SkillForumRepository;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
@@ -41,17 +40,18 @@ public class SkillForumEntityController {
 	 *         database and {@link CreatedException} if the skill is created
 	 * @author Thomas Decamp
 	 */
-	public HttpException createSkillForum(JsonNode jSkillForum) {
+	public HttpException createSkillForum(final JsonNode jSkillForum) {
 
-		SkillForum newSkillForum = new SkillForum();
+		final SkillForum newSkillForum = new SkillForum();
 		newSkillForum.setName(jSkillForum.get("name").textValue());
 		try {
-			skillForumRepository.save(newSkillForum);
-		} catch (Exception e) {
+			this.skillForumRepository.save(newSkillForum);
+		} catch (final Exception e) {
 			if (!DuplicateKeyException.class.isInstance(e)) {
 				e.printStackTrace();
-			} else
+			} else {
 				return new ConflictException();
+			}
 		}
 		return new CreatedException();
 	}
@@ -64,20 +64,20 @@ public class SkillForumEntityController {
 	 *         {@link OkException} if the skill is deactivated
 	 * @author Thomas Decamp
 	 */
-	public HttpException deleteSkillForum(JsonNode jSkillForum) {
-		return skillForumRepository.findByName(jSkillForum.get("name").textValue())
+	public HttpException deleteSkillForum(final JsonNode jSkillForum) {
+		return this.skillForumRepository.findByName(jSkillForum.get("name").textValue())
 				// optional is present
 				.map(skillForum -> {
 					skillForum.setName("deactivated" + System.currentTimeMillis());
-					skillForumRepository.save(skillForum);
+					this.skillForumRepository.save(skillForum);
 					return (HttpException) new OkException();
 				})
 				// optional isn't present
 				.orElse(new ResourceNotFoundException());
 	}
 
-	public Optional<SkillForum> getSkillForum(JsonNode jSkillForum) {
-		return skillForumRepository.findByName(jSkillForum.get("name").textValue());
+	public Optional<SkillForum> getSkillForum(final JsonNode jSkillForum) {
+		return this.skillForumRepository.findByName(jSkillForum.get("name").textValue());
 	}
 
 	/**
@@ -85,7 +85,7 @@ public class SkillForumEntityController {
 	 * @author Thomas Decamp
 	 */
 	public List<SkillForum> getSkillsForum() {
-		return skillForumRepository.findAll();
+		return this.skillForumRepository.findAll();
 	}
 
 	/**
@@ -97,18 +97,19 @@ public class SkillForumEntityController {
 	 *         found and {@link CreatedException} if the skill is updated
 	 * @author Thomas Decamp
 	 */
-	public HttpException updateSkillForum(JsonNode jSkillForum) {
-		return skillForumRepository.findByName(jSkillForum.get("oldName").textValue())
+	public HttpException updateSkillForum(final JsonNode jSkillForum) {
+		return this.skillForumRepository.findByName(jSkillForum.get("oldName").textValue())
 				// optional is present
 				.map(skillForum -> {
 					skillForum.setName(jSkillForum.get("name").textValue());
 					try {
-						skillForumRepository.save(skillForum);
-					} catch (Exception e) {
+						this.skillForumRepository.save(skillForum);
+					} catch (final Exception e) {
 						if (!DuplicateKeyException.class.isInstance(e)) {
 							e.printStackTrace();
-						} else
+						} else {
 							return (HttpException) new ConflictException();
+						}
 					}
 					return (HttpException) new OkException();
 				})

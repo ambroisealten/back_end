@@ -17,10 +17,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import static fr.alten.ambroiseJEE.utils.JsonUtils.checkJsonIntegrity;
-
 import fr.alten.ambroiseJEE.controller.business.SkillBusinessController;
 import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.utils.JsonUtils;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
@@ -33,53 +32,53 @@ import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 @Controller
 public class SkillRestController {
 
-	
-	
 	@Autowired
 	private SkillBusinessController skillBusinessController;
 
 	private final Gson gson;
 
 	public SkillRestController() {
-		GsonBuilder builder = new GsonBuilder();
+		final GsonBuilder builder = new GsonBuilder();
 		this.gson = builder.create();
 	}
 
 	@PostMapping(value = "/skill")
 	@ResponseBody
-	public HttpException createSkill(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) throws Exception {
-		return (checkJsonIntegrity(params, "mail")) ? skillBusinessController.createSkill(params, role)
+	public HttpException createSkill(@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
+			@RequestAttribute("role") final UserRole role) throws Exception {
+		return JsonUtils.checkJsonIntegrity(params, "mail") ? this.skillBusinessController.createSkill(params, role)
 				: new UnprocessableEntityException();
 	}
 
 	@DeleteMapping(value = "/skill")
 	@ResponseBody
-	public HttpException deleteSkill(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) throws Exception {
-		return (checkJsonIntegrity(params, "mail")) ? skillBusinessController.deleteSkill(params, role)
+	public HttpException deleteSkill(@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
+			@RequestAttribute("role") final UserRole role) throws Exception {
+		return JsonUtils.checkJsonIntegrity(params, "mail") ? this.skillBusinessController.deleteSkill(params, role)
 				: new UnprocessableEntityException();
 	}
 
 	@GetMapping(value = "/skill")
 	@ResponseBody
-	public String getSkill(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) throws Exception {
-		return gson.toJson(skillBusinessController.getSkill(params, role));
+	public String getSkill(@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
+			@RequestAttribute("role") final UserRole role) throws Exception {
+		return this.gson.toJson(this.skillBusinessController.getSkill(params, role));
 	}
-	
+
 	@GetMapping(value = "/skills")
 	@ResponseBody
-	public String getSkills(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
-		return gson.toJson(skillBusinessController.getSkills(role));
+	public String getSkills(@RequestAttribute("mail") final String mail,
+			@RequestAttribute("role") final UserRole role) {
+		return this.gson.toJson(this.skillBusinessController.getSkills(role));
 	}
 
 	@PutMapping(value = "/skill")
 	@ResponseBody
-	public HttpException updateSkill(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) throws Exception {
-		return (checkJsonIntegrity(params, "name", "oldName", "mail")) ? skillBusinessController.createSkill(params, role)
+	public HttpException updateSkill(@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
+			@RequestAttribute("role") final UserRole role) throws Exception {
+		return JsonUtils.checkJsonIntegrity(params, "name", "oldName", "mail")
+				? this.skillBusinessController.createSkill(params, role)
 				: new UnprocessableEntityException();
 	}
-	
+
 }

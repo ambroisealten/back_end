@@ -37,12 +37,13 @@ public class EmployerBusinessController {
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ConflictException} if there is a conflict in the
 	 *         database and {@link CreatedException} if the employer is created
-	 * @throws {@link ForbiddenException} if the current logged user hasn't the rights to perform this action
+	 * @throws {@link ForbiddenException} if the current logged user hasn't the
+	 *         rights to perform this action
 	 * @author Lucas Royackkers
 	 */
-	public HttpException createEmployer(JsonNode params, UserRole role) {
+	public HttpException createEmployer(final JsonNode params, final UserRole role) {
 		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
-			return employerEntityController.createEmployer(params);
+			return this.employerEntityController.createEmployer(params);
 		}
 		throw new ForbiddenException();
 	}
@@ -55,12 +56,13 @@ public class EmployerBusinessController {
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ResourceNotFoundException} if the resource is not
 	 *         found and {@link OkException} if the employer is deactivated
-	 * @throws {@link ForbiddenException} if the current logged user hasn't the rights to perform this action
+	 * @throws {@link ForbiddenException} if the current logged user hasn't the
+	 *         rights to perform this action
 	 * @author Lucas Royackkers
 	 */
-	public HttpException deleteEmployer(JsonNode params, UserRole role) {
+	public HttpException deleteEmployer(final JsonNode params, final UserRole role) {
 		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
-			return employerEntityController.deleteEmployer(params);
+			return this.employerEntityController.deleteEmployer(params);
 		}
 		throw new ForbiddenException();
 	}
@@ -70,13 +72,14 @@ public class EmployerBusinessController {
 	 *
 	 * @param role the user's role
 	 * @return a List of Employer objects (can be empty)
-	 * @throws {@link ForbiddenException} if the current logged user hasn't the rights to perform this action
+	 * @throws {@link ForbiddenException} if the current logged user hasn't the
+	 *         rights to perform this action
 	 * @author Lucas Royackkers
 	 */
-	public List<Employer> getEmployers(UserRole role) {
+	public List<Employer> getEmployers(final UserRole role) {
 		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.CDR == role
 				|| UserRole.MANAGER == role) {
-			return employerEntityController.getEmployers();
+			return this.employerEntityController.getEmployers();
 		}
 		throw new ForbiddenException();
 	}
@@ -89,12 +92,13 @@ public class EmployerBusinessController {
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ResourceNotFoundException} if the resource is not
 	 *         found and {@link OkException} if the employer is updated
-	 * @throws {@link ForbiddenException} if the current logged user hasn't the rights to perform this action
+	 * @throws {@link ForbiddenException} if the current logged user hasn't the
+	 *         rights to perform this action
 	 * @author Lucas Royackkers
 	 */
-	public HttpException updateEmployer(JsonNode params, UserRole role) {
+	public HttpException updateEmployer(final JsonNode params, final UserRole role) {
 		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
-			return employerEntityController.updateEmployer(params);
+			return this.employerEntityController.updateEmployer(params);
 		}
 		throw new ForbiddenException();
 	}

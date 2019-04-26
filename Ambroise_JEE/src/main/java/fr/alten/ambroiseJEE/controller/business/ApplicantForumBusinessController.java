@@ -43,10 +43,10 @@ public class ApplicantForumBusinessController {
 	 * @author Andy Chabalier
 	 * @throws ParseException, ForbiddenException
 	 */
-	public HttpException createApplicant(JsonNode jApplicant, UserRole role) throws ParseException {
+	public HttpException createApplicant(final JsonNode jApplicant, final UserRole role) throws ParseException {
 		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role
 				|| UserRole.CDR == role) {
-			return applicantForumEntityController.createApplicant(jApplicant);
+			return this.applicantForumEntityController.createApplicant(jApplicant);
 		}
 		throw new ForbiddenException();
 	}
@@ -63,9 +63,9 @@ public class ApplicantForumBusinessController {
 	 * @author Andy Chabalier
 	 * @throws ForbiddenException
 	 */
-	public HttpException deleteApplicant(JsonNode params, UserRole role) {
+	public HttpException deleteApplicant(final JsonNode params, final UserRole role) {
 		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role) {
-			return applicantForumEntityController.deleteApplicant(params);
+			return this.applicantForumEntityController.deleteApplicant(params);
 		}
 		throw new ForbiddenException();
 	}
@@ -79,10 +79,10 @@ public class ApplicantForumBusinessController {
 	 * @author Andy Chabalier
 	 * @throws ForbiddenException (if the user hasn't the right to do so)
 	 */
-	public Optional<ApplicantForum> getApplicant(String mail, UserRole role) {
+	public Optional<ApplicantForum> getApplicant(final String mail, final UserRole role) {
 		if (UserRole.CDR == role || UserRole.MANAGER == role || UserRole.MANAGER_ADMIN == role
 				|| UserRole.CDR_ADMIN == role) {
-			return applicantForumEntityController.getApplicantByMail(mail);
+			return this.applicantForumEntityController.getApplicantByMail(mail);
 		}
 		throw new ForbiddenException();
 	}
@@ -94,10 +94,10 @@ public class ApplicantForumBusinessController {
 	 * @author Andy Chabalier
 	 * @throws ForbiddenException
 	 */
-	public List<ApplicantForum> getApplicants(UserRole role) {
-		if ((UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role
-				|| UserRole.CDR == role)) {
-			return applicantForumEntityController.getApplicants();
+	public List<ApplicantForum> getApplicants(final UserRole role) {
+		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role
+				|| UserRole.CDR == role) {
+			return this.applicantForumEntityController.getApplicants();
 		}
 		throw new ForbiddenException();
 	}
@@ -114,9 +114,9 @@ public class ApplicantForumBusinessController {
 	 * @author Andy Chabalier
 	 * @throws ParseException, ForbiddenException
 	 */
-	public HttpException updateApplicant(JsonNode params, UserRole role) throws ParseException {
+	public HttpException updateApplicant(final JsonNode params, final UserRole role) throws ParseException {
 		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role) {
-			return applicantForumEntityController.updateApplicant(params);
+			return this.applicantForumEntityController.updateApplicant(params);
 		}
 		throw new ForbiddenException();
 	}

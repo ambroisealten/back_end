@@ -27,18 +27,18 @@ public class Job implements Serializable {
 	}
 
 	public ObjectId get_id() {
-		return _id;
+		return this._id;
 	}
 
 	public String getTitle() {
-		return title;
+		return this.title;
 	}
 
-	public void set_id(ObjectId _id) {
+	public void set_id(final ObjectId _id) {
 		this._id = _id;
 	}
 
-	public void setTitle(String title) {
+	public void setTitle(final String title) {
 		this.title = title;
 	}
 

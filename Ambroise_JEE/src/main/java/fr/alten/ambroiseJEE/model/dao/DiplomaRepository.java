@@ -21,7 +21,7 @@ public interface DiplomaRepository extends MongoRepository<Diploma, Long> {
 
 	/**
 	 *
-	 * @param name  the diploma's name
+	 * @param name         the diploma's name
 	 * @param yearOfResult the diploma's year of result
 	 * @return An Optional with the corresponding diploma or not
 	 * @author Lucas Royackkers

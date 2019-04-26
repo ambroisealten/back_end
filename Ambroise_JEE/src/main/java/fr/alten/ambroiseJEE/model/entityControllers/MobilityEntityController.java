@@ -16,6 +16,7 @@ import fr.alten.ambroiseJEE.model.dao.MobilityRepository;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 
 /**
  * @author Lucas Royackkers
@@ -47,34 +48,38 @@ public class MobilityEntityController {
 	 *         database and {@link CreatedException} if the mobility is created
 	 * @author Lucas Royackkers
 	 */
-	public HttpException createMobility(JsonNode jMobility) {
-		Mobility newMobility = new Mobility();
-		String geographicType = jMobility.get("type").textValue();
+	public HttpException createMobility(final JsonNode jMobility) {
+		final Mobility newMobility = new Mobility();
+		final String geographicType = jMobility.get("type").textValue();
 		switch (geographicType) {
 		case "city":
-			Optional<City> city = cityEntityController.getCity(jMobility.get("place").textValue());
-			if (city.isPresent()) {
-				newMobility.setPlaceName(city.get().getName());
+			try {
+				final City city = this.cityEntityController.getCity(jMobility.get("place").textValue());
+				newMobility.setPlaceName(city.getNom());
+			} catch (final ResourceNotFoundException rnfe) {
 			}
 			break;
 		case "departement":
-			Optional<Departement> departement = departementEntityController
+			final Departement departement = this.departementEntityController
 					.getDepartement(jMobility.get("place").textValue());
-			if (departement.isPresent()) {
-				newMobility.setPlaceName(departement.get().getName());
+			try {
+				newMobility.setPlaceName(departement.getName());
+			} catch (final ResourceNotFoundException rnfe) {
 			}
 			break;
 		case "postalCode":
-			Optional<PostalCode> postalCode = postalCodeEntityController
+			final PostalCode postalCode = this.postalCodeEntityController
 					.getPostalCode(jMobility.get("place").textValue());
-			if (postalCode.isPresent()) {
-				newMobility.setPlaceName(postalCode.get().getName());
+			try {
+				newMobility.setPlaceName(postalCode.getName());
+			} catch (final ResourceNotFoundException rnfe) {
 			}
 			break;
 		case "region":
-			Optional<Region> region = regionEntityController.getRegion(jMobility.get("place").textValue());
-			if (region.isPresent()) {
-				newMobility.setPlaceName(region.get().getName());
+			final Region region = this.regionEntityController.getRegion(jMobility.get("place").textValue());
+			try {
+				newMobility.setPlaceName(region.getName());
+			} catch (final ResourceNotFoundException rnfe) {
 			}
 			break;
 		default:
@@ -84,25 +89,25 @@ public class MobilityEntityController {
 		newMobility.setUnit(jMobility.get("unit").textValue());
 
 		try {
-			mobilityRepository.save(newMobility);
-		} catch (Exception e) {
+			this.mobilityRepository.save(newMobility);
+		} catch (final Exception e) {
 			return new ConflictException();
 		}
 		return new CreatedException();
 	}
 
-	public Optional<Mobility> getMobility(Mobility mobilityToFind) {
+	public Optional<Mobility> getMobility(final Mobility mobilityToFind) {
 		// TODO Revoir le code pour optimiser les appels
-		return mobilityRepository.findByPlaceNameAndPlaceTypeAndRadiusAndUnit(mobilityToFind.getPlaceName(),
+		return this.mobilityRepository.findByPlaceNameAndPlaceTypeAndRadiusAndUnit(mobilityToFind.getPlaceName(),
 				mobilityToFind.getPlaceType(), mobilityToFind.getRadius(), mobilityToFind.getUnit());
 	}
 
-	public Optional<Mobility> getMobilityByName(String placeName) {
-		return mobilityRepository.findByPlaceName(placeName);
+	public Optional<Mobility> getMobilityByName(final String placeName) {
+		return this.mobilityRepository.findByPlaceName(placeName);
 	}
 
-	public Optional<Mobility> getMobilityByNameAndRadius(String placeName, int radius) {
-		return mobilityRepository.findByPlaceNameAndRadius(placeName, radius);
+	public Optional<Mobility> getMobilityByNameAndRadius(final String placeName, final int radius) {
+		return this.mobilityRepository.findByPlaceNameAndRadius(placeName, radius);
 	}
 
 }

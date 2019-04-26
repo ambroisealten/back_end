@@ -1,7 +1,5 @@
 package fr.alten.ambroiseJEE.controller.business;
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,12 +18,12 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
  */
 @Service
 public class PersonBusinessController {
-	
-	private UserRoleLists roles = UserRoleLists.getInstance();
-	
+
+	private final UserRoleLists roles = UserRoleLists.getInstance();
+
 	@Autowired
 	private PersonEntityController personEntityController;
-	
+
 	/**
 	 * Try to fetch a person given its mail
 	 *
@@ -35,12 +33,11 @@ public class PersonBusinessController {
 	 * @author Camille Schnell
 	 * @throws ForbiddenException (if the user hasn't the right to do so)
 	 */
-	public Person getPerson(String mail, UserRole role) {
-		if (roles.isAdmin(role) || roles.isManagerOrCdr(role)) {
+	public Person getPerson(final String mail, final UserRole role) {
+		if (this.roles.isAdmin(role) || this.roles.isManagerOrCdr(role)) {
 			try {
-				return personEntityController.getPersonByMail(mail);
-			}
-			catch(ResourceNotFoundException e) {
+				return this.personEntityController.getPersonByMail(mail);
+			} catch (final ResourceNotFoundException e) {
 				return new Person();
 			}
 		}

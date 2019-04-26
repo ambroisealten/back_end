@@ -22,7 +22,7 @@ public class ConfigBusinessController {
 
 	/**
 	 * Get the list of all menu items
-	 * 
+	 *
 	 * @param role the user role
 	 * @return a json string containing every menu and submenu items
 	 * @author Camille Schnell
@@ -30,9 +30,10 @@ public class ConfigBusinessController {
 	 * @throws FileNotFoundException {@link ForbiddenException} if the user isn't
 	 *                               connected
 	 */
-	public String getMenuItems(UserRole role) throws FileNotFoundException {
-		if (!(UserRole.DEACTIVATED == role))
+	public String getMenuItems(final UserRole role) throws FileNotFoundException {
+		if (!(UserRole.DEACTIVATED == role)) {
 			return ParseConfigFile.getJsonMenuItemsByRole(role);
+		}
 		throw new ForbiddenException();
 	}
 
@@ -44,9 +45,10 @@ public class ConfigBusinessController {
 	 * @throws FileNotFoundException {@link ForbiddenException} if the user isn't
 	 *                               connected
 	 */
-	public String getRoutes(UserRole role, AngularModule module) throws FileNotFoundException {
-		if (!(UserRole.DEACTIVATED == role))
+	public String getRoutes(final UserRole role, final AngularModule module) throws FileNotFoundException {
+		if (!(UserRole.DEACTIVATED == role)) {
 			return ParseRoutingFile.getJsonRoutingItemsByRole(role, module);
+		}
 		throw new ForbiddenException();
 	}
 

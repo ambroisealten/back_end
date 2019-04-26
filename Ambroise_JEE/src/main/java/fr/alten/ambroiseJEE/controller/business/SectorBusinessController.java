@@ -34,7 +34,7 @@ public class SectorBusinessController {
 
 	/**
 	 * Method to delegate sector creation
-	 * 
+	 *
 	 * @param JSector JsonNode with all sector parameters
 	 * @param role    the current logged user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
@@ -42,15 +42,15 @@ public class SectorBusinessController {
 	 *         database and {@link CreatedException} if the sector is created
 	 *         * @author Andy Chabalier
 	 */
-	public HttpException createSector(JsonNode JSector, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)
-				? sectorEntityController.createSector(JSector)
+	public HttpException createSector(final JsonNode JSector, final UserRole role) {
+		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role
+				? this.sectorEntityController.createSector(JSector)
 				: new ForbiddenException();
 	}
 
 	/**
 	 * Method to delegate sector deletion
-	 * 
+	 *
 	 * @param JSector JsonNode with sector's name parameter
 	 * @param role    the current logged user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
@@ -58,29 +58,29 @@ public class SectorBusinessController {
 	 *         found and {@link OkException} if the sector is deleted
 	 * @author Andy Chabalier
 	 */
-	public HttpException deleteSector(JsonNode JSector, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)
-				? sectorEntityController.deleteSector(JSector)
+	public HttpException deleteSector(final JsonNode JSector, final UserRole role) {
+		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role
+				? this.sectorEntityController.deleteSector(JSector)
 				: new ForbiddenException();
 	}
 
 	/**
 	 * Get the list of all sectors
-	 * 
+	 *
 	 * @param role the current logged user's role
 	 * @return the list of sectors
 	 * @author Andy Chabalier
 	 */
-	public List<Sector> getSectors(UserRole role) {
+	public List<Sector> getSectors(final UserRole role) {
 		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
-			return sectorEntityController.getSectors();
+			return this.sectorEntityController.getSectors();
 		}
 		throw new ForbiddenException();
 	}
 
 	/**
 	 * Method to delegate sector update
-	 * 
+	 *
 	 * @param JSector JsonNode with all sector parameters
 	 * @param role    the current logged user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
@@ -88,9 +88,9 @@ public class SectorBusinessController {
 	 *         found and {@link OkException} if the sector is updated
 	 * @author Andy Chabalier
 	 */
-	public HttpException updateSector(JsonNode JSector, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)
-				? sectorEntityController.updateSector(JSector)
+	public HttpException updateSector(final JsonNode JSector, final UserRole role) {
+		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role
+				? this.sectorEntityController.updateSector(JSector)
 				: new ForbiddenException();
 	}
 }

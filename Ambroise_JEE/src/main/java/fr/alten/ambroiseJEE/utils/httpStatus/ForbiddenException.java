@@ -20,9 +20,9 @@ public class ForbiddenException extends HttpException {
 
 	public ForbiddenException() {
 		super("Forbidden");
-		StackTraceElement[] newStackTrace = { new StackTraceElement(this.getClass().getSimpleName(),
+		final StackTraceElement[] newStackTrace = { new StackTraceElement(this.getClass().getSimpleName(),
 				HttpStatus.FORBIDDEN.name(), "", HttpStatus.FORBIDDEN.value()) };
-		this.setStackTrace(newStackTrace);
+		setStackTrace(newStackTrace);
 	}
 
 	@Override

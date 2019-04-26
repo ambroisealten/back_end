@@ -42,8 +42,8 @@ public class PersonEntityController {
 	 * @return true if the string match with the mail pattern
 	 * @author Lucas Royackkers
 	 */
-	private static boolean validateMail(String emailStr) {
-		Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
+	private static boolean validateMail(final String emailStr) {
+		final Matcher matcher = PersonEntityController.VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
 		return matcher.find();
 	}
 
@@ -76,51 +76,52 @@ public class PersonEntityController {
 	 *                   format
 	 * @author Lucas Royackkers
 	 */
-	public HttpException createPerson(JsonNode jPerson, PersonRole type) throws ParseException {
+	public HttpException createPerson(final JsonNode jPerson, final PersonRole type) throws ParseException {
 		// if the mail don't match with the mail pattern
-		if (!validateMail(jPerson.get("mail").textValue())) {
+		if (!PersonEntityController.validateMail(jPerson.get("mail").textValue())) {
 			return new UnprocessableEntityException();
 		}
 
-		Person newPerson = new Person();
+		final Person newPerson = new Person();
 		newPerson.setSurname(jPerson.get("surname").textValue());
 		newPerson.setName(jPerson.get("name").textValue());
 		newPerson.setMonthlyWage(Float.parseFloat(jPerson.get("monthlyWage").textValue()));
 		newPerson.setRole(type);
 		newPerson.setMail(jPerson.get("mail").textValue());
-		List<String> docList = new ArrayList<String>();
-		JsonNode docNode = jPerson.get("urlDocs");
-		for (JsonNode doc : docNode) {
+		final List<String> docList = new ArrayList<String>();
+		final JsonNode docNode = jPerson.get("urlDocs");
+		for (final JsonNode doc : docNode) {
 			docList.add(doc.get("url").textValue());
 		}
 		newPerson.setUrlDocs(docList);
 
-		Optional<User> personInCharge = userEntityController
+		final Optional<User> personInCharge = this.userEntityController
 				.getUserByMail(jPerson.get("personInChargeMail").textValue());
 		if (personInCharge.isPresent()) {
 			newPerson.setPersonInChargeMail(personInCharge.get().getMail());
 		}
 
-		Optional<Diploma> diploma = diplomaEntityController.getDiplomaByNameAndYearOfResult(
+		final Optional<Diploma> diploma = this.diplomaEntityController.getDiplomaByNameAndYearOfResult(
 				jPerson.get("highestDiploma").textValue(), jPerson.get("highestDiplomaYear").textValue());
 		if (diploma.isPresent()) {
 			newPerson.setHighestDiploma(diploma.get().getName());
 			newPerson.setHighestDiplomaYear(diploma.get().getYearOfResult());
 		}
 
-		Optional<Job> job = jobEntityController.getJob(jPerson.get("job").textValue());
+		final Optional<Job> job = this.jobEntityController.getJob(jPerson.get("job").textValue());
 		if (job.isPresent()) {
 			newPerson.setJob(job.get().getTitle());
 		}
 
-		Optional<Employer> employer = employerEntityController.getEmployer(jPerson.get("employer").textValue());
+		final Optional<Employer> employer = this.employerEntityController
+				.getEmployer(jPerson.get("employer").textValue());
 		if (employer.isPresent()) {
 			newPerson.setEmployer(employer.get().getName());
 		}
 
 		try {
-			personRepository.save(newPerson);
-		} catch (Exception e) {
+			this.personRepository.save(newPerson);
+		} catch (final Exception e) {
 			return new ConflictException();
 		}
 		return new CreatedException();
@@ -138,10 +139,11 @@ public class PersonEntityController {
 	 *         the database and {@link OkException} if the person is deleted
 	 * @author Lucas Royackkers
 	 */
-	public HttpException deletePerson(JsonNode jPerson, PersonRole role) {
-		Optional<Person> optionalPerson = personRepository.findByMailAndRole(jPerson.get("mail").textValue(), role);
+	public HttpException deletePerson(final JsonNode jPerson, final PersonRole role) {
+		final Optional<Person> optionalPerson = this.personRepository.findByMailAndRole(jPerson.get("mail").textValue(),
+				role);
 		if (optionalPerson.isPresent()) {
-			Person person = optionalPerson.get();
+			final Person person = optionalPerson.get();
 			switch (role) {
 			case APPLICANT:
 				person.setSurname("Deactivated");
@@ -159,7 +161,7 @@ public class PersonEntityController {
 			person.setMonthlyWage(0);
 			person.setJob(null);
 
-			personRepository.save(person);
+			this.personRepository.save(person);
 		} else {
 			return new ResourceNotFoundException();
 		}
@@ -174,8 +176,8 @@ public class PersonEntityController {
 	 * @author Lucas Royackkers
 	 * @author Camille Schnell
 	 */
-	public Person getPersonByMail(String mail) {
-		return personRepository.findByMail(mail).orElseThrow(ResourceNotFoundException::new);
+	public Person getPersonByMail(final String mail) {
+		return this.personRepository.findByMail(mail).orElseThrow(ResourceNotFoundException::new);
 	}
 
 	/**
@@ -185,63 +187,63 @@ public class PersonEntityController {
 	 * @return An Optional with the corresponding person (of the given type) or not.
 	 * @author Lucas Royackkers
 	 */
-	public Optional<Person> getPersonByMailAndType(String mail, PersonRole type) {
-		return personRepository.findByMailAndRole(mail, type);
+	public Optional<Person> getPersonByMailAndType(final String mail, final PersonRole type) {
+		return this.personRepository.findByMailAndRole(mail, type);
 	}
 
 	/**
-	 * Get a List of Person given a role
-	 * 
-	 * @param role the type of persons that are searched
-	 * @return the list of all persons
-	 * @author Lucas Royackkers
-	 */
-	public List<Person> getPersonsByRole(PersonRole role) {
-		return personRepository.findAllByRole(role);
-	}
-	
-	/**
-	 * Get a List of Person given a name
-	 * 
-	 * @param name the name of the person
-	 * @return the list of all persons
-	 * @author Lucas Royackkers
-	 */
-	public List<Person> getPersonsByName(String name){
-		return personRepository.findByName(name);
-	}
-	
-	/**
-	 * Get a List of Person given a surname
-	 * 
-	 * @param surname the surname of the person
-	 * @return the list of all persons
-	 * @author Lucas Royackkers
-	 */
-	public List<Person> getPersonsBySurname(String surname){
-		return personRepository.findBySurname(surname);
-	}
-	
-	/**
 	 * Get a List of Person given a Diploma
-	 * 
+	 *
 	 * @param highestDiploma the highest Diploma of the person
 	 * @return the list of all persons
 	 * @author Lucas Royackkers
 	 */
-	public List<Person> getPersonsByHighestDiploma(String highestDiploma){
-		return personRepository.findByHighestDiploma(highestDiploma);
+	public List<Person> getPersonsByHighestDiploma(final String highestDiploma) {
+		return this.personRepository.findByHighestDiploma(highestDiploma);
 	}
-	
+
 	/**
 	 * Get a List of Person given a Job
-	 * 
+	 *
 	 * @param job the job of the person
 	 * @return the list of all persons
 	 * @author Lucas Royackkers
 	 */
-	public List<Person> getPersonsByJob(String job){
-		return personRepository.findByJob(job);
+	public List<Person> getPersonsByJob(final String job) {
+		return this.personRepository.findByJob(job);
+	}
+
+	/**
+	 * Get a List of Person given a name
+	 *
+	 * @param name the name of the person
+	 * @return the list of all persons
+	 * @author Lucas Royackkers
+	 */
+	public List<Person> getPersonsByName(final String name) {
+		return this.personRepository.findByName(name);
+	}
+
+	/**
+	 * Get a List of Person given a role
+	 *
+	 * @param role the type of persons that are searched
+	 * @return the list of all persons
+	 * @author Lucas Royackkers
+	 */
+	public List<Person> getPersonsByRole(final PersonRole role) {
+		return this.personRepository.findAllByRole(role);
+	}
+
+	/**
+	 * Get a List of Person given a surname
+	 *
+	 * @param surname the surname of the person
+	 * @return the list of all persons
+	 * @author Lucas Royackkers
+	 */
+	public List<Person> getPersonsBySurname(final String surname) {
+		return this.personRepository.findBySurname(surname);
 	}
 
 	/**
@@ -257,49 +259,51 @@ public class PersonEntityController {
 	 * @throws ParseException
 	 * @author Lucas Royackkers
 	 */
-	public HttpException updatePerson(JsonNode jPerson, PersonRole role) throws ParseException {
-		Optional<Person> optionalPerson = personRepository.findByMailAndRole(jPerson.get("oldMail").textValue(), role);
+	public HttpException updatePerson(final JsonNode jPerson, final PersonRole role) throws ParseException {
+		final Optional<Person> optionalPerson = this.personRepository
+				.findByMailAndRole(jPerson.get("oldMail").textValue(), role);
 		if (optionalPerson.isPresent()) {
-			Person person = optionalPerson.get();
+			final Person person = optionalPerson.get();
 			person.setSurname(jPerson.get("surname").textValue());
 			person.setName(jPerson.get("name").textValue());
-			person.setMonthlyWage(Float.parseFloat((jPerson.get("monthlyWage").textValue())));
+			person.setMonthlyWage(Float.parseFloat(jPerson.get("monthlyWage").textValue()));
 
 			person.setRole(role);
 
 			person.setMail(jPerson.get("mail").textValue());
 
-			List<String> docList = new ArrayList<String>();
-			JsonNode docNode = jPerson.get("urlDocs");
-			for (JsonNode doc : docNode) {
+			final List<String> docList = new ArrayList<String>();
+			final JsonNode docNode = jPerson.get("urlDocs");
+			for (final JsonNode doc : docNode) {
 				docList.add(doc.get("url").textValue());
 			}
 			person.setUrlDocs(docList);
 
-			Optional<User> personInCharge = userEntityController
+			final Optional<User> personInCharge = this.userEntityController
 					.getUserByMail(jPerson.get("personInChargeMail").textValue());
 			if (personInCharge.isPresent()) {
 				person.setPersonInChargeMail(personInCharge.get().getMail());
 			}
 
-			Optional<Diploma> diploma = diplomaEntityController.getDiplomaByNameAndYearOfResult(
+			final Optional<Diploma> diploma = this.diplomaEntityController.getDiplomaByNameAndYearOfResult(
 					jPerson.get("highestDiploma").textValue(), jPerson.get("highestDiplomaYear").textValue());
 			if (diploma.isPresent()) {
 				person.setHighestDiploma(diploma.get().get_id().toString());
 			}
 
-			Optional<Job> job = jobEntityController.getJob(jPerson.get("job").textValue());
+			final Optional<Job> job = this.jobEntityController.getJob(jPerson.get("job").textValue());
 			if (job.isPresent()) {
 				person.setJob(job.get().getTitle());
 			}
 
-			Optional<Employer> employer = employerEntityController.getEmployer(jPerson.get("employer").textValue());
+			final Optional<Employer> employer = this.employerEntityController
+					.getEmployer(jPerson.get("employer").textValue());
 			if (employer.isPresent()) {
 				person.setEmployer(employer.get().getName());
 			}
 			try {
-				personRepository.save(person);
-			} catch (Exception e) {
+				this.personRepository.save(person);
+			} catch (final Exception e) {
 				return new ConflictException();
 			}
 		} else {

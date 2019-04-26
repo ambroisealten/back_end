@@ -23,10 +23,10 @@ import fr.alten.ambroiseJEE.AmbroiseJeeApplication;
 public class LocalhostFilter implements Filter {
 
 	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+	public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain)
 			throws IOException, ServletException {
 
-		HttpServletRequest httpRequest = (HttpServletRequest) request;
+		final HttpServletRequest httpRequest = (HttpServletRequest) request;
 
 		if (httpRequest.getRemoteAddr().equals("0:0:0:0:0:0:0:1") || httpRequest.getRemoteAddr().equals("127.0.0.1")) {
 			chain.doFilter(httpRequest, response);

@@ -40,98 +40,98 @@ public class Person implements Serializable {
 	}
 
 	public ObjectId get_id() {
-		return _id;
+		return this._id;
 	}
 
 	public String getEmployer() {
-		return employer;
+		return this.employer;
 	}
 
 	public String getHighestDiploma() {
-		return highestDiploma;
+		return this.highestDiploma;
 	}
 
 	public String getHighestDiplomaYear() {
-		return highestDiplomaYear;
+		return this.highestDiplomaYear;
 	}
 
 	public String getJob() {
-		return job;
+		return this.job;
 	}
 
 	public String getMail() {
-		return mail;
+		return this.mail;
 	}
 
 	public float getMonthlyWage() {
-		return monthlyWage;
+		return this.monthlyWage;
 	}
 
 	public String getName() {
-		return name;
+		return this.name;
 	}
 
 	public String getPersonInChargeMail() {
-		return personInChargeMail;
+		return this.personInChargeMail;
 	}
 
 	public PersonRole getRole() {
-		return role;
+		return this.role;
 	}
 
 	public String getSurname() {
-		return surname;
+		return this.surname;
 	}
 
 	public List<String> getUrlDocs() {
-		return urlDocs;
+		return this.urlDocs;
 	}
 
-	public void set_id(ObjectId _id) {
+	public void set_id(final ObjectId _id) {
 		this._id = _id;
 	}
 
-	public void setEmployer(String employer) {
+	public void setEmployer(final String employer) {
 		this.employer = employer;
 	}
 
-	public void setHighestDiploma(String highestDiploma) {
+	public void setHighestDiploma(final String highestDiploma) {
 		this.highestDiploma = highestDiploma;
 	}
 
-	public void setHighestDiplomaYear(String highestDiplomaYear) {
+	public void setHighestDiplomaYear(final String highestDiplomaYear) {
 		this.highestDiplomaYear = highestDiplomaYear;
 	}
 
-	public void setJob(String job) {
+	public void setJob(final String job) {
 		this.job = job;
 	}
 
-	public void setMail(String mail) {
+	public void setMail(final String mail) {
 		this.mail = mail;
 	}
 
-	public void setMonthlyWage(float monthlyWage) {
+	public void setMonthlyWage(final float monthlyWage) {
 		this.monthlyWage = monthlyWage;
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
-	public void setPersonInChargeMail(String personInChargeMail) {
+	public void setPersonInChargeMail(final String personInChargeMail) {
 		this.personInChargeMail = personInChargeMail;
 	}
 
-	public void setRole(PersonRole role) {
+	public void setRole(final PersonRole role) {
 		this.role = role;
 	}
 
-	public void setSurname(String surname) {
+	public void setSurname(final String surname) {
 		this.surname = surname;
 	}
 
-	public void setUrlDocs(List<String> urlDocs) {
+	public void setUrlDocs(final List<String> urlDocs) {
 		this.urlDocs = urlDocs;
 	}
 

@@ -30,8 +30,8 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 @Service
 public class SkillBusinessController {
 
-	private UserRoleLists roles = UserRoleLists.getInstance();
-	
+	private final UserRoleLists roles = UserRoleLists.getInstance();
+
 	@Autowired
 	private SkillEntityController skillEntityController;
 
@@ -44,10 +44,8 @@ public class SkillBusinessController {
 	 *         database and {@link CreatedException} if the skill is created
 	 * @author Thomas Decamp
 	 */
-	public HttpException createSkill(JsonNode jSkill, UserRole role) {
-		return (roles.isAdmin(role))
-				? skillEntityController.createSkill(jSkill)
-				: new ForbiddenException();
+	public HttpException createSkill(final JsonNode jSkill, final UserRole role) {
+		return this.roles.isAdmin(role) ? this.skillEntityController.createSkill(jSkill) : new ForbiddenException();
 	}
 
 	/**
@@ -59,28 +57,25 @@ public class SkillBusinessController {
 	 *         {@link CreatedException} if the skill is deleted
 	 * @author Thomas Decamp
 	 */
-	public HttpException deleteSkill(JsonNode jSkill, UserRole role) {
-		return (roles.isAdmin(role))
-				? skillEntityController.deleteSkill(jSkill)
-				: new ForbiddenException();
+	public HttpException deleteSkill(final JsonNode jSkill, final UserRole role) {
+		return this.roles.isAdmin(role) ? this.skillEntityController.deleteSkill(jSkill) : new ForbiddenException();
 	}
 
-	
-	public Optional<Skill> getSkill(JsonNode jSkill, UserRole role) {
-		if (roles.isAdmin(role)) {
-			return skillEntityController.getSkill(jSkill.get("name").textValue());
+	public Optional<Skill> getSkill(final JsonNode jSkill, final UserRole role) {
+		if (this.roles.isAdmin(role)) {
+			return this.skillEntityController.getSkill(jSkill.get("name").textValue());
 		}
 		throw new ForbiddenException();
 	}
-	
+
 	/**
 	 * @param role the user role
 	 * @return the list of all skills
 	 * @author Thomas Decamp
 	 */
-	public List<Skill> getSkills(UserRole role) {
-		if (roles.isAdmin(role)) {
-			return skillEntityController.getSkills();
+	public List<Skill> getSkills(final UserRole role) {
+		if (this.roles.isAdmin(role)) {
+			return this.skillEntityController.getSkills();
 		}
 		throw new ForbiddenException();
 	}
@@ -95,10 +90,8 @@ public class SkillBusinessController {
 	 *         found and {@link CreatedException} if the skill is updated
 	 * @author Thomas Decamp
 	 */
-	public HttpException updateSkill(JsonNode jSkill, UserRole role) {
-		return (roles.isAdmin(role))
-				? skillEntityController.updateSkill(jSkill)
-				: new ForbiddenException();
+	public HttpException updateSkill(final JsonNode jSkill, final UserRole role) {
+		return this.roles.isAdmin(role) ? this.skillEntityController.updateSkill(jSkill) : new ForbiddenException();
 	}
 
 }

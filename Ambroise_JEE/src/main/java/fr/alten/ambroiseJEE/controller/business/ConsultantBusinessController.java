@@ -38,9 +38,9 @@ public class ConsultantBusinessController {
 	 * @author Lucas Royackkers
 	 * @throws ParseException
 	 */
-	public HttpException createConsultant(JsonNode jConsultant, UserRole role) throws ParseException {
+	public HttpException createConsultant(final JsonNode jConsultant, final UserRole role) throws ParseException {
 		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role) {
-			return personEntityController.createPerson(jConsultant, PersonRole.CONSULTANT);
+			return this.personEntityController.createPerson(jConsultant, PersonRole.CONSULTANT);
 		} else {
 			throw new ForbiddenException();
 		}
@@ -57,9 +57,9 @@ public class ConsultantBusinessController {
 	 *         rights to perform this action
 	 * @author Lucas Royackkers
 	 */
-	public HttpException deleteConsultant(JsonNode params, UserRole role) {
+	public HttpException deleteConsultant(final JsonNode params, final UserRole role) {
 		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role) {
-			return personEntityController.deletePerson(params, PersonRole.CONSULTANT);
+			return this.personEntityController.deletePerson(params, PersonRole.CONSULTANT);
 		}
 		throw new ForbiddenException();
 	}
@@ -73,10 +73,10 @@ public class ConsultantBusinessController {
 	 * @author Lucas Royackkers
 	 * @throws ForbiddenException (if the user hasn't the right to do so)
 	 */
-	public Optional<Person> getConsultant(String mail, UserRole role) {
+	public Optional<Person> getConsultant(final String mail, final UserRole role) {
 		if (UserRole.MANAGER == role || UserRole.MANAGER_ADMIN == role || UserRole.CDR_ADMIN == role
 				|| UserRole.CDR == role) {
-			return personEntityController.getPersonByMailAndType(mail, PersonRole.CONSULTANT);
+			return this.personEntityController.getPersonByMailAndType(mail, PersonRole.CONSULTANT);
 		}
 		throw new ForbiddenException();
 	}
@@ -86,9 +86,9 @@ public class ConsultantBusinessController {
 	 * @return the list of all consultants
 	 * @author Lucas Royackkers
 	 */
-	public List<Person> getConsultants(UserRole role) {
-		if ((UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role)) {
-			return personEntityController.getPersonsByRole(PersonRole.CONSULTANT);
+	public List<Person> getConsultants(final UserRole role) {
+		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role) {
+			return this.personEntityController.getPersonsByRole(PersonRole.CONSULTANT);
 		}
 		throw new ForbiddenException();
 	}
@@ -104,9 +104,9 @@ public class ConsultantBusinessController {
 	 * @author Lucas Royackkers
 	 * @throws ParseException
 	 */
-	public HttpException updateConsultant(JsonNode params, UserRole role) throws ParseException {
+	public HttpException updateConsultant(final JsonNode params, final UserRole role) throws ParseException {
 		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role) {
-			return personEntityController.updatePerson(params, PersonRole.CONSULTANT);
+			return this.personEntityController.updatePerson(params, PersonRole.CONSULTANT);
 		}
 		throw new ForbiddenException();
 	}

@@ -4,7 +4,6 @@
 package fr.alten.ambroiseJEE.controller.business.geographic;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +13,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import fr.alten.ambroiseJEE.model.beans.City;
 import fr.alten.ambroiseJEE.model.entityControllers.CityEntityController;
 import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.security.UserRoleLists;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
@@ -30,6 +30,8 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 @Service
 public class CityBusinessController {
 
+	private final UserRoleLists roles = UserRoleLists.getInstance();
+
 	@Autowired
 	private CityEntityController cityEntityController;
 
@@ -42,9 +44,8 @@ public class CityBusinessController {
 	 *         database and {@link CreatedException} if the city is created
 	 * @author Andy Chabalier
 	 */
-	public HttpException createCity(JsonNode jCity, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) ? cityEntityController.createCity(jCity)
-				: new ForbiddenException();
+	public HttpException createCity(final JsonNode jCity, final UserRole role) {
+		return isAdmin(role) ? this.cityEntityController.createCity(jCity) : new ForbiddenException();
 	}
 
 	/**
@@ -57,10 +58,8 @@ public class CityBusinessController {
 	 *         {@link OkException} if the city is deleted
 	 * @author Andy Chabalier
 	 */
-	public HttpException deleteCity(JsonNode params, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)
-				? cityEntityController.deleteCity(params.get("name").textValue())
-				: new ForbiddenException();
+	public HttpException deleteCity(final JsonNode params, final UserRole role) {
+		return isAdmin(role) ? this.cityEntityController.deleteCity(params) : new ForbiddenException();
 	}
 
 	/**
@@ -70,22 +69,26 @@ public class CityBusinessController {
 	 * @return the list of all cities
 	 * @author Andy Chabalier
 	 */
-	public List<City> getCities(UserRole role) {
-		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
-			return cityEntityController.getCities();
+	public List<City> getCities(final UserRole role) {
+		if (isAdmin(role)) {
+			return this.cityEntityController.getCities();
 		}
 		throw new ForbiddenException();
 	}
 
 	/**
-	 * Fetch a city
+	 * Fetch a city | Used by GeographicBusinessController
 	 *
 	 * @param name the city name to fetch
 	 * @return an optional with the requested city or empty if not found
 	 * @author Andy Chabalier
 	 */
-	public Optional<City> getCity(String name) {
-		return cityEntityController.getCity(name);
+	public City getCity(final String name) {
+		return this.cityEntityController.getCity(name);
+	}
+
+	public boolean isAdmin(final UserRole role) {
+		return this.roles.isAdmin(role);
 	}
 
 	/**
@@ -99,9 +102,8 @@ public class CityBusinessController {
 	 *         found and {@link OkException} if the city is updated
 	 * @author Andy Chabalier
 	 */
-	public HttpException updateCity(JsonNode jCity, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) ? cityEntityController.updateCity(jCity)
-				: new ForbiddenException();
+	public HttpException updateCity(final JsonNode jCity, final UserRole role) {
+		return isAdmin(role) ? this.cityEntityController.updateCity(jCity) : new ForbiddenException();
 	}
 
 }

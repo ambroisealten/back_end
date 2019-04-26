@@ -22,6 +22,7 @@ import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
@@ -39,73 +40,80 @@ public class JobRestController {
 	private final Gson gson;
 
 	public JobRestController() {
-		GsonBuilder builder = new GsonBuilder();
+		final GsonBuilder builder = new GsonBuilder();
 		this.gson = builder.create();
 	}
-	
+
 	/**
 	 * Create a Job
-	 * 
-	 * @param params the JsonNode containing all Job parameters (only its title, e.g title = "Ingénieur système")
-	 * @param role the current logged user's role
+	 *
+	 * @param params the JsonNode containing all Job parameters (only its title, e.g
+	 *               title = "Ingénieur système")
+	 * @param role   the current logged user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request, {@link ConflictException} if there is a conflict in the
-	 *         database, {@link UnprocessableEntityException} if there are not enough parameters to perform the action
-	 *         and {@link CreatedException} if the job is created
+	 *         database, {@link UnprocessableEntityException} if there are not
+	 *         enough parameters to perform the action and {@link CreatedException}
+	 *         if the job is created
 	 * @author Lucas Royackkers
 	 */
 	@PostMapping("/job")
 	@ResponseBody
-	public HttpException createJob(@RequestBody JsonNode params, @RequestAttribute("role") UserRole role) {
-		return (params.get("title") != null) ? 
-				jobBusinessController.createJob(params, role) : new UnprocessableEntityException();
+	public HttpException createJob(@RequestBody final JsonNode params, @RequestAttribute("role") final UserRole role) {
+		return params.get("title") != null ? this.jobBusinessController.createJob(params, role)
+				: new UnprocessableEntityException();
 	}
 
 	/**
 	 * Delete a Job
-	 * 
+	 *
 	 * @param params the JsonNode containing all Job parameters (only its title)
-	 * @param role the current logged user's role
+	 * @param role   the current logged user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request, {@link ConflictException} if there is a conflict in the
-	 *         database, {@link UnprocessableEntityException} if there are not enough parameters to perform the action
-	 *         and {@link OkException} if the job is deleted
+	 *         database, {@link UnprocessableEntityException} if there are not
+	 *         enough parameters to perform the action and {@link OkException} if
+	 *         the job is deleted
 	 * @author Lucas Royackkers
 	 */
 	@DeleteMapping("/job")
 	@ResponseBody
-	public HttpException deleteJob(@RequestBody JsonNode params, @RequestAttribute("role") UserRole role) {
-		return (params.get("title") != null) ? 
-				jobBusinessController.deleteJob(params, role) : new UnprocessableEntityException();
+	public HttpException deleteJob(@RequestBody final JsonNode params, @RequestAttribute("role") final UserRole role) {
+		return params.get("title") != null ? this.jobBusinessController.deleteJob(params, role)
+				: new UnprocessableEntityException();
 	}
 
 	/**
-	 * Get all Jobs 
+	 * Get all Jobs
+	 * 
 	 * @param role the current logged user's role
-	 * @return a String representing a JsonNode with all jobs contained in the database (can be empty)
+	 * @return a String representing a JsonNode with all jobs contained in the
+	 *         database (can be empty)
 	 * @author Lucas Royackkers
 	 */
 	@GetMapping("/jobs")
 	@ResponseBody
-	public String getJobs(@RequestAttribute("role") UserRole role) {
-		return gson.toJson(jobBusinessController.getJobs(role));
+	public String getJobs(@RequestAttribute("role") final UserRole role) {
+		return this.gson.toJson(this.jobBusinessController.getJobs(role));
 	}
 
 	/**
 	 * Update a Job
-	 * 
+	 *
 	 * @param params the JsonNode containing all Job parameters (title and oldTitle)
-	 * @param role the current logged user's role
+	 * @param role   the current logged user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request, {@link ConflictException} if there is a conflict in the
-	 *         database, {@link UnprocessableEntityException} if there are not enough parameters to perform the action
-	 *         and {@link OkException} if the job is updated
+	 *         database, {@link UnprocessableEntityException} if there are not
+	 *         enough parameters to perform the action and {@link OkException} if
+	 *         the job is updated
 	 * @author Lucas Royackkers
 	 */
 	@PutMapping("/job")
 	@ResponseBody
-	public HttpException updateJob(@RequestBody JsonNode params, @RequestAttribute("role") UserRole role) {
-		return (params.get("title") != null && params.get("oldTitle") != null) ?
-				jobBusinessController.updateJob(params, role) : new UnprocessableEntityException();
+	public HttpException updateJob(@RequestBody final JsonNode params, @RequestAttribute("role") final UserRole role) {
+		return params.get("title") != null && params.get("oldTitle") != null
+				? this.jobBusinessController.updateJob(params, role)
+				: new UnprocessableEntityException();
 	}
 }

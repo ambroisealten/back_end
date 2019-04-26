@@ -39,14 +39,14 @@ public class PostalCodeEntityController {
 	 *         database and {@link CreatedException} if the postalCode is created
 	 * @author Andy Chabalier
 	 */
-	public HttpException createPostalCode(JsonNode jPostalCode) {
+	public HttpException createPostalCode(final JsonNode jPostalCode) {
 
-		PostalCode newPostalCode = new PostalCode();
+		final PostalCode newPostalCode = new PostalCode();
 		newPostalCode.setName(jPostalCode.get("name").textValue());
 
 		try {
-			postalCodeRepository.save(newPostalCode);
-		} catch (Exception e) {
+			this.postalCodeRepository.save(newPostalCode);
+		} catch (final Exception e) {
 			return new ConflictException();
 		}
 		return new CreatedException();
@@ -60,21 +60,21 @@ public class PostalCodeEntityController {
 	 *         {@link OkException} if the postalCode is deactivated
 	 * @author Andy Chabalier
 	 */
-	public HttpException deletePostalCode(String name) {
-		Optional<PostalCode> postalCodeOptionnal = postalCodeRepository.findByName(name);
+	public HttpException deletePostalCode(final String name) {
+		final Optional<PostalCode> postalCodeOptionnal = this.postalCodeRepository.findByName(name);
 
 		if (postalCodeOptionnal.isPresent()) {
-			PostalCode postalCode = postalCodeOptionnal.get();
+			final PostalCode postalCode = postalCodeOptionnal.get();
 			postalCode.setName("deactivated" + System.currentTimeMillis());
-			postalCodeRepository.save(postalCode);
+			this.postalCodeRepository.save(postalCode);
 		} else {
 			throw new ResourceNotFoundException();
 		}
 		return new OkException();
 	}
 
-	public Optional<PostalCode> getPostalCode(String name) {
-		return postalCodeRepository.findByName(name);
+	public PostalCode getPostalCode(final String name) {
+		return this.postalCodeRepository.findByName(name).orElseThrow(ResourceNotFoundException::new);
 	}
 
 	/**
@@ -82,7 +82,7 @@ public class PostalCodeEntityController {
 	 * @author Andy Chabalier
 	 */
 	public List<PostalCode> getPostalCodes() {
-		return postalCodeRepository.findAll();
+		return this.postalCodeRepository.findAll();
 	}
 
 	/**
@@ -94,15 +94,15 @@ public class PostalCodeEntityController {
 	 *         found and {@link CreatedException} if the postalCode is updated
 	 * @author Andy Chabalier
 	 */
-	public HttpException updatePostalCode(JsonNode jPostalCode) {
-		Optional<PostalCode> postalCodeOptionnal = postalCodeRepository
+	public HttpException updatePostalCode(final JsonNode jPostalCode) {
+		final Optional<PostalCode> postalCodeOptionnal = this.postalCodeRepository
 				.findByName(jPostalCode.get("oldName").textValue());
 
 		if (postalCodeOptionnal.isPresent()) {
-			PostalCode postalCode = postalCodeOptionnal.get();
+			final PostalCode postalCode = postalCodeOptionnal.get();
 			postalCode.setName(jPostalCode.get("name").textValue());
 
-			postalCodeRepository.save(postalCode);
+			this.postalCodeRepository.save(postalCode);
 		} else {
 			throw new ResourceNotFoundException();
 		}

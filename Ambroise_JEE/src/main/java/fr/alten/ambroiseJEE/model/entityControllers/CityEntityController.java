@@ -4,12 +4,12 @@
 package fr.alten.ambroiseJEE.model.entityControllers;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.mongodb.DuplicateKeyException;
 
 import fr.alten.ambroiseJEE.model.beans.City;
 import fr.alten.ambroiseJEE.model.dao.CityRepository;
@@ -39,19 +39,21 @@ public class CityEntityController {
 	 *         database and {@link CreatedException} if the city is created
 	 * @author Andy Chabalier
 	 */
-	public HttpException createCity(JsonNode jCity) {
+	public HttpException createCity(final JsonNode jCity) {
 
-		City newCity = new City();
-		newCity.setName(jCity.get("nom").textValue());
+		final City newCity = new City();
+		newCity.setNom(jCity.get("nom").textValue());
 		newCity.setCode(jCity.get("code").textValue());
 		newCity.setCodeDepartement(jCity.get("codeDepartement").textValue());
 		newCity.setCodeRegion(jCity.get("codeRegion").textValue());
 		newCity.setCodePostaux(jCity.get("codesPostaux").textValue());
 
 		try {
-			cityRepository.save(newCity);
-		} catch (Exception e) {
+			this.cityRepository.save(newCity);
+		} catch (final DuplicateKeyException dke) {
 			return new ConflictException();
+		} catch (final Exception e) {
+
 		}
 		return new CreatedException();
 	}
@@ -64,17 +66,23 @@ public class CityEntityController {
 	 *         {@link OkException} if the city is deactivated
 	 * @author Andy Chabalier
 	 */
-	public HttpException deleteCity(String name) {
-		Optional<City> cityOptionnal = cityRepository.findByName(name);
+	public HttpException deleteCity(final JsonNode jCity) {
+		return this.cityRepository.findByNom(jCity.get("name").textValue())
+				// optional is present
+				.map(city -> {
+					city.setNom("deactivated" + System.currentTimeMillis());
+					try {
+						this.cityRepository.save(city);
+					} catch (final DuplicateKeyException dke) {
+						return new ConflictException();
+					} catch (final Exception e) {
+						e.printStackTrace();
+					}
+					return new OkException();
 
-		if (cityOptionnal.isPresent()) {
-			City city = cityOptionnal.get();
-			city.setName("deactivated" + System.currentTimeMillis());
-			cityRepository.save(city);
-		} else {
-			throw new ResourceNotFoundException();
-		}
-		return new OkException();
+					// optional isn't present
+				}).orElse(new ResourceNotFoundException());
+
 	}
 
 	/**
@@ -82,11 +90,11 @@ public class CityEntityController {
 	 * @author Andy Chabalier
 	 */
 	public List<City> getCities() {
-		return cityRepository.findAll();
+		return this.cityRepository.findAll();
 	}
 
-	public Optional<City> getCity(String name) {
-		return cityRepository.findByName(name);
+	public City getCity(final String name) {
+		return this.cityRepository.findByNom(name).orElseThrow(ResourceNotFoundException::new);
 	}
 
 	/**
@@ -98,18 +106,22 @@ public class CityEntityController {
 	 *         found and {@link CreatedException} if the city is updated
 	 * @author Andy Chabalier
 	 */
-	public HttpException updateCity(JsonNode jCity) {
-		Optional<City> cityOptionnal = cityRepository.findByName(jCity.get("oldName").textValue());
+	public HttpException updateCity(final JsonNode jCity) {
+		return this.cityRepository.findByNom(jCity.get("oldName").textValue())
+				// optional is present
+				.map(city -> {
+					city.setNom(jCity.get("nom").textValue());
+					try {
+						this.cityRepository.save(city);
+					} catch (final DuplicateKeyException dke) {
+						return new ConflictException();
+					} catch (final Exception e) {
+						e.printStackTrace();
+					}
+					return new OkException();
 
-		if (cityOptionnal.isPresent()) {
-			City city = cityOptionnal.get();
-			city.setName(jCity.get("nom").textValue());
-
-			cityRepository.save(city);
-		} else {
-			throw new ResourceNotFoundException();
-		}
-		return new OkException();
+					// optional isn't present
+				}).orElse(new ResourceNotFoundException());
 	}
 
 }

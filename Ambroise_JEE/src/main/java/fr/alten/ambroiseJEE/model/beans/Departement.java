@@ -28,31 +28,31 @@ public class Departement extends Geographic implements Serializable {
 	}
 
 	public String getCode() {
-		return code;
+		return this.code;
 	}
 
 	public String getCodeRegion() {
-		return codeRegion;
+		return this.codeRegion;
 	}
 
 	@Override
 	public String getIdentifier() {
-		return this.getCode();
+		return getCode();
 	}
 
 	public String getName() {
-		return name;
+		return this.name;
 	}
 
-	public void setCode(String code) {
+	public void setCode(final String code) {
 		this.code = code;
 	}
 
-	public void setCodeRegion(String codeRegion) {
+	public void setCodeRegion(final String codeRegion) {
 		this.codeRegion = codeRegion;
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 }

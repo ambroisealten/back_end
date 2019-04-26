@@ -31,8 +31,9 @@ public class ConfigRestController {
 	}
 
 	/**
-	 * Rest controller to fetch all menu items for the header menu. HTTP Method : GET
-	 * 
+	 * Rest controller to fetch all menu items for the header menu. HTTP Method :
+	 * GET
+	 *
 	 * @param role the user role
 	 * @return json reponse containing all menus and submenus items
 	 * @author Camille Schnell
@@ -41,9 +42,9 @@ public class ConfigRestController {
 	 */
 	@GetMapping(value = "/configMenu")
 	@ResponseBody
-	public String getMenuItems(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role)
-			throws FileNotFoundException {
-		return configMenuBusinessController.getMenuItems(role);
+	public String getMenuItems(@RequestAttribute("mail") final String mail,
+			@RequestAttribute("role") final UserRole role) throws FileNotFoundException {
+		return this.configMenuBusinessController.getMenuItems(role);
 	}
 
 	/**
@@ -55,9 +56,10 @@ public class ConfigRestController {
 	 */
 	@GetMapping(value = "/configRouting/{angularModule}")
 	@ResponseBody
-	public String getRoutes(@PathVariable("angularModule") AngularModule module, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) throws FileNotFoundException {
-		return configMenuBusinessController.getRoutes(role, module);
+	public String getRoutes(@PathVariable("angularModule") final AngularModule module,
+			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role)
+			throws FileNotFoundException {
+		return this.configMenuBusinessController.getRoutes(role, module);
 	}
 
 }

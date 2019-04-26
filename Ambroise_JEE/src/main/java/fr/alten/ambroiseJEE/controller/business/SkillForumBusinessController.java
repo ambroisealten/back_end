@@ -30,8 +30,8 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 @Service
 public class SkillForumBusinessController {
 
-	private UserRoleLists roles = UserRoleLists.getInstance();
-	
+	private final UserRoleLists roles = UserRoleLists.getInstance();
+
 	@Autowired
 	private SkillForumEntityController skillForumEntityController;
 
@@ -44,9 +44,8 @@ public class SkillForumBusinessController {
 	 *         database and {@link CreatedException} if the skill is created
 	 * @author Thomas Decamp
 	 */
-	public HttpException createSkillForum(JsonNode jSkillForum, UserRole role) {
-		return (roles.isAdmin(role))
-				? skillForumEntityController.createSkillForum(jSkillForum)
+	public HttpException createSkillForum(final JsonNode jSkillForum, final UserRole role) {
+		return this.roles.isAdmin(role) ? this.skillForumEntityController.createSkillForum(jSkillForum)
 				: new ForbiddenException();
 	}
 
@@ -59,16 +58,14 @@ public class SkillForumBusinessController {
 	 *         {@link CreatedException} if the skill is deleted
 	 * @author Thomas Decamp
 	 */
-	public HttpException deleteSkillForum(JsonNode params, UserRole role) {
-		return (roles.isAdmin(role))
-				? skillForumEntityController.deleteSkillForum(params)
+	public HttpException deleteSkillForum(final JsonNode params, final UserRole role) {
+		return this.roles.isAdmin(role) ? this.skillForumEntityController.deleteSkillForum(params)
 				: new ForbiddenException();
 	}
 
-	
-	public Optional<SkillForum> getSkillForum(JsonNode params, UserRole role) {
-		if (roles.isAdmin(role)) {
-			return skillForumEntityController.getSkillForum(params);
+	public Optional<SkillForum> getSkillForum(final JsonNode params, final UserRole role) {
+		if (this.roles.isAdmin(role)) {
+			return this.skillForumEntityController.getSkillForum(params);
 		}
 		throw new ForbiddenException();
 	}
@@ -78,9 +75,9 @@ public class SkillForumBusinessController {
 	 * @return the list of all skills
 	 * @author Thomas Decamp
 	 */
-	public List<SkillForum> getSkillsForum(UserRole role) {
-		if (roles.isAdmin(role)) {
-			return skillForumEntityController.getSkillsForum();
+	public List<SkillForum> getSkillsForum(final UserRole role) {
+		if (this.roles.isAdmin(role)) {
+			return this.skillForumEntityController.getSkillsForum();
 		}
 		throw new ForbiddenException();
 	}
@@ -95,9 +92,8 @@ public class SkillForumBusinessController {
 	 *         found and {@link CreatedException} if the skill is updated
 	 * @author Thomas Decamp
 	 */
-	public HttpException updateSkillForum(JsonNode jSkillForum, UserRole role) {
-		return (roles.isAdmin(role))
-				? skillForumEntityController.updateSkillForum(jSkillForum)
+	public HttpException updateSkillForum(final JsonNode jSkillForum, final UserRole role) {
+		return this.roles.isAdmin(role) ? this.skillForumEntityController.updateSkillForum(jSkillForum)
 				: new ForbiddenException();
 	}
 }

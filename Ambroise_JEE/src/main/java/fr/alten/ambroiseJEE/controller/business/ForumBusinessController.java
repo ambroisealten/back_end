@@ -41,9 +41,9 @@ public class ForumBusinessController {
 	 *         database and {@link CreatedException} if the forum is created
 	 * @author MAQUINGHEN MAXIME
 	 */
-	public HttpException createForum(JsonNode jForum, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.CDR == role
-				|| UserRole.MANAGER == role) ? forumEntityController.createForum(jForum) : new ForbiddenException();
+	public HttpException createForum(final JsonNode jForum, final UserRole role) {
+		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.CDR == role
+				|| UserRole.MANAGER == role ? this.forumEntityController.createForum(jForum) : new ForbiddenException();
 	}
 
 	/**
@@ -56,9 +56,9 @@ public class ForumBusinessController {
 	 *         {@link CreatedException} if the forum is deactivated
 	 * @author MAQUINGHEN MAXIME
 	 */
-	public HttpException deleteForum(JsonNode params, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.CDR == role
-				|| UserRole.MANAGER == role) ? forumEntityController.deleteForum(params) : new ForbiddenException();
+	public HttpException deleteForum(final JsonNode params, final UserRole role) {
+		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.CDR == role
+				|| UserRole.MANAGER == role ? this.forumEntityController.deleteForum(params) : new ForbiddenException();
 	}
 
 	/**
@@ -72,10 +72,10 @@ public class ForumBusinessController {
 	 *         problem
 	 * @author MAQUINGHEN MAXIME
 	 */
-	public Optional<Forum> getForum(String name, String date, String place, UserRole role) {
+	public Optional<Forum> getForum(final String name, final String date, final String place, final UserRole role) {
 		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.CDR == role
 				|| UserRole.MANAGER == role) {
-			return forumEntityController.getForum(name, date, place);
+			return this.forumEntityController.getForum(name, date, place);
 		}
 		throw new ForbiddenException();
 
@@ -88,10 +88,10 @@ public class ForumBusinessController {
 	 * @return the list of all Forums
 	 * @author MAQUINGHEN MAXIME
 	 */
-	public List<Forum> getForums(UserRole role) {
+	public List<Forum> getForums(final UserRole role) {
 		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.CDR == role
 				|| UserRole.MANAGER == role) {
-			return forumEntityController.getForums();
+			return this.forumEntityController.getForums();
 		}
 		throw new ForbiddenException();
 	}
@@ -105,9 +105,9 @@ public class ForumBusinessController {
 	 *         found and {@link CreatedException} if the forum is updated
 	 * @author MAQUINGHEN MAXIME
 	 */
-	public HttpException updateForum(JsonNode params, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)
-				? forumEntityController.updateForum(params)
+	public HttpException updateForum(final JsonNode params, final UserRole role) {
+		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role
+				? this.forumEntityController.updateForum(params)
 				: new ForbiddenException();
 	}
 

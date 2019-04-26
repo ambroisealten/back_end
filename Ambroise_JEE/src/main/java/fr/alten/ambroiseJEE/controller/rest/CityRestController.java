@@ -19,6 +19,7 @@ import com.google.gson.GsonBuilder;
 
 import fr.alten.ambroiseJEE.controller.business.geographic.CityBusinessController;
 import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.utils.JsonUtils;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
@@ -43,6 +44,10 @@ public class CityRestController {
 		this.gson = builder.create();
 	}
 
+	public boolean checkJsonIntegrity(final JsonNode params, final String... fields) {
+		return JsonUtils.checkJsonIntegrity(params, fields);
+	}
+
 	/**
 	 * Rest controller to create a city. HTTP Method : POST
 	 *
@@ -59,7 +64,7 @@ public class CityRestController {
 	@ResponseBody
 	public HttpException createCity(@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
 			@RequestAttribute("role") final UserRole role) {
-		return params.get("name") != null ? this.cityBusinessController.createCity(params, role)
+		return checkJsonIntegrity(params, "nom", "code") ? this.cityBusinessController.createCity(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -79,7 +84,7 @@ public class CityRestController {
 	@ResponseBody
 	public HttpException deleteCity(@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
 			@RequestAttribute("role") final UserRole role) {
-		return params.get("name") != null ? this.cityBusinessController.deleteCity(params, role)
+		return checkJsonIntegrity(params, "nom") ? this.cityBusinessController.deleteCity(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -114,7 +119,7 @@ public class CityRestController {
 	@ResponseBody
 	public HttpException updateCity(@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
 			@RequestAttribute("role") final UserRole role) {
-		return params.get("name") != null ? this.cityBusinessController.updateCity(params, role)
+		return checkJsonIntegrity(params, "nom", "oldname") ? this.cityBusinessController.updateCity(params, role)
 				: new UnprocessableEntityException();
 	}
 }

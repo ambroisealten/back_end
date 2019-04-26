@@ -18,6 +18,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 
 /**
  * Entity controller for the Employer
+ * 
  * @author Lucas Royackkers
  *
  */
@@ -36,13 +37,13 @@ public class EmployerEntityController {
 	 *         database and {@link CreatedException} if the employer is created
 	 * @author Lucas Royackkers
 	 */
-	public HttpException createEmployer(JsonNode jEmployer) {
-		Employer newEmployer = new Employer();
+	public HttpException createEmployer(final JsonNode jEmployer) {
+		final Employer newEmployer = new Employer();
 		newEmployer.setName(jEmployer.get("name").textValue());
 
 		try {
-			employerRepository.save(newEmployer);
-		} catch (Exception e) {
+			this.employerRepository.save(newEmployer);
+		} catch (final Exception e) {
 			return new ConflictException();
 		}
 		return new CreatedException();
@@ -57,14 +58,15 @@ public class EmployerEntityController {
 	 *         {@link OkException} if the employer is deactivated
 	 * @author Lucas Royackkers
 	 */
-	public HttpException deleteEmployer(JsonNode jEmployer) {
-		Optional<Employer> employerOptionnal = employerRepository.findByName(jEmployer.get("name").textValue());
+	public HttpException deleteEmployer(final JsonNode jEmployer) {
+		final Optional<Employer> employerOptionnal = this.employerRepository
+				.findByName(jEmployer.get("name").textValue());
 
 		if (employerOptionnal.isPresent()) {
-			Employer employer = employerOptionnal.get();
+			final Employer employer = employerOptionnal.get();
 			employer.setName("deactivated" + System.currentTimeMillis());
 
-			employerRepository.save(employer);
+			this.employerRepository.save(employer);
 		} else {
 			throw new ResourceNotFoundException();
 		}
@@ -73,21 +75,23 @@ public class EmployerEntityController {
 
 	/**
 	 * Get an Employer by its name
+	 * 
 	 * @param name the employer's name
 	 * @return an Optional with the matched employer (can be empty)
 	 * @author Lucas Royackkers
 	 */
-	public Optional<Employer> getEmployer(String name) {
-		return employerRepository.findByName(name);
+	public Optional<Employer> getEmployer(final String name) {
+		return this.employerRepository.findByName(name);
 	}
 
 	/**
 	 * Get all Employers in the database
+	 * 
 	 * @return a List containing all Employers in the database (can be empty)
 	 * @author Lucas Royackkers
 	 */
 	public List<Employer> getEmployers() {
-		return employerRepository.findAll();
+		return this.employerRepository.findAll();
 	}
 
 	/**
@@ -101,16 +105,17 @@ public class EmployerEntityController {
 	 *         database and {@link OkException} if the employer is updated
 	 * @author Lucas Royackkers
 	 */
-	public HttpException updateEmployer(JsonNode jEmployer) {
-		Optional<Employer> employerOptionnal = employerRepository.findByName(jEmployer.get("oldName").textValue());
+	public HttpException updateEmployer(final JsonNode jEmployer) {
+		final Optional<Employer> employerOptionnal = this.employerRepository
+				.findByName(jEmployer.get("oldName").textValue());
 
 		if (employerOptionnal.isPresent()) {
-			Employer employer = employerOptionnal.get();
+			final Employer employer = employerOptionnal.get();
 			employer.setName(jEmployer.get("name").textValue());
 
 			try {
-				employerRepository.save(employer);
-			} catch (Exception e) {
+				this.employerRepository.save(employer);
+			} catch (final Exception e) {
 				return new ConflictException();
 			}
 		} else {

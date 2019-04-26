@@ -4,7 +4,6 @@
 package fr.alten.ambroiseJEE.controller.business.geographic;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,9 +41,9 @@ public class PostalCodeBusinessController {
 	 *         database and {@link CreatedException} if the postalCode is created
 	 * @author Andy Chabalier
 	 */
-	public HttpException createPostalCode(JsonNode jPostalCode, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)
-				? postalCodeEntityController.createPostalCode(jPostalCode)
+	public HttpException createPostalCode(final JsonNode jPostalCode, final UserRole role) {
+		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role
+				? this.postalCodeEntityController.createPostalCode(jPostalCode)
 				: new ForbiddenException();
 	}
 
@@ -58,9 +57,9 @@ public class PostalCodeBusinessController {
 	 *         {@link OkException} if the postalCode is deleted
 	 * @author Andy Chabalier
 	 */
-	public HttpException deletePostalCode(JsonNode params, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)
-				? postalCodeEntityController.deletePostalCode(params.get("name").textValue())
+	public HttpException deletePostalCode(final JsonNode params, final UserRole role) {
+		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role
+				? this.postalCodeEntityController.deletePostalCode(params.get("name").textValue())
 				: new ForbiddenException();
 	}
 
@@ -71,8 +70,8 @@ public class PostalCodeBusinessController {
 	 * @return an optional with the requested postal code or empty if not found
 	 * @author Andy Chabalier
 	 */
-	public Optional<PostalCode> getPostalCode(String name) {
-		return postalCodeEntityController.getPostalCode(name);
+	public PostalCode getPostalCode(final String name) {
+		return this.postalCodeEntityController.getPostalCode(name);
 	}
 
 	/**
@@ -82,9 +81,9 @@ public class PostalCodeBusinessController {
 	 * @return the list of allppostalCodes
 	 * @author Andy Chabalier
 	 */
-	public List<PostalCode> getPostalCodes(UserRole role) {
+	public List<PostalCode> getPostalCodes(final UserRole role) {
 		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
-			return postalCodeEntityController.getPostalCodes();
+			return this.postalCodeEntityController.getPostalCodes();
 		}
 		throw new ForbiddenException();
 	}
@@ -100,9 +99,9 @@ public class PostalCodeBusinessController {
 	 *         found and {@link OkException} if the postalCode is updated
 	 * @author Andy Chabalier
 	 */
-	public HttpException updatePostalCode(JsonNode jPostalCode, UserRole role) {
-		return (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)
-				? postalCodeEntityController.updatePostalCode(jPostalCode)
+	public HttpException updatePostalCode(final JsonNode jPostalCode, final UserRole role) {
+		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role
+				? this.postalCodeEntityController.updatePostalCode(jPostalCode)
 				: new ForbiddenException();
 	}
 

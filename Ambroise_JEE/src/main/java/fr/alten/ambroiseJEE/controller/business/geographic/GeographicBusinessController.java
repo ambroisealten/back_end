@@ -170,16 +170,16 @@ public class GeographicBusinessController {
 		try {
 			switch (placeType.toLowerCase()) {
 			case "city":
-				place = this.cityBusinessController.getCity(placeName).get();
+				place = this.cityBusinessController.getCity(placeName);
 				break;
 			case "region":
-				place = this.regionBusinessController.getRegion(placeName).get();
+				place = this.regionBusinessController.getRegion(placeName);
 				break;
 			case "departement":
-				place = this.departementBusinessController.getDepartement(placeName).get();
+				place = this.departementBusinessController.getDepartement(placeName);
 				break;
 			case "postalCode":
-				place = this.postalCodeBusinessController.getPostalCode(placeName).get();
+				place = this.postalCodeBusinessController.getPostalCode(placeName);
 				break;
 			default:
 				throw new ResourceNotFoundException();

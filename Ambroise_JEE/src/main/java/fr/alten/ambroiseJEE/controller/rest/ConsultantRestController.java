@@ -1,7 +1,5 @@
 package fr.alten.ambroiseJEE.controller.rest;
 
-import static fr.alten.ambroiseJEE.utils.JsonUtils.checkJsonIntegrity;
-
 import java.text.ParseException;
 import java.util.Optional;
 
@@ -23,6 +21,7 @@ import com.google.gson.GsonBuilder;
 import fr.alten.ambroiseJEE.controller.business.ConsultantBusinessController;
 import fr.alten.ambroiseJEE.model.beans.Person;
 import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.utils.JsonUtils;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
@@ -44,7 +43,7 @@ public class ConsultantRestController {
 	private final Gson gson;
 
 	public ConsultantRestController() {
-		GsonBuilder builder = new GsonBuilder();
+		final GsonBuilder builder = new GsonBuilder();
 		this.gson = builder.create();
 	}
 
@@ -61,9 +60,12 @@ public class ConsultantRestController {
 	 */
 	@PostMapping(value = "/consultant")
 	@ResponseBody
-	public HttpException createConsultant(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) throws Exception {
-		return (checkJsonIntegrity(params,"mail")) ? consultantBusinessController.createConsultant(params, role) : new UnprocessableEntityException();
+	public HttpException createConsultant(@RequestBody final JsonNode params,
+			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role)
+			throws Exception {
+		return JsonUtils.checkJsonIntegrity(params, "mail")
+				? this.consultantBusinessController.createConsultant(params, role)
+				: new UnprocessableEntityException();
 	}
 
 	/**
@@ -78,9 +80,11 @@ public class ConsultantRestController {
 	 */
 	@DeleteMapping(value = "/consultant")
 	@ResponseBody
-	public HttpException deleteConsultant(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) {
-		return (checkJsonIntegrity(params,"mail")) ? consultantBusinessController.deleteConsultant(params, role) : new UnprocessableEntityException();
+	public HttpException deleteConsultant(@RequestBody final JsonNode params,
+			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
+		return JsonUtils.checkJsonIntegrity(params, "mail")
+				? this.consultantBusinessController.deleteConsultant(params, role)
+				: new UnprocessableEntityException();
 	}
 
 	/**
@@ -92,11 +96,11 @@ public class ConsultantRestController {
 	 */
 	@GetMapping(value = "/consultant/{mail}")
 	@ResponseBody
-	public String getConsultant(@PathVariable("mail") String consultantMail, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) {
-		Optional<Person> personOptional = consultantBusinessController.getConsultant(consultantMail, role);
+	public String getConsultant(@PathVariable("mail") final String consultantMail,
+			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
+		final Optional<Person> personOptional = this.consultantBusinessController.getConsultant(consultantMail, role);
 		if (personOptional.isPresent()) {
-			return gson.toJson(personOptional.get());
+			return this.gson.toJson(personOptional.get());
 		}
 		throw new ResourceNotFoundException();
 	}
@@ -110,8 +114,9 @@ public class ConsultantRestController {
 	 */
 	@GetMapping(value = "/consultants")
 	@ResponseBody
-	public String getConsultants(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
-		return gson.toJson(consultantBusinessController.getConsultants(role));
+	public String getConsultants(@RequestAttribute("mail") final String mail,
+			@RequestAttribute("role") final UserRole role) {
+		return this.gson.toJson(this.consultantBusinessController.getConsultants(role));
 	}
 
 	/**
@@ -127,9 +132,12 @@ public class ConsultantRestController {
 	 */
 	@PutMapping(value = "/consultant")
 	@ResponseBody
-	public HttpException updateConsultant(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) throws ParseException {
-		return (checkJsonIntegrity(params,"mail","oldMail")) ?  consultantBusinessController.updateConsultant(params, role) : new UnprocessableEntityException();
+	public HttpException updateConsultant(@RequestBody final JsonNode params,
+			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role)
+			throws ParseException {
+		return JsonUtils.checkJsonIntegrity(params, "mail", "oldMail")
+				? this.consultantBusinessController.updateConsultant(params, role)
+				: new UnprocessableEntityException();
 	}
 
 }

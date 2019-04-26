@@ -32,31 +32,32 @@ public class ParseRoutingFile {
 	 * @throws FileNotFoundException
 	 * @author Kylian Gehier
 	 */
-	public static String getJsonRoutingItemsByRole(UserRole role, AngularModule module) throws FileNotFoundException {
+	public static String getJsonRoutingItemsByRole(final UserRole role, final AngularModule module)
+			throws FileNotFoundException {
 		BufferedReader jsonFile = null;
 		try {
 			jsonFile = new BufferedReader(new InputStreamReader(
 					new FileInputStream(AngularModules.getInstance().getFileByAngularModule(module)), "ISO-8859-1"));
-		} catch (UnsupportedEncodingException e1) {
+		} catch (final UnsupportedEncodingException e1) {
 			e1.printStackTrace();
 		}
 
-		JsonElement configElement = new JsonParser().parse(jsonFile);
-		JsonObject configObject = configElement.getAsJsonObject();
+		final JsonElement configElement = new JsonParser().parse(jsonFile);
+		final JsonObject configObject = configElement.getAsJsonObject();
 
 		// gt Routingitems containing the list of couple (UserRole, Routes[])
-		JsonArray routingItems = configObject.get("routing").getAsJsonArray();
+		final JsonArray routingItems = configObject.get("routing").getAsJsonArray();
 
-		for (JsonElement routing : routingItems) {
+		for (final JsonElement routing : routingItems) {
 			// get the routes list of the current UserRole
 			if (UserRole.valueOf(((JsonObject) routing).get("role").getAsString()).equals(role)) {
-				JsonArray resultArray = (JsonArray) ((JsonObject) routing).get("routes");
+				final JsonArray resultArray = (JsonArray) ((JsonObject) routing).get("routes");
 
 				// create result Json
-				JsonObject resultjson = new JsonObject();
+				final JsonObject resultjson = new JsonObject();
 				resultjson.add("routes", resultArray);
 
-				return gson.toJson(resultjson);
+				return ParseRoutingFile.gson.toJson(resultjson);
 			}
 		}
 

@@ -39,16 +39,16 @@ public class DepartementEntityController {
 	 *         database and {@link CreatedException} if the departement is created
 	 * @author Andy Chabalier
 	 */
-	public HttpException createDepartement(JsonNode jDepartement) {
+	public HttpException createDepartement(final JsonNode jDepartement) {
 
-		Departement newDepartement = new Departement();
+		final Departement newDepartement = new Departement();
 		newDepartement.setName(jDepartement.get("nom").textValue());
 		newDepartement.setCode(jDepartement.get("code").textValue());
 		newDepartement.setCodeRegion(jDepartement.get("codeRegion").textValue());
 
 		try {
-			departementRepository.save(newDepartement);
-		} catch (Exception e) {
+			this.departementRepository.save(newDepartement);
+		} catch (final Exception e) {
 			return new ConflictException();
 		}
 		return new CreatedException();
@@ -62,21 +62,21 @@ public class DepartementEntityController {
 	 *         {@link OkException} if the departement is deactivated
 	 * @author Andy Chabalier
 	 */
-	public HttpException deleteDepartement(String name) {
-		Optional<Departement> departementOptionnal = departementRepository.findByName(name);
+	public HttpException deleteDepartement(final String name) {
+		final Optional<Departement> departementOptionnal = this.departementRepository.findByName(name);
 
 		if (departementOptionnal.isPresent()) {
-			Departement departement = departementOptionnal.get();
+			final Departement departement = departementOptionnal.get();
 			departement.setName("deactivated" + System.currentTimeMillis());
-			departementRepository.save(departement);
+			this.departementRepository.save(departement);
 		} else {
 			throw new ResourceNotFoundException();
 		}
 		return new OkException();
 	}
 
-	public Optional<Departement> getDepartement(String name) {
-		return departementRepository.findByName(name);
+	public Departement getDepartement(final String name) {
+		return this.departementRepository.findByName(name).orElseThrow(ResourceNotFoundException::new);
 	}
 
 	/**
@@ -84,7 +84,7 @@ public class DepartementEntityController {
 	 * @author Andy Chabalier
 	 */
 	public List<Departement> getDepartements() {
-		return departementRepository.findAll();
+		return this.departementRepository.findAll();
 	}
 
 	/**
@@ -96,15 +96,15 @@ public class DepartementEntityController {
 	 *         found and {@link CreatedException} if the departement is updated
 	 * @author Andy Chabalier
 	 */
-	public HttpException updateDepartement(JsonNode jDepartement) {
-		Optional<Departement> departementOtionnal = departementRepository
+	public HttpException updateDepartement(final JsonNode jDepartement) {
+		final Optional<Departement> departementOtionnal = this.departementRepository
 				.findByName(jDepartement.get("oldName").textValue());
 
 		if (departementOtionnal.isPresent()) {
-			Departement departement = departementOtionnal.get();
+			final Departement departement = departementOtionnal.get();
 			departement.setName(jDepartement.get("name").textValue());
 
-			departementRepository.save(departement);
+			this.departementRepository.save(departement);
 		} else {
 			throw new ResourceNotFoundException();
 		}

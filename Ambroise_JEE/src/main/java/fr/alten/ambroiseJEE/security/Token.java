@@ -13,15 +13,15 @@ public class Token {
 
 	private String token;
 
-	public Token(String token) {
+	public Token(final String token) {
 		this.token = token;
 	}
 
 	public String getToken() {
-		return token;
+		return this.token;
 	}
 
-	public void setToken(String token) {
+	public void setToken(final String token) {
 		this.token = token;
 	}
 }

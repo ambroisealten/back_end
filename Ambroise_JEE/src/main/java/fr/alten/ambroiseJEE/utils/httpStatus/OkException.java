@@ -20,9 +20,9 @@ public class OkException extends HttpException {
 
 	public OkException() {
 		super("OK");
-		StackTraceElement[] newStackTrace = { new StackTraceElement(this.getClass().getSimpleName(),
+		final StackTraceElement[] newStackTrace = { new StackTraceElement(this.getClass().getSimpleName(),
 				HttpStatus.OK.name(), "", HttpStatus.OK.value()) };
-		this.setStackTrace(newStackTrace);
+		setStackTrace(newStackTrace);
 	}
 
 	@Override

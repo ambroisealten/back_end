@@ -43,21 +43,22 @@ public class AgencyEntityController {
 	 *         database and {@link CreatedException} if the user is created
 	 * @author Andy Chabalier
 	 */
-	public HttpException createAgency(JsonNode jAgency) {
+	public HttpException createAgency(final JsonNode jAgency) {
 
-		Agency newAgency = new Agency();
+		final Agency newAgency = new Agency();
 		newAgency.setName(jAgency.get("name").textValue());
 
-		String placeType = jAgency.get("placeType").textValue();
-		Optional<Geographic> place = geographicBusinessController.getPlace(jAgency.get("place").textValue(), placeType);
+		final String placeType = jAgency.get("placeType").textValue();
+		final Optional<Geographic> place = this.geographicBusinessController.getPlace(jAgency.get("place").textValue(),
+				placeType);
 		if (place.isPresent()) {
 			newAgency.setPlace(place.get().getIdentifier());
 			newAgency.setPlaceType(placeType);
 		}
 
 		try {
-			agencyRepository.save(newAgency);
-		} catch (Exception e) {
+			this.agencyRepository.save(newAgency);
+		} catch (final Exception e) {
 			return new ConflictException();
 		}
 		return new CreatedException();
@@ -71,14 +72,14 @@ public class AgencyEntityController {
 	 *         {@link OkException} if the agency is deactivated
 	 * @author MAQUINGHEN MAXIME
 	 */
-	public HttpException deleteAgency(String name) {
-		Optional<Agency> agencyOptionnal = agencyRepository.findByName(name);
+	public HttpException deleteAgency(final String name) {
+		final Optional<Agency> agencyOptionnal = this.agencyRepository.findByName(name);
 
 		if (agencyOptionnal.isPresent()) {
-			Agency agency = agencyOptionnal.get();
+			final Agency agency = agencyOptionnal.get();
 			agency.setName("deactivated" + System.currentTimeMillis());
 			agency.setPlace(null);
-			agencyRepository.save(agency);
+			this.agencyRepository.save(agency);
 		} else {
 			throw new ResourceNotFoundException();
 		}
@@ -90,11 +91,11 @@ public class AgencyEntityController {
 	 * @author Andy Chabalier
 	 */
 	public List<Agency> getAgencies() {
-		return agencyRepository.findAll();
+		return this.agencyRepository.findAll();
 	}
 
-	public Optional<Agency> getAgency(String name) {
-		return agencyRepository.findByName(name);
+	public Optional<Agency> getAgency(final String name) {
+		return this.agencyRepository.findByName(name);
 	}
 
 	/**
@@ -106,20 +107,20 @@ public class AgencyEntityController {
 	 *         found and {@link CreatedException} if the agency is updated
 	 * @author Andy Chabalier
 	 */
-	public HttpException updateAgency(JsonNode jAgency) {
-		Optional<Agency> agencyOptionnal = agencyRepository.findByName(jAgency.get("oldName").textValue());
+	public HttpException updateAgency(final JsonNode jAgency) {
+		final Optional<Agency> agencyOptionnal = this.agencyRepository.findByName(jAgency.get("oldName").textValue());
 
 		if (agencyOptionnal.isPresent()) {
-			Agency agency = agencyOptionnal.get();
+			final Agency agency = agencyOptionnal.get();
 			agency.setName(jAgency.get("name").textValue());
-			String placeType = jAgency.get("placeType").textValue();
-			Optional<Geographic> place = geographicBusinessController.getPlace(jAgency.get("place").textValue(),
-					placeType);
+			final String placeType = jAgency.get("placeType").textValue();
+			final Optional<Geographic> place = this.geographicBusinessController
+					.getPlace(jAgency.get("place").textValue(), placeType);
 			if (place.isPresent()) {
 				agency.setPlace(place.get().getIdentifier());
 				agency.setPlaceType(placeType);
 			}
-			agencyRepository.save(agency);
+			this.agencyRepository.save(agency);
 		} else {
 			throw new ResourceNotFoundException();
 		}

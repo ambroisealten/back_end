@@ -40,13 +40,13 @@ public class ApplicantForumRestController {
 	private final Gson gson;
 
 	public ApplicantForumRestController() {
-		GsonBuilder builder = new GsonBuilder();
+		final GsonBuilder builder = new GsonBuilder();
 		this.gson = builder.create();
 	}
 
 	/**
 	 * Rest controller to create an forum applicant. HTTP Method : POST
-	 * 
+	 *
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the user's mail
 	 * @param role   the user's role
@@ -58,15 +58,15 @@ public class ApplicantForumRestController {
 	 */
 	@PostMapping(value = "/forum/applicant")
 	@ResponseBody
-	public HttpException createApplicant(@RequestBody JsonNode params, @RequestAttribute("role") UserRole role)
-			throws Exception {
-		return params.get("mail") != null ? applicantForumBusinessController.createApplicant(params, role)
+	public HttpException createApplicant(@RequestBody final JsonNode params,
+			@RequestAttribute("role") final UserRole role) throws Exception {
+		return params.get("mail") != null ? this.applicantForumBusinessController.createApplicant(params, role)
 				: new UnprocessableEntityException();
 	}
 
 	/**
 	 * Rest controller to delete an forum applicant. HTTP Method : DELETE
-	 * 
+	 *
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the user's mail
 	 * @param role   the user's role
@@ -77,15 +77,15 @@ public class ApplicantForumRestController {
 	 */
 	@DeleteMapping(value = "/forum/applicant")
 	@ResponseBody
-	public HttpException deleteApplicant(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) {
-		return params.get("mail") != null ? applicantForumBusinessController.deleteApplicant(params, role)
+	public HttpException deleteApplicant(@RequestBody final JsonNode params,
+			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
+		return params.get("mail") != null ? this.applicantForumBusinessController.deleteApplicant(params, role)
 				: new UnprocessableEntityException();
 	}
 
 	/**
 	 * Rest controller to fetch a specific applicant. HTTP Method : GET
-	 * 
+	 *
 	 * @param applicantMail the applicant's name
 	 * @param mail          the user's mail
 	 * @param role          the user's role
@@ -94,14 +94,14 @@ public class ApplicantForumRestController {
 	 */
 	@GetMapping(value = "/forum/applicant/{mail}")
 	@ResponseBody
-	public String getApplicant(@PathVariable("mail") String applicantMail, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) {
-		return gson.toJson(applicantForumBusinessController.getApplicant(applicantMail, role));
+	public String getApplicant(@PathVariable("mail") final String applicantMail,
+			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
+		return this.gson.toJson(this.applicantForumBusinessController.getApplicant(applicantMail, role));
 	}
 
 	/**
 	 * Rest controller to fetch all forum applicants. HTTP Method : GET
-	 * 
+	 *
 	 * @param mail the user's mail
 	 * @param role the user's role
 	 * @return the list of all applicants
@@ -109,13 +109,14 @@ public class ApplicantForumRestController {
 	 */
 	@GetMapping(value = "/forum/applicants")
 	@ResponseBody
-	public String getApplicants(@RequestAttribute("mail") String mail, @RequestAttribute("role") UserRole role) {
-		return gson.toJson(applicantForumBusinessController.getApplicants(role));
+	public String getApplicants(@RequestAttribute("mail") final String mail,
+			@RequestAttribute("role") final UserRole role) {
+		return this.gson.toJson(this.applicantForumBusinessController.getApplicants(role));
 	}
 
 	/**
 	 * Rest controller to update a forum applicant
-	 * 
+	 *
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the user's mail
 	 * @param role   the user's role
@@ -127,9 +128,10 @@ public class ApplicantForumRestController {
 	 */
 	@PutMapping(value = "/forum/applicant")
 	@ResponseBody
-	public HttpException updateApplicant(@RequestBody JsonNode params, @RequestAttribute("mail") String mail,
-			@RequestAttribute("role") UserRole role) throws ParseException {
-		return params.get("mail") != null ? applicantForumBusinessController.updateApplicant(params, role)
+	public HttpException updateApplicant(@RequestBody final JsonNode params,
+			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role)
+			throws ParseException {
+		return params.get("mail") != null ? this.applicantForumBusinessController.updateApplicant(params, role)
 				: new UnprocessableEntityException();
 	}
 }

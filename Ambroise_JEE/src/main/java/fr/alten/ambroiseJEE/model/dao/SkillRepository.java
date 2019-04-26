@@ -23,5 +23,5 @@ public interface SkillRepository extends MongoRepository<Skill, Long> {
 	 * @author Thomas Decamp
 	 */
 	public Optional<Skill> findByName(String name);
-	
+
 }

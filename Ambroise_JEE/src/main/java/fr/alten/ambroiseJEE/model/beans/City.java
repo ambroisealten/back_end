@@ -8,6 +8,8 @@ import java.io.Serializable;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.mongodb.lang.NonNull;
+
 /**
  *
  * @author Andy Chabalier
@@ -19,58 +21,60 @@ public class City extends Geographic implements Serializable {
 	private static final long serialVersionUID = 7473150851064346366L;
 
 	@Indexed(unique = true)
+	@NonNull
 	private String code;
 	private String codeDepartement;
 	private String codeRegion;
 	private String codePostaux;
-	private String name;
+	@NonNull
+	private String nom;
 
 	public City() {
 		super();
 	}
 
 	public String getCode() {
-		return code;
+		return this.code;
 	}
 
 	public String getCodeDepartement() {
-		return codeDepartement;
+		return this.codeDepartement;
 	}
 
 	public String getCodePostaux() {
-		return codePostaux;
+		return this.codePostaux;
 	}
 
 	public String getCodeRegion() {
-		return codeRegion;
+		return this.codeRegion;
 	}
 
 	@Override
 	public String getIdentifier() {
-		return this.getCode();
+		return getCode();
 	}
 
-	public String getName() {
-		return name;
+	public String getNom() {
+		return this.nom;
 	}
 
-	public void setCode(String code) {
+	public void setCode(final String code) {
 		this.code = code;
 	}
 
-	public void setCodeDepartement(String codeDepartement) {
+	public void setCodeDepartement(final String codeDepartement) {
 		this.codeDepartement = codeDepartement;
 	}
 
-	public void setCodePostaux(String codePostaux) {
+	public void setCodePostaux(final String codePostaux) {
 		this.codePostaux = codePostaux;
 	}
 
-	public void setCodeRegion(String codeRegion) {
+	public void setCodeRegion(final String codeRegion) {
 		this.codeRegion = codeRegion;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setNom(final String name) {
+		this.nom = name;
 	}
 }

@@ -32,34 +32,34 @@ public class Agency implements Serializable {
 	}
 
 	public ObjectId get_id() {
-		return _id;
+		return this._id;
 	}
 
 	public String getName() {
-		return name;
+		return this.name;
 	}
 
 	public String getPlace() {
-		return place;
+		return this.place;
 	}
 
 	public String getPlaceType() {
-		return placeType;
+		return this.placeType;
 	}
 
-	public void set_id(ObjectId _id) {
+	public void set_id(final ObjectId _id) {
 		this._id = _id;
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
-	public void setPlace(String place) {
+	public void setPlace(final String place) {
 		this.place = place;
 	}
 
-	public void setPlaceType(String placeType) {
+	public void setPlaceType(final String placeType) {
 		this.placeType = placeType;
 	}
 
