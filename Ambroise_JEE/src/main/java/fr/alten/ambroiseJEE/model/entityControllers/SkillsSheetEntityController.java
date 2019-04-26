@@ -1,12 +1,10 @@
 package fr.alten.ambroiseJEE.model.entityControllers;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -58,8 +56,7 @@ public class SkillsSheetEntityController {
 	 * @author Lucas Royackkers
 	 */
 	public boolean checkIfSkillsWithMailExists(final String mailPerson) {
-		final List<SkillsSheet> listSkillsSheet = this.skillsSheetRepository.findByMailPersonAttachedTo(mailPerson);
-		return listSkillsSheet.size() > 0;
+		return !this.skillsSheetRepository.findByMailPersonAttachedTo(mailPerson).isEmpty();
 	}
 
 	/**
@@ -72,48 +69,55 @@ public class SkillsSheetEntityController {
 	 * @author Lucas Royackkers
 	 */
 	public HttpException createSkillsSheet(final JsonNode jSkillsSheet) {
-		final SkillsSheet newSkillsSheet = new SkillsSheet();
-		final String skillsSheetName = jSkillsSheet.get("name").textValue();
-		newSkillsSheet.setName(skillsSheetName);
-
-		Optional<Person> personAttachedTo;
-		final String status = jSkillsSheet.get("rolePersonAttachedTo").textValue();
-		final String personMail = jSkillsSheet.get("mailPersonAttachedTo").textValue();
-		// Given the created person status
-		switch (status) {
-		case "consultant":
-			personAttachedTo = this.personEntityController.getPersonByMailAndType(personMail, PersonRole.CONSULTANT);
-			break;
-		default:
-			personAttachedTo = this.personEntityController.getPersonByMailAndType(personMail, PersonRole.APPLICANT);
-			break;
-		}
-		if (personAttachedTo.isPresent()) {
-			newSkillsSheet.setMailPersonAttachedTo(personAttachedTo.get().getMail());
-		}
-		newSkillsSheet.setRolePersonAttachedTo(status);
-		// Get all skills given several lists of skills (tech and soft)
-		newSkillsSheet.setSkillsList(getAllSkills(jSkillsSheet.get("skillsList")));
-
-		// Set an Id and a Version Number on this skills sheet (initialization to 1 for
-		// the version number)
-		newSkillsSheet.setVersionNumber(1);
-		newSkillsSheet.set_id(new ObjectId());
-
-		final String authorMail = jSkillsSheet.get("mailVersionAuthor").textValue();
-		final Optional<User> userAuthor = this.userEntityController.getUserByMail(authorMail);
-		if (userAuthor.isPresent()) {
-			newSkillsSheet.setMailVersionAuthor(userAuthor.get().getMail());
-		}
-
-		newSkillsSheet.setVersionDate(LocalDateTime.now().toString());
 
 		try {
+			final String status = jSkillsSheet.get("rolePersonAttachedTo").textValue();
+			final String personMail = jSkillsSheet.get("mailPersonAttachedTo").textValue();
+			final String skillsSheetName = jSkillsSheet.get("name").textValue();
+
+			if (this.skillsSheetRepository
+					.findByNameAndMailPersonAttachedToAndVersionNumber(skillsSheetName, personMail, 1).isPresent()) {
+				return new ConflictException();
+			}
+			// Given the created person status
+			Person personAttachedTo;
+			switch (status) {
+			case "consultant":
+				personAttachedTo = this.personEntityController.getPersonByMailAndType(personMail, PersonRole.CONSULTANT)
+						.orElseThrow(ResourceNotFoundException::new);
+				break;
+			default:
+				personAttachedTo = this.personEntityController.getPersonByMailAndType(personMail, PersonRole.APPLICANT)
+						.orElseThrow(ResourceNotFoundException::new);
+				;
+				break;
+			}
+
+			final SkillsSheet newSkillsSheet = new SkillsSheet();
+			newSkillsSheet.setName(skillsSheetName);
+
+			newSkillsSheet.setMailPersonAttachedTo(personAttachedTo.getMail());
+			newSkillsSheet.setRolePersonAttachedTo(status);
+			// Get all skills given several lists of skills (tech and soft)
+			newSkillsSheet.setSkillsList(getAllSkills(jSkillsSheet.get("skillsList")));
+
+			// Set a Version Number on this skills sheet (initialization to 1 for
+			// the version number)
+			newSkillsSheet.setVersionNumber(1);
+
+			final String authorMail = jSkillsSheet.get("mailVersionAuthor").textValue();
+			final User userAuthor = this.userEntityController.getUserByMail(authorMail)
+					.orElseThrow(ResourceNotFoundException::new);
+			newSkillsSheet.setMailVersionAuthor(userAuthor.getMail());
+
+			newSkillsSheet.setVersionDate(String.valueOf(System.currentTimeMillis()));
+
 			this.skillsSheetRepository.save(newSkillsSheet);
+		} catch (final ResourceNotFoundException rnfe) {
+			return rnfe;
 		} catch (final Exception e) {
 			return new ConflictException();
 		}
-
 		return new CreatedException();
 	}
 
@@ -129,16 +133,14 @@ public class SkillsSheetEntityController {
 		final List<SkillGraduated> allSkills = new ArrayList<SkillGraduated>();
 
 		for (final JsonNode skillGraduated : jSkills) {
-			final Optional<Skill> newSkillOptional = this.skillEntityController
-					.getSkill(skillGraduated.get("skill").get("name").textValue());
-			// Get a specific soft skill by its name in the JsonNode
-			if (newSkillOptional.isPresent()) {
-				final double skillGrade = skillGraduated.get("grade").asDouble();
-				if (checkGrade(skillGrade)) {
-					allSkills.add(new SkillGraduated(newSkillOptional.get(), skillGrade));
-				}
-			} else {
-				// Add a new Skill in the db
+			final String skillName = skillGraduated.get("skill").get("name").textValue();
+			final JsonNode jIsSoft = skillGraduated.get("skill").get("isSoft");
+			final Skill skill = this.skillEntityController.getSkill(skillName).orElseGet(
+					this.skillEntityController.createSkill(skillName, jIsSoft != null ? jIsSoft.textValue() : null));
+
+			final double skillGrade = skillGraduated.get("grade").asDouble();
+			if (checkGrade(skillGrade)) {
+				allSkills.add(new SkillGraduated(skill, skillGrade));
 			}
 		}
 		return allSkills;
@@ -230,54 +232,53 @@ public class SkillsSheetEntityController {
 	public HttpException updateSkillsSheet(final JsonNode jSkillsSheet) {
 		// We retrieve the latest version number of the skills sheet, in order to
 		// increment it later
-		final long latestVersionNumber = jSkillsSheet.get("versionNumber").longValue();
-		final Optional<SkillsSheet> skillsSheetOptional = getSkillsSheetByNameAndVersionNumber(
-				jSkillsSheet.get("name").textValue(), latestVersionNumber);
-		// If we find the skills sheet, with its name and its version (the Front part
-		// will have to send the latest version number)
-		if (skillsSheetOptional.isPresent()) {
-			final SkillsSheet skillsSheet = skillsSheetOptional.get();
+		try {
+			final long latestVersionNumber = jSkillsSheet.get("versionNumber").longValue();
 
-			Optional<Person> personAttachedTo;
-			final String status = jSkillsSheet.get("rolePersonAttachedTo").textValue();
+			final String skillSheetName = jSkillsSheet.get("name").textValue();
 			final String personMail = jSkillsSheet.get("mailPersonAttachedTo").textValue();
+
+			if (this.skillsSheetRepository.findByNameAndMailPersonAttachedToAndVersionNumber(skillSheetName, personMail,
+					latestVersionNumber + 1).isPresent()) {
+				return new ConflictException();
+			}
+
+			final SkillsSheet skillsSheet = getSkillsSheetByNameAndVersionNumber(skillSheetName, latestVersionNumber)
+					.orElseThrow(ResourceNotFoundException::new);
+			// If we find the skills sheet, with its name and its version (the Front part
+			// will have to send the latest version number)
+
+			Person personAttachedTo;
+			final String status = jSkillsSheet.get("rolePersonAttachedTo").textValue();
 			switch (status) {
 			case "consultant":
-				personAttachedTo = this.personEntityController.getPersonByMailAndType(personMail,
-						PersonRole.CONSULTANT);
+				personAttachedTo = this.personEntityController.getPersonByMailAndType(personMail, PersonRole.CONSULTANT)
+						.orElseThrow(ResourceNotFoundException::new);
 				break;
 			default:
-				personAttachedTo = this.personEntityController.getPersonByMailAndType(personMail, PersonRole.APPLICANT);
+				personAttachedTo = this.personEntityController.getPersonByMailAndType(personMail, PersonRole.APPLICANT)
+						.orElseThrow(ResourceNotFoundException::new);
 				break;
 			}
-			if (personAttachedTo.isPresent()) {
-				skillsSheet.setMailPersonAttachedTo(personAttachedTo.get().getMail());
-			}
+			skillsSheet.setMailPersonAttachedTo(personAttachedTo.getMail());
 			skillsSheet.setRolePersonAttachedTo(status);
 
 			skillsSheet.setSkillsList(getAllSkills(jSkillsSheet.get("skillsList")));
 
 			skillsSheet.setVersionNumber(latestVersionNumber + 1);
 
-			final Optional<SkillsSheet> newVersionSkillsSheet = getSkillsSheetByNameAndVersionNumber(
-					jSkillsSheet.get("name").textValue(), latestVersionNumber + 1);
-			if (newVersionSkillsSheet.isPresent()) {
-				return new ConflictException();
-			}
-
-			skillsSheet.set_id(new ObjectId());
-
 			final String authorMail = jSkillsSheet.get("mailVersionAuthor").textValue();
-			final Optional<User> userAuthor = this.userEntityController.getUserByMail(authorMail);
-			if (userAuthor.isPresent()) {
-				skillsSheet.setMailVersionAuthor(userAuthor.get().getMail());
-			}
+			final User userAuthor = this.userEntityController.getUserByMail(authorMail)
+					.orElseThrow(ResourceNotFoundException::new);
+			skillsSheet.setMailVersionAuthor(userAuthor.getMail());
 
-			skillsSheet.setVersionDate(LocalDateTime.now().toString());
+			skillsSheet.setVersionDate(String.valueOf(System.currentTimeMillis()));
 
 			this.skillsSheetRepository.save(skillsSheet);
-		} else {
-			return new ResourceNotFoundException();
+		} catch (final ResourceNotFoundException rnfe) {
+			return rnfe;
+		} catch (final Exception e) {
+			return new ConflictException();
 		}
 		return new OkException();
 	}

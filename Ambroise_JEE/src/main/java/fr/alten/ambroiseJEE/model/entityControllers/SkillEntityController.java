@@ -5,8 +5,10 @@ package fr.alten.ambroiseJEE.model.entityControllers;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -17,6 +19,7 @@ import fr.alten.ambroiseJEE.model.dao.SkillRepository;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.InternalServerErrorException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 
@@ -48,11 +51,10 @@ public class SkillEntityController {
 			newSkill.setIsSoft(jSkill.get("isSoft").textValue());
 		try {
 			skillRepository.save(newSkill);
+		} catch (DuplicateKeyException dke) {
+			return new ConflictException();
 		} catch (Exception e) {
-			if (!DuplicateKeyException.class.isInstance(e)) {
-				e.printStackTrace();
-			} else
-				return new ConflictException();
+			e.printStackTrace();
 		}
 		return new CreatedException();
 
@@ -90,7 +92,6 @@ public class SkillEntityController {
 		return skillRepository.findByName(name);
 	}
 
-	
 	/**
 	 * @return the list of all skills
 	 * @author Thomas Decamp
@@ -129,6 +130,22 @@ public class SkillEntityController {
 				})
 				// optional isn't present
 				.orElse(new ResourceNotFoundException());
+	}
+
+	public Supplier<? extends Skill> createSkill(String name, @Nullable String isSoft) {
+		return () -> {
+			Skill newSkill = new Skill();
+			newSkill.setName(name);
+			newSkill.setIsSoft(isSoft);
+			try {
+				newSkill = skillRepository.save(newSkill);
+			} catch (DuplicateKeyException dke) {
+				throw new ConflictException();
+			} catch (Exception e) {
+				throw new InternalServerErrorException();
+			}
+			return newSkill;
+		};
 	}
 
 }

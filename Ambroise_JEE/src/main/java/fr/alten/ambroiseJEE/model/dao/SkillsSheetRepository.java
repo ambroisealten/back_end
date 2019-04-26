@@ -40,4 +40,7 @@ public interface SkillsSheetRepository extends MongoRepository<SkillsSheet, Long
 	 * @author Lucas Royackkers
 	 */
 	public List<SkillsSheet> findByMailPersonAttachedTo(String mail);
+
+	
+	public Optional<SkillsSheet> findByNameAndMailPersonAttachedToAndVersionNumber(String skillsSheetName, String personMail, long i);
 }
