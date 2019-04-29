@@ -1,11 +1,11 @@
 package fr.alten.ambroiseJEE.model.entityControllers;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -191,8 +191,10 @@ public class SkillsSheetEntityController {
 
 		for (final String identityFilter : identitiesList) {
 			filteredPersons.addAll(new HashSet<Person>(personEntityController.getPersonsByName(identityFilter)));
-			filteredPersons.addAll(new HashSet<Person>(this.personEntityController.getPersonsBySurname(identityFilter)));
-			filteredPersons.addAll(new HashSet<Person>(this.personEntityController.getPersonsByHighestDiploma(identityFilter)));
+			filteredPersons
+					.addAll(new HashSet<Person>(this.personEntityController.getPersonsBySurname(identityFilter)));
+			filteredPersons.addAll(
+					new HashSet<Person>(this.personEntityController.getPersonsByHighestDiploma(identityFilter)));
 			filteredPersons.addAll(new HashSet<Person>(this.personEntityController.getPersonsByJob(identityFilter)));
 		}
 
@@ -201,37 +203,44 @@ public class SkillsSheetEntityController {
 		}
 
 		Set<SkillsSheet> result = new HashSet<SkillsSheet>();
-		Map<JsonNode,SkillsSheet> finalResult = new HashMap<JsonNode,SkillsSheet>();
-		
+		Map<JsonNode, SkillsSheet> finalResult = new HashMap<JsonNode, SkillsSheet>();
+
 		for (Person person : filteredPersons) {
 			SkillsSheet skillsSheetExample = new SkillsSheet();
 			skillsSheetExample.setMailPersonAttachedTo(person.getMail());
 
-			final ExampleMatcher matcher = ExampleMatcher.matching()
-					.withIgnoreNullValues()
+			final ExampleMatcher matcher = ExampleMatcher.matching().withIgnoreNullValues()
 					.withMatcher("mailPersonAttachedTo", GenericPropertyMatchers.exact())
 					.withIgnorePaths("versionNumber");
-			List<SkillsSheet> personSkillSheet = this.skillsSheetRepository.findAll(Example.of(skillsSheetExample, matcher));
+			List<SkillsSheet> personSkillSheet = this.skillsSheetRepository
+					.findAll(Example.of(skillsSheetExample, matcher));
 			result.addAll(personSkillSheet);
 		}
-		
-		if(!filteredSkills.isEmpty()) {
-			for(SkillsSheet skillSheet : result) {
+
+		if (!filteredSkills.isEmpty()) {
+			for (SkillsSheet skillSheet : result) {
 				boolean skillsMatch = true;
-				for(Skill skill : filteredSkills) {
+				for (Skill skill : filteredSkills) {
 					skillsMatch = skillsMatch && this.ifSkillsInSheet(skill, skillSheet);
 				}
-				//if(skillsMatch) finalResult.put(JsonUtils.toJsonNode(JsonUtils.toJson(this.personEntityController.getPersonByMail(skillSheet.getMailPersonAttachedTo())), skillSheet));
+				if (skillsMatch)
+					try {
+						finalResult.put(JsonUtils.toJsonNode(
+								this.personEntityController.getPersonByMail(skillSheet.getMailPersonAttachedTo())),
+								skillSheet);
+					} catch (IOException e) {
+//						LoggerFactory.getLogger(SkillsSheetEntityController.class).error(e.getMessage());
+						e.printStackTrace();
+					}
 			}
 		}
-		
+
 		return finalResult;
 	}
-	
-	
-	public boolean ifSkillsInSheet(Skill filterSkill,SkillsSheet skillSheet) {
-		for(SkillGraduated skillGraduated : skillSheet.getSkillsList()) {
-			if(skillGraduated.getSkill().getName().equals(filterSkill.getName())) {
+
+	public boolean ifSkillsInSheet(Skill filterSkill, SkillsSheet skillSheet) {
+		for (SkillGraduated skillGraduated : skillSheet.getSkillsList()) {
+			if (skillGraduated.getSkill().getName().equals(filterSkill.getName())) {
 				return true;
 			}
 		}
