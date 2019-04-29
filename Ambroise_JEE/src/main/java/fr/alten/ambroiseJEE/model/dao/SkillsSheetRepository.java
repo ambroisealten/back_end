@@ -32,8 +32,24 @@ public interface SkillsSheetRepository extends MongoRepository<SkillsSheet, Long
 	 */
 	public List<SkillsSheet> findByName(String name);
 
+	/**
+	 * Get a Skills Sheet given a name, a person attached to it and a version number
+	 * @param skillsSheetName the name of the skills sheet
+	 * @param personMail the mail of the person attached to it
+	 * @param i the number (long type) of the skills sheet
+	 * @return An Optional, if this specific Skills Sheet exists or not
+	 * @author Lucas Royackkers
+	 */
 	public Optional<SkillsSheet> findByNameAndMailPersonAttachedToAndVersionNumber(String skillsSheetName,
 			String personMail, long i);
+	
+	/**
+	 * Get a List of Skills Sheet given a name, and with the latest in first position
+	 * @param skillsSheetName the name of the Skills Sheet
+	 * @return A List of Skills Sheets
+	 * @author Lucas Royackkers
+	 */
+	public List<SkillsSheet> findByNameOrderByVersionNumberDesc(String skillsSheetName);
 
 	/**
 	 * Fetch skills sheet by name and version number

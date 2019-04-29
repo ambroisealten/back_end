@@ -185,7 +185,7 @@ public class SkillsSheetEntityController {
 	 * @author Lucas Royackkers
 	 */
 	public String getSkillsSheetsByIdentityAndSkills(final String identity, final String skills) {
-		final GsonBuilder builder = new GsonBuilder();
+ 		final GsonBuilder builder = new GsonBuilder();
 		Gson gson = builder.create();
 		final String[] identitiesList = identity.split(",");
 		final String[] skillsList = skills.split(",");
@@ -228,14 +228,17 @@ public class SkillsSheetEntityController {
 					skillsMatch = skillsMatch && this.ifSkillsInSheet(skill, skillSheet);
 				}
 				if (skillsMatch) {
-					String personResult = skillSheet.getMailPersonAttachedTo();
-					try {
-						final JsonNode jResult = JsonUtils.toJsonNode(gson.toJson(skillSheet));
-						((ObjectNode) jResult).set("person",JsonUtils.toJsonNode(gson.toJson(this.personEntityController.getPersonByMail(personResult))));
-						finalResult.add(jResult);
-					}
-					catch(IOException e) {
-						LoggerFactory.getLogger(SkillsSheetEntityController.class).error(e.getMessage());
+					long latestVersionNumber = this.skillsSheetRepository.findByNameOrderByVersionNumberDesc(skillSheet.getName()).get(0).getVersionNumber();
+					if(skillSheet.getVersionNumber() == latestVersionNumber) {
+						String personResult = skillSheet.getMailPersonAttachedTo();
+						try {
+							final JsonNode jResult = JsonUtils.toJsonNode(gson.toJson(skillSheet));
+							((ObjectNode) jResult).set("person",JsonUtils.toJsonNode(gson.toJson(this.personEntityController.getPersonByMail(personResult))));
+							finalResult.add(jResult);
+						}
+						catch(IOException e) {
+							LoggerFactory.getLogger(SkillsSheetEntityController.class).error(e.getMessage());
+						}
 					}
 				}
 			}
