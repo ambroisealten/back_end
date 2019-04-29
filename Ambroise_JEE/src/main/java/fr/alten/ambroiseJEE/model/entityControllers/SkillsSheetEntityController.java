@@ -2,12 +2,11 @@ package fr.alten.ambroiseJEE.model.entityControllers;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -15,6 +14,9 @@ import org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import fr.alten.ambroiseJEE.model.SkillGraduated;
 import fr.alten.ambroiseJEE.model.beans.Person;
@@ -182,7 +184,9 @@ public class SkillsSheetEntityController {
 	 * @return a List of Skills Sheets that match the query
 	 * @author Lucas Royackkers
 	 */
-	public Map<JsonNode, SkillsSheet> getSkillsSheetsByIdentityAndSkills(final String identity, final String skills) {
+	public String getSkillsSheetsByIdentityAndSkills(final String identity, final String skills) {
+		final GsonBuilder builder = new GsonBuilder();
+		Gson gson = builder.create();
 		final String[] identitiesList = identity.split(",");
 		final String[] skillsList = skills.split(",");
 
@@ -203,8 +207,8 @@ public class SkillsSheetEntityController {
 		}
 
 		Set<SkillsSheet> result = new HashSet<SkillsSheet>();
-		Map<JsonNode, SkillsSheet> finalResult = new HashMap<JsonNode, SkillsSheet>();
-
+		List<JsonNode> finalResult = new ArrayList<JsonNode>();
+		
 		for (Person person : filteredPersons) {
 			SkillsSheet skillsSheetExample = new SkillsSheet();
 			skillsSheetExample.setMailPersonAttachedTo(person.getMail());
@@ -223,19 +227,21 @@ public class SkillsSheetEntityController {
 				for (Skill skill : filteredSkills) {
 					skillsMatch = skillsMatch && this.ifSkillsInSheet(skill, skillSheet);
 				}
-				if (skillsMatch)
+				if (skillsMatch) {
+					String personResult = skillSheet.getMailPersonAttachedTo();
 					try {
-						finalResult.put(JsonUtils.toJsonNode(
-								this.personEntityController.getPersonByMail(skillSheet.getMailPersonAttachedTo())),
-								skillSheet);
-					} catch (IOException e) {
-//						LoggerFactory.getLogger(SkillsSheetEntityController.class).error(e.getMessage());
-						e.printStackTrace();
+						final JsonNode jResult = JsonUtils.toJsonNode(gson.toJson(skillSheet));
+						((ObjectNode) jResult).set("person",JsonUtils.toJsonNode(gson.toJson(this.personEntityController.getPersonByMail(personResult))));
+						finalResult.add(jResult);
 					}
+					catch(IOException e) {
+						LoggerFactory.getLogger(SkillsSheetEntityController.class).error(e.getMessage());
+					}
+				}
 			}
 		}
-
-		return finalResult;
+		
+		return gson.toJson(finalResult);
 	}
 
 	public boolean ifSkillsInSheet(Skill filterSkill, SkillsSheet skillSheet) {

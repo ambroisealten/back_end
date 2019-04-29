@@ -69,4 +69,9 @@ public class JsonUtils {
 		ObjectMapper mapper = new ObjectMapper();
 		return mapper.convertValue(object, JsonNode.class);
 	}
+	
+	public static JsonNode toJsonNode(String json) throws IOException{
+		ObjectMapper mapper = new ObjectMapper();
+		return mapper.readTree(json);
+	}
 }

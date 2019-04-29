@@ -102,8 +102,7 @@ public class SkillsSheetRestController {
 	@ResponseBody
 	public String getSkillsSheetByIdentityAndSkills(@PathVariable("identity") final String identity,
 			@PathVariable("skills") final String skills, @RequestAttribute("role") final UserRole role) {
-		return this.gson
-				.toJson(this.skillsSheetBusinessController.getSkillsSheetsByIdentityAndSkills(identity, skills, role));
+		return this.skillsSheetBusinessController.getSkillsSheetsByIdentityAndSkills(identity, skills, role);
 	}
 
 	/**

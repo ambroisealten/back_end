@@ -2,7 +2,6 @@ package fr.alten.ambroiseJEE.controller.business;
 
 import java.text.ParseException;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -130,7 +129,7 @@ public class SkillsSheetBusinessController {
 	 *         rights to perform this action
 	 * @author Lucas Royackkers
 	 */
-	public Map<JsonNode, SkillsSheet> getSkillsSheetsByIdentityAndSkills(String identity, String skills,
+	public String getSkillsSheetsByIdentityAndSkills(String identity, String skills,
 			UserRole role) {
 		if (UserRole.MANAGER == role || UserRole.MANAGER_ADMIN == role) {
 			return skillsSheetEntityController.getSkillsSheetsByIdentityAndSkills(identity, skills);
