@@ -29,18 +29,16 @@ public class SkillsSheetBusinessController {
 	private SkillsSheetEntityController skillsSheetEntityController;
 
 	/**
-	 * Check if a Person already has a Skills sheets with its mail in it
-	 *
+	 * Get all Skills Sheets given a mail
+	 * 
 	 * @param mailPerson the mail of the person
-	 * @param role       the current logged user's role
-	 * @return a boolean whether the mail has been used or not
-	 * @throws {@link ForbiddenException} if the current logged user hasn't the
-	 *         rights to perform this action
+	 * @param role the current logged user's role
+	 * @return a List of Skills Sheet given a mail
 	 * @author Lucas Royackkers
 	 */
-	public boolean checkIfSkillsWithMailExists(final String mailPerson, final UserRole role) {
+	public List<SkillsSheet> getSkillsSheetByMail(final String mailPerson, final UserRole role) {
 		if (UserRole.MANAGER == role || UserRole.MANAGER_ADMIN == role) {
-			return this.skillsSheetEntityController.checkIfSkillsWithMailExists(mailPerson);
+			return this.skillsSheetEntityController.getSkillsSheetsByMail(mailPerson);
 		}
 		throw new ForbiddenException();
 	}
@@ -78,25 +76,6 @@ public class SkillsSheetBusinessController {
 			return this.skillsSheetEntityController.getSkillsSheets();
 		}
 		throw new ForbiddenException();
-	}
-
-	/**
-	 * Get a specific version of a skills sheet
-	 *
-	 * @param name          the searched skills sheet's name
-	 * @param versionNumber the searched skills sheet's number
-	 * @param role          the current logged user's role
-	 * @return a skills sheet given a name and a version number (Optional, might be
-	 *         empty if the resource isn't found or if the user hasn't the rights to
-	 *         performs this action)
-	 * @author Lucas Royackkers
-	 */
-	public SkillsSheet getSkillsSheet(final String name, final long versionNumber, final UserRole role) {
-		if (UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role) {
-			return this.skillsSheetEntityController.getSkillsSheetByNameAndVersionNumber(name, versionNumber);
-		} else {
-			throw new ForbiddenException();
-		}
 	}
 
 	/**
@@ -154,6 +133,22 @@ public class SkillsSheetBusinessController {
 		return UserRole.MANAGER == role || UserRole.MANAGER_ADMIN == role
 				? this.skillsSheetEntityController.updateSkillsSheet(jSkillsSheet)
 				: new ForbiddenException();
+	}
+
+	/**
+	 * Get a List of Skills Sheet (with different versions) given their common name and mail of the person attached to
+	 * 
+	 * @param name the name of the skills sheet
+	 * @param role the logged user's role
+	 * @param mail the mail of the person attached to it
+	 * @return a List of Skills Sheet that matches the given parameters (can be empty)
+	 * @author Lucas Royackkers
+	 */
+	public List<SkillsSheet> getSkillsSheetVersion(String name, String mailPerson, UserRole role) {
+		if(UserRole.MANAGER == role || UserRole.MANAGER_ADMIN == role) {
+			return this.skillsSheetEntityController.getSkillsSheetVersion(name,mailPerson);
+		}
+		throw new ForbiddenException();
 	}
 
 }

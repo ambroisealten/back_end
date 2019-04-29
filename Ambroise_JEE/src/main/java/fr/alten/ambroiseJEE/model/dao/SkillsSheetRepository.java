@@ -52,12 +52,12 @@ public interface SkillsSheetRepository extends MongoRepository<SkillsSheet, Long
 	public List<SkillsSheet> findByNameOrderByVersionNumberDesc(String skillsSheetName);
 
 	/**
-	 * Fetch skills sheet by name and version number
-	 *
-	 * @param name
-	 * @param versionNumber the version number of the searched skills sheet
-	 * @return An Optional with the corresponding skills sheet or not.
+	 * Fetch skills sheet versions by name and mail of the person attached to it 
+	 * 
+	 * @param name the name of the Skills Sheet
+	 * @param mail the mail of the person attached to the Skills Sheet
+	 * @return a List of Skills Sheet that matches the given parameters (can be empty)
 	 * @author Lucas Royackkers
 	 */
-	public Optional<SkillsSheet> findByNameAndVersionNumber(String name, long versionNumber);
+	public List<SkillsSheet> findByNameAndMailPersonAttachedToOrderByVersionNumberDesc(String name, String mail);
 }

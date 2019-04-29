@@ -42,22 +42,36 @@ public class SkillsSheetRestController {
 	}
 
 	/**
-	 *
-	 * @param mailPerson a person's mail that we need to check whether it has been
-	 *                   used in a skills sheet or not
-	 * @param mail       the current logged user's mail
-	 * @param role       the current logged user's role
-	 * @return a boolean showing if the mailPerson has been used in a skills sheet
-	 *         or not
-	 * @throws {@link ForbiddenException} if the current logged user hasn't the
-	 *         rights to perform this action
+	 * Get all Skills Sheets given a person (with its mail)
+	 * 
+	 * @param mailPerson the mail of the person
+	 * @param mail the current logged user's mail
+	 * @param role the current logged user's role
+	 * @return a String containing a JsonNode with a List of Skills Sheets given the person attached to
 	 * @author Lucas Royackkers
 	 */
 	@GetMapping(value = "/skillsheetMail/{mail}")
 	@ResponseBody
-	public boolean checkIfSkillsWithMailExists(@PathVariable("mail") final String mailPerson,
+	public String getSkillsSheetByMail(@PathVariable("mail") final String mailPerson,
 			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
-		return this.skillsSheetBusinessController.checkIfSkillsWithMailExists(mailPerson, role);
+		return this.gson.toJson(this.skillsSheetBusinessController.getSkillsSheetByMail(mailPerson, role));
+	}
+	
+	/**
+	 * Get all versions of a Skills Sheet given their common name and person attached to
+	 * 
+	 * @param mailPerson the mail of the person attached to the different versions
+	 * @param role the current logged user's role
+	 * @param name the name of the Skills Sheet
+	 * @param mail the current logged user's mail
+	 * @return a String containing a JsonNode that contains a List of Skills Sheet
+	 * @author Lucas Royackkers
+	 */
+	@GetMapping(value = "/skillsheetVersion/{name}/{mail}")
+	@ResponseBody
+	public String getSkillsSheetVersions(@PathVariable("mail") final String mailPerson, @RequestAttribute("role") UserRole role,
+			@PathVariable("name") final String name, @RequestAttribute("mail") final String mail) {
+		return this.gson.toJson(this.skillsSheetBusinessController.getSkillsSheetVersion(name,mailPerson,role));
 	}
 
 	/**
@@ -121,27 +135,6 @@ public class SkillsSheetRestController {
 	public String getSkillsSheetByName(@PathVariable("name") final String sheetName,
 			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
 		return this.gson.toJson(this.skillsSheetBusinessController.getSkillsSheets(sheetName, role));
-	}
-
-	/**
-	 *
-	 * @param sheetName     the name of the skills sheet
-	 * @param versionNumber the version number of the skills sheet
-	 * @param mail          the current logged user's mail
-	 * @param role          the current logged user's role
-	 * @return a skills sheet given its name and its versionNumber
-	 * @throws {@link ResourceNotFoundException} if the skills sheet hasn't been
-	 *         found, {@link ForbiddenException} if the current logged user hasn't
-	 *         the rights to perform this action
-	 * @author Lucas Royackkers
-	 */
-	@GetMapping(value = "/skillsheet/{name}/{versionNumber}")
-	@ResponseBody
-	public String getSkillsSheetByNameAndVersion(@PathVariable("name") final String sheetName,
-			@PathVariable("versionNumber") final String versionNumber, @RequestAttribute("mail") final String mail,
-			@RequestAttribute("role") final UserRole role) {
-		return this.gson.toJson(
-				this.skillsSheetBusinessController.getSkillsSheet(sheetName, Long.parseLong(versionNumber), role));
 	}
 
 	/**

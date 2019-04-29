@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.slf4j.LoggerFactory;
@@ -57,35 +58,37 @@ public class SkillsSheetEntityController {
 		return d == 1 || d == 2 || d == 2.5 || d == 3 || d == 3.5 || d == 4;
 	}
 
-	/**
-	 * Check if a mail has already been used for a skills sheet
-	 *
-	 * @param mailPerson the mail of a person linked (or not) to a skills sheet
-	 * @return a boolean if the person has been linked to a skills sheet
-	 * @author Lucas Royackkers
-	 */
-	public boolean checkIfSkillsWithMailExists(final String mailPerson) {
-		return !this.skillsSheetRepository.findByMailPersonAttachedTo(mailPerson).isEmpty();
-	}
 
 	/**
-	 * Method to create a skills sheet.
-	 *
-	 * @param jUser JsonNode with all skills sheet parameters
+	 * Get a List of Skills Sheet given a mail of a person attached to it
+	 * 
+	 * @param mailPerson the mail of the person
+	 * @return a List of Skills Sheets that match the given parameters
+	 * @author Lucas Royackkers
+	 */
+	public List<SkillsSheet> getSkillsSheetsByMail(final String mailPerson) {
+		return this.skillsSheetRepository.findByMailPersonAttachedTo(mailPerson);
+	}
+	
+	/**
+	 * Method to create a new Skills Sheet (whatever time it is)
+	 * 
+	 * @param jSkillsSheet the JsonNode containing all the parameters
+	 * @param versionNumber the versionNumber of the Skills Sheet
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ConflictException} if there is a conflict in the
 	 *         database and {@link CreatedException} if the skills sheet is created
 	 * @author Lucas Royackkers
 	 */
-	public HttpException createSkillsSheet(final JsonNode jSkillsSheet) {
-
+	private HttpException createSkillsSheet(final JsonNode jSkillsSheet, long versionNumber) {
 		try {
+			
 			final String status = jSkillsSheet.get("rolePersonAttachedTo").textValue();
 			final String personMail = jSkillsSheet.get("mailPersonAttachedTo").textValue();
 			final String skillsSheetName = jSkillsSheet.get("name").textValue();
 
 			if (this.skillsSheetRepository
-					.findByNameAndMailPersonAttachedToAndVersionNumber(skillsSheetName, personMail, 1).isPresent()) {
+					.findByNameAndMailPersonAttachedToAndVersionNumber(skillsSheetName, personMail, versionNumber).isPresent()) {
 				return new ConflictException();
 			}
 			// Given the created person status
@@ -111,7 +114,7 @@ public class SkillsSheetEntityController {
 
 			// Set a Version Number on this skills sheet (initialization to 1 for
 			// the version number)
-			newSkillsSheet.setVersionNumber(1);
+			newSkillsSheet.setVersionNumber(versionNumber);
 
 			final String authorMail = jSkillsSheet.get("mailVersionAuthor").textValue();
 			final User userAuthor = this.userEntityController.getUserByMail(authorMail);
@@ -126,6 +129,20 @@ public class SkillsSheetEntityController {
 			return new ConflictException();
 		}
 		return new CreatedException();
+	}
+
+	/**
+	 * Method to create a skills sheet for the first time
+	 *
+	 * @param jUser JsonNode with all skills sheet parameters
+	 * @return the @see {@link HttpException} corresponding to the status of the
+	 *         request ({@link ConflictException} if there is a conflict in the
+	 *         database and {@link CreatedException} if the skills sheet is created
+	 * @author Lucas Royackkers
+	 */
+	public HttpException createSkillsSheet(final JsonNode jSkillsSheet) {
+		return this.createSkillsSheet(jSkillsSheet, 1);
+		
 	}
 
 	/**
@@ -153,18 +170,6 @@ public class SkillsSheetEntityController {
 		return allSkills;
 	}
 
-	/**
-	 * Try to fetch an skills sheet by its name and its versionNumber
-	 *
-	 * @param name          the skills sheet's name to fetch
-	 * @param versionNumber the skills sheet's version number
-	 * @return An Optional with the corresponding skills sheet or not.
-	 * @author Lucas Royackkers
-	 */
-	public SkillsSheet getSkillsSheetByNameAndVersionNumber(final String name, final long versionNumber) {
-		return this.skillsSheetRepository.findByNameAndVersionNumber(name, versionNumber)
-				.orElseThrow(ResourceNotFoundException::new);
-	}
 
 	/**
 	 * Try to fetch all skills sheets
@@ -174,6 +179,10 @@ public class SkillsSheetEntityController {
 	 */
 	public List<SkillsSheet> getSkillsSheets() {
 		return this.skillsSheetRepository.findAll();
+	}
+	
+	public Optional<SkillsSheet> getSkillsSheet(String name, String personMail, long versionNumber){
+		return this.skillsSheetRepository.findByNameAndMailPersonAttachedToAndVersionNumber(name, personMail, versionNumber);
 	}
 
 	/**
@@ -272,7 +281,7 @@ public class SkillsSheetEntityController {
 	 * sheet
 	 *
 	 * @param jSkillsSheet JsonNode with all skills sheet parameters, including its
-	 *                     name (which cannot be changed) to perform an update on
+	 *                     name to perform an update on
 	 *                     the database
 	 *
 	 * @return the @see {@link HttpException} corresponding to the status of the
@@ -282,54 +291,29 @@ public class SkillsSheetEntityController {
 	 * @author Lucas Royackkers
 	 */
 	public HttpException updateSkillsSheet(final JsonNode jSkillsSheet) {
-		// We retrieve the latest version number of the skills sheet, in order to
-		// increment it later
 		try {
+			// We retrieve the latest version number of the skills sheet, in order to
+			// increment it later
 			final long latestVersionNumber = jSkillsSheet.get("versionNumber").longValue();
 
-			final String skillSheetName = jSkillsSheet.get("name").textValue();
-			final String personMail = jSkillsSheet.get("mailPersonAttachedTo").textValue();
-
-			if (this.skillsSheetRepository.findByNameAndMailPersonAttachedToAndVersionNumber(skillSheetName, personMail,
-					latestVersionNumber + 1).isPresent()) {
-				return new ConflictException();
-			}
-
-			final SkillsSheet skillsSheet = getSkillsSheetByNameAndVersionNumber(skillSheetName, latestVersionNumber);
-			// If we find the skills sheet, with its name and its version (the Front part
-			// will have to send the latest version number)
-
-			Person personAttachedTo;
-			final String status = jSkillsSheet.get("rolePersonAttachedTo").textValue();
-			switch (status) {
-			case "consultant":
-				personAttachedTo = this.personEntityController.getPersonByMailAndType(personMail,
-						PersonRole.CONSULTANT);
-				break;
-			default:
-				personAttachedTo = this.personEntityController.getPersonByMailAndType(personMail, PersonRole.APPLICANT);
-				break;
-			}
-			skillsSheet.setMailPersonAttachedTo(personAttachedTo.getMail());
-			skillsSheet.setRolePersonAttachedTo(status);
-
-			skillsSheet.setSkillsList(getAllSkills(jSkillsSheet.get("skillsList")));
-
-			skillsSheet.setVersionNumber(latestVersionNumber + 1);
-
-			final String authorMail = jSkillsSheet.get("mailVersionAuthor").textValue();
-			final User userAuthor = this.userEntityController.getUserByMail(authorMail);
-			skillsSheet.setMailVersionAuthor(userAuthor.getMail());
-
-			skillsSheet.setVersionDate(String.valueOf(System.currentTimeMillis()));
-
-			this.skillsSheetRepository.save(skillsSheet);
+			return this.createSkillsSheet(jSkillsSheet, latestVersionNumber+1);
 		} catch (final ResourceNotFoundException rnfe) {
 			return rnfe;
 		} catch (final Exception e) {
 			return new ConflictException();
 		}
-		return new OkException();
+	}
+
+	/**
+	 * Get a List of Skills Sheet (with different versions) given their common name and mail of the person attached to
+	 * 
+	 * @param name the name of the skills sheet
+	 * @param mail the mail of the person attached to it
+	 * @return a List of Skills Sheet that matches the given parameters (can be empty)
+	 * @author Lucas Royackkers
+	 */
+	public List<SkillsSheet> getSkillsSheetVersion(String name, String mail) {
+		return this.skillsSheetRepository.findByNameAndMailPersonAttachedToOrderByVersionNumberDesc(name, mail);
 	}
 
 }
