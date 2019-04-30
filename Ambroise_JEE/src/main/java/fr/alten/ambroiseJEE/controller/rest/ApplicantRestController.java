@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -47,8 +48,10 @@ public class ApplicantRestController {
 	}
 
 	/**
-	 *
+	 * Method to create an Applicant (Person)
+ 	 *
 	 * @param params JsonNode containing post parameters from http request
+	 * @param mail   the current logged user's mail
 	 * @param role   the user's role
 	 * @return {@link HttpException} corresponding to the status of the request
 	 *         ({@link ConflictException} if there is a conflict in the database and
@@ -58,14 +61,16 @@ public class ApplicantRestController {
 	 */
 	@PostMapping(value = "/applicant")
 	@ResponseBody
-	public HttpException createApplicant(@RequestBody final JsonNode params,
+	public HttpException createApplicant(@RequestBody final JsonNode params,@RequestAttribute("mail") final String mail,
 			@RequestAttribute("role") final UserRole role) throws Exception {
+		((ObjectNode) params).put("personInChargeMail", mail);
 		return JsonUtils.checkJsonIntegrity(params, "mail")
 				? this.applicantBusinessController.createApplicant(params, role)
 				: new UnprocessableEntityException();
 	}
 
 	/**
+	 * Method to delete an Applicant
 	 *
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the current logged user's mail
@@ -85,11 +90,12 @@ public class ApplicantRestController {
 	}
 
 	/**
+	 * Method to get a specific Applicant given its name
 	 *
 	 * @param applicantName the applicant's name
 	 * @param mail          the current logged user's mail
 	 * @param role          the user's role
-	 * @return an applicant, given its name
+	 * @return an applicant, given its name (can be empty)
 	 * @author Lucas Royackkers
 	 */
 	@GetMapping(value = "/applicant/{mail}")
@@ -100,6 +106,7 @@ public class ApplicantRestController {
 	}
 
 	/**
+	 * Method to get all applicants
 	 *
 	 * @param mail the current logged user's mail
 	 * @param role the user's role
@@ -114,6 +121,7 @@ public class ApplicantRestController {
 	}
 
 	/**
+	 * Method to update an Applicant given its mail
 	 *
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the current logged user's mail
@@ -129,6 +137,7 @@ public class ApplicantRestController {
 	public HttpException updateApplicant(@RequestBody final JsonNode params,
 			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role)
 			throws ParseException {
+		((ObjectNode) params).put("personInChargeMail", mail);
 		return JsonUtils.checkJsonIntegrity(params, "mail")
 				? this.applicantBusinessController.updateApplicant(params, role)
 				: new UnprocessableEntityException();

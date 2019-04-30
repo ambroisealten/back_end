@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -77,6 +78,7 @@ public class SkillsSheetRestController {
 	}
 
 	/**
+	 * Method to create a Skills Sheet
 	 *
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the current logged user's mail
@@ -94,6 +96,7 @@ public class SkillsSheetRestController {
 	public HttpException createSkillsSheet(@RequestBody final JsonNode params,
 			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role)
 			throws Exception {
+		((ObjectNode) params).put("mailVersionAuthor", mail);
 		return params.get("name") != null && params.get("mailPersonAttachedTo") != null
 				&& params.get("mailVersionAuthor") != null
 						? this.skillsSheetBusinessController.createSkillsSheet(params, role)
@@ -123,6 +126,7 @@ public class SkillsSheetRestController {
 	}
 
 	/**
+	 * Method to get all Skills Sheets given a name
 	 *
 	 * @param mail the current logged user's mail
 	 * @param role the current logged user's role
@@ -141,6 +145,7 @@ public class SkillsSheetRestController {
 	}
 
 	/**
+	 * Get all Skills Sheets
 	 *
 	 * @param mail the current logged user's mail
 	 * @param role the current logged user's role
@@ -157,6 +162,7 @@ public class SkillsSheetRestController {
 	}
 
 	/**
+	 * Method to update a Skills Sheet
 	 *
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the current logged user's mail
@@ -172,6 +178,7 @@ public class SkillsSheetRestController {
 	@ResponseBody
 	public HttpException updateSkillsSheet(@RequestBody final JsonNode params,
 			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
+		((ObjectNode) params).put("mailVersionAuthor", mail);
 		return params.get("versionNumber") != null && params.get("name") != null
 				&& params.get("mailPersonAttachedTo") != null && params.get("mailVersionAuthor") != null
 						? this.skillsSheetBusinessController.updateSkillsSheet(params, role)
