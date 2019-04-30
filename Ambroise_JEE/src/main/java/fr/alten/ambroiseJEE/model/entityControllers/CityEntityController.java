@@ -71,7 +71,7 @@ public class CityEntityController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException deleteCity(final JsonNode jCity) {
-		return this.cityRepository.findByNom(jCity.get("name").textValue())
+		return this.cityRepository.findByNom(jCity.get("nom").textValue())
 				// optional is present
 				.map(city -> {
 					city.setNom("deactivated" + System.currentTimeMillis());
