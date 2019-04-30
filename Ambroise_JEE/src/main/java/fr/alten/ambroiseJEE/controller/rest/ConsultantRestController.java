@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -46,6 +47,7 @@ public class ConsultantRestController {
 	}
 
 	/**
+	 * Method to create a Consultant (Person)
 	 *
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the user's mail
@@ -61,12 +63,14 @@ public class ConsultantRestController {
 	public HttpException createConsultant(@RequestBody final JsonNode params,
 			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role)
 			throws Exception {
+		((ObjectNode) params).put("personInChargeMail", mail);
 		return JsonUtils.checkJsonIntegrity(params, "mail")
 				? this.consultantBusinessController.createConsultant(params, role)
 				: new UnprocessableEntityException();
 	}
 
 	/**
+	 * Method to delete a Consultant given its mail
 	 *
 	 * @param params the JsonNode containing post parameters from http request
 	 * @param mail   the current logged user's mail
@@ -86,6 +90,8 @@ public class ConsultantRestController {
 	}
 
 	/**
+	 * Method to get a Consultant given its mail
+	 * 
 	 * @param consultantName the consultant's name
 	 * @param mail           the current logged user's mail
 	 * @param role           the user's role
@@ -100,6 +106,7 @@ public class ConsultantRestController {
 	}
 
 	/**
+	 * Method to get all Consultants
 	 *
 	 * @param mail the current logged user's mail
 	 * @param role the user's role
@@ -114,6 +121,7 @@ public class ConsultantRestController {
 	}
 
 	/**
+	 * Method to update a Consultant
 	 *
 	 * @param params the JsonNode containing post parameters from http request
 	 * @param mail   the current logged user's mail
@@ -129,7 +137,8 @@ public class ConsultantRestController {
 	public HttpException updateConsultant(@RequestBody final JsonNode params,
 			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role)
 			throws ParseException {
-		return JsonUtils.checkJsonIntegrity(params, "mail", "oldMail")
+		((ObjectNode) params).put("personInChargeMail", mail);
+		return JsonUtils.checkJsonIntegrity(params, "mail")
 				? this.consultantBusinessController.updateConsultant(params, role)
 				: new UnprocessableEntityException();
 	}
