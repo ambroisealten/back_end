@@ -267,7 +267,7 @@ public class PersonEntityController {
 	 */
 	public HttpException updatePerson(final JsonNode jPerson, final PersonRole role) throws ParseException {
 		try {
-			final Person person = this.personRepository.findByMailAndRole(jPerson.get("oldMail").textValue(), role)
+			final Person person = this.personRepository.findByMailAndRole(jPerson.get("mail").textValue(), role)
 					.orElseThrow(ResourceNotFoundException::new);
 
 			person.setSurname(jPerson.get("surname").textValue());
@@ -275,8 +275,6 @@ public class PersonEntityController {
 			person.setMonthlyWage(Float.parseFloat(jPerson.get("monthlyWage").textValue()));
 
 			person.setRole(role);
-
-			person.setMail(jPerson.get("mail").textValue());
 
 			final List<String> docList = new ArrayList<String>();
 			final JsonNode docNode = jPerson.get("urlDocs");

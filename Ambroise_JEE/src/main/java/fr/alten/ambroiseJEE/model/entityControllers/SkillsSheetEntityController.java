@@ -15,6 +15,7 @@ import org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -193,9 +194,10 @@ public class SkillsSheetEntityController {
 	 * @return a List of Skills Sheets that match the query
 	 * @author Lucas Royackkers
 	 */
-	public String getSkillsSheetsByIdentityAndSkills(final String identity, final String skills) {
+	public List<JsonNode> getSkillsSheetsByIdentityAndSkills(final String identity, final String skills) {
  		final GsonBuilder builder = new GsonBuilder();
 		Gson gson = builder.create();
+		ObjectMapper mapper = new ObjectMapper();
 		final String[] identitiesList = identity.split(",");
 		final String[] skillsList = skills.split(",");
 
@@ -241,7 +243,8 @@ public class SkillsSheetEntityController {
 					if(skillSheet.getVersionNumber() == latestVersionNumber) {
 						String personResult = skillSheet.getMailPersonAttachedTo();
 						try {
-							final JsonNode jResult = JsonUtils.toJsonNode(gson.toJson(skillSheet));
+							final JsonNode jResult = mapper.createObjectNode();
+							((ObjectNode) jResult).set("skillsheet",JsonUtils.toJsonNode(gson.toJson(skillSheet)));
 							((ObjectNode) jResult).set("person",JsonUtils.toJsonNode(gson.toJson(this.personEntityController.getPersonByMail(personResult))));
 							finalResult.add(jResult);
 						}
@@ -253,7 +256,7 @@ public class SkillsSheetEntityController {
 			}
 		}
 		
-		return gson.toJson(finalResult);
+		return finalResult;
 	}
 
 	public boolean ifSkillsInSheet(Skill filterSkill, SkillsSheet skillSheet) {

@@ -108,7 +108,7 @@ public class SkillsSheetBusinessController {
 	 *         rights to perform this action
 	 * @author Lucas Royackkers
 	 */
-	public String getSkillsSheetsByIdentityAndSkills(String identity, String skills,
+	public List<JsonNode> getSkillsSheetsByIdentityAndSkills(String identity, String skills,
 			UserRole role) {
 		if (UserRole.MANAGER == role || UserRole.MANAGER_ADMIN == role) {
 			return skillsSheetEntityController.getSkillsSheetsByIdentityAndSkills(identity, skills);

@@ -1,5 +1,7 @@
 package fr.alten.ambroiseJEE.controller.rest;
 
+import java.io.IOException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -111,12 +113,13 @@ public class SkillsSheetRestController {
 	 * @throws {@link ForbiddenException} if the current logged user hasn't the
 	 *         rights to perform this action
 	 * @author Lucas Royackkers
+	 * @throws IOException 
 	 */
 	@GetMapping(value = "/skillsheetSearch/{identity}/{skills}")
 	@ResponseBody
 	public String getSkillsSheetByIdentityAndSkills(@PathVariable("identity") final String identity,
-			@PathVariable("skills") final String skills, @RequestAttribute("role") final UserRole role) {
-		return this.skillsSheetBusinessController.getSkillsSheetsByIdentityAndSkills(identity, skills, role);
+			@PathVariable("skills") final String skills, @RequestAttribute("role") final UserRole role) throws IOException {
+		return "{\"results\" : "+this.skillsSheetBusinessController.getSkillsSheetsByIdentityAndSkills(identity, skills, role).toString()+"}";
 	}
 
 	/**
