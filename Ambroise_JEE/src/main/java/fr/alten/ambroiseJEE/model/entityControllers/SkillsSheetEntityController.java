@@ -61,14 +61,22 @@ public class SkillsSheetEntityController {
 
 
 	/**
-	 * Get a List of Skills Sheet given a mail of a person attached to it
+	 * Get a List of Skills Sheet (at the latest version) given a mail of a person attached to it
 	 * 
 	 * @param mailPerson the mail of the person
 	 * @return a List of Skills Sheets that match the given parameters
 	 * @author Lucas Royackkers
 	 */
 	public List<SkillsSheet> getSkillsSheetsByMail(final String mailPerson) {
-		return this.skillsSheetRepository.findByMailPersonAttachedTo(mailPerson);
+		List<SkillsSheet> finalResult = new ArrayList<SkillsSheet>();
+		List<SkillsSheet> skillsSheetList = this.skillsSheetRepository.findByMailPersonAttachedTo(mailPerson);
+		for(SkillsSheet skillsSheet : skillsSheetList) {
+			long latestVersionNumber = this.skillsSheetRepository.findByNameAndMailPersonAttachedToOrderByVersionNumberDesc(skillsSheet.getName(),skillsSheet.getMailPersonAttachedTo()).get(0).getVersionNumber();
+			if(skillsSheet.getVersionNumber() == latestVersionNumber) {
+				finalResult.add(skillsSheet);
+			}
+		}
+		return finalResult;
 	}
 	
 	/**
@@ -239,12 +247,12 @@ public class SkillsSheetEntityController {
 					skillsMatch = skillsMatch && this.ifSkillsInSheet(skill, skillSheet);
 				}
 				if (skillsMatch) {
-					long latestVersionNumber = this.skillsSheetRepository.findByNameOrderByVersionNumberDesc(skillSheet.getName()).get(0).getVersionNumber();
+					long latestVersionNumber = this.skillsSheetRepository.findByNameAndMailPersonAttachedToOrderByVersionNumberDesc(skillSheet.getName(),skillSheet.getMailPersonAttachedTo()).get(0).getVersionNumber();
 					if(skillSheet.getVersionNumber() == latestVersionNumber) {
 						String personResult = skillSheet.getMailPersonAttachedTo();
 						try {
 							final JsonNode jResult = mapper.createObjectNode();
-							((ObjectNode) jResult).set("skillsheet",JsonUtils.toJsonNode(gson.toJson(skillSheet)));
+							((ObjectNode) jResult).set("skillsSheet",JsonUtils.toJsonNode(gson.toJson(skillSheet)));
 							((ObjectNode) jResult).set("person",JsonUtils.toJsonNode(gson.toJson(this.personEntityController.getPersonByMail(personResult))));
 							finalResult.add(jResult);
 						}
@@ -259,6 +267,13 @@ public class SkillsSheetEntityController {
 		return finalResult;
 	}
 
+	/**
+	 * Check if a Skill is contained in a specific SkillsSheet
+	 * @param filterSkill the Skill that we are searching for
+	 * @param skillSheet the skills Sheet
+	 * @return true if the Skill is in the Skills Sheet, else false
+	 * @author Lucas Royackkers
+	 */
 	public boolean ifSkillsInSheet(Skill filterSkill, SkillsSheet skillSheet) {
 		for (SkillGraduated skillGraduated : skillSheet.getSkillsList()) {
 			if (skillGraduated.getSkill().getName().equals(filterSkill.getName())) {
