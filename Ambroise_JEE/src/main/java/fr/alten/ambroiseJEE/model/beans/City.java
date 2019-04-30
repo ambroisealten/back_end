@@ -5,6 +5,8 @@ package fr.alten.ambroiseJEE.model.beans;
 
 import java.io.Serializable;
 
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -20,6 +22,9 @@ public class City extends Geographic implements Serializable {
 
 	private static final long serialVersionUID = 7473150851064346366L;
 
+	@Id
+	private transient ObjectId _id;
+	
 	@Indexed(unique = true)
 	@NonNull
 	private String code;
