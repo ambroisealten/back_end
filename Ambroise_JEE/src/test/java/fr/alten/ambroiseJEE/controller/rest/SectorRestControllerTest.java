@@ -5,11 +5,13 @@ import java.util.ArrayList;
 
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,6 +22,12 @@ import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
+/**
+ * 
+ * @author Andy Chabalier
+ *
+ */
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class SectorRestControllerTest {
 
 	@InjectMocks

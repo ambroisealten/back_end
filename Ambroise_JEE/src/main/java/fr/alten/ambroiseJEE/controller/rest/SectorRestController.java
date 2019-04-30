@@ -65,7 +65,7 @@ public class SectorRestController {
 	@ResponseBody
 	public HttpException createSector(@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
 			@RequestAttribute("role") final UserRole role) {
-		return params.get("name") != null ? this.sectorBusinessController.createSector(params, role)
+		return checkJsonIntegrity(params, "name") ? this.sectorBusinessController.createSector(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -84,7 +84,7 @@ public class SectorRestController {
 	@ResponseBody
 	public HttpException deleteSector(@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
 			@RequestAttribute("role") final UserRole role) {
-		return params.get("name") != null ? this.sectorBusinessController.deleteSector(params, role)
+		return checkJsonIntegrity(params, "name") ? this.sectorBusinessController.deleteSector(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -119,7 +119,7 @@ public class SectorRestController {
 	@ResponseBody
 	public HttpException updateSector(@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
 			@RequestAttribute("role") final UserRole role) {
-		return params.get("name") != null ? this.sectorBusinessController.updateSector(params, role)
+		return checkJsonIntegrity(params, "name", "oldName") ? this.sectorBusinessController.updateSector(params, role)
 				: new UnprocessableEntityException();
 	}
 }
