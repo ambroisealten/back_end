@@ -144,7 +144,7 @@ public class SkillsSheetRestController {
 	 *
 	 * @param mail the current logged user's mail
 	 * @param role the current logged user's role
-	 * @return the list of all skills sheets (empty if there is no match)
+	 * @return the list of all skills sheets (can be empty)
 	 * @throws {@link ForbiddenException} if the current logged user hasn't the
 	 *         rights to perform this action
 	 * @author Lucas Royackkers
@@ -153,7 +153,7 @@ public class SkillsSheetRestController {
 	@ResponseBody
 	public String getSkillsSheets(@RequestAttribute("mail") final String mail,
 			@RequestAttribute("role") final UserRole role) {
-		return this.gson.toJson(this.skillsSheetBusinessController.getAllSkillsSheets(role));
+		return "{\"results\" : "+this.skillsSheetBusinessController.getAllSkillsSheets(role).toString()+"}";
 	}
 
 	/**

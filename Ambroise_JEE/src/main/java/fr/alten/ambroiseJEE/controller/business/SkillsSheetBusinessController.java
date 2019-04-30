@@ -71,7 +71,7 @@ public class SkillsSheetBusinessController {
 	 *         rights to perform this action
 	 * @author Lucas Royackkers
 	 */
-	public List<SkillsSheet> getAllSkillsSheets(final UserRole role) {
+	public List<JsonNode> getAllSkillsSheets(final UserRole role) {
 		if (UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role) {
 			return this.skillsSheetEntityController.getSkillsSheets();
 		}
