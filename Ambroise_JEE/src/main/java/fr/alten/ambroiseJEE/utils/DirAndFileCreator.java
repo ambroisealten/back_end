@@ -41,7 +41,7 @@ public class DirAndFileCreator {
 
 	}
 
-	public static void createFile(File file) {
+	private static void createFile(File file) {
 
 		DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 		Date date = new Date();
@@ -67,7 +67,7 @@ public class DirAndFileCreator {
 		}
 	}
 
-	public static void deleteFile() throws FileNotFoundException {
+	private static void deleteFile() throws FileNotFoundException {
 
 		DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 		Date date = new Date();
