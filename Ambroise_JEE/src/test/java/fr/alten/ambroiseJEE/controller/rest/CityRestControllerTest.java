@@ -63,29 +63,58 @@ public class CityRestControllerTest {
 				.createCity(ArgumentMatchers.any(JsonNode.class), ArgumentMatchers.any(UserRole.class));
 
 		// setup : all needed fields present
-		final String valid = "{\r\n" + "  \"nom\":\"name\",\r\n" + "  \"code\":\"code\"\r\n" + "}";
+		final String valid = "{" + "\"nom\":\"city\"," + "\"code\":\"code\"," + "\"codeRegion\":\"code\","
+				+ "\"codeDepartement\":\"code\"," + "\"codesPostaux\":\"code\"" + "}";
 
 		this.spiedJsonNode = this.mapper.readTree(valid);
 		// assert all field present
 		Assertions.assertThat(this.cityRestController.createCity(this.spiedJsonNode, "mail", UserRole.CDR))
 				.isNotInstanceOf(UnprocessableEntityException.class);
 
-		// setup : missing name
-		final String missingName = "{\r\n" + "  \"code\":\"code\"\r\n" + "}";
+		// setup : missing nom
+		final String missingNom = "{" + "\"code\":\"code\"," + "\"codeRegion\":\"code\","
+				+ "\"codeDepartement\":\"code\"," + "\"codesPostaux\":\"code\"" + "}";
 
-		this.spiedJsonNode = this.mapper.readTree(missingName);
-		// assert missing name
+		this.spiedJsonNode = this.mapper.readTree(missingNom);
+		// assert missing nom
 		Assertions.assertThat(this.cityRestController.createCity(this.spiedJsonNode, "mail", UserRole.CDR))
 				.isInstanceOf(UnprocessableEntityException.class);
 
 		// setup : missing code
-		final String missingCode = "{\r\n" + "  \"nom\":\"name\"\r\n" + "}";
+		final String missingCode = "{" + "\"nom\":\"city\"," + "\"codeRegion\":\"code\","
+				+ "\"codeDepartement\":\"code\"," + "\"codesPostaux\":\"code\"" + "}";
 
 		this.spiedJsonNode = this.mapper.readTree(missingCode);
 		// assert missing code
 		Assertions.assertThat(this.cityRestController.createCity(this.spiedJsonNode, "mail", UserRole.CDR))
 				.isInstanceOf(UnprocessableEntityException.class);
 
+		// setup : missing code
+		final String missingCodeRegion = "{" + "\"nom\":\"city\"," + "\"code\":\"code\","
+				+ "\"codeDepartement\":\"code\"," + "\"codesPostaux\":\"code\"" + "}";
+
+		this.spiedJsonNode = this.mapper.readTree(missingCodeRegion);
+		// assert missing code
+		Assertions.assertThat(this.cityRestController.createCity(this.spiedJsonNode, "mail", UserRole.CDR))
+				.isInstanceOf(UnprocessableEntityException.class);
+
+		// setup : missing code
+		final String missingCodeDepartement = "{" + "\"nom\":\"city\"," + "\"code\":\"code\","
+				+ "\"codeRegion\":\"code\"," + "\"codesPostaux\":\"code\"" + "}";
+
+		this.spiedJsonNode = this.mapper.readTree(missingCodeDepartement);
+		// assert missing code
+		Assertions.assertThat(this.cityRestController.createCity(this.spiedJsonNode, "mail", UserRole.CDR))
+				.isInstanceOf(UnprocessableEntityException.class);
+
+		// setup : missing code
+		final String missingCodesPostaux = "{" + "\"nom\":\"city\"," + "\"code\":\"code\"," + "\"codeRegion\":\"code\","
+				+ "\"codeDepartement\":\"code\"" + "}";
+
+		this.spiedJsonNode = this.mapper.readTree(missingCodesPostaux);
+		// assert missing code
+		Assertions.assertThat(this.cityRestController.createCity(this.spiedJsonNode, "mail", UserRole.CDR))
+				.isInstanceOf(UnprocessableEntityException.class);
 	}
 
 	/**

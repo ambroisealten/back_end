@@ -98,9 +98,12 @@ public class CityBusinessController {
 	 *              the update even if the name is changed
 	 * @param role  user role
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link ResourceNotFoundException} if the resource is not
-	 *         found and {@link OkException} if the city is updated
+	 *         request {@link ResourceNotFoundException} if the resource is not
+	 *         found, {@link ConflictException} if a duplicate unique field is
+	 *         trying to be saved by updating and {@link CreatedException} if the
+	 *         city is updated
 	 * @author Andy Chabalier
+	 * @author Kylian Gehier
 	 */
 	public HttpException updateCity(final JsonNode jCity, final UserRole role) {
 		return isAdmin(role) ? this.cityEntityController.updateCity(jCity) : new ForbiddenException();
