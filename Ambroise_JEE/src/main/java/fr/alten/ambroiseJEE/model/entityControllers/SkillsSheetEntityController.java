@@ -186,10 +186,39 @@ public class SkillsSheetEntityController {
 	 * @return A List with all skills sheets (might be empty)
 	 * @author Lucas Royackkers
 	 */
-	public List<SkillsSheet> getSkillsSheets() {
-		return this.skillsSheetRepository.findAll();
+	public List<JsonNode> getSkillsSheets() {
+		List<SkillsSheet> allSkillsSheets = this.skillsSheetRepository.findAll();
+		List<JsonNode> finalResult = new ArrayList<JsonNode>();
+		ObjectMapper mapper = new ObjectMapper();
+		final GsonBuilder builder = new GsonBuilder();
+		Gson gson = builder.create();
+		
+		for(SkillsSheet skillsSheet : allSkillsSheets) {
+			long latestVersionNumber = this.skillsSheetRepository.findByNameAndMailPersonAttachedToOrderByVersionNumberDesc(skillsSheet.getName(),skillsSheet.getMailPersonAttachedTo()).get(0).getVersionNumber();
+			if(skillsSheet.getVersionNumber() == latestVersionNumber) {
+				try {
+					JsonNode jResult = mapper.createObjectNode();
+					((ObjectNode) jResult).set("skillsSheet",JsonUtils.toJsonNode(gson.toJson(skillsSheet)));
+					((ObjectNode) jResult).set("person",JsonUtils.toJsonNode(gson.toJson(this.personEntityController.getPersonByMail(skillsSheet.getMailPersonAttachedTo()))));
+					finalResult.add(jResult);
+				}
+				catch(IOException e) {
+					LoggerFactory.getLogger(SkillsSheetEntityController.class).error(e.getMessage());
+				}
+			}
+			
+		}
+		return finalResult;
 	}
 	
+	/**
+	 * Get a specific Skills Sheet given a name, the mail and the versionNumber
+	 * @param name the name of the skills sheet
+	 * @param personMail the mail of the person attached to
+	 * @param versionNumber the vesion number of the skills sheet
+	 * @return a Skill Sheet if there is a match, an empty Optional if not
+	 * @author Lucas Royackkers
+	 */
 	public Optional<SkillsSheet> getSkillsSheet(String name, String personMail, long versionNumber){
 		return this.skillsSheetRepository.findByNameAndMailPersonAttachedToAndVersionNumber(name, personMail, versionNumber);
 	}
@@ -203,6 +232,9 @@ public class SkillsSheetEntityController {
 	 * @author Lucas Royackkers
 	 */
 	public List<JsonNode> getSkillsSheetsByIdentityAndSkills(final String identity, final String skills) {
+		if(identity.length() == 1 && skills.length() == 1) {
+			return this.getSkillsSheets();
+		}
  		final GsonBuilder builder = new GsonBuilder();
 		Gson gson = builder.create();
 		ObjectMapper mapper = new ObjectMapper();
@@ -212,14 +244,20 @@ public class SkillsSheetEntityController {
 		final Set<Skill> filteredSkills = new HashSet<Skill>();
 		final Set<Person> filteredPersons = new HashSet<Person>();
 
-		for (final String identityFilter : identitiesList) {
-			filteredPersons.addAll(new HashSet<Person>(personEntityController.getPersonsByName(identityFilter)));
-			filteredPersons
-					.addAll(new HashSet<Person>(this.personEntityController.getPersonsBySurname(identityFilter)));
-			filteredPersons.addAll(
-					new HashSet<Person>(this.personEntityController.getPersonsByHighestDiploma(identityFilter)));
-			filteredPersons.addAll(new HashSet<Person>(this.personEntityController.getPersonsByJob(identityFilter)));
+		if(!(identitiesList.length == 1 && identitiesList[0].equals(" "))) {
+			for (final String identityFilter : identitiesList) {
+				filteredPersons.addAll(new HashSet<Person>(personEntityController.getPersonsByName(identityFilter)));
+				filteredPersons
+						.addAll(new HashSet<Person>(this.personEntityController.getPersonsBySurname(identityFilter)));
+				filteredPersons.addAll(
+						new HashSet<Person>(this.personEntityController.getPersonsByHighestDiploma(identityFilter)));
+				filteredPersons.addAll(new HashSet<Person>(this.personEntityController.getPersonsByJob(identityFilter)));
+			}
 		}
+		else {
+			filteredPersons.addAll(new HashSet<Person>(personEntityController.getAllPersons()));
+		}
+		
 
 		for (final String skillFilter : skillsList) {
 			this.skillEntityController.getSkill(skillFilter).ifPresent(skill -> filteredSkills.add(skill));
@@ -240,25 +278,26 @@ public class SkillsSheetEntityController {
 			result.addAll(personSkillSheet);
 		}
 
-		if (!filteredSkills.isEmpty()) {
-			for (SkillsSheet skillSheet : result) {
-				boolean skillsMatch = true;
+		
+		for (SkillsSheet skillSheet : result) {
+			boolean skillsMatch = true;
+			if (!filteredSkills.isEmpty()) {
 				for (Skill skill : filteredSkills) {
 					skillsMatch = skillsMatch && this.ifSkillsInSheet(skill, skillSheet);
 				}
-				if (skillsMatch) {
-					long latestVersionNumber = this.skillsSheetRepository.findByNameAndMailPersonAttachedToOrderByVersionNumberDesc(skillSheet.getName(),skillSheet.getMailPersonAttachedTo()).get(0).getVersionNumber();
-					if(skillSheet.getVersionNumber() == latestVersionNumber) {
-						String personResult = skillSheet.getMailPersonAttachedTo();
-						try {
-							final JsonNode jResult = mapper.createObjectNode();
-							((ObjectNode) jResult).set("skillsSheet",JsonUtils.toJsonNode(gson.toJson(skillSheet)));
-							((ObjectNode) jResult).set("person",JsonUtils.toJsonNode(gson.toJson(this.personEntityController.getPersonByMail(personResult))));
-							finalResult.add(jResult);
-						}
-						catch(IOException e) {
-							LoggerFactory.getLogger(SkillsSheetEntityController.class).error(e.getMessage());
-						}
+			}
+			if (skillsMatch) {
+				long latestVersionNumber = this.skillsSheetRepository.findByNameAndMailPersonAttachedToOrderByVersionNumberDesc(skillSheet.getName(),skillSheet.getMailPersonAttachedTo()).get(0).getVersionNumber();
+				if(skillSheet.getVersionNumber() == latestVersionNumber) {
+					String personResult = skillSheet.getMailPersonAttachedTo();
+					try {
+						final JsonNode jResult = mapper.createObjectNode();
+						((ObjectNode) jResult).set("skillsSheet",JsonUtils.toJsonNode(gson.toJson(skillSheet)));
+						((ObjectNode) jResult).set("person",JsonUtils.toJsonNode(gson.toJson(this.personEntityController.getPersonByMail(personResult))));
+						finalResult.add(jResult);
+					}
+					catch(IOException e) {
+						LoggerFactory.getLogger(SkillsSheetEntityController.class).error(e.getMessage());
 					}
 				}
 			}

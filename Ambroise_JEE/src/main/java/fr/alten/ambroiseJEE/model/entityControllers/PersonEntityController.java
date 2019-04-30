@@ -251,6 +251,16 @@ public class PersonEntityController {
 	public List<Person> getPersonsBySurname(final String surname) {
 		return this.personRepository.findBySurname(surname);
 	}
+	
+	/**
+	 * Get a List of all Persons in the database
+	 * 
+	 * @return the list of all persons
+	 * @author Lucas Royackkers
+	 */
+	public List<Person> getAllPersons(){
+		return this.personRepository.findAll();
+	}
 
 	/**
 	 * Method to update a Person. Person type will be defined by business
