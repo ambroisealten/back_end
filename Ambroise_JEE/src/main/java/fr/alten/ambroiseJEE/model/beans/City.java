@@ -25,17 +25,25 @@ public class City extends Geographic implements Serializable {
 	@Id
 	private transient ObjectId _id;
 	
+	//@NonNull
 	@Indexed(unique = true)
-	@NonNull
 	private String code;
 	private String codeDepartement;
 	private String codeRegion;
 	private String codePostaux;
-	@NonNull
+	//@NonNull
 	private String nom;
 
 	public City() {
 		super();
+	}
+
+	public ObjectId get_id() {
+		return _id;
+	}
+
+	public void set_id(ObjectId _id) {
+		this._id = _id;
 	}
 
 	public String getCode() {

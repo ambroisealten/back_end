@@ -45,7 +45,7 @@ public class CityEntityController {
 	 */
 	public HttpException createCity(final JsonNode jCity) {
 
-		final City newCity = new City();
+		City newCity = new City();
 		newCity.setNom(jCity.get("nom").textValue());
 		newCity.setCode(jCity.get("code").textValue());
 		newCity.setCodeDepartement(jCity.get("codeDepartement").textValue());
@@ -71,7 +71,7 @@ public class CityEntityController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException deleteCity(final JsonNode jCity) {
-		return this.cityRepository.findByNom(jCity.get("nom").textValue())
+		return this.cityRepository.findByCode(jCity.get("code").textValue())
 				// optional is present
 				.map(city -> {
 					city.setNom("deactivated" + System.currentTimeMillis());
@@ -114,7 +114,7 @@ public class CityEntityController {
 	 * @author Kylian Gehier
 	 */
 	public HttpException updateCity(final JsonNode jCity) {
-		return this.cityRepository.findByNom(jCity.get("oldName").textValue())
+		return this.cityRepository.findByCode(jCity.get("code").textValue())
 				// optional is present
 				.map(city -> {
 					city.setNom(jCity.get("nom").textValue());
