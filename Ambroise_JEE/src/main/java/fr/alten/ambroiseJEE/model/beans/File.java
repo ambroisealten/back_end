@@ -3,6 +3,8 @@
  */
 package fr.alten.ambroiseJEE.model.beans;
 
+import java.io.Serializable;
+
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -13,8 +15,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
  *
  */
 @Document(collection = "files")
-public class File {
+public class File implements Serializable {
 
+	private static final long serialVersionUID = 2715853052440964943L;
+	
 	@Id
 	private transient ObjectId _id;
 	@Indexed(unique = true)
