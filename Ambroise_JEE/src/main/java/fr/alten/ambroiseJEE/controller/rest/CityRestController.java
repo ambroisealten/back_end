@@ -87,7 +87,7 @@ public class CityRestController {
 	@ResponseBody
 	public HttpException deleteCity(@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
 			@RequestAttribute("role") final UserRole role) {
-		return checkJsonIntegrity(params, "nom") ? this.cityBusinessController.deleteCity(params, role)
+		return checkJsonIntegrity(params, "code") ? this.cityBusinessController.deleteCity(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -126,7 +126,7 @@ public class CityRestController {
 	@ResponseBody
 	public HttpException updateCity(@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
 			@RequestAttribute("role") final UserRole role) {
-		return checkJsonIntegrity(params, "nom", "oldname") ? this.cityBusinessController.updateCity(params, role)
+		return checkJsonIntegrity(params, "nom", "code") ? this.cityBusinessController.updateCity(params, role)
 				: new UnprocessableEntityException();
 	}
 }
