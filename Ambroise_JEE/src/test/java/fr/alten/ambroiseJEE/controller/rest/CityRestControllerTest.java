@@ -169,7 +169,7 @@ public class CityRestControllerTest {
 				.deleteCity(ArgumentMatchers.any(JsonNode.class), ArgumentMatchers.any(UserRole.class));
 
 		// setup : all needed fields present
-		final String valid = "{\r\n" + "  \"nom\":\"name\"\r\n" + "}";
+		final String valid = "{\r\n" + "  \"code\":\"code\"\r\n" + "}";
 
 		this.spiedJsonNode = this.mapper.readTree(valid);
 		// assert all field present
@@ -254,7 +254,7 @@ public class CityRestControllerTest {
 				.updateCity(ArgumentMatchers.any(JsonNode.class), ArgumentMatchers.any(UserRole.class));
 
 		// setup : all needed fields present
-		final String valid = "{\r\n" + "  \"nom\":\"name\",\r\n" + "  \"oldname\":\"oldname\"\r\n" + "}";
+		final String valid = "{\r\n" + "  \"nom\":\"name\",\r\n" + "  \"code\":\"code\"\r\n" + "}";
 
 		this.spiedJsonNode = this.mapper.readTree(valid);
 		// assert all field present
@@ -262,7 +262,7 @@ public class CityRestControllerTest {
 				.isNotInstanceOf(UnprocessableEntityException.class);
 
 		// setup : missing name
-		final String missingName = "{\r\n" + "  \"oldName\":\"oldname\"\r\n" + "}";
+		final String missingName = "{\r\n" + "  \"code\":\"code\"\r\n" + "}";
 
 		this.spiedJsonNode = this.mapper.readTree(missingName);
 		// assert missing name
@@ -270,7 +270,7 @@ public class CityRestControllerTest {
 				.isInstanceOf(UnprocessableEntityException.class);
 
 		// setup : missing name
-		final String missingOldName = "{\r\n" + "  \"nom\":\"name\"\r\n" + "}";
+		final String missingOldName = "{\r\n" + "  \"code\":\"code\"\r\n" + "}";
 
 		this.spiedJsonNode = this.mapper.readTree(missingOldName);
 		// assert missing name
