@@ -211,9 +211,10 @@ public class FileRestController {
 	 * @param file the file to store
 	 * @param mail the current logged user's mail
 	 * @param role the current logged user's role
-	 * @return {@link HttpException} corresponding to the status of the request
+	 * @throws {@link HttpException} corresponding to the status of the request
 	 *         ({@link UnprocessableEntityException} if the provided file is null,
 	 *         and {@link CreatedException} if the file is stored and created
+	 * @return the uploaded file
 	 * @author Andy Chabalier
 	 */
 	@PostMapping("/file")

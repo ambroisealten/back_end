@@ -21,7 +21,8 @@ public interface SkillRepository extends MongoRepository<Skill, Long> {
 	 * @param name
 	 * @return An Optional with the corresponding skill or not.
 	 * @author Thomas Decamp
+	 * @author Lucas Royackkers
 	 */
-	public Optional<Skill> findByName(String name);
+	public Optional<Skill> findByNameIgnoreCase(String name);
 
 }

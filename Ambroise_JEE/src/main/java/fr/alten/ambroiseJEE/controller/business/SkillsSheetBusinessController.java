@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import fr.alten.ambroiseJEE.model.beans.File;
 import fr.alten.ambroiseJEE.model.beans.SkillsSheet;
 import fr.alten.ambroiseJEE.model.entityControllers.SkillsSheetEntityController;
 import fr.alten.ambroiseJEE.security.UserRole;
@@ -27,21 +28,6 @@ public class SkillsSheetBusinessController {
 
 	@Autowired
 	private SkillsSheetEntityController skillsSheetEntityController;
-
-	/**
-	 * Get all Skills Sheets given a mail
-	 * 
-	 * @param mailPerson the mail of the person
-	 * @param role the current logged user's role
-	 * @return a List of Skills Sheet given a mail
-	 * @author Lucas Royackkers
-	 */
-	public List<SkillsSheet> getSkillsSheetByMail(final String mailPerson, final UserRole role) {
-		if (UserRole.MANAGER == role || UserRole.MANAGER_ADMIN == role) {
-			return this.skillsSheetEntityController.getSkillsSheetsByMail(mailPerson);
-		}
-		throw new ForbiddenException();
-	}
 
 	/**
 	 * Method to delegate skills sheet creation
@@ -79,6 +65,21 @@ public class SkillsSheetBusinessController {
 	}
 
 	/**
+	 * Get all Skills Sheets given a mail
+	 *
+	 * @param mailPerson the mail of the person
+	 * @param role       the current logged user's role
+	 * @return a List of Skills Sheet given a mail
+	 * @author Lucas Royackkers
+	 */
+	public List<SkillsSheet> getSkillsSheetByMail(final String mailPerson, final UserRole role) {
+		if (UserRole.MANAGER == role || UserRole.MANAGER_ADMIN == role) {
+			return this.skillsSheetEntityController.getSkillsSheetsByMail(mailPerson);
+		}
+		throw new ForbiddenException();
+	}
+
+	/**
 	 * Get all versions of a skills sheet
 	 *
 	 * @param role the current logged user's role
@@ -108,10 +109,28 @@ public class SkillsSheetBusinessController {
 	 *         rights to perform this action
 	 * @author Lucas Royackkers
 	 */
-	public List<JsonNode> getSkillsSheetsByIdentityAndSkills(String identity, String skills,
-			UserRole role) {
+	public List<JsonNode> getSkillsSheetsByIdentityAndSkills(final String identity, final String skills,
+			final UserRole role) {
 		if (UserRole.MANAGER == role || UserRole.MANAGER_ADMIN == role) {
-			return skillsSheetEntityController.getSkillsSheetsByIdentityAndSkills(identity, skills);
+			return this.skillsSheetEntityController.getSkillsSheetsByIdentityAndSkills(identity, skills);
+		}
+		throw new ForbiddenException();
+	}
+
+	/**
+	 * Get a List of Skills Sheet (with different versions) given their common name
+	 * and mail of the person attached to
+	 *
+	 * @param name the name of the skills sheet
+	 * @param role the logged user's role
+	 * @param mail the mail of the person attached to it
+	 * @return a List of Skills Sheet that matches the given parameters (can be
+	 *         empty)
+	 * @author Lucas Royackkers
+	 */
+	public List<SkillsSheet> getSkillsSheetVersion(final String name, final String mailPerson, final UserRole role) {
+		if (UserRole.MANAGER == role || UserRole.MANAGER_ADMIN == role) {
+			return this.skillsSheetEntityController.getSkillsSheetVersion(name, mailPerson);
 		}
 		throw new ForbiddenException();
 	}
@@ -135,20 +154,12 @@ public class SkillsSheetBusinessController {
 				: new ForbiddenException();
 	}
 
-	/**
-	 * Get a List of Skills Sheet (with different versions) given their common name and mail of the person attached to
-	 * 
-	 * @param name the name of the skills sheet
-	 * @param role the logged user's role
-	 * @param mail the mail of the person attached to it
-	 * @return a List of Skills Sheet that matches the given parameters (can be empty)
-	 * @author Lucas Royackkers
-	 */
-	public List<SkillsSheet> getSkillsSheetVersion(String name, String mailPerson, UserRole role) {
-		if(UserRole.MANAGER == role || UserRole.MANAGER_ADMIN == role) {
-			return this.skillsSheetEntityController.getSkillsSheetVersion(name,mailPerson);
-		}
-		throw new ForbiddenException();
+	public HttpException updateSkillsSheetCV(final File cv, final String name, final String mailPersonAttachedTo,
+			final long versionNumber, final UserRole role) {
+		return UserRole.MANAGER == role || UserRole.MANAGER_ADMIN == role
+				? this.skillsSheetEntityController.updateSkillsSheetCV(cv, name, mailPersonAttachedTo, versionNumber)
+				: new ForbiddenException();
+
 	}
 
 }

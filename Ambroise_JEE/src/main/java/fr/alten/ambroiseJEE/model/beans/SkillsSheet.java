@@ -28,6 +28,7 @@ public class SkillsSheet implements Serializable {
 	private long versionNumber;
 	private List<SkillGraduated> skillsList;
 	private String versionDate;
+	private File cvPerson;
 
 	public SkillsSheet() {
 		super();
@@ -96,5 +97,14 @@ public class SkillsSheet implements Serializable {
 	public void setVersionNumber(final long versionNumber) {
 		this.versionNumber = versionNumber;
 	}
+
+	public File getCvPerson() {
+		return cvPerson;
+	}
+	
+	public void setCvPerson(File cvPerson) {
+		this.cvPerson = cvPerson;
+	}
+	
 
 }

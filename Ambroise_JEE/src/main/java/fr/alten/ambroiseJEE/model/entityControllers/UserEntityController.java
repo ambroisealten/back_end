@@ -108,7 +108,7 @@ public class UserEntityController {
 	 */
 	public HttpException deleteUser(final String mail) {
 		try {
-			final User user = this.userRepository.findByMail(mail).orElseThrow(ResourceNotFoundException::new);
+			final User user = this.userRepository.findByMailIgnoreCase(mail).orElseThrow(ResourceNotFoundException::new);
 			user.setForname("");
 			user.setMail("deactivated" + System.currentTimeMillis());
 			user.setName("");
@@ -131,7 +131,7 @@ public class UserEntityController {
 	 * @throws {@link ResourceNotFoundException} if the ressource can't be found
 	 */
 	public User getUser(final String usermail) {
-		return this.userRepository.findByMail(usermail).orElseThrow(ResourceNotFoundException::new);
+		return this.userRepository.findByMailIgnoreCase(usermail).orElseThrow(ResourceNotFoundException::new);
 	}
 
 	/**
@@ -156,7 +156,7 @@ public class UserEntityController {
 	 * @throws {@link ResourceNotFoundException} if the ressource can't be found
 	 */
 	public User getUserByMail(final String mail) {
-		return this.userRepository.findByMail(mail).orElseThrow(ResourceNotFoundException::new);
+		return this.userRepository.findByMailIgnoreCase(mail).orElseThrow(ResourceNotFoundException::new);
 	}
 
 	/**
@@ -182,7 +182,7 @@ public class UserEntityController {
 	 * @author MAQUINGHEN MAXIME
 	 */
 	public HttpException resetUserPassword(final String mail) {
-		final User user = this.userRepository.findByMail(mail).orElseThrow(ResourceNotFoundException::new);
+		final User user = this.userRepository.findByMailIgnoreCase(mail).orElseThrow(ResourceNotFoundException::new);
 		try {
 			final String new_pass = RandomString.getAlphaNumericString(20);
 			user.setPswd(new_pass);
@@ -208,7 +208,7 @@ public class UserEntityController {
 	 */
 	public HttpException updateUser(final JsonNode jUser) {
 		try {
-			final User user = this.userRepository.findByMail(jUser.get("oldMail").textValue())
+			final User user = this.userRepository.findByMailIgnoreCase(jUser.get("oldMail").textValue())
 					.orElseThrow(ResourceNotFoundException::new);
 
 			user.setForname(jUser.get("forname").textValue());
