@@ -72,6 +72,19 @@ public class FileEntityController {
 	}
 
 	/**
+	 * Fetch a file with is id
+	 *
+	 * @param _id id of the file to fetch
+	 * @return the fetched file
+	 * @author Andy Chabalier
+	 * @throws {@link UnprocessableEntityException} if the id can't be processed
+	 * @throws {@link ResourceNotFoundException} if the ressource is not found
+	 */
+	public File getFile(final ObjectId _id) {
+		return this.fileRepository.findBy_id(_id).orElseThrow(ResourceNotFoundException::new);
+	}
+
+	/**
 	 * @return the list of files
 	 * @author Andy Chabalier
 	 */
