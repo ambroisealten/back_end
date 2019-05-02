@@ -101,7 +101,7 @@ public class CityEntityControllerTest {
 		final Optional<City> notEmptyCityOptional = Optional.of(new City());
 		Mockito.doReturn(this.mockedJCity).when(this.mockedJCity).get(ArgumentMatchers.anyString());
 		Mockito.doReturn("anyString").when(this.mockedJCity).textValue();
-		Mockito.doReturn(notEmptyCityOptional).when(this.cityRepository).findByNom(ArgumentMatchers.anyString());
+		Mockito.doReturn(notEmptyCityOptional).when(this.cityRepository).findByCode(ArgumentMatchers.anyString());
 		Mockito.when(this.cityRepository.save(ArgumentMatchers.any(City.class)))
 				.thenThrow(this.mockedDuplicateKeyException);
 		// assert
@@ -124,7 +124,7 @@ public class CityEntityControllerTest {
 		final Optional<City> emptyCityOptional = Optional.ofNullable(null);
 		Mockito.doReturn(this.mockedJCity).when(this.mockedJCity).get(ArgumentMatchers.anyString());
 		Mockito.doReturn("anyString").when(this.mockedJCity).textValue();
-		Mockito.doReturn(emptyCityOptional).when(this.cityRepository).findByNom(ArgumentMatchers.anyString());
+		Mockito.doReturn(emptyCityOptional).when(this.cityRepository).findByCode(ArgumentMatchers.anyString());
 		// assert
 		Assertions.assertThat(this.cityEntityController.deleteCity(this.mockedJCity))
 				.isInstanceOf(ResourceNotFoundException.class);
@@ -145,7 +145,7 @@ public class CityEntityControllerTest {
 		final Optional<City> notEmptyCityOptional = Optional.of(new City());
 		Mockito.doReturn(this.mockedJCity).when(this.mockedJCity).get(ArgumentMatchers.anyString());
 		Mockito.doReturn("anyString").when(this.mockedJCity).textValue();
-		Mockito.doReturn(notEmptyCityOptional).when(this.cityRepository).findByNom(ArgumentMatchers.anyString());
+		Mockito.doReturn(notEmptyCityOptional).when(this.cityRepository).findByCode(ArgumentMatchers.anyString());
 		// assert
 		Assertions.assertThat(this.cityEntityController.deleteCity(this.mockedJCity)).isInstanceOf(OkException.class);
 		// verify
@@ -213,7 +213,7 @@ public class CityEntityControllerTest {
 		final Optional<City> notEmptyCityOptional = Optional.of(new City());
 		Mockito.doReturn(this.mockedJCity).when(this.mockedJCity).get(ArgumentMatchers.anyString());
 		Mockito.doReturn("anyString").when(this.mockedJCity).textValue();
-		Mockito.doReturn(notEmptyCityOptional).when(this.cityRepository).findByNom(ArgumentMatchers.anyString());
+		Mockito.doReturn(notEmptyCityOptional).when(this.cityRepository).findByCode(ArgumentMatchers.anyString());
 		Mockito.when(this.cityRepository.save(ArgumentMatchers.any(City.class)))
 				.thenThrow(this.mockedDuplicateKeyException);
 		// assert
@@ -236,7 +236,7 @@ public class CityEntityControllerTest {
 		final Optional<City> emptyCityOptional = Optional.ofNullable(null);
 		Mockito.doReturn(this.mockedJCity).when(this.mockedJCity).get(ArgumentMatchers.anyString());
 		Mockito.doReturn("anyString").when(this.mockedJCity).textValue();
-		Mockito.doReturn(emptyCityOptional).when(this.cityRepository).findByNom(ArgumentMatchers.anyString());
+		Mockito.doReturn(emptyCityOptional).when(this.cityRepository).findByCode(ArgumentMatchers.anyString());
 		// assert
 		Assertions.assertThat(this.cityEntityController.updateCity(this.mockedJCity))
 				.isInstanceOf(ResourceNotFoundException.class);
@@ -257,7 +257,7 @@ public class CityEntityControllerTest {
 		final Optional<City> notEmptyCityOptional = Optional.of(new City());
 		Mockito.doReturn(this.mockedJCity).when(this.mockedJCity).get(ArgumentMatchers.anyString());
 		Mockito.doReturn("anyString").when(this.mockedJCity).textValue();
-		Mockito.doReturn(notEmptyCityOptional).when(this.cityRepository).findByNom(ArgumentMatchers.anyString());
+		Mockito.doReturn(notEmptyCityOptional).when(this.cityRepository).findByCode(ArgumentMatchers.anyString());
 		// assert
 		Assertions.assertThat(this.cityEntityController.updateCity(this.mockedJCity)).isInstanceOf(OkException.class);
 		// verify

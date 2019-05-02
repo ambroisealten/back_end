@@ -9,13 +9,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import java.io.FileNotFoundException;
 
-import org.assertj.core.api.Assertions;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,7 +35,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import fr.alten.ambroiseJEE.AmbroiseJeeApplication;
 import fr.alten.ambroiseJEE.model.beans.City;
 import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.model.dao.CityRepository;
@@ -47,9 +47,10 @@ import fr.alten.ambroiseJEE.utils.DirAndFileCreator;
  *
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = AmbroiseJeeApplication.class)
+@SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class CityRestIT {
 
 	private static User userAdmin = new User();
@@ -96,21 +97,25 @@ public class CityRestIT {
 	@Before
 	public void beforeEachTest() {
 		userRepository.insert(userAdmin);
+		
+		if (!mongoTemplate.collectionExists("city")) {
+			// Recreate the collection with the unique index "code" -> index beeing dropped
+			// with the collection
+			mongoTemplate.createCollection(City.class);
+			mongoTemplate.indexOps("city").ensureIndex(new Index().on("code", Direction.ASC).unique());
+		}
 	}
 
 	@After
 	public void afterEachTest() {
 		mongoTemplate.getDb().getCollection("user").drop();
 		mongoTemplate.getDb().getCollection("city").drop();
-		
-		// Recreate the collection with the unique index "code" -> index beeing dropped with the collection
-		mongoTemplate.createCollection(City.class);
-		mongoTemplate.indexOps("city").ensureIndex(new Index().on("code", Direction.ASC).unique());
+
 	}
 
 	@AfterClass
 	public static void afterTests() throws FileNotFoundException {
-		// DirAndFileCreator.deleteDir();
+		DirAndFileCreator.deleteDir();
 	}
 
 	@Test
@@ -192,6 +197,8 @@ public class CityRestIT {
 		assertTrue(result.getResponse().getContentAsString().contains("UnprocessableEntityException"));
 	}
 
+	// TODO : Reecrire le test en créant des Jsons de retour et vérifiant bien que
+	// le retour est EGAL à ce Json de retour.
 	@Test
 	public void getCities() throws Exception {
 
@@ -252,6 +259,12 @@ public class CityRestIT {
 				.perform(put("/city").contentType(MediaType.APPLICATION_JSON).content(cityToDelete)).andReturn();
 
 		assertTrue(result.getResponse().getContentAsString().contains("UnprocessableEntityException"));
+	}
+
+	@Test
+	public void z_DroppingDatabase() {
+		//Last test run to drop the database for next test classes.
+		mongoTemplate.getDb().drop();
 	}
 
 }

@@ -9,8 +9,7 @@ import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import com.mongodb.lang.NonNull;
+import org.springframework.lang.NonNull;
 
 /**
  *
@@ -25,13 +24,11 @@ public class City extends Geographic implements Serializable {
 	@Id
 	private transient ObjectId _id;
 	
-	//@NonNull
 	@Indexed(unique = true)
 	private String code;
 	private String codeDepartement;
 	private String codeRegion;
 	private String codePostaux;
-	//@NonNull
 	private String nom;
 
 	public City() {
