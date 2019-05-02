@@ -188,7 +188,7 @@ public class FileStorageBusinessController {
 	 */
 	public HttpException storeFile(final MultipartFile file, final String path, final String fileName,
 			final UserRole role) {
-		if (!(UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)) {
+		if (!(UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role)) {
 			return new ForbiddenException();
 		}
 

@@ -34,7 +34,7 @@ public class FileBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public File createDocument(final String filePath, final String fileName, final UserRole role) {
-		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
+		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role) {
 			return this.fileEntityController.pushDocument(filePath, fileName);
 		} else {
 			throw new ForbiddenException();

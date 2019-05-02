@@ -24,6 +24,7 @@ import com.google.gson.GsonBuilder;
 import fr.alten.ambroiseJEE.controller.business.FileBusinessController;
 import fr.alten.ambroiseJEE.model.PersonSetWithFilters;
 import fr.alten.ambroiseJEE.model.SkillGraduated;
+import fr.alten.ambroiseJEE.model.beans.File;
 import fr.alten.ambroiseJEE.model.beans.Person;
 import fr.alten.ambroiseJEE.model.beans.Skill;
 import fr.alten.ambroiseJEE.model.beans.SkillsSheet;
@@ -51,7 +52,7 @@ public class SkillsSheetEntityController {
 
 	@Autowired
 	private UserEntityController userEntityController;
-	
+
 	@Autowired
 	private FileBusinessController fileBusinessController;
 
@@ -97,8 +98,8 @@ public class SkillsSheetEntityController {
 			final String personMail = jSkillsSheet.get("mailPersonAttachedTo").textValue();
 			final String skillsSheetName = jSkillsSheet.get("name").textValue();
 
-			if (this.skillsSheetRepository.findByNameIgnoreCaseAndMailPersonAttachedToIgnoreCaseAndVersionNumber(
-					skillsSheetName, personMail, versionNumber).isPresent()) {
+			if (this.skillsSheetRepository.existsByNameIgnoreCaseAndMailPersonAttachedToIgnoreCaseAndVersionNumber(
+					skillsSheetName, personMail, versionNumber)) {
 				return new ConflictException();
 			}
 			// Given the created person status
@@ -125,11 +126,11 @@ public class SkillsSheetEntityController {
 			// Set a Version Number on this skills sheet (initialization to 1 for
 			// the version number)
 			newSkillsSheet.setVersionNumber(versionNumber);
-			
-			if(jSkillsSheet.has("cv")) {
-				newSkillsSheet.setCvPerson(this.fileBusinessController.getDocument(jSkillsSheet.get("cv").get("_id").textValue(), UserRole.MANAGER_ADMIN));
-			}
-			else {
+
+			if (jSkillsSheet.has("cv")) {
+				newSkillsSheet.setCvPerson(this.fileBusinessController
+						.getDocument(jSkillsSheet.get("cv").get("_id").textValue(), UserRole.MANAGER_ADMIN));
+			} else {
 				newSkillsSheet.setCvPerson(null);
 			}
 
@@ -400,6 +401,34 @@ public class SkillsSheetEntityController {
 		} catch (final Exception e) {
 			return new ConflictException();
 		}
+	}
+
+	public HttpException updateSkillsSheetCV(final File cv, final String name, final String mailPersonAttachedTo,
+			final long versionNumber) {
+		try {
+
+			final SkillsSheet skillsSheet = this.skillsSheetRepository
+					.findByNameIgnoreCaseAndMailPersonAttachedToIgnoreCaseAndVersionNumber(name, mailPersonAttachedTo,
+							versionNumber)
+					.orElseThrow(ResourceNotFoundException::new);
+
+			if (this.skillsSheetRepository.existsByNameIgnoreCaseAndMailPersonAttachedToIgnoreCaseAndVersionNumber(name,
+					mailPersonAttachedTo, versionNumber + 1)) {
+				return new ConflictException();
+			}
+
+			skillsSheet.setCvPerson(cv);
+			skillsSheet.set_id(null);
+			skillsSheet.setVersionNumber(versionNumber + 1);
+
+			this.skillsSheetRepository.save(skillsSheet);
+
+		} catch (final ResourceNotFoundException rnfe) {
+			return rnfe;
+		} catch (final Exception e) {
+			return new ConflictException();
+		}
+		return new OkException();
 	}
 
 }

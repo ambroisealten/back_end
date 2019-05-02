@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -18,6 +20,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import fr.alten.ambroiseJEE.controller.business.SkillsSheetBusinessController;
+import fr.alten.ambroiseJEE.model.beans.File;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
@@ -37,44 +40,14 @@ public class SkillsSheetRestController {
 	@Autowired
 	private SkillsSheetBusinessController skillsSheetBusinessController;
 
+	@Autowired
+	private FileRestController fileRestController;
+
 	private final Gson gson;
 
 	public SkillsSheetRestController() {
 		final GsonBuilder builder = new GsonBuilder();
 		this.gson = builder.create();
-	}
-
-	/**
-	 * Get all Skills Sheets given a person (with its mail)
-	 * 
-	 * @param mailPerson the mail of the person
-	 * @param mail the current logged user's mail
-	 * @param role the current logged user's role
-	 * @return a String containing a JsonNode with a List of Skills Sheets given the person attached to
-	 * @author Lucas Royackkers
-	 */
-	@GetMapping(value = "/skillsheetMail/{mail}")
-	@ResponseBody
-	public String getSkillsSheetByMail(@PathVariable("mail") final String mailPerson,
-			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
-		return this.gson.toJson(this.skillsSheetBusinessController.getSkillsSheetByMail(mailPerson, role));
-	}
-	
-	/**
-	 * Get all versions of a Skills Sheet given their common name and person attached to
-	 * 
-	 * @param mailPerson the mail of the person attached to the different versions
-	 * @param role the current logged user's role
-	 * @param name the name of the Skills Sheet
-	 * @param mail the current logged user's mail
-	 * @return a String containing a JsonNode that contains a List of Skills Sheet
-	 * @author Lucas Royackkers
-	 */
-	@GetMapping(value = "/skillsheetVersion/{name}/{mail}")
-	@ResponseBody
-	public String getSkillsSheetVersions(@PathVariable("mail") final String mailPerson, @RequestAttribute("role") UserRole role,
-			@PathVariable("name") final String name, @RequestAttribute("mail") final String mail) {
-		return this.gson.toJson(this.skillsSheetBusinessController.getSkillsSheetVersion(name,mailPerson,role));
 	}
 
 	/**
@@ -116,13 +89,32 @@ public class SkillsSheetRestController {
 	 * @throws {@link ForbiddenException} if the current logged user hasn't the
 	 *         rights to perform this action
 	 * @author Lucas Royackkers
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	@GetMapping(value = "/skillsheetSearch/{identity}/{skills}")
 	@ResponseBody
 	public String getSkillsSheetByIdentityAndSkills(@PathVariable("identity") final String identity,
-			@PathVariable("skills") final String skills, @RequestAttribute("role") final UserRole role) throws IOException {
-		return "{\"results\" : "+this.skillsSheetBusinessController.getSkillsSheetsByIdentityAndSkills(identity, skills, role).toString()+"}";
+			@PathVariable("skills") final String skills, @RequestAttribute("role") final UserRole role)
+			throws IOException {
+		return "{\"results\" : " + this.skillsSheetBusinessController
+				.getSkillsSheetsByIdentityAndSkills(identity, skills, role).toString() + "}";
+	}
+
+	/**
+	 * Get all Skills Sheets given a person (with its mail)
+	 *
+	 * @param mailPerson the mail of the person
+	 * @param mail       the current logged user's mail
+	 * @param role       the current logged user's role
+	 * @return a String containing a JsonNode with a List of Skills Sheets given the
+	 *         person attached to
+	 * @author Lucas Royackkers
+	 */
+	@GetMapping(value = "/skillsheetMail/{mail}")
+	@ResponseBody
+	public String getSkillsSheetByMail(@PathVariable("mail") final String mailPerson,
+			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
+		return this.gson.toJson(this.skillsSheetBusinessController.getSkillsSheetByMail(mailPerson, role));
 	}
 
 	/**
@@ -158,7 +150,26 @@ public class SkillsSheetRestController {
 	@ResponseBody
 	public String getSkillsSheets(@RequestAttribute("mail") final String mail,
 			@RequestAttribute("role") final UserRole role) {
-		return "{\"results\" : "+this.skillsSheetBusinessController.getAllSkillsSheets(role).toString()+"}";
+		return "{\"results\" : " + this.skillsSheetBusinessController.getAllSkillsSheets(role).toString() + "}";
+	}
+
+	/**
+	 * Get all versions of a Skills Sheet given their common name and person
+	 * attached to
+	 *
+	 * @param mailPerson the mail of the person attached to the different versions
+	 * @param role       the current logged user's role
+	 * @param name       the name of the Skills Sheet
+	 * @param mail       the current logged user's mail
+	 * @return a String containing a JsonNode that contains a List of Skills Sheet
+	 * @author Lucas Royackkers
+	 */
+	@GetMapping(value = "/skillsheetVersion/{name}/{mail}")
+	@ResponseBody
+	public String getSkillsSheetVersions(@PathVariable("mail") final String mailPerson,
+			@RequestAttribute("role") final UserRole role, @PathVariable("name") final String name,
+			@RequestAttribute("mail") final String mail) {
+		return this.gson.toJson(this.skillsSheetBusinessController.getSkillsSheetVersion(name, mailPerson, role));
 	}
 
 	/**
@@ -183,6 +194,19 @@ public class SkillsSheetRestController {
 				&& params.get("mailPersonAttachedTo") != null && params.get("mailVersionAuthor") != null
 						? this.skillsSheetBusinessController.updateSkillsSheet(params, role)
 						: new UnprocessableEntityException();
+	}
+
+	@PutMapping(value = "/skillsheet/CV")
+	@ResponseBody
+	public HttpException updateSkillsSheetCV(@RequestParam("file") final MultipartFile file,
+			@RequestParam("name") final String name,
+			@RequestParam("mailPersonAttachedTo") final String mailPersonAttachedTo,
+			@RequestParam("versionNumber") final long versionNumber, @RequestAttribute("mail") final String mail,
+			@RequestAttribute("role") final UserRole role) {
+		final File cv = this.fileRestController.uploadFile(file,
+				"/skillsheet/cv/" + mailPersonAttachedTo + "/" + name + "/" + versionNumber + "/", mail, role);
+		return this.skillsSheetBusinessController.updateSkillsSheetCV(cv, name, mailPersonAttachedTo, versionNumber,
+				role);
 	}
 
 }
