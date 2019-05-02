@@ -94,7 +94,7 @@ public class SkillsSheetEntityController {
 	private HttpException createSkillsSheet(final JsonNode jSkillsSheet, final long versionNumber) {
 		try {
 
-			final String status = jSkillsSheet.get("rolePersonAttachedTo").textValue();
+			final PersonRole status = PersonRole.valueOf(jSkillsSheet.get("rolePersonAttachedTo").textValue());
 			final String personMail = jSkillsSheet.get("mailPersonAttachedTo").textValue();
 			final String skillsSheetName = jSkillsSheet.get("name").textValue();
 
@@ -105,13 +105,12 @@ public class SkillsSheetEntityController {
 			// Given the created person status
 			Person personAttachedTo;
 			switch (status) {
-			case "consultant":
+			case CONSULTANT:
 				personAttachedTo = this.personEntityController.getPersonByMailAndType(personMail,
 						PersonRole.CONSULTANT);
 				break;
 			default:
 				personAttachedTo = this.personEntityController.getPersonByMailAndType(personMail, PersonRole.APPLICANT);
-				;
 				break;
 			}
 
@@ -119,7 +118,7 @@ public class SkillsSheetEntityController {
 			newSkillsSheet.setName(skillsSheetName);
 
 			newSkillsSheet.setMailPersonAttachedTo(personAttachedTo.getMail());
-			newSkillsSheet.setRolePersonAttachedTo(status);
+			newSkillsSheet.setRolePersonAttachedTo(status.name());
 			// Get all skills given several lists of skills (tech and soft)
 			newSkillsSheet.setSkillsList(getAllSkills(jSkillsSheet.get("skillsList")));
 
