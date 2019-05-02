@@ -449,6 +449,7 @@ public class InitBaseWebService {
 		newCandidatMichel.setHighestDiploma("EiCESI");
 		newCandidatMichel.setHighestDiplomaYear("2019");
 		newCandidatMichel.setPersonInChargeMail("tempUserAdminManager@mail.com");
+		newCandidatMichel.setOpinion("++");
 
 		final JsonNode newCandidatMichelJsonNode = JsonUtils
 				.toJsonNode(this.gson.toJsonTree(newCandidatMichel).getAsJsonObject());
@@ -466,6 +467,7 @@ public class InitBaseWebService {
 		newCandidatPaul.setHighestDiplomaYear("2019");
 		newCandidatPaul.setRole(PersonRole.APPLICANT);
 		newCandidatPaul.setPersonInChargeMail("tempUserAdminManager@mail.com");
+		newCandidatPaul.setOpinion("+");
 
 		final JsonNode newCandidatPaulJsonNode = JsonUtils
 				.toJsonNode(this.gson.toJsonTree(newCandidatPaul).getAsJsonObject());
@@ -483,6 +485,7 @@ public class InitBaseWebService {
 		newCandidatCyprien.setHighestDiplomaYear("2019");
 		newCandidatCyprien.setRole(PersonRole.CONSULTANT);
 		newCandidatCyprien.setPersonInChargeMail("tempUserAdminManager@mail.com");
+		newCandidatCyprien.setOpinion("+++");
 
 		final JsonNode newCandidatCyprienJsonNode = JsonUtils
 				.toJsonNode(this.gson.toJsonTree(newCandidatCyprien).getAsJsonObject());
@@ -500,6 +503,7 @@ public class InitBaseWebService {
 		newCandidatJeanClaude.setHighestDiplomaYear("2019");
 		newCandidatJeanClaude.setRole(PersonRole.CONSULTANT);
 		newCandidatJeanClaude.setPersonInChargeMail("tempUserAdminManager@mail.com");
+		newCandidatJeanClaude.setOpinion("+");
 
 		final JsonNode newCandidatJeanClaudeJsonNode = JsonUtils
 				.toJsonNode(this.gson.toJsonTree(newCandidatJeanClaude).getAsJsonObject());

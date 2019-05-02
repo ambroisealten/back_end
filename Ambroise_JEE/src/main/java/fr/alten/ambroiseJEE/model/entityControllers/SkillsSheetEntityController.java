@@ -31,6 +31,7 @@ import fr.alten.ambroiseJEE.model.beans.SkillsSheet;
 import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.model.dao.SkillsSheetRepository;
 import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.utils.Constants;
 import fr.alten.ambroiseJEE.utils.JsonUtils;
 import fr.alten.ambroiseJEE.utils.PersonRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
@@ -175,6 +176,72 @@ public class SkillsSheetEntityController {
 	}
 
 	/**
+	 * Get a fiability grade given the average of Soft and Tech SKills and the
+	 * opinion of the Person as : fiability = opinion x AVERAGE(SUM(Soft) +
+	 * SUM(Tech))
+	 *
+	 * @param skillsSheet the skills sheet
+	 * @param opinion     the opinion of the Person
+	 * @param skillsList  the list of skills that are searched (can be empty)
+	 * @return a double that indicates the fiability grade
+	 * @author Lucas Royackkers
+	 */
+	private double getFiabilityGrade(final SkillsSheet skillsSheet, final String opinion, List<String> skillsList) {
+		Double averageSoft = 0.0;
+		Double averageTech = 0.0;
+		int totalTech = 0;
+		int totalSoft = 0;
+
+		if (skillsList.isEmpty()) {
+			skillsList = new ArrayList<String>(Constants.DEFAULT_SKILLS);
+			skillsList.replaceAll(String::toLowerCase);
+		}
+
+		for (final SkillGraduated skillGraduated : skillsSheet.getSkillsList()) {
+			final Skill skill = skillGraduated.getSkill();
+			final String isSoft = skill.getIsSoft();
+			if (isSoft != null) {
+				averageSoft += skillGraduated.getGrade();
+				totalSoft++;
+			} else if (skillsList.contains(skill.getName().toLowerCase())) {
+				averageTech += skillGraduated.getGrade();
+				totalTech++;
+			}
+
+		}
+		averageSoft = (averageSoft + averageTech) / (totalTech + totalSoft);
+
+		switch (opinion) {
+		case "+++":
+			averageSoft *= 1;
+			break;
+		case "++":
+			averageSoft *= 0.7;
+			break;
+		case "+":
+			averageSoft *= 0.6;
+			break;
+		case "-":
+			averageSoft *= 0.4;
+			break;
+		case "--":
+			averageSoft *= 0.2;
+			break;
+		case "---":
+			averageSoft *= 0.1;
+			break;
+		case "NOK":
+			averageSoft *= 0;
+			break;
+		default:
+			averageSoft *= 0;
+			break;
+		}
+
+		return averageSoft;
+	}
+
+	/**
 	 * Get a specific Skills Sheet given a name, the mail and the versionNumber
 	 *
 	 * @param name          the name of the skills sheet
@@ -242,7 +309,7 @@ public class SkillsSheetEntityController {
 		final Gson gson = builder.create();
 		final ObjectMapper mapper = new ObjectMapper();
 		final List<String> identitiesList = Arrays.asList(identity.split(","));
-		final List<String> skillsList = Arrays.asList(skills.split(","));
+		final List<String> skillsList = Arrays.asList(skills.toLowerCase().split(","));
 
 		final HashSet<Skill> filteredSkills = new HashSet<Skill>();
 		final List<Person> allPersons = this.personEntityController.getAllPersons();
@@ -296,8 +363,10 @@ public class SkillsSheetEntityController {
 					try {
 						final JsonNode jResult = mapper.createObjectNode();
 						((ObjectNode) jResult).set("skillsSheet", JsonUtils.toJsonNode(gson.toJson(skillSheet)));
-						((ObjectNode) jResult).set("person", JsonUtils
-								.toJsonNode(gson.toJson(this.personEntityController.getPersonByMail(personMail))));
+						final Person person = this.personEntityController.getPersonByMail(personMail);
+						((ObjectNode) jResult).set("person", JsonUtils.toJsonNode(gson.toJson(person)));
+						((ObjectNode) jResult).put("fiability",
+								getFiabilityGrade(skillSheet, person.getOpinion(), skillsList));
 						finalResult.add(jResult);
 					} catch (final IOException e) {
 						LoggerFactory.getLogger(SkillsSheetEntityController.class).error(e.getMessage());
@@ -305,6 +374,8 @@ public class SkillsSheetEntityController {
 				}
 			}
 		}
+		finalResult.sort((e1, e2) -> Double.valueOf(e2.get("fiability").asDouble())
+				.compareTo(Double.valueOf(e1.get("fiability").asDouble())));
 
 		return finalResult;
 	}
