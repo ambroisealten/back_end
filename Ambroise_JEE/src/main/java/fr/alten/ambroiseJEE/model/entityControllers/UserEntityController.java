@@ -52,8 +52,8 @@ public class UserEntityController {
 	@Autowired
 	private UserRepository userRepository;
 
-	//@Autowired
-	//private AgencyEntityController agencyEntityController;
+	@Autowired
+	private AgencyEntityController agencyEntityController;
 
 	/**
 	 * Method to create an user. User role are by default choosed by application

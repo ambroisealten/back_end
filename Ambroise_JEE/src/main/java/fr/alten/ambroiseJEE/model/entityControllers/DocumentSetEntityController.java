@@ -21,7 +21,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
-import fr.alten.ambroiseJEE.utils.httpStatus.RessourceNotFoundException;
+import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 
 /**
  * @author MAQUINGHEN MAXIME
@@ -78,7 +78,7 @@ public class DocumentSetEntityController {
 	 */
 	public HttpException updateDocumentSet(final JsonNode JDocumentSet) {
 		final DocumentSet documentSet = this.documentSetRepository.findByName(JDocumentSet.get("oldName").textValue())
-				.orElseThrow(RessourceNotFoundException::new);
+				.orElseThrow(ResourceNotFoundException::new);
 		documentSet.setName(JDocumentSet.get("name").textValue());
 		final List<MobileDoc> files = new ArrayList<MobileDoc>();
 		for (final JsonNode document : JDocumentSet.get("files")) {
@@ -109,7 +109,7 @@ public class DocumentSetEntityController {
 		// RessourceNotFoundException. If is present we get the list of MobileDoc. And
 		// we create from this list a MobileDocArrayList
 		final DocumentSet documentSet = this.documentSetRepository.findByName(documentSetName)
-				.orElseThrow(RessourceNotFoundException::new);
+				.orElseThrow(ResourceNotFoundException::new);
 		final List<MobileDoc> mobileDocs = documentSet.getMobileDocs();
 		final MobileDocArrayList databaseDocArrayList = new MobileDocArrayList(mobileDocs);
 
