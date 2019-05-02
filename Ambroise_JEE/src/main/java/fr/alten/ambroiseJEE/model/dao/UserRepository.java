@@ -22,7 +22,7 @@ public interface UserRepository extends MongoRepository<User, Long> {
 	 * @return An Optional with the corresponding user or not.
 	 * @author Andy Chabalier
 	 */
-	Optional<User> findByMail(String mail);
+	Optional<User> findByMailIgnoreCase(String mail);
 
 	/**
 	 * Fetch user by is credential
