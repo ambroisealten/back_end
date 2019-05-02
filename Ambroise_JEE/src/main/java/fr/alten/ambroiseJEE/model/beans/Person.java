@@ -140,17 +140,17 @@ public class Person implements Serializable {
 	 */
 	@Override
 	public boolean equals(Object other) {
-		return true;
-//		if(super.equals(other)) {
-//			return true;
-//		}
-//		else if(!(other instanceof Person)) {
-//			return false;
-//		}
-//		else {
-//			Person otherPerson = (Person) other;
-//			return this._id.equals(otherPerson.get_id());
-//		}
+//		return true;
+		if(super.equals(other)) {
+			return true;
+		}
+		else if(!(other instanceof Person)) {
+			return false;
+		}
+		else {
+			Person otherPerson = (Person) other;
+			return this._id.equals(otherPerson.get_id());
+		}
 		
 	}
 }

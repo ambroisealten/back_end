@@ -86,7 +86,7 @@ public class SkillEntityController {
 	 * @author Thomas Decamp
 	 */
 	public HttpException deleteSkill(final JsonNode jSkill) {
-		return this.skillRepository.findByName(jSkill.get("name").textValue())
+		return this.skillRepository.findByNameIgnoreCase(jSkill.get("name").textValue())
 				// optional is present
 				.map(skill -> {
 					skill.setName("deactivated" + System.currentTimeMillis());
@@ -106,7 +106,7 @@ public class SkillEntityController {
 	 * @author Thomas Decamp
 	 */
 	public Optional<Skill> getSkill(final String name) {
-		return this.skillRepository.findByName(name);
+		return this.skillRepository.findByNameIgnoreCase(name);
 	}
 
 	/**
@@ -127,7 +127,7 @@ public class SkillEntityController {
 	 * @author Thomas Decamp
 	 */
 	public HttpException updateSkill(final JsonNode jSkill) {
-		return this.skillRepository.findByName(jSkill.get("oldName").textValue())
+		return this.skillRepository.findByNameIgnoreCase(jSkill.get("oldName").textValue())
 				// optional is present
 				.map(skill -> {
 					skill.setName(jSkill.get("name").textValue());
