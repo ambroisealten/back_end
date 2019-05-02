@@ -104,7 +104,7 @@ public class UserEntityController {
 	 *         ({@link ResourceNotFoundException} if the resource is not found and
 	 *         {@link CreatedException} if the user is deactivated
 	 * @author MAQUINGHEN MAXIME
-	 * @throws {@link ResourceNotFoundException} if the ressource can't be found
+	 * @throws {@link ResourceNotFoundException} if the resource can't be found
 	 */
 	public HttpException deleteUser(final String mail) {
 		try {
@@ -128,7 +128,7 @@ public class UserEntityController {
 	 *
 	 * @param usermail
 	 * @return
-	 * @throws {@link ResourceNotFoundException} if the ressource can't be found
+	 * @throws {@link ResourceNotFoundException} if the resource can't be found
 	 */
 	public User getUser(final String usermail) {
 		return this.userRepository.findByMailIgnoreCase(usermail).orElseThrow(ResourceNotFoundException::new);
@@ -153,7 +153,7 @@ public class UserEntityController {
 	 * @param mail the user mail to fetch
 	 * @return An Optional with the corresponding user or not.
 	 * @author Andy Chabalier
-	 * @throws {@link ResourceNotFoundException} if the ressource can't be found
+	 * @throws {@link ResourceNotFoundException} if the resource can't be found
 	 */
 	public User getUserByMail(final String mail) {
 		return this.userRepository.findByMailIgnoreCase(mail).orElseThrow(ResourceNotFoundException::new);

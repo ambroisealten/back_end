@@ -98,7 +98,7 @@ public class AgencyEntityController {
 	 *
 	 * @param name the name of the agency to fetch
 	 * @return the fetched agency
-	 * @throws @{@link ResourceNotFoundException} if the ressource is not found
+	 * @throws @{@link ResourceNotFoundException} if the resource is not found
 	 * @author Andy Chabalier
 	 */
 	public Agency getAgency(final String name) {

@@ -171,7 +171,7 @@ public class PersonEntityController {
 	 *
 	 * @param mail the person's mail to fetch
 	 * @return A List of Person that match the searched mail (can be empty).
-	 * @throws @{@link ResourceNotFoundException} if the ressource is not found
+	 * @throws @{@link ResourceNotFoundException} if the resource is not found
 	 * @author Lucas Royackkers
 	 * @author Camille Schnell
 	 */
@@ -185,7 +185,7 @@ public class PersonEntityController {
 	 * @param mail the person's mail to fetch
 	 * @return An Optional with the corresponding person (of the given type) or not.
 	 * @author Lucas Royackkers
-	 * @throws {@link ResourceNotFoundException} if the ressource can't be found
+	 * @throws {@link ResourceNotFoundException} if the resource can't be found
 	 *
 	 */
 	public Person getPersonByMailAndType(final String mail, final PersonRole type) {

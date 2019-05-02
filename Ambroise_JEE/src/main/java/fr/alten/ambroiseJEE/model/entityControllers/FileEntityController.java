@@ -37,7 +37,7 @@ public class FileEntityController {
 	 *
 	 * @param _id the id of file to delete
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link ResourceNotFoundException} if the ressource is not
+	 *         request ({@link ResourceNotFoundException} if the resource is not
 	 *         found and {@link OkException} if the document is deleted
 	 * @author Andy Chabalier
 	 */
@@ -78,7 +78,7 @@ public class FileEntityController {
 	 * @return the fetched file
 	 * @author Andy Chabalier
 	 * @throws {@link UnprocessableEntityException} if the id can't be processed
-	 * @throws {@link ResourceNotFoundException} if the ressource is not found
+	 * @throws {@link ResourceNotFoundException} if the resource is not found
 	 */
 	public File getFile(final ObjectId _id) {
 		return this.fileRepository.findBy_id(_id).orElseThrow(ResourceNotFoundException::new);

@@ -79,7 +79,7 @@ public class RegionEntityController {
 	 * @param name the region name to fetch
 	 * @return the asked region
 	 * @author Andy Chabalier
-	 * @throws {@link ResourceNotFoundException} if the ressource is not found
+	 * @throws {@link ResourceNotFoundException} if the resource is not found
 	 */
 	public Region getRegion(final String name) {
 		return this.regionRepository.findByName(name).orElseThrow(ResourceNotFoundException::new);
