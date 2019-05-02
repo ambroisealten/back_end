@@ -29,6 +29,7 @@ import fr.alten.ambroiseJEE.model.beans.Skill;
 import fr.alten.ambroiseJEE.model.beans.SkillsSheet;
 import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.model.dao.SkillsSheetRepository;
+import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.JsonUtils;
 import fr.alten.ambroiseJEE.utils.PersonRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
@@ -126,7 +127,7 @@ public class SkillsSheetEntityController {
 			newSkillsSheet.setVersionNumber(versionNumber);
 			
 			if(jSkillsSheet.has("cv")) {
-				//newSkillsSheet.setCvPerson();
+				newSkillsSheet.setCvPerson(this.fileBusinessController.getDocument(jSkillsSheet.get("cv").get("_id").textValue(), UserRole.MANAGER_ADMIN));
 			}
 			else {
 				newSkillsSheet.setCvPerson(null);
