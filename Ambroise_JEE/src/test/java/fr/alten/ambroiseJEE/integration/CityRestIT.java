@@ -125,9 +125,8 @@ public class CityRestIT {
 		String newCity = "{" + "\"nom\":\"city\"," + "\"code\":\"000002\"," + "\"codeRegion\":\"000\","
 				+ "\"codeDepartement\":\"00\"," + "\"codesPostaux\":\"0000\"" + "}";
 
-		MvcResult result;
 
-		result = this.mockMvc.perform(post("/city").contentType(MediaType.APPLICATION_JSON).content(newCity))
+		MvcResult result = this.mockMvc.perform(post("/city").contentType(MediaType.APPLICATION_JSON).content(newCity))
 				.andReturn();
 
 		assertTrue(result.getResponse().getContentAsString().contains("CreatedException"));
@@ -144,7 +143,6 @@ public class CityRestIT {
 
 		MvcResult result = this.mockMvc.perform(post("/city").contentType(MediaType.APPLICATION_JSON).content(newCity))
 				.andReturn();
-		System.out.println("\n\nCOUCOU :\n" + result.getResponse().getContentAsString());
 		assertTrue(result.getResponse().getContentAsString().contains("ConflictException"));
 	}
 
