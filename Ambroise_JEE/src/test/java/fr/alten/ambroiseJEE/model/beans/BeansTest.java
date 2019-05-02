@@ -36,7 +36,7 @@ public class BeansTest {
 		// asserting all unique index are present
 		
 		HashMap<String, Boolean> indexPresent = new HashMap<>();
-		indexPresent.put("_id_", true);
+		indexPresent.put("_id_", false);
 		indexPresent.put("code", false);
 		
 		// getting all indexed field of the collection "city"
