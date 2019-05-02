@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import fr.alten.ambroiseJEE.controller.business.FileBusinessController;
 import fr.alten.ambroiseJEE.model.PersonSetWithFilters;
 import fr.alten.ambroiseJEE.model.SkillGraduated;
 import fr.alten.ambroiseJEE.model.beans.Person;
@@ -49,6 +50,9 @@ public class SkillsSheetEntityController {
 
 	@Autowired
 	private UserEntityController userEntityController;
+	
+	@Autowired
+	private FileBusinessController fileBusinessController;
 
 	/**
 	 * Checks if a Skill has a grade (Double) in a good format
@@ -120,6 +124,13 @@ public class SkillsSheetEntityController {
 			// Set a Version Number on this skills sheet (initialization to 1 for
 			// the version number)
 			newSkillsSheet.setVersionNumber(versionNumber);
+			
+			if(jSkillsSheet.has("cv")) {
+				//newSkillsSheet.setCvPerson();
+			}
+			else {
+				newSkillsSheet.setCvPerson(null);
+			}
 
 			final String authorMail = jSkillsSheet.get("mailVersionAuthor").textValue();
 			final User userAuthor = this.userEntityController.getUserByMail(authorMail);

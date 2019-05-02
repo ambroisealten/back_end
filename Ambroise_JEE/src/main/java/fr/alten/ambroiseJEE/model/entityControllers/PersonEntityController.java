@@ -1,7 +1,6 @@
 package fr.alten.ambroiseJEE.model.entityControllers;
 
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -88,12 +87,7 @@ public class PersonEntityController {
 			newPerson.setMonthlyWage(Float.parseFloat(jPerson.get("monthlyWage").textValue()));
 			newPerson.setRole(type);
 			newPerson.setMail(jPerson.get("mail").textValue());
-			final List<String> docList = new ArrayList<String>();
-			final JsonNode docNode = jPerson.get("urlDocs");
-			for (final JsonNode doc : docNode) {
-				docList.add(doc.get("url").textValue());
-			}
-			newPerson.setUrlDocs(docList);
+
 
 			final User personInCharge = this.userEntityController
 					.getUserByMail(jPerson.get("personInChargeMail").textValue());
@@ -117,6 +111,8 @@ public class PersonEntityController {
 			final Employer employer = this.employerEntityController.getEmployer(employerName)
 					.orElseGet(this.employerEntityController.createEmployer(employerName));
 			newPerson.setEmployer(employer.getName());
+			
+			newPerson.setOpinion(jPerson.get("opinion").textValue());
 
 			this.personRepository.save(newPerson);
 		} catch (final ResourceNotFoundException rnfe) {
@@ -156,10 +152,10 @@ public class PersonEntityController {
 			}
 			person.setMail("deactivated" + System.currentTimeMillis() + "@deactivated.com");
 			person.setEmployer(null);
-			person.setUrlDocs(null);
 			person.setRole(PersonRole.DEMISSIONAIRE);
 			person.setMonthlyWage(0);
 			person.setJob(null);
+			person.setOpinion(null);
 
 			this.personRepository.save(person);
 		} catch (final ResourceNotFoundException rnfe) {
@@ -286,13 +282,6 @@ public class PersonEntityController {
 
 			person.setRole(role);
 
-			final List<String> docList = new ArrayList<String>();
-			final JsonNode docNode = jPerson.get("urlDocs");
-			for (final JsonNode doc : docNode) {
-				docList.add(doc.get("url").textValue());
-			}
-			person.setUrlDocs(docList);
-
 			final User personInCharge = this.userEntityController
 					.getUserByMail(jPerson.get("personInChargeMail").textValue());
 			person.setPersonInChargeMail(personInCharge.getMail());
@@ -316,6 +305,9 @@ public class PersonEntityController {
 			final Employer employer = this.employerEntityController.getEmployer(employerName)
 					.orElseGet(this.employerEntityController.createEmployer(employerName));
 			person.setEmployer(employer.getName());
+			
+			person.setOpinion(jPerson.get("opinion").textValue());
+			
 			this.personRepository.save(person);
 		} catch (final ResourceNotFoundException rnfe) {
 			return rnfe;

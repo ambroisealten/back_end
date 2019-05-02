@@ -1,7 +1,6 @@
 package fr.alten.ambroiseJEE.model.beans;
 
 import java.io.Serializable;
-import java.util.List;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
@@ -31,9 +30,9 @@ public class Person implements Serializable {
 	private float monthlyWage;
 	private PersonRole role;
 	private String personInChargeMail;
-	private List<String> urlDocs;
 	private String highestDiploma;
 	private String highestDiplomaYear;
+	private String opinion;
 
 	public Person() {
 		super();
@@ -83,9 +82,6 @@ public class Person implements Serializable {
 		return this.surname;
 	}
 
-	public List<String> getUrlDocs() {
-		return this.urlDocs;
-	}
 
 	public void set_id(final ObjectId _id) {
 		this._id = _id;
@@ -130,9 +126,13 @@ public class Person implements Serializable {
 	public void setSurname(final String surname) {
 		this.surname = surname;
 	}
+	
+	public String getOpinion() {
+		return opinion;
+	}
 
-	public void setUrlDocs(final List<String> urlDocs) {
-		this.urlDocs = urlDocs;
+	public void setOpinion(String opinion) {
+		this.opinion = opinion;
 	}
 
 	/**
@@ -140,7 +140,6 @@ public class Person implements Serializable {
 	 */
 	@Override
 	public boolean equals(Object other) {
-//		return true;
 		if(super.equals(other)) {
 			return true;
 		}
