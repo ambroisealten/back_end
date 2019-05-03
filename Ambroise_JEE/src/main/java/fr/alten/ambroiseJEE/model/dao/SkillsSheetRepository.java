@@ -13,6 +13,15 @@ import fr.alten.ambroiseJEE.model.beans.SkillsSheet;
  */
 public interface SkillsSheetRepository extends MongoRepository<SkillsSheet, Long> {
 
+	/**
+	 * Checks if a Skills Sheet with the given parameters exists
+	 * 
+	 * @param name the name of the Skills Sheet
+	 * @param mailPersonAttachedTo the mail of the person attached to the Skills Sheet
+	 * @param l the version number of the Skills Sheet
+	 * @return true if this specific Skills Sheet exists, otherwise false
+	 * @author Lucas Royackkers
+	 */
 	public boolean existsByNameIgnoreCaseAndMailPersonAttachedToIgnoreCaseAndVersionNumber(String name,
 			String mailPersonAttachedTo, long l);
 
