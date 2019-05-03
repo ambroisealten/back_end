@@ -111,7 +111,7 @@ public class SkillsSheetEntityController {
 				personAttachedTo = this.personEntityController.getPersonByMailAndType(personMail, PersonRole.APPLICANT);
 				break;
 			default:
-				return new ResourceNotFoundException(); 
+				return new ResourceNotFoundException();
 			}
 
 			final SkillsSheet newSkillsSheet = new SkillsSheet();
