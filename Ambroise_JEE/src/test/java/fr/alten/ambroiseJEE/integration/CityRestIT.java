@@ -9,7 +9,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 import java.io.FileNotFoundException;
-import java.util.List;
 import java.util.Optional;
 
 import org.junit.After;
@@ -42,7 +41,7 @@ import fr.alten.ambroiseJEE.model.beans.City;
 import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.model.dao.CityRepository;
 import fr.alten.ambroiseJEE.model.dao.UserRepository;
-import fr.alten.ambroiseJEE.utils.DirAndFileCreator;
+import fr.alten.ambroiseJEE.utils.TokenIgnore;
 
 /**
  *
@@ -72,7 +71,7 @@ public class CityRestIT {
 
 	@BeforeClass
 	public static void beforeTests() {
-		DirAndFileCreator.createDir();
+		TokenIgnore.createDir();
 		initAdminUser();
 		initCity();
 		initGson();
@@ -118,7 +117,7 @@ public class CityRestIT {
 
 	@AfterClass
 	public static void afterTests() throws FileNotFoundException {
-		//DirAndFileCreator.deleteDir();
+		TokenIgnore.deleteDir();
 	}
 
 	@Test

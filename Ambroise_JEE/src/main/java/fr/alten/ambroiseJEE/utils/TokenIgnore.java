@@ -10,16 +10,21 @@ import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.alten.ambroiseJEE.security.UserRole;
+
 /**
  *
  * @author Kylian Gehier
  *
  */
 
-public class DirAndFileCreator {
+public class TokenIgnore {
 
+	
 	private static String dirPath = "src/main/resources/dev";
-	private static Logger logger = LoggerFactory.getLogger(DirAndFileCreator.class);
+	private static Logger logger = LoggerFactory.getLogger(TokenIgnore.class);
+	private static String tokenIgnoreMail = "tempUserAdminManager@mail.com";
+	private static UserRole tokenIgnoreUserRole = UserRole.MANAGER_ADMIN;
 
 	public static void createDir() {
 
@@ -91,6 +96,14 @@ public class DirAndFileCreator {
 
 		return file.exists();
 
+	}
+	
+	public static String getTokenIgnoreMail() {
+		return tokenIgnoreMail;
+	}
+	
+	public static UserRole getTokenIgnoreUserRole() {
+		return tokenIgnoreUserRole;
 	}
 
 }
