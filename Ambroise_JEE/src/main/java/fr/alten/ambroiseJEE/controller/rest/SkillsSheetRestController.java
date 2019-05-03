@@ -28,6 +28,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
+import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
@@ -60,6 +61,7 @@ public class SkillsSheetRestController {
 	 * @param role   the current logged user's role
 	 * @return {@link HttpException} corresponding to the status of the request,
 	 *         {@link UnprocessableEntityException} if we can't create the resource,
+	 *         {@link ResourceNotFoundException} if there is no such resource (such as User, PersonRole, etc.) as the one that are given,
 	 *         {@link ConflictException} if there is a conflict in the database,
 	 *         {@link ForbiddenException} if the current logged user hasn't the
 	 *         rights to perform this action and {@link CreatedException} if the
@@ -202,6 +204,7 @@ public class SkillsSheetRestController {
 	 * @param role   the current logged user's role
 	 * @return {@link HttpException} corresponding to the status of the request,
 	 *         {@link UnprocessableEntityException} if we can't update the resource,
+	 *         {@link ResourceNotFoundException} if there is no such resource as the one that are given,
 	 *         {@link ForbiddenException} if the current logged user hasn't the
 	 *         rights to perform this action and {@link CreatedException} if the
 	 *         skills sheet is updated
