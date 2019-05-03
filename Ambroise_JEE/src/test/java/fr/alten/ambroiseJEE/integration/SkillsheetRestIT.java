@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 import java.io.FileNotFoundException;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,13 +32,14 @@ import com.google.gson.GsonBuilder;
 
 import fr.alten.ambroiseJEE.model.SkillGraduated;
 import fr.alten.ambroiseJEE.model.beans.Person;
+import fr.alten.ambroiseJEE.model.beans.Skill;
 import fr.alten.ambroiseJEE.model.beans.SkillsSheet;
 import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.model.dao.PersonRepository;
 import fr.alten.ambroiseJEE.model.dao.SkillsSheetRepository;
 import fr.alten.ambroiseJEE.model.dao.UserRepository;
-import fr.alten.ambroiseJEE.utils.TokenIgnore;
 import fr.alten.ambroiseJEE.utils.PersonRole;
+import fr.alten.ambroiseJEE.utils.TokenIgnore;
 
 /**
  *
@@ -51,12 +51,12 @@ import fr.alten.ambroiseJEE.utils.PersonRole;
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class skillsheetRestIT {
+public class SkillsheetRestIT {
 
 	private static User userAdmin = new User();
 	private static Person person = new Person();
-	private static SkillsSheet skillsSheetWithSoftSkill = new SkillsSheet();
-	private static SkillsSheet skillsSheetWithoutSoftSkill = new SkillsSheet();
+	private static Skill skill = new Skill();
+	private static SkillsSheet skillsSheet = new SkillsSheet();
 	private static Gson gson;
 
 	@Autowired
@@ -75,6 +75,7 @@ public class skillsheetRestIT {
 		TokenIgnore.createDir();
 		initAdminUser();
 		initPerson();
+		initSkillSheet();
 		initGson();
 	}
 
@@ -87,6 +88,14 @@ public class skillsheetRestIT {
 	private static void initPerson() {
 		person.setMail("person@mail.com");
 		person.setRole(PersonRole.CONSULTANT);
+	}
+	
+	private static void initSkillSheet() {
+		skill.setIsSoft("");
+		skill.setName("skill1");
+		skillsSheet.setMailPersonAttachedTo("person@mail.com");
+		skillsSheet.setMailVersionAuthor(TokenIgnore.getTokenIgnoreMail());
+		skillsSheet.setRolePersonAttachedTo("CONSULTANT");
 	}
 
 	private static void initGson() {
