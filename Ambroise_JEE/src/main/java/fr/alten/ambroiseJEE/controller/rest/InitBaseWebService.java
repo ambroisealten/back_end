@@ -27,6 +27,7 @@ import fr.alten.ambroiseJEE.controller.business.ApplicantBusinessController;
 import fr.alten.ambroiseJEE.controller.business.ApplicantForumBusinessController;
 import fr.alten.ambroiseJEE.controller.business.ConsultantBusinessController;
 import fr.alten.ambroiseJEE.controller.business.DiplomaBusinessController;
+import fr.alten.ambroiseJEE.controller.business.DocumentSetBusinessController;
 import fr.alten.ambroiseJEE.controller.business.EmployerBusinessController;
 import fr.alten.ambroiseJEE.controller.business.ForumBusinessController;
 import fr.alten.ambroiseJEE.controller.business.JobBusinessController;
@@ -39,6 +40,7 @@ import fr.alten.ambroiseJEE.model.SkillGraduated;
 import fr.alten.ambroiseJEE.model.beans.Agency;
 import fr.alten.ambroiseJEE.model.beans.ApplicantForum;
 import fr.alten.ambroiseJEE.model.beans.Diploma;
+import fr.alten.ambroiseJEE.model.beans.DocumentSet;
 import fr.alten.ambroiseJEE.model.beans.Employer;
 import fr.alten.ambroiseJEE.model.beans.Forum;
 import fr.alten.ambroiseJEE.model.beans.Job;
@@ -103,6 +105,9 @@ public class InitBaseWebService {
 	private ApplicantForumBusinessController applicantForumBusinessController;
 
 	private final Gson gson;
+
+	@Autowired
+	private DocumentSetBusinessController documentSetBusinessController;
 
 	public InitBaseWebService() {
 		final GsonBuilder builder = new GsonBuilder();
@@ -304,6 +309,22 @@ public class InitBaseWebService {
 		final JsonNode diplomaMasterJsonNode = JsonUtils
 				.toJsonNode(this.gson.toJsonTree(diplomaMaster).getAsJsonObject());
 		this.diplomaBusinessController.createDiploma(diplomaMasterJsonNode, UserRole.MANAGER_ADMIN);
+	}
+
+	/**
+	 * populate the base with the forum documentSet
+	 *
+	 * @author Andy Chabalier
+	 * @throws IOException
+	 */
+	private void createDocumentSet() throws IOException {
+		final DocumentSet documentSet = new DocumentSet();
+		documentSet.setMobileDocs(null);
+		documentSet.setName("forum");
+		final JsonNode documentSetJsonNode = JsonUtils.toJsonNode(this.gson.toJsonTree(documentSet).getAsJsonObject());
+		((ObjectNode) documentSetJsonNode).put("files", "[]");
+
+		this.documentSetBusinessController.createDocumentSet(documentSetJsonNode, UserRole.MANAGER_ADMIN);
 	}
 
 	/**
@@ -841,6 +862,9 @@ public class InitBaseWebService {
 
 		// peupler la base de données des candidats sur un forum
 		createApplicantForum();
+
+		// peuple la base de donnée avec un dataSet pour les documents
+		createDocumentSet();
 
 		LoggerFactory.getLogger(InitBaseWebService.class).info(String.valueOf(System.currentTimeMillis() - start));
 		return new CreatedException();
