@@ -28,7 +28,6 @@ import fr.alten.ambroiseJEE.model.beans.File;
 import fr.alten.ambroiseJEE.model.beans.Person;
 import fr.alten.ambroiseJEE.model.beans.Skill;
 import fr.alten.ambroiseJEE.model.beans.SkillsSheet;
-import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.model.dao.SkillsSheetRepository;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.Constants;
@@ -50,9 +49,6 @@ public class SkillsSheetEntityController {
 
 	@Autowired
 	private SkillEntityController skillEntityController;
-
-	@Autowired
-	private UserEntityController userEntityController;
 
 	@Autowired
 	private FileBusinessController fileBusinessController;
@@ -88,13 +84,14 @@ public class SkillsSheetEntityController {
 	 * @param jSkillsSheet  the JsonNode containing all the parameters
 	 * @param versionNumber the versionNumber of the Skills Sheet
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link ConflictException} if there is a conflict in the
+	 *         request, {@link ResourceNotFoundException} if there is no such resource as the one that are given,
+	 *         {@link ConflictException} if there is a conflict in the
 	 *         database and {@link CreatedException} if the skills sheet is created
 	 * @author Lucas Royackkers
 	 */
 	private HttpException createSkillsSheet(final JsonNode jSkillsSheet, final long versionNumber) {
 		try {
-
+			
 			final PersonRole status = PersonRole.valueOf(jSkillsSheet.get("rolePersonAttachedTo").textValue());
 			final String personMail = jSkillsSheet.get("mailPersonAttachedTo").textValue();
 			final String skillsSheetName = jSkillsSheet.get("name").textValue();
@@ -104,7 +101,7 @@ public class SkillsSheetEntityController {
 				return new ConflictException();
 			}
 			// Given the created person status
-			Person personAttachedTo;
+			Person personAttachedTo = null;
 			switch (status) {
 			case CONSULTANT:
 				personAttachedTo = this.personEntityController.getPersonByMailAndType(personMail,
@@ -119,7 +116,7 @@ public class SkillsSheetEntityController {
 			newSkillsSheet.setName(skillsSheetName);
 
 			newSkillsSheet.setMailPersonAttachedTo(personAttachedTo.getMail());
-			newSkillsSheet.setRolePersonAttachedTo(status.name());
+			newSkillsSheet.setRolePersonAttachedTo(status);
 			// Get all skills given several lists of skills (tech and soft)
 			newSkillsSheet.setSkillsList(getAllSkills(jSkillsSheet.get("skillsList")));
 
@@ -206,33 +203,35 @@ public class SkillsSheetEntityController {
 			}
 
 		}
-		averageSoft = (averageSoft + averageTech) / (totalTech + totalSoft);
+		averageSoft = (totalTech+totalSoft != 0) ? (averageSoft + averageTech) / (totalTech + totalSoft) : 0.0;
 
-		switch (opinion) {
-		case "+++":
-			averageSoft *= 1;
-			break;
-		case "++":
-			averageSoft *= 0.7;
-			break;
-		case "+":
-			averageSoft *= 0.6;
-			break;
-		case "-":
-			averageSoft *= 0.4;
-			break;
-		case "--":
-			averageSoft *= 0.2;
-			break;
-		case "---":
-			averageSoft *= 0.1;
-			break;
-		case "NOK":
-			averageSoft *= 0;
-			break;
-		default:
-			averageSoft *= 0;
-			break;
+		if(averageSoft != 0.0) {
+			switch (opinion) {
+			case "+++":
+				averageSoft *= 1;
+				break;
+			case "++":
+				averageSoft *= 0.7;
+				break;
+			case "+":
+				averageSoft *= 0.6;
+				break;
+			case "-":
+				averageSoft *= 0.4;
+				break;
+			case "--":
+				averageSoft *= 0.2;
+				break;
+			case "---":
+				averageSoft *= 0.1;
+				break;
+			case "NOK":
+				averageSoft = 0.0;
+				break;
+			default:
+				averageSoft = 0.0;
+				break;
+			}
 		}
 
 		return averageSoft;
@@ -297,7 +296,7 @@ public class SkillsSheetEntityController {
 	public List<JsonNode> getSkillsSheetsByIdentityAndSkills(final String identity, final String skills) {
 		// If there is no parameters given (e.g. a space for identity and skills
 		// filter), returns all skills sheets
-		if (identity.length() == 1 && skills.length() == 1) {
+		if ((identity.length() == 1 && identity.equals(",")) && (skills.length() == 1 && skills.equals(","))) {
 			return getSkillsSheets();
 		}
 
@@ -317,7 +316,9 @@ public class SkillsSheetEntityController {
 
 		// Get all Skills in the filter that are in the database
 		for (final String skillFilter : skillsList) {
-			this.skillEntityController.getSkill(skillFilter).ifPresent(skill -> filteredSkills.add(skill));
+			Skill filterSkill = new Skill();
+			filterSkill.setName(skillFilter);
+			filteredSkills.add(filterSkill);
 		}
 
 		final Set<SkillsSheet> result = new HashSet<SkillsSheet>();
@@ -437,7 +438,7 @@ public class SkillsSheetEntityController {
 	 */
 	public boolean ifSkillsInSheet(final Skill filterSkill, final SkillsSheet skillSheet) {
 		for (final SkillGraduated skillGraduated : skillSheet.getSkillsList()) {
-			if (skillGraduated.getSkill().getName().equals(filterSkill.getName())) {
+			if (skillGraduated.getSkill().getName().toLowerCase().equals(filterSkill.getName())) {
 				return true;
 			}
 		}
@@ -471,6 +472,20 @@ public class SkillsSheetEntityController {
 		}
 	}
 
+	/**
+	 * Method to update a CV on a Skills Sheet, the update save a new version of the skills sheet
+	 * with the new CV in it
+	 * 
+	 * @param cv the CV as a File
+	 * @param name the name of the Skills Sheet
+	 * @param mailPersonAttachedTo the mail of the person attached to this Skills Sheet
+	 * @param versionNumber the version number of this Skills Sheet
+	 * @return the @see {@link HttpException} corresponding to the status of the
+	 *         request {@link ResourceNotFoundException} if the resource is not
+	 *         found, {@link ConflictException} if there is a conflict in the
+	 *         database and {@link OkException} if the skills sheet is updated
+	 * @author Lucas Royackkers
+	 */
 	public HttpException updateSkillsSheetCV(final File cv, final String name, final String mailPersonAttachedTo,
 			final long versionNumber) {
 		try {
@@ -499,7 +514,15 @@ public class SkillsSheetEntityController {
 		return new OkException();
 	}
 
-	
+	/**
+	 * Checks if a specific version of this Skills Sheet exists
+	 * 
+	 * @param name the name of the Skills List
+	 * @param mailPerson the mail of the person attached to this Skills Sheet
+	 * @param versionNumber the verion number of this Skills Sheet
+	 * @return true if the specific version of this Skills Sheet exists, otherwise false
+	 * @author Lucas Royackkers
+	 */
 	public boolean checkIfSkillsSheetVersion(String name, String mailPerson, long versionNumber) {
 		boolean check = false;
 		List<SkillsSheet> skillsSheetList = this.getSkillsSheetVersion(name, mailPerson);

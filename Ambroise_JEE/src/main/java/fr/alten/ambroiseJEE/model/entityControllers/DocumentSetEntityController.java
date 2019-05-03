@@ -50,7 +50,7 @@ public class DocumentSetEntityController {
 		final List<MobileDoc> files = new ArrayList<MobileDoc>();
 		for (final JsonNode document : JDocumentSet.get("files")) {
 			final Integer order = Integer.valueOf(document.get("order").asInt());
-			final String name = document.get("name").textValue();
+			final String name = document.get("id").textValue();
 			files.add(MobileDoc.of(name, order));
 		}
 		documentSet.setMobileDocs(files);
@@ -83,7 +83,7 @@ public class DocumentSetEntityController {
 		final List<MobileDoc> files = new ArrayList<MobileDoc>();
 		for (final JsonNode document : JDocumentSet.get("files")) {
 			final Integer order = Integer.valueOf(document.get("order").asInt());
-			final String name = document.get("name").textValue();
+			final String name = document.get("id").textValue();
 			files.add(MobileDoc.of(name, order));
 		}
 		documentSet.setMobileDocs(files);
@@ -117,7 +117,7 @@ public class DocumentSetEntityController {
 		final MobileDocArrayList mobileDocArrayList = new MobileDocArrayList();
 		for (final JsonNode document : jDocumentSet.get("files")) {
 			final Integer order = Integer.valueOf(document.get("order").asInt());
-			final String name = document.get("name").textValue();
+			final String name = document.get("id").textValue();
 			mobileDocArrayList.add(MobileDoc.of(name, order));
 		}
 
