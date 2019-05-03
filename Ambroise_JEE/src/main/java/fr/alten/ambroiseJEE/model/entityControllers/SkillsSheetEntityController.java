@@ -28,7 +28,6 @@ import fr.alten.ambroiseJEE.model.beans.File;
 import fr.alten.ambroiseJEE.model.beans.Person;
 import fr.alten.ambroiseJEE.model.beans.Skill;
 import fr.alten.ambroiseJEE.model.beans.SkillsSheet;
-import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.model.dao.SkillsSheetRepository;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.Constants;
@@ -50,9 +49,6 @@ public class SkillsSheetEntityController {
 
 	@Autowired
 	private SkillEntityController skillEntityController;
-
-	@Autowired
-	private UserEntityController userEntityController;
 
 	@Autowired
 	private FileBusinessController fileBusinessController;
@@ -88,13 +84,14 @@ public class SkillsSheetEntityController {
 	 * @param jSkillsSheet  the JsonNode containing all the parameters
 	 * @param versionNumber the versionNumber of the Skills Sheet
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link ConflictException} if there is a conflict in the
+	 *         request, {@link ResourceNotFoundException} if there is no such resource as the one that are given,
+	 *         {@link ConflictException} if there is a conflict in the
 	 *         database and {@link CreatedException} if the skills sheet is created
 	 * @author Lucas Royackkers
 	 */
 	private HttpException createSkillsSheet(final JsonNode jSkillsSheet, final long versionNumber) {
 		try {
-
+			
 			final PersonRole status = PersonRole.valueOf(jSkillsSheet.get("rolePersonAttachedTo").textValue());
 			final String personMail = jSkillsSheet.get("mailPersonAttachedTo").textValue();
 			final String skillsSheetName = jSkillsSheet.get("name").textValue();
@@ -134,9 +131,7 @@ public class SkillsSheetEntityController {
 				newSkillsSheet.setCvPerson(null);
 			}
 
-			final String authorMail = jSkillsSheet.get("mailVersionAuthor").textValue();
-			final User userAuthor = this.userEntityController.getUserByMail(authorMail);
-			newSkillsSheet.setMailVersionAuthor(userAuthor.getMail());
+			newSkillsSheet.setMailVersionAuthor(jSkillsSheet.get("mailVersionAuthor").textValue());
 
 			newSkillsSheet.setVersionDate(String.valueOf(System.currentTimeMillis()));
 

@@ -16,6 +16,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 
 /**
  * Skills sheet controller for business rules.
@@ -35,7 +36,8 @@ public class SkillsSheetBusinessController {
 	 * @param jSkillsSheet JsonNode with all skills sheet parameters
 	 * @param role         the current logged user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request, {@link ConflictException} if there is a conflict in the
+	 *         request, {@link ResourceNotFoundException} if there is no such resource as the one that are given,
+	 *         {@link ConflictException} if there is a conflict in the
 	 *         database, {@link ForbiddenException} if the current logged user
 	 *         hasn't the rights to perform this action and {@link CreatedException}
 	 *         if the skills sheet is created
@@ -143,8 +145,9 @@ public class SkillsSheetBusinessController {
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ConflictException} if there is a conflict in the
 	 *         database, {@link ForbiddenException} if the current logged user
-	 *         hasn't the rights to perform this action and {@link CreatedException}
-	 *         if the skills sheet is updated
+	 *         hasn't the rights to perform this action, 
+	 *         {@link ResourceNotFoundException} if there is no such resource as the one that are given,
+	 *         and {@link CreatedException}if the skills sheet is updated
 	 * @author Lucas Royackkers
 	 * @throws ParseException
 	 */
@@ -164,7 +167,8 @@ public class SkillsSheetBusinessController {
 	 * @param role the current logged user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ConflictException} if there is a conflict in the
-	 *         database, {@link ForbiddenException} if the current logged user
+	 *         database, {@link ResourceNotFoundException} if there is no such resource as the one that are given,
+	 *         {@link ForbiddenException} if the current logged user
 	 *         hasn't the rights to perform this action and {@link OkException}
 	 *         if the CV in this skills sheet is updated
 	 * @author Lucas Royackkers
