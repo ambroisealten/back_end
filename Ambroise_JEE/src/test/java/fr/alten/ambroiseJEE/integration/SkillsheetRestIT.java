@@ -95,7 +95,7 @@ public class SkillsheetRestIT {
 		skill.setName("skill1");
 		skillsSheet.setMailPersonAttachedTo("person@mail.com");
 		skillsSheet.setMailVersionAuthor(TokenIgnore.getTokenIgnoreMail());
-		skillsSheet.setRolePersonAttachedTo("CONSULTANT");
+		skillsSheet.setRolePersonAttachedTo(PersonRole.CONSULTANT);
 	}
 
 	private static void initGson() {
@@ -153,7 +153,7 @@ public class SkillsheetRestIT {
 		assertThat(skillsSheetOptional.get().getName()).isEqualTo("skillsheetName");
 		assertThat(skillsSheetOptional.get().getMailPersonAttachedTo()).isEqualTo("person@mail.com");
 		assertThat(skillsSheetOptional.get().getMailVersionAuthor()).isEqualTo(TokenIgnore.getTokenIgnoreMail());
-		assertThat(skillsSheetOptional.get().getRolePersonAttachedTo()).isEqualTo("CONSULTANT");
+		assertThat(skillsSheetOptional.get().getRolePersonAttachedTo()).isEqualTo(PersonRole.CONSULTANT);
 		
 		List<SkillGraduated> skillList = skillsSheetOptional.get().getSkillsList();
 
