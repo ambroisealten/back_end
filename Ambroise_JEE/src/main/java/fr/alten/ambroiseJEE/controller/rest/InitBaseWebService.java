@@ -629,7 +629,7 @@ public class InitBaseWebService {
 		final SkillsSheet newFirst = new SkillsSheet();
 		newFirst.setName("JTE-mmm-AAA");
 		newFirst.setMailPersonAttachedTo("jc.test@gmail.com");
-		newFirst.setRolePersonAttachedTo("consultant");
+		newFirst.setRolePersonAttachedTo("CONSULTANT");
 		newFirst.setMailVersionAuthor("tempUserAdminManager@mail.com");
 
 		final List<SkillGraduated> newListSkill = new ArrayList<SkillGraduated>();
@@ -675,7 +675,7 @@ public class InitBaseWebService {
 		final SkillsSheet newSecond = new SkillsSheet();
 		newSecond.setName("PTE-mmm-AAA");
 		newSecond.setMailPersonAttachedTo("paul.test@gmail.com");
-		newSecond.setRolePersonAttachedTo("applicant");
+		newSecond.setRolePersonAttachedTo("APPLICANT");
 		newSecond.setMailVersionAuthor("tempUserAdminManager@mail.com");
 
 		final List<SkillGraduated> newListSkillBis = new ArrayList<SkillGraduated>();

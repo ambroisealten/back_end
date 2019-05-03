@@ -16,6 +16,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 
 /**
  * Skills sheet controller for business rules.
@@ -35,7 +36,8 @@ public class SkillsSheetBusinessController {
 	 * @param jSkillsSheet JsonNode with all skills sheet parameters
 	 * @param role         the current logged user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request, {@link ConflictException} if there is a conflict in the
+	 *         request, {@link ResourceNotFoundException} if there is no such resource as the one that are given,
+	 *         {@link ConflictException} if there is a conflict in the
 	 *         database, {@link ForbiddenException} if the current logged user
 	 *         hasn't the rights to perform this action and {@link CreatedException}
 	 *         if the skills sheet is created
@@ -143,8 +145,9 @@ public class SkillsSheetBusinessController {
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ConflictException} if there is a conflict in the
 	 *         database, {@link ForbiddenException} if the current logged user
-	 *         hasn't the rights to perform this action and {@link CreatedException}
-	 *         if the skills sheet is updated
+	 *         hasn't the rights to perform this action, 
+	 *         {@link ResourceNotFoundException} if there is no such resource as the one that are given,
+	 *         and {@link CreatedException}if the skills sheet is updated
 	 * @author Lucas Royackkers
 	 * @throws ParseException
 	 */
@@ -154,12 +157,45 @@ public class SkillsSheetBusinessController {
 				: new ForbiddenException();
 	}
 
+	/**
+	 * Method to delegate CV update in a Skills Sheet
+	 * 
+	 * @param cv the CV as a File
+	 * @param name the name of the Skills Sheet
+	 * @param mailPersonAttachedTo the mail of the person attached to this Skills Sheet
+	 * @param versionNumber the version number of this Skills Sheet
+	 * @param role the current logged user's role
+	 * @return the @see {@link HttpException} corresponding to the status of the
+	 *         request ({@link ConflictException} if there is a conflict in the
+	 *         database, {@link ResourceNotFoundException} if there is no such resource as the one that are given,
+	 *         {@link ForbiddenException} if the current logged user
+	 *         hasn't the rights to perform this action and {@link OkException}
+	 *         if the CV in this skills sheet is updated
+	 * @author Lucas Royackkers
+	 */
 	public HttpException updateSkillsSheetCV(final File cv, final String name, final String mailPersonAttachedTo,
 			final long versionNumber, final UserRole role) {
 		return UserRole.MANAGER == role || UserRole.MANAGER_ADMIN == role
 				? this.skillsSheetEntityController.updateSkillsSheetCV(cv, name, mailPersonAttachedTo, versionNumber)
 				: new ForbiddenException();
 
+	}
+
+	/**
+	 * Method to delegate check if a version of a Skills Sheet exists
+	 * 
+	 * @param name the name of the Skills Sheet
+	 * @param mailPerson the mail of the person attached to the Skills Sheet
+	 * @param versionNumber the version number of the Skills Sheet
+	 * @param role the current logged user's role
+	 * @return true if a version of this specific Skills Sheet exists, otherwise false
+	 * @author Lucas Royackkers
+	 */
+	public boolean checkIfSkillsSheetVersionExists(String name, String mailPerson, long versionNumber, UserRole role) {
+		if (UserRole.MANAGER == role || UserRole.MANAGER_ADMIN == role) {
+			return this.skillsSheetEntityController.checkIfSkillsSheetVersion(name,mailPerson,versionNumber);
+		}
+		throw new ForbiddenException();
 	}
 
 }

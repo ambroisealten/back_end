@@ -56,7 +56,7 @@ public class UserEntityController {
 	private AgencyEntityController agencyEntityController;
 
 	/**
-	 * Method to create an user. User role are by default choosed by application
+	 * Method to create an user. User role are by default chosen by application
 	 * default settings.
 	 *
 	 * @param jUser JsonNode with all user parameters (forname, mail, name,
