@@ -116,7 +116,7 @@ public class SkillsSheetEntityController {
 			newSkillsSheet.setName(skillsSheetName);
 
 			newSkillsSheet.setMailPersonAttachedTo(personAttachedTo.getMail());
-			newSkillsSheet.setRolePersonAttachedTo(status.name());
+			newSkillsSheet.setRolePersonAttachedTo(status);
 			// Get all skills given several lists of skills (tech and soft)
 			newSkillsSheet.setSkillsList(getAllSkills(jSkillsSheet.get("skillsList")));
 
@@ -203,33 +203,35 @@ public class SkillsSheetEntityController {
 			}
 
 		}
-		averageSoft = (averageSoft + averageTech) / (totalTech + totalSoft);
+		averageSoft = (totalTech+totalSoft != 0) ? (averageSoft + averageTech) / (totalTech + totalSoft) : 0.0;
 
-		switch (opinion) {
-		case "+++":
-			averageSoft *= 1;
-			break;
-		case "++":
-			averageSoft *= 0.7;
-			break;
-		case "+":
-			averageSoft *= 0.6;
-			break;
-		case "-":
-			averageSoft *= 0.4;
-			break;
-		case "--":
-			averageSoft *= 0.2;
-			break;
-		case "---":
-			averageSoft *= 0.1;
-			break;
-		case "NOK":
-			averageSoft *= 0;
-			break;
-		default:
-			averageSoft *= 0;
-			break;
+		if(averageSoft != 0.0) {
+			switch (opinion) {
+			case "+++":
+				averageSoft *= 1;
+				break;
+			case "++":
+				averageSoft *= 0.7;
+				break;
+			case "+":
+				averageSoft *= 0.6;
+				break;
+			case "-":
+				averageSoft *= 0.4;
+				break;
+			case "--":
+				averageSoft *= 0.2;
+				break;
+			case "---":
+				averageSoft *= 0.1;
+				break;
+			case "NOK":
+				averageSoft = 0.0;
+				break;
+			default:
+				averageSoft = 0.0;
+				break;
+			}
 		}
 
 		return averageSoft;
