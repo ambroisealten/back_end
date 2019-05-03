@@ -1,6 +1,7 @@
 package fr.alten.ambroiseJEE.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -8,6 +9,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 import java.io.FileNotFoundException;
+import java.util.List;
+import java.util.Optional;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -97,10 +100,10 @@ public class CityRestIT {
 	@Before
 	public void beforeEachTest() {
 		userRepository.insert(userAdmin);
-		
+
 		if (!mongoTemplate.collectionExists("city")) {
 			// Recreate the collection with the unique index "code" -> index beeing dropped
-			// with the collection
+			// when the collection is dropped.
 			mongoTemplate.createCollection(City.class);
 			mongoTemplate.indexOps("city").ensureIndex(new Index().on("code", Direction.ASC).unique());
 		}
@@ -122,28 +125,45 @@ public class CityRestIT {
 	public void createCity_with_success() throws Exception {
 
 		// setup
-		String newCity = "{" + "\"nom\":\"city\"," + "\"code\":\"000002\"," + "\"codeRegion\":\"000\","
+		String newCity = "{" + "\"nom\":\"newCity\"," + "\"code\":\"00001\"," + "\"codeRegion\":\"000\","
 				+ "\"codeDepartement\":\"00\"," + "\"codesPostaux\":\"0000\"" + "}";
-
 
 		MvcResult result = this.mockMvc.perform(post("/city").contentType(MediaType.APPLICATION_JSON).content(newCity))
 				.andReturn();
 
+		// Checking that the ResponseBody contain a CreatedException
 		assertTrue(result.getResponse().getContentAsString().contains("CreatedException"));
+
+		// checking the new city in base and its fields's value
+		Optional<City> cityOptional = this.cityRepository.findByCode("00001");
+		assertTrue(cityOptional.isPresent());
+		assertThat(cityOptional.get().getCodeDepartement()).isEqualTo("00");
+		assertThat(cityOptional.get().getCodeRegion()).isEqualTo("000");
+		assertThat(cityOptional.get().getCodePostaux()).isEqualTo("0000");
+		assertThat(cityOptional.get().getNom()).isEqualTo("newCity");
 	}
 
 	@Test
 	public void createCity_with_conflict() throws Exception {
 
 		// setup
-		String newCity = "{" + "\"nom\":\"city\"," + "\"code\":\"00000\"," + "\"codeRegion\":\"000\","
+		String newCity = "{" + "\"nom\":\"newCity\"," + "\"code\":\"00000\"," + "\"codeRegion\":\"000\","
 				+ "\"codeDepartement\":\"00\"," + "\"codesPostaux\":\"0000\"" + "}";
 
-		cityRepository.insert(city); // Pre-inserting a City with name city to create a ConflictException
+		// Pre-inserting a City with name code as this.city to create a
+		// ConflictException
+		cityRepository.insert(city);
+		// Checking pre-insertion
+		assertTrue(this.cityRepository.findByCode("00000").isPresent());
 
 		MvcResult result = this.mockMvc.perform(post("/city").contentType(MediaType.APPLICATION_JSON).content(newCity))
 				.andReturn();
+
+		// Checking that the ResponseBody contain a ConflictException
 		assertTrue(result.getResponse().getContentAsString().contains("ConflictException"));
+
+		// Checking only this.city is in base
+		assertThat(this.cityRepository.findAll().size()).isEqualTo(1);
 	}
 
 	@Test
@@ -155,7 +175,10 @@ public class CityRestIT {
 		MvcResult result = this.mockMvc.perform(post("/city").contentType(MediaType.APPLICATION_JSON).content(newCity))
 				.andReturn();
 
+		// Checking that the ResponseBody contain a UnprocessableEntityException
 		assertTrue(result.getResponse().getContentAsString().contains("UnprocessableEntityException"));
+		// Checking there is no city in base
+		assertThat(this.cityRepository.findAll()).isEmpty();
 	}
 
 	@Test
@@ -163,12 +186,20 @@ public class CityRestIT {
 
 		// setup
 		String cityToDelete = "{" + "\"code\":\"00000\"" + "}";
+		// Pre-inserting a City with name code as this.city for having a city to delete
+		// with success
 		cityRepository.insert(city);
+		// Checking pre-insertion
+		assertTrue(this.cityRepository.findByCode("00000").isPresent());
 
 		MvcResult result = this.mockMvc
 				.perform(delete("/city").contentType(MediaType.APPLICATION_JSON).content(cityToDelete)).andReturn();
 
+		// Checking that the ResponseBody contain a OkException
 		assertTrue(result.getResponse().getContentAsString().contains("OkException"));
+
+		// Checking the cityToDelete had been deactivated
+		assertThat(this.cityRepository.findByCode("00000").get().getNom()).startsWith("deactivated");
 	}
 
 	@Test
@@ -176,10 +207,13 @@ public class CityRestIT {
 
 		// setup
 		String cityToDelete = "{" + "\"code\":\"00000\"" + "}";
+		// Checking if there is not already a city in base with the code : 00000
+		assertFalse(this.cityRepository.findByCode("00000").isPresent());
 
 		MvcResult result = this.mockMvc
 				.perform(delete("/city").contentType(MediaType.APPLICATION_JSON).content(cityToDelete)).andReturn();
 
+		// Checking that the ResponseBody contain a ResourceNotFoundException
 		assertTrue(result.getResponse().getContentAsString().contains("ResourceNotFoundException"));
 	}
 
@@ -192,11 +226,13 @@ public class CityRestIT {
 		MvcResult result = this.mockMvc
 				.perform(delete("/city").contentType(MediaType.APPLICATION_JSON).content(cityToDelete)).andReturn();
 
+		// Checking that the ResponseBody contain a UnprocessableEntityException
 		assertTrue(result.getResponse().getContentAsString().contains("UnprocessableEntityException"));
 	}
 
-	// TODO : Reecrire le test en créant des Jsons de retour et vérifiant bien que
-	// le retour est EGAL à ce Json de retour.
+	// TODO : Reecrire la pré-insertion en créant des Jsons de retour et vérifiant
+	// bien que
+	// le retour est EGAL à ces Jsons de retour.
 	@Test
 	public void getCities() throws Exception {
 
@@ -206,6 +242,9 @@ public class CityRestIT {
 			cityForGet.setNom("City" + i);
 			cityForGet.setCode("Code" + i);
 			this.cityRepository.insert(cityForGet);
+			Optional<City> cityOptional = this.cityRepository.findByCode("Code" + i);
+			assertTrue(cityOptional.isPresent());
+			assertThat(cityOptional.get().getNom()).isEqualTo("City" + i);
 		}
 
 		MvcResult result = this.mockMvc.perform(get("/cities").contentType(MediaType.APPLICATION_JSON)).andReturn();
@@ -226,23 +265,31 @@ public class CityRestIT {
 	public void updateCity_with_success() throws Exception {
 
 		// setup
-		String cityToDelete = "{" + "\"nom\":\"newCity\"," + "\"code\":\"00000\"" + "}";
+		String updatedCity = "{" + "\"nom\":\"newCity\"," + "\"code\":\"00000\"" + "}";
+		// Pre-inserting a city to update
 		cityRepository.insert(city);
+		// Checking pre-insertion
+		assertTrue(this.cityRepository.findByCode("00000").isPresent());
 
 		MvcResult result = this.mockMvc
-				.perform(put("/city").contentType(MediaType.APPLICATION_JSON).content(cityToDelete)).andReturn();
+				.perform(put("/city").contentType(MediaType.APPLICATION_JSON).content(updatedCity)).andReturn();
 
 		assertTrue(result.getResponse().getContentAsString().contains("OkException"));
+
+		// Checking the updated city in base
+		Optional<City> cityOptional = this.cityRepository.findByCode("00000");
+		assertTrue(cityOptional.isPresent());
+		assertThat(cityOptional.get().getNom()).isEqualTo("newCity");
 	}
 
 	@Test
 	public void updateCity_with_resourceNotFound() throws Exception {
 
 		// setup
-		String cityToDelete = "{" + "\"nom\":\"newCity\"," + "\"code\":\"00000\"" + "}";
+		String updatedCity = "{" + "\"nom\":\"newCity\"," + "\"code\":\"00000\"" + "}";
 
 		MvcResult result = this.mockMvc
-				.perform(put("/city").contentType(MediaType.APPLICATION_JSON).content(cityToDelete)).andReturn();
+				.perform(put("/city").contentType(MediaType.APPLICATION_JSON).content(updatedCity)).andReturn();
 
 		assertTrue(result.getResponse().getContentAsString().contains("ResourceNotFoundException"));
 	}
@@ -261,7 +308,7 @@ public class CityRestIT {
 
 	@Test
 	public void z_DroppingDatabase() {
-		//Last test run to drop the database for next test classes.
+		// Last test run to drop the database for next test classes.
 		mongoTemplate.getDb().drop();
 	}
 
