@@ -294,7 +294,7 @@ public class SkillsSheetEntityController {
 	public List<JsonNode> getSkillsSheetsByIdentityAndSkills(final String identity, final String skills) {
 		// If there is no parameters given (e.g. a space for identity and skills
 		// filter), returns all skills sheets
-		if (identity.length() == 1 && skills.length() == 1) {
+		if ((identity.length() == 1 && identity.equals(",")) && (skills.length() == 1 && skills.equals(","))) {
 			return getSkillsSheets();
 		}
 
@@ -314,7 +314,9 @@ public class SkillsSheetEntityController {
 
 		// Get all Skills in the filter that are in the database
 		for (final String skillFilter : skillsList) {
-			this.skillEntityController.getSkill(skillFilter).ifPresent(skill -> filteredSkills.add(skill));
+			Skill filterSkill = new Skill();
+			filterSkill.setName(skillFilter);
+			filteredSkills.add(filterSkill);
 		}
 
 		final Set<SkillsSheet> result = new HashSet<SkillsSheet>();
@@ -434,7 +436,7 @@ public class SkillsSheetEntityController {
 	 */
 	public boolean ifSkillsInSheet(final Skill filterSkill, final SkillsSheet skillSheet) {
 		for (final SkillGraduated skillGraduated : skillSheet.getSkillsList()) {
-			if (skillGraduated.getSkill().getName().equals(filterSkill.getName())) {
+			if (skillGraduated.getSkill().getName().toLowerCase().equals(filterSkill.getName())) {
 				return true;
 			}
 		}
