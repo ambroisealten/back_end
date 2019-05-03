@@ -1,7 +1,6 @@
 package fr.alten.ambroiseJEE.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -153,9 +152,8 @@ public class skillsheetRestIT {
 			SkillGraduated skill_i = skillList.get(i-1);
 			assertThat(skill_i.getName()).isEqualTo("skill"+i);
 			assertThat(skill_i.getGrade()).isEqualByComparingTo(new Double(i));
-			/*if(i==1) {assertTrue(skill_i.getSkill().isSoft());}
-			else {assertFalse(skill_i.getSkill().isSoft());}*/
-			assertThat(skill_i.getSkill().isSoft()).isEqualTo(i==1);
+			if(i==1) {assertThat(skill_i.getSkill().getIsSoft()).isEqualTo(" ");}
+			else {assertNull(skill_i.getSkill().getIsSoft());}
 		}
 		
 	}

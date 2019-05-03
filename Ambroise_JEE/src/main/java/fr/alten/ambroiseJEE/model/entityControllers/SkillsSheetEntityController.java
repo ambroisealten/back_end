@@ -134,9 +134,7 @@ public class SkillsSheetEntityController {
 				newSkillsSheet.setCvPerson(null);
 			}
 
-			final String authorMail = jSkillsSheet.get("mailVersionAuthor").textValue();
-			final User userAuthor = this.userEntityController.getUserByMail(authorMail);
-			newSkillsSheet.setMailVersionAuthor(userAuthor.getMail());
+			newSkillsSheet.setMailVersionAuthor(jSkillsSheet.get("mailVersionAuthor").textValue());
 
 			newSkillsSheet.setVersionDate(String.valueOf(System.currentTimeMillis()));
 
