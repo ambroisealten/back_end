@@ -162,4 +162,12 @@ public class SkillsSheetBusinessController {
 
 	}
 
+	
+	public boolean checkIfSkillsSheetVersionExists(String name, String mailPerson, long versionNumber, UserRole role) {
+		if (UserRole.MANAGER == role || UserRole.MANAGER_ADMIN == role) {
+			return this.skillsSheetEntityController.checkIfSkillsSheetVersion(name,mailPerson,versionNumber);
+		}
+		throw new ForbiddenException();
+	}
+
 }

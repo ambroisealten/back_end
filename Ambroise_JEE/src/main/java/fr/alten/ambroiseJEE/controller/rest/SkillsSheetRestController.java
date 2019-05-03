@@ -171,6 +171,14 @@ public class SkillsSheetRestController {
 			@RequestAttribute("mail") final String mail) {
 		return this.gson.toJson(this.skillsSheetBusinessController.getSkillsSheetVersion(name, mailPerson, role));
 	}
+	
+	@GetMapping(value = "/skillsheetVersionExists/{name}/{mail}/{versionNumber}")
+	@ResponseBody
+	public boolean checkIfSkillsSheetVersionExists(@PathVariable("mail") final String mailPerson,
+			@RequestAttribute("role") final UserRole role, @PathVariable("name") final String name,
+			@RequestAttribute("mail") final String mail, @PathVariable("versionNumber") String versionNumber) {
+		return this.skillsSheetBusinessController.checkIfSkillsSheetVersionExists(name, mailPerson, Long.parseLong(versionNumber), role);
+	}
 
 	/**
 	 * Method to update a Skills Sheet

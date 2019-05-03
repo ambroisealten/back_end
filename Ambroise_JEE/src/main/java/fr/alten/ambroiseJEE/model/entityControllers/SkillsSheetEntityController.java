@@ -501,4 +501,16 @@ public class SkillsSheetEntityController {
 		return new OkException();
 	}
 
+	
+	public boolean checkIfSkillsSheetVersion(String name, String mailPerson, long versionNumber) {
+		boolean check = false;
+		List<SkillsSheet> skillsSheetList = this.getSkillsSheetVersion(name, mailPerson);
+		for(SkillsSheet skillsSheet : skillsSheetList) {
+			if(skillsSheet.getVersionNumber() == versionNumber) {
+				check = true;
+			}
+		}
+		return check;
+	}
+
 }
