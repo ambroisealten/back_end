@@ -629,7 +629,7 @@ public class InitBaseWebService {
 		final SkillsSheet newFirst = new SkillsSheet();
 		newFirst.setName("JTE-mmm-AAA");
 		newFirst.setMailPersonAttachedTo("jc.test@gmail.com");
-		newFirst.setRolePersonAttachedTo("consultant");
+		newFirst.setRolePersonAttachedTo("CONSULTANT");
 		newFirst.setMailVersionAuthor("tempUserAdminManager@mail.com");
 
 		final List<SkillGraduated> newListSkill = new ArrayList<SkillGraduated>();
@@ -675,7 +675,7 @@ public class InitBaseWebService {
 		final SkillsSheet newSecond = new SkillsSheet();
 		newSecond.setName("PTE-mmm-AAA");
 		newSecond.setMailPersonAttachedTo("paul.test@gmail.com");
-		newSecond.setRolePersonAttachedTo("applicant");
+		newSecond.setRolePersonAttachedTo("APPLICANT");
 		newSecond.setMailVersionAuthor("tempUserAdminManager@mail.com");
 
 		final List<SkillGraduated> newListSkillBis = new ArrayList<SkillGraduated>();
@@ -828,43 +828,43 @@ public class InitBaseWebService {
 	public HttpException init() throws IOException, ParseException {
 		final long start = System.currentTimeMillis();
 		// peupler la base de données des diplômes
-		createDiplomas();
+		//createDiplomas();
 
 		// peupler la base de données des employeurs
-		createEmployers();
+		//createEmployers();
 
 		// peupler la base de données des métiers consultants
-		createJobs();
+		//createJobs();
 
 		// peupler la base de données géographiques
-		createGeographics();
+		//createGeographics();
 
 		// peupler la base de données forums
-		createForums();
+		//createForums();
 
 		// peupler la base de données secteud d'activité
-		createSectors();
+		//createSectors();
 
 		// peupler la base de données des compétences (Skill)
-		createSkills();
+		//createSkills();
 
 		// peupler la base de données Géographiques
-		createAgencies();
+		//createAgencies();
 
 		// peupler la base d'utilisateurs
-		createUsers();
+		//createUsers();
 
 		// peupler la base de données des personnes (identités consultants, candidats)
-		createPersons();
+		//createPersons();
 
 		// peupler la base de données des matrices de compétences
 		createSkillsSheets();
 
 		// peupler la base de données des candidats sur un forum
-		createApplicantForum();
+		//createApplicantForum();
 
 		// peuple la base de donnée avec un dataSet pour les documents
-		createDocumentSet();
+		//createDocumentSet();
 
 		LoggerFactory.getLogger(InitBaseWebService.class).info(String.valueOf(System.currentTimeMillis() - start));
 		return new CreatedException();
