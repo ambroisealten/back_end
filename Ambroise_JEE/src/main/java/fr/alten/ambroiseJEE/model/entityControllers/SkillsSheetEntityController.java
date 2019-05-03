@@ -104,7 +104,7 @@ public class SkillsSheetEntityController {
 				return new ConflictException();
 			}
 			// Given the created person status
-			Person personAttachedTo;
+			Person personAttachedTo = null;
 			switch (status) {
 			case CONSULTANT:
 				personAttachedTo = this.personEntityController.getPersonByMailAndType(personMail,
