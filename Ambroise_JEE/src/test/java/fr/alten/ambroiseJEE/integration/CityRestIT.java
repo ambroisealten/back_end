@@ -118,7 +118,7 @@ public class CityRestIT {
 
 	@AfterClass
 	public static void afterTests() throws FileNotFoundException {
-		//DirAndFileCreator.deleteDir();
+		DirAndFileCreator.deleteDir();
 	}
 
 	@Test
