@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,7 +56,6 @@ public class SkillsheetRestIT {
 
 	private static User userAdmin = new User();
 	private static Person person = new Person();
-	private static Skill skill = new Skill();
 	private static SkillsSheet skillsSheet = new SkillsSheet();
 	private static Gson gson;
 
@@ -91,8 +91,7 @@ public class SkillsheetRestIT {
 	}
 	
 	private static void initSkillSheet() {
-		skill.setIsSoft("");
-		skill.setName("skill1");
+		skillsSheet.setName("skillsSheetName");
 		skillsSheet.setMailPersonAttachedTo("person@mail.com");
 		skillsSheet.setMailVersionAuthor(TokenIgnore.getTokenIgnoreMail());
 		skillsSheet.setRolePersonAttachedTo(PersonRole.CONSULTANT);
@@ -128,7 +127,7 @@ public class SkillsheetRestIT {
 	}
 
 	@Test
-	public void create_skillsSheet_withsuccess() throws Exception {
+	public void create_skillsSheet_with_success() throws Exception {
 
 		String newSkillsSheet = "{" + "  \"name\": \"skillsheetName\","
 				+ "  \"mailPersonAttachedTo\": \"person@mail.com\"," + "  \"rolePersonAttachedTo\": \"CONSULTANT\","
@@ -154,6 +153,7 @@ public class SkillsheetRestIT {
 		assertThat(skillsSheetOptional.get().getMailPersonAttachedTo()).isEqualTo("person@mail.com");
 		assertThat(skillsSheetOptional.get().getMailVersionAuthor()).isEqualTo(TokenIgnore.getTokenIgnoreMail());
 		assertThat(skillsSheetOptional.get().getRolePersonAttachedTo()).isEqualTo(PersonRole.CONSULTANT);
+		assertThat(skillsSheetOptional.get().getVersionNumber()).isEqualTo(1);
 		
 		List<SkillGraduated> skillList = skillsSheetOptional.get().getSkillsList();
 
@@ -165,6 +165,45 @@ public class SkillsheetRestIT {
 			else {assertNull(skill_i.getSkill().getIsSoft());}
 		}
 		
+	}
+	
+	@Test
+	public void create_skillsSheet_with_conflict() throws Exception {
+		
+		String newSkillsSheet = "{" + "  \"name\": \"skillsheetName\","
+				+ "  \"mailPersonAttachedTo\": \"person@mail.com\"," + "  \"rolePersonAttachedTo\": \"CONSULTANT\","
+				+ "  \"skillsList\": [" + "    {" + "      \"skill\": {" + "        \"name\": \"skill1\","
+				+ "        \"isSoft\": \" \"" + "      }," + "      \"grade\": \"1\"" + "    }," + "    {"
+				+ "      \"skill\": {" + "        \"name\": \"skill2\"" + "      }," + "      \"grade\": \"2\""
+				+ "    }" + "  ]" + "}";
+		
+		skillsSheet.setVersionNumber(1);
+		
+		List<SkillGraduated> skillGraduatedList = new ArrayList<SkillGraduated>();
+		// Skill
+		Skill skill1 = new Skill();
+		skill1.setIsSoft("");
+		skill1.setName("skill1");
+		SkillGraduated skillGraduated1 = new SkillGraduated(skill1, 1);
+		skillGraduatedList.add(skillGraduated1);
+		// SoftSkill
+		Skill skill2 = new Skill();
+		skill1.setName("skill2");
+		SkillGraduated skillGraduated2 = new SkillGraduated(skill2, 2);
+		skillGraduatedList.add(skillGraduated2);
+		
+		skillsSheet.setSkillsList(skillGraduatedList);
+		skillsSheetRepository.insert(skillsSheet);
+		assertTrue(skillsSheetRepository.findByNameIgnoreCaseAndMailPersonAttachedToIgnoreCaseAndVersionNumber("skillsSheetName", "person@Mail", 1).isPresent());
+		
+		
+		personRepository.insert(person);
+
+		MvcResult result = this.mockMvc
+				.perform(post("/skillsheet").contentType(MediaType.APPLICATION_JSON).content(newSkillsSheet))
+				.andReturn();
+
+		assertTrue(result.getResponse().getContentAsString().contains("ConflictException"));
 	}
 
 }
