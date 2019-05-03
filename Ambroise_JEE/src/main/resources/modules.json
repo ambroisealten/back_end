@@ -3,14 +3,35 @@
 		{
 			"access": [
 				{
-					"ADMIN": "Missions Compétences Forum",
-					"MANAGER_ADMIN": "Missions Compétences Forum",
-					"CDR_ADMIN": "Missions Compétences Forum",
+					"ADMIN": "Missions Compétences Forum Administration",
+					"MANAGER_ADMIN": "Missions Compétences Forum Administration",
+					"CDR_ADMIN": "Missions Compétences Forum Administration",
 					"MANAGER": "Missions Compétences Forum",
 					"CDR": "Missions Forum"
 				}
 			],
-			"modules": [
+			"modules": [{
+					"label": "Administration",
+					"routerLink": "admin",
+					"menus": [
+						{
+							"label": "Données Applicatives",
+							"submenus": []
+						},
+						{
+							"label": "Documents",
+							"submenus": []
+						},
+						{
+							"label": "Qualité de données",
+							"submenus": []
+						},
+						{
+							"label": "Utilisateur",
+							"submenus": []
+						}
+					]
+				},
 				{
 					"label": "Missions",
 					"routerLink": "mission",
