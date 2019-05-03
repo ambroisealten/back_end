@@ -117,7 +117,7 @@ public class FileEntityController {
 		file.setPath(path);
 		file.setExtension(FilenameUtils.getExtension(fileName));
 		file.setDateOfCreation(System.currentTimeMillis());
-		file.setName(fileName);
+		file.setDisplayName(fileName);
 		try {
 			return this.fileRepository.save(file);
 		} catch (final Exception e) {
@@ -139,7 +139,7 @@ public class FileEntityController {
 	public HttpException updateFile(final String _id, final String path, final String displayName) {
 		final Optional<File> fileOptionnal = this.fileRepository.findBy_id(new ObjectId(_id));
 		return fileOptionnal.map(file -> {
-			file.setName(displayName);
+			file.setDisplayName(displayName);
 			file.setPath(path);
 			this.fileRepository.save(file);
 			return (HttpException) new OkException();
