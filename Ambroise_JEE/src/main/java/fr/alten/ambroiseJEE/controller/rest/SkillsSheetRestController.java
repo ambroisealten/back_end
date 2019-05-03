@@ -21,11 +21,13 @@ import com.google.gson.GsonBuilder;
 
 import fr.alten.ambroiseJEE.controller.business.SkillsSheetBusinessController;
 import fr.alten.ambroiseJEE.model.beans.File;
+import fr.alten.ambroiseJEE.model.beans.SkillsSheet;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
@@ -172,6 +174,18 @@ public class SkillsSheetRestController {
 		return this.gson.toJson(this.skillsSheetBusinessController.getSkillsSheetVersion(name, mailPerson, role));
 	}
 	
+	
+	/**
+	 * Checks if a version of a specific Skills Sheet exists
+	 * 
+	 * @param mailPerson the mail of the person attached to this Skills Sheet
+	 * @param role the current logged user's role
+	 * @param name the name of the Skills Sheet
+	 * @param mail the current logged user's mail
+	 * @param versionNumber the version Number of this Skills Sheet
+	 * @return true if the specific version of this Skills Sheet exists, otherwise false
+	 * @author Lucas Royackkers
+	 */
 	@GetMapping(value = "/skillsheetVersionExists/{name}/{mail}/{versionNumber}")
 	@ResponseBody
 	public boolean checkIfSkillsSheetVersionExists(@PathVariable("mail") final String mailPerson,
@@ -204,6 +218,22 @@ public class SkillsSheetRestController {
 						: new UnprocessableEntityException();
 	}
 
+	/**
+	 * Method to update a CV on a existent {@link SkillsSheet}
+	 * 
+	 * @param file the CV as a File 
+	 * @param name the name of the Skills Sheet
+	 * @param mailPersonAttachedTo the mail of the person attached to this Skills Sheet
+	 * @param versionNumber the versionNumber of this Skills Sheet
+	 * @param mail the mail of the current logged user's 
+	 * @param role the role of the current logged user's
+	 * @return {@link HttpException} corresponding to the status of the request,
+	 *         {@link UnprocessableEntityException} if we can't update the resource,
+	 *         {@link ForbiddenException} if the current logged user hasn't the
+	 *         rights to perform this action and {@link OkException} if the
+	 *         skills sheet is updated with the CV
+	 * @author Lucas Royackkers
+	 */
 	@PutMapping(value = "/skillsheet/CV")
 	@ResponseBody
 	public HttpException updateSkillsSheetCV(@RequestParam("file") final MultipartFile file,

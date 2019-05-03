@@ -154,6 +154,21 @@ public class SkillsSheetBusinessController {
 				: new ForbiddenException();
 	}
 
+	/**
+	 * Method to delegate CV update in a Skills Sheet
+	 * 
+	 * @param cv the CV as a File
+	 * @param name the name of the Skills Sheet
+	 * @param mailPersonAttachedTo the mail of the person attached to this Skills Sheet
+	 * @param versionNumber the version number of this Skills Sheet
+	 * @param role the current logged user's role
+	 * @return the @see {@link HttpException} corresponding to the status of the
+	 *         request ({@link ConflictException} if there is a conflict in the
+	 *         database, {@link ForbiddenException} if the current logged user
+	 *         hasn't the rights to perform this action and {@link OkException}
+	 *         if the CV in this skills sheet is updated
+	 * @author Lucas Royackkers
+	 */
 	public HttpException updateSkillsSheetCV(final File cv, final String name, final String mailPersonAttachedTo,
 			final long versionNumber, final UserRole role) {
 		return UserRole.MANAGER == role || UserRole.MANAGER_ADMIN == role
@@ -162,7 +177,16 @@ public class SkillsSheetBusinessController {
 
 	}
 
-	
+	/**
+	 * Method to delegate check if a version of a Skills Sheet exists
+	 * 
+	 * @param name the name of the Skills Sheet
+	 * @param mailPerson the mail of the person attached to the Skills Sheet
+	 * @param versionNumber the version number of the Skills Sheet
+	 * @param role the current logged user's role
+	 * @return true if a version of this specific Skills Sheet exists, otherwise false
+	 * @author Lucas Royackkers
+	 */
 	public boolean checkIfSkillsSheetVersionExists(String name, String mailPerson, long versionNumber, UserRole role) {
 		if (UserRole.MANAGER == role || UserRole.MANAGER_ADMIN == role) {
 			return this.skillsSheetEntityController.checkIfSkillsSheetVersion(name,mailPerson,versionNumber);

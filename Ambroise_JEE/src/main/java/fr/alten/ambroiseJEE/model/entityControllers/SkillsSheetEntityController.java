@@ -473,6 +473,20 @@ public class SkillsSheetEntityController {
 		}
 	}
 
+	/**
+	 * Method to update a CV on a Skills Sheet, the update save a new version of the skills sheet
+	 * with the new CV in it
+	 * 
+	 * @param cv the CV as a File
+	 * @param name the name of the Skills Sheet
+	 * @param mailPersonAttachedTo the mail of the person attached to this Skills Sheet
+	 * @param versionNumber the version number of this Skills Sheet
+	 * @return the @see {@link HttpException} corresponding to the status of the
+	 *         request {@link ResourceNotFoundException} if the resource is not
+	 *         found, {@link ConflictException} if there is a conflict in the
+	 *         database and {@link OkException} if the skills sheet is updated
+	 * @author Lucas Royackkers
+	 */
 	public HttpException updateSkillsSheetCV(final File cv, final String name, final String mailPersonAttachedTo,
 			final long versionNumber) {
 		try {
@@ -501,7 +515,15 @@ public class SkillsSheetEntityController {
 		return new OkException();
 	}
 
-	
+	/**
+	 * Checks if a specific version of this Skills Sheet exists
+	 * 
+	 * @param name the name of the Skills List
+	 * @param mailPerson the mail of the person attached to this Skills Sheet
+	 * @param versionNumber the verion number of this Skills Sheet
+	 * @return true if the specific version of this Skills Sheet exists, otherwise false
+	 * @author Lucas Royackkers
+	 */
 	public boolean checkIfSkillsSheetVersion(String name, String mailPerson, long versionNumber) {
 		boolean check = false;
 		List<SkillsSheet> skillsSheetList = this.getSkillsSheetVersion(name, mailPerson);
