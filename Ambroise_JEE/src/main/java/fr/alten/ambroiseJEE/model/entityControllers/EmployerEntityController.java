@@ -103,8 +103,8 @@ public class EmployerEntityController {
 	 * @return an Optional with the matched employer (can be empty)
 	 * @author Lucas Royackkers
 	 */
-	public Optional<Employer> getEmployer(final String name) {
-		return this.employerRepository.findByName(name);
+	public Employer getEmployer(final String name) {
+		return this.employerRepository.findByName(name).orElseThrow(ResourceNotFoundException::new);
 	}
 
 	/**
