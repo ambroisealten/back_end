@@ -56,7 +56,7 @@ public class DocumentSetRestController {
 	@GetMapping("/documentset")
 	@ResponseBody
 	public String getDocumentSet(@RequestBody JsonNode JDocumentSet, @RequestAttribute("role") UserRole role) {
-		if(!checkJsonIntegrity(JDocumentSet, "name", "files")) throw new UnprocessableEntityException();
+		if(!JsonUtils.checkJsonIntegrity(JDocumentSet, "name", "files")) throw new UnprocessableEntityException();
 		else return gson.toJson(documentSetBusinessController.getDocumentSet(JDocumentSet, role));	
 	}
 
@@ -66,7 +66,4 @@ public class DocumentSetRestController {
 		return gson.toJson(documentSetBusinessController.getDocumentSetAdmin(role));
 	}
 	
-	public boolean checkJsonIntegrity(JsonNode params, String... fields) {
-		return JsonUtils.checkJsonIntegrity(params, fields);
-	}
 }

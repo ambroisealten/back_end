@@ -51,4 +51,8 @@ public class Skill implements Serializable {
 	public void setName(final String name) {
 		this.name = name;
 	}
+	
+	public boolean isSoft() {
+		return this.isSoft != null;
+	}
 }

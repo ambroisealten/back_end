@@ -1,6 +1,5 @@
 package fr.alten.ambroiseJEE.model.entityControllers;
 
-import java.text.ParseException;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -70,11 +69,9 @@ public class PersonEntityController {
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ConflictException} if there is a conflict in the
 	 *         database and {@link CreatedException} if the person is created
-	 * @throws Exception @see ParseException if the date submitted hasn't a good
-	 *                   format
 	 * @author Lucas Royackkers
 	 */
-	public HttpException createPerson(final JsonNode jPerson, final PersonRole type) throws ParseException {
+	public HttpException createPerson(final JsonNode jPerson, final PersonRole type) {
 		try {
 			// if the mail don't match with the mail pattern
 			if (!PersonEntityController.validateMail(jPerson.get("mail").textValue())) {
@@ -268,10 +265,9 @@ public class PersonEntityController {
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ResourceNotFoundException} if the resource isn't in
 	 *         the database and {@link OkException} if the person is updated
-	 * @throws ParseException
 	 * @author Lucas Royackkers
 	 */
-	public HttpException updatePerson(final JsonNode jPerson, final PersonRole role) throws ParseException {
+	public HttpException updatePerson(final JsonNode jPerson, final PersonRole role) {
 		try {
 			final Person person = this.personRepository.findByMailAndRole(jPerson.get("mail").textValue(), role)
 					.orElseThrow(ResourceNotFoundException::new);
