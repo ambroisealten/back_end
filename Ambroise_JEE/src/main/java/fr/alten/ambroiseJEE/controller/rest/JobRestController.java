@@ -19,6 +19,7 @@ import com.google.gson.GsonBuilder;
 
 import fr.alten.ambroiseJEE.controller.business.JobBusinessController;
 import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.utils.JsonUtils;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
@@ -60,7 +61,7 @@ public class JobRestController {
 	@PostMapping("/job")
 	@ResponseBody
 	public HttpException createJob(@RequestBody final JsonNode params, @RequestAttribute("role") final UserRole role) {
-		return params.get("title") != null ? this.jobBusinessController.createJob(params, role)
+		return JsonUtils.checkJsonIntegrity(params, "title") ? this.jobBusinessController.createJob(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -79,7 +80,7 @@ public class JobRestController {
 	@DeleteMapping("/job")
 	@ResponseBody
 	public HttpException deleteJob(@RequestBody final JsonNode params, @RequestAttribute("role") final UserRole role) {
-		return params.get("title") != null ? this.jobBusinessController.deleteJob(params, role)
+		return JsonUtils.checkJsonIntegrity(params, "title") ? this.jobBusinessController.deleteJob(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -112,8 +113,7 @@ public class JobRestController {
 	@PutMapping("/job")
 	@ResponseBody
 	public HttpException updateJob(@RequestBody final JsonNode params, @RequestAttribute("role") final UserRole role) {
-		return params.get("title") != null && params.get("oldTitle") != null
-				? this.jobBusinessController.updateJob(params, role)
+		return JsonUtils.checkJsonIntegrity(params, "title","oldTitle") ? this.jobBusinessController.updateJob(params, role)
 				: new UnprocessableEntityException();
 	}
 }

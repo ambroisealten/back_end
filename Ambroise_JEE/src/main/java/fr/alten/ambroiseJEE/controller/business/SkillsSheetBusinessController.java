@@ -72,6 +72,8 @@ public class SkillsSheetBusinessController {
 	 * @param mailPerson the mail of the person
 	 * @param role       the current logged user's role
 	 * @return a List of Skills Sheet given a mail
+	 * @throws {@link ForbiddenException} if the current logged user hasn't the
+	 *         rights to perform this action
 	 * @author Lucas Royackkers
 	 */
 	public List<SkillsSheet> getSkillsSheetByMail(final String mailPerson, final UserRole role) {
@@ -128,6 +130,8 @@ public class SkillsSheetBusinessController {
 	 * @param mail the mail of the person attached to it
 	 * @return a List of Skills Sheet that matches the given parameters (can be
 	 *         empty)
+	 * @throws {@link ForbiddenException} if the current logged user hasn't the
+	 *         rights to perform this action
 	 * @author Lucas Royackkers
 	 */
 	public List<SkillsSheet> getSkillsSheetVersion(final String name, final String mailPerson, final UserRole role) {
@@ -189,6 +193,8 @@ public class SkillsSheetBusinessController {
 	 * @param versionNumber the version number of the Skills Sheet
 	 * @param role the current logged user's role
 	 * @return true if a version of this specific Skills Sheet exists, otherwise false
+	 * @throws {@link ForbiddenException} if the current logged user hasn't the
+	 *         rights to perform this action
 	 * @author Lucas Royackkers
 	 */
 	public boolean checkIfSkillsSheetVersionExists(String name, String mailPerson, long versionNumber, UserRole role) {

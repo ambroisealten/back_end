@@ -23,10 +23,10 @@ import com.google.gson.GsonBuilder;
 
 import fr.alten.ambroiseJEE.controller.business.FileBusinessController;
 import fr.alten.ambroiseJEE.model.PersonSetWithFilters;
-import fr.alten.ambroiseJEE.model.SkillGraduated;
 import fr.alten.ambroiseJEE.model.beans.File;
 import fr.alten.ambroiseJEE.model.beans.Person;
 import fr.alten.ambroiseJEE.model.beans.Skill;
+import fr.alten.ambroiseJEE.model.beans.SkillGraduated;
 import fr.alten.ambroiseJEE.model.beans.SkillsSheet;
 import fr.alten.ambroiseJEE.model.dao.SkillsSheetRepository;
 import fr.alten.ambroiseJEE.security.UserRole;
@@ -39,6 +39,12 @@ import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 
+/**
+ * Skills Sheet controller for entity gestion rules
+ * 
+ * @author Lucas Royackkers
+ *
+ */
 @Service
 public class SkillsSheetEntityController {
 	@Autowired
@@ -79,7 +85,7 @@ public class SkillsSheetEntityController {
 	}
 
 	/**
-	 * Method to create a new Skills Sheet (whatever time it is)
+	 * Method to create a new Skills Sheet, first version or as an update
 	 *
 	 * @param jSkillsSheet  the JsonNode containing all the parameters
 	 * @param versionNumber the versionNumber of the Skills Sheet
@@ -195,8 +201,7 @@ public class SkillsSheetEntityController {
 
 		for (final SkillGraduated skillGraduated : skillsSheet.getSkillsList()) {
 			final Skill skill = skillGraduated.getSkill();
-			final String isSoft = skill.getIsSoft();
-			if (isSoft != null) {
+			if (skill.isSoft()) {
 				averageSoft += skillGraduated.getGrade();
 				totalSoft++;
 			} else if (skillsList.contains(skill.getName().toLowerCase())) {
@@ -207,36 +212,51 @@ public class SkillsSheetEntityController {
 		}
 		averageSoft = (totalTech+totalSoft != 0) ? (averageSoft + averageTech) / (totalTech + totalSoft) : 0.0;
 
-		if(averageSoft != 0.0) {
+		return this.getOpinionMultiplier(averageSoft, opinion);
+		
+	}
+	
+	/**
+	 * Defines the rules when we multiply the "fiability" grade with a value representing the opinion of the person
+	 * attached to a Skills Sheet.
+	 * Here, we defines the rules of our calculation.
+	 * 
+	 * @param averageSkill the average grade of the Skills in the Skills Sheet
+	 * @param opinion the opinion of the Person attached to the Skills Sheet
+	 * @return a double that represents the final grade of a Person 
+	 * @author Lucas Royackkers
+	 */
+	private double getOpinionMultiplier(Double averageSkill,String opinion) {
+		if(averageSkill != 0.0) {
 			switch (opinion) {
 			case "+++":
-				averageSoft *= 1;
+				averageSkill *= 1;
 				break;
 			case "++":
-				averageSoft *= 0.7;
+				averageSkill *= 0.7;
 				break;
 			case "+":
-				averageSoft *= 0.6;
+				averageSkill *= 0.6;
 				break;
 			case "-":
-				averageSoft *= 0.4;
+				averageSkill *= 0.4;
 				break;
 			case "--":
-				averageSoft *= 0.2;
+				averageSkill *= 0.2;
 				break;
 			case "---":
-				averageSoft *= 0.1;
+				averageSkill *= 0.1;
 				break;
 			case "NOK":
-				averageSoft = 0.0;
+				averageSkill = 0.0;
 				break;
 			default:
-				averageSoft = 0.0;
+				averageSkill = 0.0;
 				break;
 			}
 		}
 
-		return averageSoft;
+		return averageSkill;
 	}
 
 	/**

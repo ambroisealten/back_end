@@ -23,6 +23,7 @@ import fr.alten.ambroiseJEE.controller.business.SkillsSheetBusinessController;
 import fr.alten.ambroiseJEE.model.beans.File;
 import fr.alten.ambroiseJEE.model.beans.SkillsSheet;
 import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.utils.JsonUtils;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
@@ -74,10 +75,8 @@ public class SkillsSheetRestController {
 			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role)
 			throws Exception {
 		((ObjectNode) params).put("mailVersionAuthor", mail);
-		return params.get("name") != null && params.get("mailPersonAttachedTo") != null
-				&& params.get("mailVersionAuthor") != null
-						? this.skillsSheetBusinessController.createSkillsSheet(params, role)
-						: new UnprocessableEntityException();
+		return JsonUtils.checkJsonIntegrity(params,"name","mailPersonAttachedTo","mailVersionAuthor") ?
+				this.skillsSheetBusinessController.createSkillsSheet(params, role) : new UnprocessableEntityException();
 	}
 
 	/**
@@ -93,7 +92,8 @@ public class SkillsSheetRestController {
 	 * @throws {@link ForbiddenException} if the current logged user hasn't the
 	 *         rights to perform this action
 	 * @author Lucas Royackkers
-	 * @throws IOException
+	 * @throws {@link ForbiddenException} if the current logged user hasn't the
+	 *         rights to perform this action, IOException
 	 */
 	@GetMapping(value = "/skillsheetSearch/{identity}/{skills}")
 	@ResponseBody
@@ -112,6 +112,8 @@ public class SkillsSheetRestController {
 	 * @param role       the current logged user's role
 	 * @return a String containing a JsonNode with a List of Skills Sheets given the
 	 *         person attached to
+	 * @throws {@link ForbiddenException} if the current logged user hasn't the
+	 *         rights to perform this action
 	 * @author Lucas Royackkers
 	 */
 	@GetMapping(value = "/skillsheetMail/{mail}")
@@ -166,6 +168,8 @@ public class SkillsSheetRestController {
 	 * @param name       the name of the Skills Sheet
 	 * @param mail       the current logged user's mail
 	 * @return a String containing a JsonNode that contains a List of Skills Sheet
+	 * @throws {@link ForbiddenException} if the current logged user hasn't the
+	 *         rights to perform this action
 	 * @author Lucas Royackkers
 	 */
 	@GetMapping(value = "/skillsheetVersion/{name}/{mail}")
@@ -186,6 +190,8 @@ public class SkillsSheetRestController {
 	 * @param mail the current logged user's mail
 	 * @param versionNumber the version Number of this Skills Sheet
 	 * @return true if the specific version of this Skills Sheet exists, otherwise false
+	 * @throws {@link ForbiddenException} if the current logged user hasn't the
+	 *         rights to perform this action
 	 * @author Lucas Royackkers
 	 */
 	@GetMapping(value = "/skillsheetVersionExists/{name}/{mail}/{versionNumber}")
@@ -215,9 +221,8 @@ public class SkillsSheetRestController {
 	public HttpException updateSkillsSheet(@RequestBody final JsonNode params,
 			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
 		((ObjectNode) params).put("mailVersionAuthor", mail);
-		return params.get("versionNumber") != null && params.get("name") != null
-				&& params.get("mailPersonAttachedTo") != null && params.get("mailVersionAuthor") != null
-						? this.skillsSheetBusinessController.updateSkillsSheet(params, role)
+		return JsonUtils.checkJsonIntegrity(params, "name","mailPersonAttachedTo","mailVersionAuthor") ?
+				this.skillsSheetBusinessController.updateSkillsSheet(params, role)
 						: new UnprocessableEntityException();
 	}
 

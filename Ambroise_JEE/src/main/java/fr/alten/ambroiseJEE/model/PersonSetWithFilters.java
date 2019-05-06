@@ -38,6 +38,10 @@ public class PersonSetWithFilters implements Set<Person> {
 		return false;
 	}
 
+	/**
+	 * Add every element of a Collection of Person, if the element isn't contained already in the list, and if 
+	 * the element validates all the filters
+	 */
 	@Override
 	public boolean addAll(final Collection<? extends Person> personCollection) {
 		personCollection.forEach(person -> {
