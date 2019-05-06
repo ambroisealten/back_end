@@ -68,6 +68,10 @@ public class SkillBusinessController {
 		throw new ForbiddenException();
 	}
 
+	public boolean isAdmin(final UserRole role) {
+		return this.roles.isAdmin(role);
+	}
+
 	/**
 	 * @param role the user role
 	 * @return the list of all skills
