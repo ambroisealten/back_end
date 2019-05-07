@@ -15,7 +15,7 @@ import org.springframework.http.HttpMethod;
 
 import fr.alten.ambroiseJEE.security.JWTokenUtility;
 import fr.alten.ambroiseJEE.security.UserRole;
-import fr.alten.ambroiseJEE.utils.DirAndFileCreator;
+import fr.alten.ambroiseJEE.utils.TokenIgnore;
 
 public class TokenFilter implements Filter {
 
@@ -37,7 +37,7 @@ public class TokenFilter implements Filter {
         if (!(requestURI.endsWith("/login") || requestURI.endsWith("/admin/init") || requestURI.startsWith("/test")
                 || method.equals(HttpMethod.OPTIONS.toString()))) {
             try {
-                if (!DirAndFileCreator.fileIsPresent()) {
+                if (!TokenIgnore.fileIsPresent()) {
                     // We try to validate the token. In our case, the subject is formed by mail|role
                     final String[] tokenInfo = JWTokenUtility.validate(token).split("\\|");
                     final String subject = tokenInfo[0];
@@ -49,8 +49,8 @@ public class TokenFilter implements Filter {
                     httpRequest.setAttribute("mail", subject);
                     httpRequest.setAttribute("role", role);
                 } else {
-                    httpRequest.setAttribute("mail", "tempUserAdminManager@mail.com");
-                    httpRequest.setAttribute("role", UserRole.MANAGER_ADMIN);
+                    httpRequest.setAttribute("mail", TokenIgnore.getTokenIgnoreMail());
+                    httpRequest.setAttribute("role", TokenIgnore.getTokenIgnoreUserRole());
                 }
 
                 chain.doFilter(httpRequest, response);

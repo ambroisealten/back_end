@@ -38,11 +38,15 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import fr.alten.ambroiseJEE.model.beans.BeansTest;
 import fr.alten.ambroiseJEE.model.beans.City;
 import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.model.dao.CityRepository;
 import fr.alten.ambroiseJEE.model.dao.UserRepository;
-import fr.alten.ambroiseJEE.utils.DirAndFileCreator;
+import fr.alten.ambroiseJEE.utils.TokenIgnore;
+import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
+import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
+import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
  *
@@ -72,18 +76,29 @@ public class CityRestIT {
 
 	@BeforeClass
 	public static void beforeTests() {
-		DirAndFileCreator.createDir();
+		// Creating the dev folder and the dev file to ignore the token during tests.
+		TokenIgnore.createDir();
 		initAdminUser();
 		initCity();
 		initGson();
 	}
 
+	/**
+	 * Setting the {@link User} that will be insered in base for tests
+	 * 
+	 * @author Kylian Gehier
+	 */
 	private static void initAdminUser() {
 		userAdmin.setForname("tempUserAdmin");
 		userAdmin.setMail("tempUserAdmin@mail.com");
 		userAdmin.setName("tempUserAdminName");
 	}
 
+	/**
+	 * Setting the {@link City} that will be insered in base for tests
+	 * 
+	 * @author Kylian Gehier
+	 */
 	private static void initCity() {
 		city.setNom("city");
 		city.setCode("00000");
@@ -92,11 +107,25 @@ public class CityRestIT {
 		city.setCodeRegion("codeRegion");
 	}
 
+	/**
+	 * Setting the {@link Gson} use for inserting JSON file in request's body
+	 * 
+	 * @author Kylian Gehier
+	 */
 	private static void initGson() {
 		final GsonBuilder builder = new GsonBuilder();
 		gson = builder.create();
 	}
 
+	/**
+	 * Inserting an admin {@link User} in base for incoming tests Creating the city
+	 * collection in base with its unique index "code" if its not existing in base
+	 * already. Indeed, when the collection is dropped after each test, all the
+	 * indexes are drop also and not recreated. So we need to do it manually and
+	 * test index unicity in another test @see {@link BeansTest}.
+	 * 
+	 * @author Kylian Gehier
+	 */
 	@Before
 	public void beforeEachTest() {
 		userRepository.insert(userAdmin);
@@ -109,6 +138,11 @@ public class CityRestIT {
 		}
 	}
 
+	/**
+	 * Droping both collections user and city after each test.
+	 * 
+	 * @author Kylian Gehier
+	 */
 	@After
 	public void afterEachTest() {
 		mongoTemplate.getDb().getCollection("user").drop();
@@ -116,11 +150,28 @@ public class CityRestIT {
 
 	}
 
+	/**
+	 * Deleting the txt file and the dev folder once all of the class's test are
+	 * done.
+	 * 
+	 * @throws FileNotFoundException
+	 * @author Kylian Gehier
+	 */
 	@AfterClass
 	public static void afterTests() throws FileNotFoundException {
-		DirAndFileCreator.deleteDir();
+		TokenIgnore.deleteDir();
 	}
 
+	/**
+	 * @test creating a new {@link City}
+	 * @context The {@link City} doesn't already exist in base. The Json is
+	 *          correctly set.
+	 * @expected the response contains a {@link CreatedException} and the
+	 *           {@link City} in base has the same field's values than the JSON
+	 *           newCity.
+	 * @throws Exception
+	 * @author Kylian Gehier
+	 */
 	@Test
 	public void createCity_with_success() throws Exception {
 
@@ -143,6 +194,14 @@ public class CityRestIT {
 		assertThat(cityOptional.get().getNom()).isEqualTo("newCity");
 	}
 
+	/**
+	 * @test creating a new {@link City}
+	 * @context The {@link City} already exist in base. The Json is correctly set.
+	 * @expected the response contains a {@link ConflictException} and the
+	 *           {@link City} has not been inserted in base.
+	 * @throws Exception
+	 * @author Kylian Gehier
+	 */
 	@Test
 	public void createCity_with_conflict() throws Exception {
 
@@ -166,6 +225,14 @@ public class CityRestIT {
 		assertThat(this.cityRepository.findAll().size()).isEqualTo(1);
 	}
 
+	/**
+	 * @test creating a new {@link City}
+	 * @context The Json isn't correctly set.
+	 * @expected the response contains a {@link UnprocessableEntityException} and
+	 *           the {@link City} has not been inserted in base.
+	 * @throws Exception
+	 * @author Kylian Gehier
+	 */
 	@Test
 	public void createCity_with_missingRequiredFields() throws Exception {
 
@@ -181,6 +248,14 @@ public class CityRestIT {
 		assertThat(this.cityRepository.findAll()).isEmpty();
 	}
 
+	/**
+	 * @test deleting a {@link City} in base.
+	 * @context The {@link City} to delete exist in base. The Json is correctly set.
+	 * @expected the response contains a {@link OkException} and the {@link City}'s
+	 *           name to delete in base has been set to "deactivated..."
+	 * @throws Exception
+	 * @author Kylian Gehier
+	 */
 	@Test
 	public void deleteCity_with_success() throws Exception {
 
@@ -202,6 +277,14 @@ public class CityRestIT {
 		assertThat(this.cityRepository.findByCode("00000").get().getNom()).startsWith("deactivated");
 	}
 
+	/**
+	 * @test deleting a {@link City} in base.
+	 * @context The {@link City} to delete doesn't exist in base. The Json is
+	 *          correctly set.
+	 * @expected the response contains a {@link ResourceNotFoundException}.
+	 * @throws Exception
+	 * @author Kylian Gehier
+	 */
 	@Test
 	public void deleteCity_with_resourceNotFound() throws Exception {
 
@@ -217,6 +300,13 @@ public class CityRestIT {
 		assertTrue(result.getResponse().getContentAsString().contains("ResourceNotFoundException"));
 	}
 
+	/**
+	 * @test deleting a {@link City} in base.
+	 * @context The Json isn't correctly set.
+	 * @expected the response contains a {@link UnprocessableEntityException}.
+	 * @throws Exception
+	 * @author Kylian Gehier
+	 */
 	@Test
 	public void deleteCity_with_missingRequiredFields() throws Exception {
 
@@ -230,9 +320,14 @@ public class CityRestIT {
 		assertTrue(result.getResponse().getContentAsString().contains("UnprocessableEntityException"));
 	}
 
-	// TODO : Reecrire la pré-insertion en créant des Jsons de retour et vérifiant
-	// bien que
-	// le retour est EGAL à ces Jsons de retour.
+	/**
+	 * @test Getting the {@link List} of all {@link City} present in base.
+	 * @context pré-inserting 20 {@link City}
+	 * @expected The {@link List} of {@link City} contains all of the pre-inserted
+	 *           {@link City}
+	 * @throws Exception
+	 * @author Kylian Gehier
+	 */
 	@Test
 	public void getCities() throws Exception {
 
@@ -261,6 +356,14 @@ public class CityRestIT {
 		}
 	}
 
+	/**
+	 * @test updating a {@link City} in base.
+	 * @context The {@link City} to update exist in base. The Json is correctly set.
+	 * @expected the response contains a {@link OkException} and the {@link City}'s
+	 *           name to update in base has been set with the new name.
+	 * @throws Exception
+	 * @author Kylian Gehier
+	 */
 	@Test
 	public void updateCity_with_success() throws Exception {
 
@@ -282,6 +385,14 @@ public class CityRestIT {
 		assertThat(cityOptional.get().getNom()).isEqualTo("newCity");
 	}
 
+	/**
+	 * @test updating a {@link City} in base.
+	 * @context The {@link City} to update doesn't exist in base. The Json is
+	 *          correctly set.
+	 * @expected the response contains a {@link ResourceNotFoundException}.
+	 * @throws Exception
+	 * @author Kylian Gehier
+	 */
 	@Test
 	public void updateCity_with_resourceNotFound() throws Exception {
 
@@ -294,6 +405,13 @@ public class CityRestIT {
 		assertTrue(result.getResponse().getContentAsString().contains("ResourceNotFoundException"));
 	}
 
+	/**
+	 * @test updating a {@link City} in base.
+	 * @context The Json isn't correctly set.
+	 * @expected the response contains a {@link UnprocessableEntityException}.
+	 * @throws Exception
+	 * @author Kylian Gehier
+	 */
 	@Test
 	public void updateCity_with_missingRequiredFields() throws Exception {
 
@@ -306,6 +424,14 @@ public class CityRestIT {
 		assertTrue(result.getResponse().getContentAsString().contains("UnprocessableEntityException"));
 	}
 
+	/**
+	 * This is no a Test ! This method has been set in a {@link Test} because its
+	 * not possible to drop the database in {@link AfterClass}. Indeed,
+	 * {@link Autowired} doesn't work with static access required by
+	 * {@link AfterClass}.
+	 * 
+	 * @author Kylian Gehier
+	 */
 	@Test
 	public void z_DroppingDatabase() {
 		// Last test run to drop the database for next test classes.

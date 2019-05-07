@@ -20,6 +20,7 @@ import com.google.gson.GsonBuilder;
 
 import fr.alten.ambroiseJEE.controller.business.ForumBusinessController;
 import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.utils.JsonUtils;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
@@ -59,7 +60,7 @@ public class ForumRestController {
 	@ResponseBody
 	public HttpException createForum(@RequestBody final JsonNode params, @RequestAttribute("role") final UserRole role)
 			throws Exception {
-		return params.get("name") != null && params.get("date") != null && params.get("place") != null
+		return JsonUtils.checkJsonIntegrity(params, "name","date","place")
 				? this.forumBusinessController.createForum(params, role)
 				: new UnprocessableEntityException();
 	}
@@ -80,7 +81,7 @@ public class ForumRestController {
 	@ResponseBody
 	public HttpException deleteForum(@RequestBody final JsonNode params, @RequestAttribute("role") final UserRole role)
 			throws Exception {
-		return params.get("name") != null ? this.forumBusinessController.deleteForum(params, role)
+		return JsonUtils.checkJsonIntegrity(params, "name","date","place")? this.forumBusinessController.deleteForum(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -130,7 +131,7 @@ public class ForumRestController {
 	@ResponseBody
 	public HttpException updateForum(@RequestBody final JsonNode params, @RequestAttribute("role") final UserRole role)
 			throws Exception {
-		return params.get("name") != null ? this.forumBusinessController.updateForum(params, role)
+		return JsonUtils.checkJsonIntegrity(params, "name","date","place") ? this.forumBusinessController.updateForum(params, role)
 				: new UnprocessableEntityException();
 	}
 }

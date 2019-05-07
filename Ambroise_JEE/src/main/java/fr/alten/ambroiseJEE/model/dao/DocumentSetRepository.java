@@ -13,9 +13,13 @@ import fr.alten.ambroiseJEE.model.beans.DocumentSet;
  */
 public interface DocumentSetRepository extends MongoRepository<DocumentSet, Long> {
 
-	
+	/**
+	 * Fetch a file by its name
+	 * 
+	 * @param name the name of the file
+	 * @return an Optional containing a DocumentSet (or not)
+	 * @author MAQUINGHEN MAXIME
+	 */
 	Optional<DocumentSet> findByName(String name);
-
-	//Optional<DocumentSet> findByUri(String textValue);
 
 }

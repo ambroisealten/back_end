@@ -122,8 +122,15 @@ public class ApplicantForumEntityController {
 			newApplicant.setJob(job.getTitle());
 
 			final String employerName = jApplicant.get("employer").textValue();
-			final Employer employer = this.employerEntityController.getEmployer(employerName)
-					.orElseGet(this.employerEntityController.createEmployer(employerName));
+			Employer employer;
+			try {
+				employer = this.employerEntityController.getEmployer(employerName);
+				
+			}
+			catch (ResourceNotFoundException e) {
+				employer = (Employer) this.employerEntityController.createEmployer(employerName);
+			}
+			
 			newApplicant.setEmployer(employer.getName());
 
 			newApplicant.setMobilities(getAllMobilities(jApplicant.get("mobilities")));
@@ -287,8 +294,15 @@ public class ApplicantForumEntityController {
 			applicant.setJob(job.getTitle());
 
 			final String employerName = jApplicant.get("employer").textValue();
-			final Employer employer = this.employerEntityController.getEmployer(employerName)
-					.orElseGet(this.employerEntityController.createEmployer(employerName));
+			Employer employer;
+			try {
+				employer = this.employerEntityController.getEmployer(employerName);
+				
+			}
+			catch (ResourceNotFoundException e) {
+				employer = (Employer) this.employerEntityController.createEmployer(employerName);
+			}
+			
 			applicant.setEmployer(employer.getName());
 
 			applicant.setMobilities(getAllMobilities(jApplicant.get("mobilities")));

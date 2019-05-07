@@ -36,7 +36,6 @@ import fr.alten.ambroiseJEE.controller.business.SkillBusinessController;
 import fr.alten.ambroiseJEE.controller.business.SkillsSheetBusinessController;
 import fr.alten.ambroiseJEE.controller.business.UserBusinessController;
 import fr.alten.ambroiseJEE.controller.business.geographic.GeographicBusinessController;
-import fr.alten.ambroiseJEE.model.SkillGraduated;
 import fr.alten.ambroiseJEE.model.beans.Agency;
 import fr.alten.ambroiseJEE.model.beans.ApplicantForum;
 import fr.alten.ambroiseJEE.model.beans.Diploma;
@@ -47,6 +46,7 @@ import fr.alten.ambroiseJEE.model.beans.Job;
 import fr.alten.ambroiseJEE.model.beans.Person;
 import fr.alten.ambroiseJEE.model.beans.Sector;
 import fr.alten.ambroiseJEE.model.beans.Skill;
+import fr.alten.ambroiseJEE.model.beans.SkillGraduated;
 import fr.alten.ambroiseJEE.model.beans.SkillsSheet;
 import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.security.UserRole;
@@ -629,7 +629,7 @@ public class InitBaseWebService {
 		final SkillsSheet newFirst = new SkillsSheet();
 		newFirst.setName("JTE-mmm-AAA");
 		newFirst.setMailPersonAttachedTo("jc.test@gmail.com");
-		newFirst.setRolePersonAttachedTo("CONSULTANT");
+		newFirst.setRolePersonAttachedTo(PersonRole.valueOf("CONSULTANT"));
 		newFirst.setMailVersionAuthor("tempUserAdminManager@mail.com");
 
 		final List<SkillGraduated> newListSkill = new ArrayList<SkillGraduated>();
@@ -675,7 +675,7 @@ public class InitBaseWebService {
 		final SkillsSheet newSecond = new SkillsSheet();
 		newSecond.setName("PTE-mmm-AAA");
 		newSecond.setMailPersonAttachedTo("paul.test@gmail.com");
-		newSecond.setRolePersonAttachedTo("APPLICANT");
+		newSecond.setRolePersonAttachedTo(PersonRole.valueOf("APPLICANT"));
 		newSecond.setMailVersionAuthor("tempUserAdminManager@mail.com");
 
 		final List<SkillGraduated> newListSkillBis = new ArrayList<SkillGraduated>();

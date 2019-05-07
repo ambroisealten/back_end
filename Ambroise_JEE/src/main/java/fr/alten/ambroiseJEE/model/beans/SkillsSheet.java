@@ -7,7 +7,7 @@ import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import fr.alten.ambroiseJEE.model.SkillGraduated;
+import fr.alten.ambroiseJEE.utils.PersonRole;
 
 /**
  * Defines what a Skills Sheet is in our app
@@ -23,7 +23,7 @@ public class SkillsSheet implements Serializable {
 	private transient ObjectId _id;
 	private String name;
 	private String mailPersonAttachedTo;
-	private String rolePersonAttachedTo;
+	private PersonRole rolePersonAttachedTo;
 	private String mailVersionAuthor;
 	private long versionNumber;
 	private List<SkillGraduated> skillsList;
@@ -50,7 +50,7 @@ public class SkillsSheet implements Serializable {
 		return this.name;
 	}
 
-	public String getRolePersonAttachedTo() {
+	public PersonRole getRolePersonAttachedTo() {
 		return this.rolePersonAttachedTo;
 	}
 
@@ -82,7 +82,7 @@ public class SkillsSheet implements Serializable {
 		this.name = name;
 	}
 
-	public void setRolePersonAttachedTo(final String rolePersonAttachedTo) {
+	public void setRolePersonAttachedTo(final PersonRole rolePersonAttachedTo) {
 		this.rolePersonAttachedTo = rolePersonAttachedTo;
 	}
 
