@@ -1,7 +1,6 @@
 package fr.alten.ambroiseJEE.model.entityControllers;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Supplier;
 
 import org.springframework.beans.factory.annotation.Autowired;
