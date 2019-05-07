@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import java.io.FileNotFoundException;
 import java.util.Optional;
 
+import org.bson.types.ObjectId;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -180,7 +181,9 @@ public class EmployerRestIT {
 		// with success
 		employerRepository.insert(employer);
 		// Checking pre-insertion
-		assertTrue(this.employerRepository.findByName("newEmployer").isPresent());
+		Optional<Employer> employerOptional = this.employerRepository.findByName("newEmployer");
+		ObjectId employerOptionalID = employerOptional.get().get_id();
+		assertTrue(employerOptional.isPresent());
 
 		MvcResult result = this.mockMvc
 				.perform(delete("/employer").contentType(MediaType.APPLICATION_JSON).content(employerToDelete)).andReturn();
@@ -189,7 +192,7 @@ public class EmployerRestIT {
 		assertTrue(result.getResponse().getContentAsString().contains("OkException"));
 
 		// Checking the employerToDelete had been deactivated
-		//assertThat(this.employerRepository.findByName("deactivated").get().getName()).startsWith("deactivated");
+		assertThat(this.employerRepository.findBy_id(employerOptionalID).get().getName()).startsWith("deactivated");
 	}
 
 	@Test
