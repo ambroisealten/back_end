@@ -4,7 +4,6 @@
 package fr.alten.ambroiseJEE.model.entityControllers;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -61,15 +60,26 @@ public class SectorEntityController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException deleteSector(final JsonNode jSector) {
-		final Optional<Sector> sectorOptionnal = this.sectorRepository.findByName(jSector.get("name").textValue());
-
-		if (sectorOptionnal.isPresent()) {
-			this.sectorRepository.delete(sectorOptionnal.get());
-
-		} else {
-			throw new ResourceNotFoundException();
+		try {
+			final Sector sector = this.sectorRepository.findByName(jSector.get("name").textValue())
+					.orElseThrow(ResourceNotFoundException::new);
+			this.sectorRepository.delete(sector);
+		} catch (final ResourceNotFoundException rnfe) {
+			return rnfe;
 		}
 		return new OkException();
+	}
+
+	/**
+	 * fetch a sector
+	 *
+	 * @param name name of the sector to fetch
+	 * @author Andy Chabalier
+	 * @return the sector
+	 * @throws {@link ResourceNotFoundException} if the ressource is not found
+	 */
+	public Sector getSector(final String name) {
+		return this.sectorRepository.findByName(name).orElseThrow(ResourceNotFoundException::new);
 	}
 
 	/**
@@ -95,9 +105,12 @@ public class SectorEntityController {
 		try {
 			final Sector sector = this.sectorRepository.findByName(jSector.get("oldName").textValue())
 					.orElseThrow(ResourceNotFoundException::new);
+			sector.setName(jSector.get("name").textValue());
 			this.sectorRepository.save(sector);
 		} catch (final ResourceNotFoundException rnfe) {
 			return rnfe;
+		} catch (final Exception e) {
+			return new ConflictException();
 		}
 		return new OkException();
 	}

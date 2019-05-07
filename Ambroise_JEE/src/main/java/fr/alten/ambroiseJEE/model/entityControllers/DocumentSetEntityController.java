@@ -134,7 +134,18 @@ public class DocumentSetEntityController {
 	 * @return the List of the all the document Version on the server
 	 * @author MAQUINGHEN MAXIME
 	 */
-	public List<DocumentSet> getDocumentSetAdmin() {
+	public List<DocumentSet> getAllDocumentSet() {
 		return this.documentSetRepository.findAll();
+	}
+
+	/**
+	 * fetch a Document set
+	 * 
+	 * @param set the set name to fetch
+	 * @return the document set
+	 * @author Andy Chabalier
+	 */
+	public DocumentSet getSpecificDocumentSet(String set) {
+		return this.documentSetRepository.findByName(set).orElseThrow(ResourceNotFoundException::new);
 	}
 }
