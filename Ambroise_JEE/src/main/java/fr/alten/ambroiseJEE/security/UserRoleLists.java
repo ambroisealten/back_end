@@ -73,5 +73,9 @@ public class UserRoleLists {
 	public boolean isManagerOrCdr(final UserRole role) {
 		return role == UserRole.CDR || role == UserRole.MANAGER;
 	}
+	
+	public boolean isNotConsultantOrDeactivated(final UserRole role) {
+		return role != UserRole.DEACTIVATED && role != UserRole.CONSULTANT; 
+	}
 
 }

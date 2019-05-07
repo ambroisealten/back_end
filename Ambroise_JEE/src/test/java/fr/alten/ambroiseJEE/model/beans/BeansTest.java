@@ -68,5 +68,32 @@ public class BeansTest {
 		}
 
 	}
+	
+	@Test
+	public void check_EmployerBean() {
+
+		assertTrue(mongoTemplate.collectionExists("employer"));
+		
+		HashMap<String, Boolean> indexPresent = new HashMap<>();
+		indexPresent.put("_id_", false);
+		indexPresent.put("name", false);
+		
+		List<IndexInfo> indexList = mongoTemplate.indexOps("employer").getIndexInfo();
+
+		for(IndexInfo index : indexList) {
+			for(Map.Entry<String, Boolean> indexInMap : indexPresent.entrySet()) {
+				if(index.getName().equals(indexInMap.getKey())) {
+					
+					if(!index.getName().equals("_id_")) {assertTrue(index.isUnique());}
+					indexInMap.setValue(true);
+				}
+			}
+		}
+		
+		// Checking the presence of all indexes
+		for(Map.Entry<String, Boolean> indexInMap : indexPresent.entrySet()) {			
+			assertTrue(indexInMap.getValue());;	
+		}
+	}
 
 }
