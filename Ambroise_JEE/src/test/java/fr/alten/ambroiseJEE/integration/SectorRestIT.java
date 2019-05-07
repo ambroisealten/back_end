@@ -12,6 +12,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 import java.io.FileNotFoundException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.junit.After;
@@ -25,9 +28,8 @@ import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.index.Index;
+import org.springframework.data.mongodb.core.index.IndexInfo;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -98,19 +100,12 @@ public class SectorRestIT {
 	@Before
 	public void beforeEachTest() {
 		userRepository.insert(userAdmin);
-
-		if (!mongoTemplate.collectionExists("sector")) {
-			// Recreate the collection with the unique index "name" -> index beeing dropped
-			// when the collection is dropped.
-			mongoTemplate.createCollection(Sector.class);
-			mongoTemplate.indexOps("sector").ensureIndex(new Index().on("name", Direction.ASC).unique());
-		}
 	}
 
 	@After
 	public void afterEachTest() {
-		mongoTemplate.getDb().getCollection("user").drop();
-		mongoTemplate.getDb().getCollection("sector").drop();
+		userRepository.deleteAll();
+		sectorRepository.deleteAll();
 
 	}
 
@@ -292,6 +287,40 @@ public class SectorRestIT {
 				.perform(put("/sector").contentType(MediaType.APPLICATION_JSON).content(sectorToDelete)).andReturn();
 
 		assertTrue(result.getResponse().getContentAsString().contains("UnprocessableEntityException"));
+	}
+
+	@Test
+	public void y_testIndex() {
+		// asserting the collection city exist
+		assertTrue(mongoTemplate.collectionExists("sector"));
+
+		// asserting all unique index are present
+
+		HashMap<String, Boolean> indexPresent = new HashMap<>();
+		indexPresent.put("_id_", false);
+		indexPresent.put("name", false);
+
+		// getting all indexed field of the collection "sector"
+		List<IndexInfo> indexList = mongoTemplate.indexOps("sector").getIndexInfo();
+
+		for (IndexInfo index : indexList) {
+			for (Map.Entry<String, Boolean> indexInMap : indexPresent.entrySet()) {
+				if (index.getName().equals(indexInMap.getKey())) {
+
+					// checking the unicity of unique indexed fields - except for _id_ because
+					// mongoDB consider his unicity as false
+					if (!index.getName().equals("_id_")) {
+						assertTrue(index.isUnique());
+					}
+					indexInMap.setValue(true);
+				}
+			}
+		}
+
+		// Checking the presence of all indexes
+		for (Map.Entry<String, Boolean> indexInMap : indexPresent.entrySet()) {
+			assertTrue(indexInMap.getValue());
+		}
 	}
 
 	@Test
