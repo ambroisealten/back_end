@@ -20,6 +20,7 @@ import fr.alten.ambroiseJEE.model.beans.Diploma;
 import fr.alten.ambroiseJEE.model.beans.Employer;
 import fr.alten.ambroiseJEE.model.beans.Job;
 import fr.alten.ambroiseJEE.model.beans.Mobility;
+import fr.alten.ambroiseJEE.model.beans.Skill;
 import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.model.dao.ApplicantForumRepository;
 import fr.alten.ambroiseJEE.utils.Nationality;
@@ -102,7 +103,6 @@ public class ApplicantForumEntityController {
 			newApplicant.setMonthlyWage(Integer.parseInt(jApplicant.get("monthlyWage").textValue()));
 			newApplicant.setMail(applicantMail);
 
-
 			final User personInCharge = this.userEntityController
 					.getUserByMail(jApplicant.get("managerMail").textValue());
 			newApplicant.setPersonInChargeMail(personInCharge.getMail());
@@ -125,12 +125,11 @@ public class ApplicantForumEntityController {
 			Employer employer;
 			try {
 				employer = this.employerEntityController.getEmployer(employerName);
-				
-			}
-			catch (ResourceNotFoundException e) {
+
+			} catch (ResourceNotFoundException e) {
 				employer = (Employer) this.employerEntityController.createEmployer(employerName);
 			}
-			
+
 			newApplicant.setEmployer(employer.getName());
 
 			newApplicant.setMobilities(getAllMobilities(jApplicant.get("mobilities")));
@@ -146,11 +145,18 @@ public class ApplicantForumEntityController {
 			final JsonNode skillNode = jApplicant.get("skills");
 			for (final JsonNode JSkill : skillNode) {
 				final String skillName = JSkill.get("name").textValue();
-				skills.add(this.skillEntityController.getSkill(skillName)
-						.orElseGet(this.skillEntityController.createSkill(skillName, null)).getName());
+				Skill skill;
+
+				try {
+					skill = this.skillEntityController.getSkill(skillName);
+				} catch (ResourceNotFoundException e) {
+					skill = this.skillEntityController.createSkill(skillName, null).get();
+				}
+
+				skills.add(skill.getName());
 			}
 			newApplicant.setSkills(skills);
-			
+
 			newApplicant.setOpinion(jApplicant.get("opinion").textValue());
 
 			newApplicant.setVehicule(Boolean.getBoolean(jApplicant.get("hasVehicule").textValue()));
@@ -297,12 +303,11 @@ public class ApplicantForumEntityController {
 			Employer employer;
 			try {
 				employer = this.employerEntityController.getEmployer(employerName);
-				
-			}
-			catch (ResourceNotFoundException e) {
+
+			} catch (ResourceNotFoundException e) {
 				employer = (Employer) this.employerEntityController.createEmployer(employerName);
 			}
-			
+
 			applicant.setEmployer(employer.getName());
 
 			applicant.setMobilities(getAllMobilities(jApplicant.get("mobilities")));
@@ -318,11 +323,18 @@ public class ApplicantForumEntityController {
 			final JsonNode skillNode = jApplicant.get("skills");
 			for (final JsonNode JSkill : skillNode) {
 				final String skillName = JSkill.get("name").textValue();
-				skills.add(this.skillEntityController.getSkill(skillName)
-						.orElseGet(this.skillEntityController.createSkill(skillName, null)).getName());
+				Skill skill;
+
+				try {
+					skill = this.skillEntityController.getSkill(skillName);
+				} catch (ResourceNotFoundException e) {
+					skill = this.skillEntityController.createSkill(skillName, null).get();
+				}
+
+				skills.add(skill.getName());
 			}
 			applicant.setSkills(skills);
-			
+
 			applicant.setOpinion(jApplicant.get("opinion").textValue());
 
 			applicant.setMobilities(getAllMobilities(jApplicant.get("mobilities")));

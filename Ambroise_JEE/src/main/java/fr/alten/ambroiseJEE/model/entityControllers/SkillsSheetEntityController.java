@@ -90,14 +90,15 @@ public class SkillsSheetEntityController {
 	 * @param jSkillsSheet  the JsonNode containing all the parameters
 	 * @param versionNumber the versionNumber of the Skills Sheet
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request, {@link ResourceNotFoundException} if there is no such resource as the one that are given,
-	 *         {@link ConflictException} if there is a conflict in the
-	 *         database and {@link CreatedException} if the skills sheet is created
+	 *         request, {@link ResourceNotFoundException} if there is no such
+	 *         resource as the one that are given, {@link ConflictException} if
+	 *         there is a conflict in the database and {@link CreatedException} if
+	 *         the skills sheet is created
 	 * @author Lucas Royackkers
 	 */
 	private HttpException createSkillsSheet(final JsonNode jSkillsSheet, final long versionNumber) {
 		try {
-			
+
 			final PersonRole status = PersonRole.valueOf(jSkillsSheet.get("rolePersonAttachedTo").textValue());
 			final String personMail = jSkillsSheet.get("mailPersonAttachedTo").textValue();
 			final String skillsSheetName = jSkillsSheet.get("name").textValue();
@@ -166,9 +167,14 @@ public class SkillsSheetEntityController {
 		for (final JsonNode skillGraduated : jSkills) {
 			final String skillName = skillGraduated.get("skill").get("name").textValue();
 			final JsonNode jIsSoft = skillGraduated.get("skill").get("isSoft");
-			final Skill skill = this.skillEntityController.getSkill(skillName).orElseGet(
-					this.skillEntityController.createSkill(skillName, jIsSoft != null ? jIsSoft.textValue() : null));
+			Skill skill = null;
+			try {
+				skill = this.skillEntityController.getSkill(skillName);
 
+			} catch (ResourceNotFoundException e) {
+				this.skillEntityController.createSkill(skillName, jIsSoft != null ? jIsSoft.textValue() : null);
+			}
+			
 			final double skillGrade = skillGraduated.get("grade").asDouble();
 			if (checkGrade(skillGrade)) {
 				allSkills.add(new SkillGraduated(skill, skillGrade));
@@ -210,24 +216,24 @@ public class SkillsSheetEntityController {
 			}
 
 		}
-		averageSoft = (totalTech+totalSoft != 0) ? (averageSoft + averageTech) / (totalTech + totalSoft) : 0.0;
+		averageSoft = (totalTech + totalSoft != 0) ? (averageSoft + averageTech) / (totalTech + totalSoft) : 0.0;
 
 		return this.getOpinionMultiplier(averageSoft, opinion);
-		
+
 	}
-	
+
 	/**
-	 * Defines the rules when we multiply the "fiability" grade with a value representing the opinion of the person
-	 * attached to a Skills Sheet.
-	 * Here, we defines the rules of our calculation.
+	 * Defines the rules when we multiply the "fiability" grade with a value
+	 * representing the opinion of the person attached to a Skills Sheet. Here, we
+	 * defines the rules of our calculation.
 	 * 
 	 * @param averageSkill the average grade of the Skills in the Skills Sheet
-	 * @param opinion the opinion of the Person attached to the Skills Sheet
-	 * @return a double that represents the final grade of a Person 
+	 * @param opinion      the opinion of the Person attached to the Skills Sheet
+	 * @return a double that represents the final grade of a Person
 	 * @author Lucas Royackkers
 	 */
-	private double getOpinionMultiplier(Double averageSkill,String opinion) {
-		if(averageSkill != 0.0) {
+	private double getOpinionMultiplier(Double averageSkill, String opinion) {
+		if (averageSkill != 0.0) {
 			switch (opinion) {
 			case "+++":
 				averageSkill *= 1;
@@ -495,13 +501,14 @@ public class SkillsSheetEntityController {
 	}
 
 	/**
-	 * Method to update a CV on a Skills Sheet, the update save a new version of the skills sheet
-	 * with the new CV in it
+	 * Method to update a CV on a Skills Sheet, the update save a new version of the
+	 * skills sheet with the new CV in it
 	 * 
-	 * @param cv the CV as a File
-	 * @param name the name of the Skills Sheet
-	 * @param mailPersonAttachedTo the mail of the person attached to this Skills Sheet
-	 * @param versionNumber the version number of this Skills Sheet
+	 * @param cv                   the CV as a File
+	 * @param name                 the name of the Skills Sheet
+	 * @param mailPersonAttachedTo the mail of the person attached to this Skills
+	 *                             Sheet
+	 * @param versionNumber        the version number of this Skills Sheet
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request {@link ResourceNotFoundException} if the resource is not
 	 *         found, {@link ConflictException} if there is a conflict in the
@@ -539,17 +546,18 @@ public class SkillsSheetEntityController {
 	/**
 	 * Checks if a specific version of this Skills Sheet exists
 	 * 
-	 * @param name the name of the Skills List
-	 * @param mailPerson the mail of the person attached to this Skills Sheet
+	 * @param name          the name of the Skills List
+	 * @param mailPerson    the mail of the person attached to this Skills Sheet
 	 * @param versionNumber the verion number of this Skills Sheet
-	 * @return true if the specific version of this Skills Sheet exists, otherwise false
+	 * @return true if the specific version of this Skills Sheet exists, otherwise
+	 *         false
 	 * @author Lucas Royackkers
 	 */
 	public boolean checkIfSkillsSheetVersion(String name, String mailPerson, long versionNumber) {
 		boolean check = false;
 		List<SkillsSheet> skillsSheetList = this.getSkillsSheetVersion(name, mailPerson);
-		for(SkillsSheet skillsSheet : skillsSheetList) {
-			if(skillsSheet.getVersionNumber() == versionNumber) {
+		for (SkillsSheet skillsSheet : skillsSheetList) {
+			if (skillsSheet.getVersionNumber() == versionNumber) {
 				check = true;
 			}
 		}

@@ -61,11 +61,15 @@ public class SkillBusinessController {
 		return this.roles.isAdmin(role) ? this.skillEntityController.deleteSkill(jSkill) : new ForbiddenException();
 	}
 
-	public Optional<Skill> getSkill(final JsonNode jSkill, final UserRole role) {
+	public Skill getSkill(final JsonNode jSkill, final UserRole role) {
 		if (this.roles.isAdmin(role)) {
 			return this.skillEntityController.getSkill(jSkill.get("name").textValue());
 		}
 		throw new ForbiddenException();
+	}
+
+	public boolean isAdmin(final UserRole role) {
+		return this.roles.isAdmin(role);
 	}
 
 	/**
