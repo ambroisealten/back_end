@@ -48,9 +48,24 @@ public class DocumentSetBusinessController {
 		throw new ForbiddenException();
 	}
 
-	public List<DocumentSet> getDocumentSetAdmin(UserRole role) {
+	public List<DocumentSet> getAllDocumentSet(UserRole role) {
 		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
-			return documentSetEntityController.getDocumentSetAdmin();
+			return documentSetEntityController.getAllDocumentSet();
+		}
+		throw new ForbiddenException();
+	}
+
+	/**
+	 * fetch a Document set
+	 * 
+	 * @param set  the set name to fetch
+	 * @param role the current logged user's role
+	 * @return the document set
+	 * @author Andy Chabalier
+	 */
+	public DocumentSet getSpecificDocumentSet(String set, UserRole role) {
+		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
+			return documentSetEntityController.getSpecificDocumentSet(set);
 		}
 		throw new ForbiddenException();
 	}

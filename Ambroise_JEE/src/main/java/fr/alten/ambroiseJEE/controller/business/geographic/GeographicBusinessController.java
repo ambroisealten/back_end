@@ -22,6 +22,7 @@ import com.google.gson.internal.LinkedTreeMap;
 
 import fr.alten.ambroiseJEE.model.beans.Geographic;
 import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.security.UserRoleLists;
 import fr.alten.ambroiseJEE.utils.JsonUtils;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
@@ -48,6 +49,10 @@ public class GeographicBusinessController {
 	private PostalCodeBusinessController postalCodeBusinessController;
 
 	private final Gson gson = new GsonBuilder().create();
+
+	public boolean isAdmin(final UserRole role) {
+		return UserRoleLists.getInstance().isAdmin(role);
+	}
 
 	/**
 	 * Create cities from a provided departement arrayList. This method will ask the
@@ -202,7 +207,7 @@ public class GeographicBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException synchronize(final UserRole role) {
-		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
+		if (isAdmin(role)) {
 			final HashMap<String, ArrayList<LinkedTreeMap>> data = fetchData();
 
 			createRegion(data.get("region"), role);

@@ -20,6 +20,7 @@ import fr.alten.ambroiseJEE.model.beans.Diploma;
 import fr.alten.ambroiseJEE.model.beans.Employer;
 import fr.alten.ambroiseJEE.model.beans.Job;
 import fr.alten.ambroiseJEE.model.beans.Mobility;
+import fr.alten.ambroiseJEE.model.beans.Skill;
 import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.model.dao.ApplicantForumRepository;
 import fr.alten.ambroiseJEE.utils.Nationality;
@@ -147,8 +148,15 @@ public class ApplicantForumEntityController {
 			final JsonNode skillNode = jApplicant.get("skills");
 			for (final JsonNode JSkill : skillNode) {
 				final String skillName = JSkill.get("name").textValue();
-				skills.add(this.skillEntityController.getSkill(skillName)
-						.orElseGet(this.skillEntityController.createSkill(skillName, null)).getName());
+				Skill skill;
+
+				try {
+					skill = this.skillEntityController.getSkill(skillName);
+				} catch (ResourceNotFoundException e) {
+					skill = this.skillEntityController.createSkill(skillName, null).get();
+				}
+
+				skills.add(skill.getName());
 			}
 			newApplicant.setSkills(skills);
 
@@ -321,8 +329,15 @@ public class ApplicantForumEntityController {
 			final JsonNode skillNode = jApplicant.get("skills");
 			for (final JsonNode JSkill : skillNode) {
 				final String skillName = JSkill.get("name").textValue();
-				skills.add(this.skillEntityController.getSkill(skillName)
-						.orElseGet(this.skillEntityController.createSkill(skillName, null)).getName());
+				Skill skill;
+
+				try {
+					skill = this.skillEntityController.getSkill(skillName);
+				} catch (ResourceNotFoundException e) {
+					skill = this.skillEntityController.createSkill(skillName, null).get();
+				}
+
+				skills.add(skill.getName());
 			}
 			applicant.setSkills(skills);
 

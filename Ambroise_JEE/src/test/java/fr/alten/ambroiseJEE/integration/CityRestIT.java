@@ -9,7 +9,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 import java.io.FileNotFoundException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.junit.After;
@@ -23,9 +25,8 @@ import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.index.Index;
+import org.springframework.data.mongodb.core.index.IndexInfo;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -44,7 +45,9 @@ import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.model.dao.CityRepository;
 import fr.alten.ambroiseJEE.model.dao.UserRepository;
 import fr.alten.ambroiseJEE.utils.TokenIgnore;
+import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
+import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
@@ -129,13 +132,6 @@ public class CityRestIT {
 	@Before
 	public void beforeEachTest() {
 		userRepository.insert(userAdmin);
-
-		if (!mongoTemplate.collectionExists("city")) {
-			// Recreate the collection with the unique index "code" -> index beeing dropped
-			// when the collection is dropped.
-			mongoTemplate.createCollection(City.class);
-			mongoTemplate.indexOps("city").ensureIndex(new Index().on("code", Direction.ASC).unique());
-		}
 	}
 
 	/**
@@ -145,9 +141,8 @@ public class CityRestIT {
 	 */
 	@After
 	public void afterEachTest() {
-		mongoTemplate.getDb().getCollection("user").drop();
-		mongoTemplate.getDb().getCollection("city").drop();
-
+		userRepository.deleteAll();
+		cityRepository.deleteAll();
 	}
 
 	/**
@@ -422,6 +417,41 @@ public class CityRestIT {
 				.perform(put("/city").contentType(MediaType.APPLICATION_JSON).content(cityToDelete)).andReturn();
 
 		assertTrue(result.getResponse().getContentAsString().contains("UnprocessableEntityException"));
+	}
+
+	@Test
+	public void y_testIndex() {
+		// asserting the collection city exist
+		assertTrue(mongoTemplate.collectionExists("city"));
+
+		// asserting all unique index are present
+
+		HashMap<String, Boolean> indexPresent = new HashMap<>();
+		indexPresent.put("_id_", false);
+		indexPresent.put("code", false);
+
+		// getting all indexed field of the collection "city"
+		List<IndexInfo> indexList = mongoTemplate.indexOps("city").getIndexInfo();
+
+		for (IndexInfo index : indexList) {
+			for (Map.Entry<String, Boolean> indexInMap : indexPresent.entrySet()) {
+				if (index.getName().equals(indexInMap.getKey())) {
+
+					// checking the unicity of unique indexed fields - except for _id_ because
+					// mongoDB consider his unicity as false
+					if (!index.getName().equals("_id_")) {
+						assertTrue(index.isUnique());
+					}
+					indexInMap.setValue(true);
+				}
+			}
+		}
+
+		// Checking the presence of all indexes
+		for (Map.Entry<String, Boolean> indexInMap : indexPresent.entrySet()) {
+			assertTrue(indexInMap.getValue());
+			;
+		}
 	}
 
 	/**
