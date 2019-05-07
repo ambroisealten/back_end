@@ -131,6 +131,25 @@ public class FileRestController {
 	}
 
 	/**
+	 * Send the requested resources. HTTP Method : GET
+	 *
+	 * @param fileName the file's name to fetch
+	 * @param mail     the current logged user's mail
+	 * @param role     the current logged user's role
+	 * @param request  Request object with informations
+	 * @return the asked resource wrapped in an ResponseEntity
+	 * @author Andy Chabalier
+	 */
+	@GetMapping("/file")
+	public String getFile(@RequestParam("fileName") final String fileName, @RequestAttribute("mail") final String mail,
+			@RequestAttribute("role") final UserRole role) {
+		if (ObjectId.isValid(fileName)) {
+			return gson.toJson(this.fileBusinessController.getDocument(fileName, role));
+		}
+		throw new UnprocessableEntityException();
+	}
+
+	/**
 	 * Fetch the list of specific collection's document
 	 *
 	 * @param mail the current logged user's mail
@@ -249,4 +268,5 @@ public class FileRestController {
 		return Arrays.asList(files).stream().map(file -> uploadFile(file, path, mail, role))
 				.collect(Collectors.toList());
 	}
+
 }

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -56,16 +57,32 @@ public class DocumentSetRestController {
 	@GetMapping("/documentset")
 	@ResponseBody
 	public String getDocumentSet(@RequestBody JsonNode JDocumentSet, @RequestAttribute("role") UserRole role) {
-		if(!checkJsonIntegrity(JDocumentSet, "name", "files")) throw new UnprocessableEntityException();
-		else return gson.toJson(documentSetBusinessController.getDocumentSet(JDocumentSet, role));	
+		if (!checkJsonIntegrity(JDocumentSet, "name", "files"))
+			throw new UnprocessableEntityException();
+		else
+			return gson.toJson(documentSetBusinessController.getDocumentSet(JDocumentSet, role));
 	}
 
-	@GetMapping("/admin/documentset")
+	@GetMapping("/admin/documentset/all")
 	@ResponseBody
 	public String getDocumentSetAdmin(@RequestAttribute("role") UserRole role) {
-		return gson.toJson(documentSetBusinessController.getDocumentSetAdmin(role));
+		return gson.toJson(documentSetBusinessController.getAllDocumentSet(role));
 	}
-	
+
+	/**
+	 * fetch a Document set
+	 * 
+	 * @param set  the set name to fetch
+	 * @param role the current logged user's role
+	 * @return the document set
+	 * @author Andy Chabalier
+	 */
+	@GetMapping("/admin/documentset")
+	@ResponseBody
+	public String getSpecificDocumentSet(@RequestParam("set") String set, @RequestAttribute("role") UserRole role) {
+		return gson.toJson(documentSetBusinessController.getSpecificDocumentSet(set, role));
+	}
+
 	public boolean checkJsonIntegrity(JsonNode params, String... fields) {
 		return JsonUtils.checkJsonIntegrity(params, fields);
 	}
