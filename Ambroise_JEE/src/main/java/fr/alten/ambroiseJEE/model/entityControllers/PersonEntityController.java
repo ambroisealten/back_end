@@ -100,8 +100,12 @@ public class PersonEntityController {
 			newPerson.setHighestDiplomaYear(diploma.getYearOfResult());
 
 			final String jobName = jPerson.get("job").textValue();
-			final Job job = this.jobEntityController.getJob(jobName)
-					.orElseGet(this.jobEntityController.createJob(jobName));
+			Job job;
+			try {
+				job = this.jobEntityController.getJob(jobName);
+			} catch (ResourceNotFoundException e) {
+				job = (Job) this.jobEntityController.createJob(jobName);
+			}
 			newPerson.setJob(job.getTitle());
 
 			final String employerName = jPerson.get("employer").textValue();
@@ -299,8 +303,12 @@ public class PersonEntityController {
 			person.setHighestDiplomaYear(diploma.getYearOfResult());
 
 			final String jobName = jPerson.get("job").textValue();
-			final Job job = this.jobEntityController.getJob(jobName)
-					.orElseGet(this.jobEntityController.createJob(jobName));
+			Job job;
+			try {
+				job = this.jobEntityController.getJob(jobName);
+			} catch (ResourceNotFoundException e) {
+				job = (Job) this.jobEntityController.createJob(jobName);
+			}
 			person.setJob(job.getTitle());
 
 			final String employerName = jPerson.get("employer").textValue();
