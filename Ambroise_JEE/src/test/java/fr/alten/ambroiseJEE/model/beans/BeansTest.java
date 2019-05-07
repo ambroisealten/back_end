@@ -68,31 +68,74 @@ public class BeansTest {
 		}
 
 	}
-	
+
 	@Test
 	public void check_EmployerBean() {
 
 		assertTrue(mongoTemplate.collectionExists("employer"));
-		
+
 		HashMap<String, Boolean> indexPresent = new HashMap<>();
 		indexPresent.put("_id_", false);
 		indexPresent.put("name", false);
-		
+
 		List<IndexInfo> indexList = mongoTemplate.indexOps("employer").getIndexInfo();
 
-		for(IndexInfo index : indexList) {
-			for(Map.Entry<String, Boolean> indexInMap : indexPresent.entrySet()) {
-				if(index.getName().equals(indexInMap.getKey())) {
-					
-					if(!index.getName().equals("_id_")) {assertTrue(index.isUnique());}
+		for (IndexInfo index : indexList) {
+			for (Map.Entry<String, Boolean> indexInMap : indexPresent.entrySet()) {
+				if (index.getName().equals(indexInMap.getKey())) {
+
+					if (!index.getName().equals("_id_")) {
+						assertTrue(index.isUnique());
+					}
 					indexInMap.setValue(true);
 				}
 			}
 		}
-		
+
 		// Checking the presence of all indexes
-		for(Map.Entry<String, Boolean> indexInMap : indexPresent.entrySet()) {			
-			assertTrue(indexInMap.getValue());;	
+		for (Map.Entry<String, Boolean> indexInMap : indexPresent.entrySet()) {
+			assertTrue(indexInMap.getValue());
+			;
+		}
+	}
+
+	/**
+	 * @test Testing sector collection presence in base and index with their unicity
+	 * 
+	 * @author Andy Chabalier
+	 */
+	@Test
+	public void check_SectorBean() {
+
+		// asserting the collection city exist
+		assertTrue(mongoTemplate.collectionExists("sector"));
+
+		// asserting all unique index are present
+
+		HashMap<String, Boolean> indexPresent = new HashMap<>();
+		indexPresent.put("_id_", false);
+		indexPresent.put("name", false);
+
+		// getting all indexed field of the collection "sector"
+		List<IndexInfo> indexList = mongoTemplate.indexOps("sector").getIndexInfo();
+
+		for (IndexInfo index : indexList) {
+			for (Map.Entry<String, Boolean> indexInMap : indexPresent.entrySet()) {
+				if (index.getName().equals(indexInMap.getKey())) {
+
+					// checking the unicity of unique indexed fields - except for _id_ because
+					// mongoDB consider his unicity as false
+					if (!index.getName().equals("_id_")) {
+						assertTrue(index.isUnique());
+					}
+					indexInMap.setValue(true);
+				}
+			}
+		}
+
+		// Checking the presence of all indexes
+		for (Map.Entry<String, Boolean> indexInMap : indexPresent.entrySet()) {
+			assertTrue(indexInMap.getValue());
 		}
 	}
 

@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import fr.alten.ambroiseJEE.model.beans.Sector;
 import fr.alten.ambroiseJEE.model.entityControllers.SectorEntityController;
 import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.security.UserRoleLists;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
@@ -32,6 +33,10 @@ public class SectorBusinessController {
 	@Autowired
 	private SectorEntityController sectorEntityController;
 
+	public boolean isAdmin(final UserRole role) {
+		return UserRoleLists.getInstance().isAdmin(role);
+	}
+
 	/**
 	 * Method to delegate sector creation
 	 *
@@ -43,9 +48,7 @@ public class SectorBusinessController {
 	 *         * @author Andy Chabalier
 	 */
 	public HttpException createSector(final JsonNode JSector, final UserRole role) {
-		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role
-				? this.sectorEntityController.createSector(JSector)
-				: new ForbiddenException();
+		return isAdmin(role) ? this.sectorEntityController.createSector(JSector) : new ForbiddenException();
 	}
 
 	/**
@@ -59,9 +62,7 @@ public class SectorBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException deleteSector(final JsonNode JSector, final UserRole role) {
-		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role
-				? this.sectorEntityController.deleteSector(JSector)
-				: new ForbiddenException();
+		return isAdmin(role) ? this.sectorEntityController.deleteSector(JSector) : new ForbiddenException();
 	}
 
 	/**
@@ -72,7 +73,7 @@ public class SectorBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public List<Sector> getSectors(final UserRole role) {
-		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
+		if (isAdmin(role)) {
 			return this.sectorEntityController.getSectors();
 		}
 		throw new ForbiddenException();
@@ -89,8 +90,6 @@ public class SectorBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException updateSector(final JsonNode JSector, final UserRole role) {
-		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role
-				? this.sectorEntityController.updateSector(JSector)
-				: new ForbiddenException();
+		return isAdmin(role) ? this.sectorEntityController.updateSector(JSector) : new ForbiddenException();
 	}
 }
