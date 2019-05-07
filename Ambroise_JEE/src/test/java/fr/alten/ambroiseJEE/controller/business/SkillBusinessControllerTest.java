@@ -155,20 +155,6 @@ public class SkillBusinessControllerTest {
     }
 
     /**
-	 * @test create a {@link Skill}
-	 * @expected same {@link Optional} returned by the {@link SkillEntityController}
-     * 
-	 * @author Thomas Decamp
-	 */
-    @Test
-    public void getSkill() {
-        // setup
-        Mockito.when(this.skillEntityController.getSkill("name")).thenReturn(this.mockedSkill);
-        // assert
-        Assertions.assertThat(this.skillBusinessController.getSkill(this.mockedJSkill, UserRole.MANAGER_ADMIN))).isEqualTo(this.mockedSkill);
-    }
-
-    /**
 	 * @test update a {@link Skill}
 	 * @context as admin user
 	 * @expected same {@link HttpException} returned by the
