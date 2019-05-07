@@ -4,15 +4,14 @@
 package fr.alten.ambroiseJEE.model.entityControllers;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Supplier;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.mongodb.DuplicateKeyException;
 
 import fr.alten.ambroiseJEE.model.beans.Skill;
 import fr.alten.ambroiseJEE.model.dao.SkillRepository;
@@ -116,8 +115,8 @@ public class SkillEntityController {
 	 * @return an Optional containing the Skill (or not)
 	 * @author Thomas Decamp
 	 */
-	public Optional<Skill> getSkill(final String name) {
-		return this.skillRepository.findByNameIgnoreCase(name);
+	public Skill getSkill(final String name) {
+		return this.skillRepository.findByNameIgnoreCase(name).orElseThrow(ResourceNotFoundException::new);
 	}
 
 	/**
