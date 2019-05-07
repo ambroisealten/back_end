@@ -105,8 +105,14 @@ public class PersonEntityController {
 			newPerson.setJob(job.getTitle());
 
 			final String employerName = jPerson.get("employer").textValue();
-			final Employer employer = this.employerEntityController.getEmployer(employerName)
-					.orElseGet(this.employerEntityController.createEmployer(employerName));
+			Employer employer;
+			try {
+				employer = this.employerEntityController.getEmployer(employerName);
+				
+			}
+			catch (ResourceNotFoundException e) {
+				employer = (Employer) this.employerEntityController.createEmployer(employerName);
+			}
 			newPerson.setEmployer(employer.getName());
 			
 			newPerson.setOpinion(jPerson.get("opinion").textValue());
@@ -298,8 +304,15 @@ public class PersonEntityController {
 			person.setJob(job.getTitle());
 
 			final String employerName = jPerson.get("employer").textValue();
-			final Employer employer = this.employerEntityController.getEmployer(employerName)
-					.orElseGet(this.employerEntityController.createEmployer(employerName));
+			Employer employer;
+			try {
+				employer = this.employerEntityController.getEmployer(employerName);
+				
+			}
+			catch (ResourceNotFoundException e) {
+				employer = (Employer) this.employerEntityController.createEmployer(employerName);
+			}
+			
 			person.setEmployer(employer.getName());
 			
 			person.setOpinion(jPerson.get("opinion").textValue());
