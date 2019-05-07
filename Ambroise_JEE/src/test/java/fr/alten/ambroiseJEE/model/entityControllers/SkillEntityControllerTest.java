@@ -98,11 +98,13 @@ public class SkillEntityControllerTest {
 	 * 
      * @author Thomas Decamp
 	 */
-	//@Test
+	@Test
 	public void deleteSkill_with_resourceNotFound() {
 
+		Optional<Skill> skilloptional = Optional.of(new Skill());
 		Mockito.doReturn(this.mockedJSkill).when(this.mockedJSkill).get(ArgumentMatchers.anyString());
 		Mockito.doReturn("anyString").when(this.mockedJSkill).textValue();
+		Mockito.doReturn(skilloptional).when(this.skillRepository).findByNameIgnoreCase(ArgumentMatchers.anyString());
 		// assert
 		Assertions.assertThat(this.skillEntityController.deleteSkill(this.mockedJSkill))
 				.isInstanceOf(ResourceNotFoundException.class);
@@ -117,7 +119,7 @@ public class SkillEntityControllerTest {
 	 * 
      * @author Thomas Decamp
 	 */
-	//@Test
+	@Test
 	public void deleteSkill_with_success() {
 
 		Optional<Skill> skilloptional = Optional.of(new Skill());
@@ -213,7 +215,7 @@ public class SkillEntityControllerTest {
 	 * 
      * @author Thomas Decamp
 	 */
-	//@Test
+	@Test
 	public void updateSkill_with_resourceNotFound() {
 
 		Mockito.doReturn(this.mockedJSkill).when(this.mockedJSkill).get(ArgumentMatchers.anyString());
@@ -232,7 +234,7 @@ public class SkillEntityControllerTest {
 	 * 
      * @author Thomas Decamp
 	 */
-	//@Test
+	@Test
 	public void updateSkill_with_success() {
 
 		Mockito.doReturn(this.mockedJSkill).when(this.mockedJSkill).get(ArgumentMatchers.anyString());
