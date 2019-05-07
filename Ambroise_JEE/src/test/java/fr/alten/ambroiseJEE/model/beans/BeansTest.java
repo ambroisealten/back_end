@@ -59,5 +59,16 @@ public class BeansTest {
 		}
 
 	}
+	
+	@Test
+	public void check_PersonBean() {
+		
+		assertTrue(mongoTemplate.collectionExists("person"));
+		
+		HashMap<String, Boolean> indexPresent = new HashMap<>();
+		indexPresent.put("_id_", false);
+	
+		
+	}
 
 }
