@@ -85,7 +85,7 @@ public class SkillRestIT {
 	}
 
 	private static void initSkill() {
-		skill.setName("skill");
+		skill.setName("newSkill");
 	}
 
 	private static void initGson() {
@@ -221,7 +221,7 @@ public class SkillRestIT {
 		assertTrue(result.getResponse().getContentAsString().contains("UnprocessableEntityException"));
 	}
 
-	// TO-DO : Reecrire la pré-insertion en créant des Jsons de retour et vérifiant
+	// TODO : Reecrire la pré-insertion en créant des Jsons de retour et vérifiant
 	// bien que
 	// le retour est EGAL à ces Jsons de retour.
 	@Test
@@ -254,7 +254,7 @@ public class SkillRestIT {
 	public void updateSkill_with_success() throws Exception {
 
 		// setup
-		String updatedSkill = "{" + "\"name\":\"newSkill\"" + "}";
+		String updatedSkill = "{" + "\"name\":\"updateSkill\"," +  "\"oldName\":\"newSkill\"" + "}";
 		// Pre-inserting a skill to update
 		skillRepository.insert(skill);
 		// Checking pre-insertion
@@ -266,16 +266,16 @@ public class SkillRestIT {
 		assertTrue(result.getResponse().getContentAsString().contains("OkException"));
 
 		// Checking the updated skill in base
-		Optional<Skill> skillOptional = this.skillRepository.findByNameIgnoreCase("newSkill");
+		Optional<Skill> skillOptional = this.skillRepository.findByNameIgnoreCase("updateSkill");
 		assertTrue(skillOptional.isPresent());
-		assertThat(skillOptional.get().getName()).isEqualTo("newSkill");
+		assertThat(skillOptional.get().getName()).isEqualTo("updateSkill");
 	}
 
 	@Test
 	public void updateSkill_with_resourceNotFound() throws Exception {
 
 		// setup
-		String updatedSkill = "{" + "\"name\":\"newSkill\"" + "}";
+		String updatedSkill = "{" + "\"name\":\"newSkillFalse\"," +  "\"oldName\":\"skillNotFound\"" + "}";
 
 		MvcResult result = this.mockMvc
 				.perform(put("/skill").contentType(MediaType.APPLICATION_JSON).content(updatedSkill)).andReturn();
