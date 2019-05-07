@@ -41,7 +41,7 @@ public class PersonEntityController {
 	 * @return true if the string match with the mail pattern
 	 * @author Lucas Royackkers
 	 */
-	private static boolean validateMail(final String emailStr) {
+	public boolean validateMail(final String emailStr) {
 		final Matcher matcher = PersonEntityController.VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
 		return matcher.find();
 	}
@@ -78,7 +78,7 @@ public class PersonEntityController {
 	public HttpException createPerson(final JsonNode jPerson, final PersonRole type) throws ParseException {
 		try {
 			// if the mail don't match with the mail pattern
-			if (!PersonEntityController.validateMail(jPerson.get("mail").textValue())) {
+			if (!validateMail(jPerson.get("mail").textValue())) {
 				return new UnprocessableEntityException();
 			}
 

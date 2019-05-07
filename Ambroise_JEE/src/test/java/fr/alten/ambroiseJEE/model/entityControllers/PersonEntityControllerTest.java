@@ -62,7 +62,8 @@ public class PersonEntityControllerTest {
 	public void createApplicant_with_conflict() throws ParseException {
 
 		// setup
-		Mockito.doReturn(this.mockedJPerson).when(this.mockedJPerson).get(ArgumentMatchers.anyString());
+//		Mockito.doReturn(this.mockedJPerson).when(this.mockedJPerson).get(ArgumentMatchers.anyString());
+		Mockito.doReturn(true).when(this.personEntityController).validateMail(ArgumentMatchers.anyString());
 		Mockito.doThrow(this.mockedDuplicateKeyException).when(this.personRepository)
 				.save(ArgumentMatchers.any(Person.class));
 		// assert
@@ -146,7 +147,7 @@ public class PersonEntityControllerTest {
 		final Optional<Person> notEmptyPersonOptional = Optional.of(new Person());
 		Mockito.doReturn(this.mockedJPerson).when(this.mockedJPerson).get(ArgumentMatchers.anyString());
 		Mockito.doReturn("anyString").when(this.mockedJPerson).textValue();
-		Mockito.doReturn(notEmptyPersonOptional).when(this.personRepository).findByMail(ArgumentMatchers.anyString());
+		Mockito.doReturn(notEmptyPersonOptional).when(this.personRepository).findByMailAndRole(ArgumentMatchers.anyString(),ArgumentMatchers.any(PersonRole.class));
 		Mockito.when(this.personRepository.save(ArgumentMatchers.any(Person.class)))
 				.thenThrow(this.mockedDuplicateKeyException);
 		// assert
@@ -169,7 +170,7 @@ public class PersonEntityControllerTest {
 		final Optional<Person> notEmptyPersonOptional = Optional.of(new Person());
 		Mockito.doReturn(this.mockedJPerson).when(this.mockedJPerson).get(ArgumentMatchers.anyString());
 		Mockito.doReturn("anyString").when(this.mockedJPerson).textValue();
-		Mockito.doReturn(notEmptyPersonOptional).when(this.personRepository).findByMail(ArgumentMatchers.anyString());
+		Mockito.doReturn(notEmptyPersonOptional).when(this.personRepository).findByMailAndRole(ArgumentMatchers.anyString(),ArgumentMatchers.any(PersonRole.class));
 		Mockito.when(this.personRepository.save(ArgumentMatchers.any(Person.class)))
 				.thenThrow(this.mockedDuplicateKeyException);
 		// assert
@@ -192,7 +193,7 @@ public class PersonEntityControllerTest {
 		final Optional<Person> emptyPersonOptional = Optional.ofNullable(null);
 		Mockito.doReturn(this.mockedJPerson).when(this.mockedJPerson).get(ArgumentMatchers.anyString());
 		Mockito.doReturn("anyString").when(this.mockedJPerson).textValue();
-		Mockito.doReturn(emptyPersonOptional).when(this.personRepository).findByMail(ArgumentMatchers.anyString());
+		Mockito.doReturn(emptyPersonOptional).when(this.personRepository).findByMailAndRole(ArgumentMatchers.anyString(),ArgumentMatchers.any(PersonRole.class));
 		// assert
 		Assertions.assertThat(this.personEntityController.deletePerson(this.mockedJPerson,PersonRole.APPLICANT))
 				.isInstanceOf(ResourceNotFoundException.class);
@@ -213,7 +214,7 @@ public class PersonEntityControllerTest {
 		final Optional<Person> emptyPersonOptional = Optional.ofNullable(null);
 		Mockito.doReturn(this.mockedJPerson).when(this.mockedJPerson).get(ArgumentMatchers.anyString());
 		Mockito.doReturn("anyString").when(this.mockedJPerson).textValue();
-		Mockito.doReturn(emptyPersonOptional).when(this.personRepository).findByMail(ArgumentMatchers.anyString());
+		Mockito.doReturn(emptyPersonOptional).when(this.personRepository).findByMailAndRole(ArgumentMatchers.anyString(),ArgumentMatchers.any(PersonRole.class));
 		// assert
 		Assertions.assertThat(this.personEntityController.deletePerson(this.mockedJPerson,PersonRole.CONSULTANT))
 				.isInstanceOf(ResourceNotFoundException.class);
@@ -234,7 +235,7 @@ public class PersonEntityControllerTest {
 		final Optional<Person> notEmptyPersonOptional = Optional.of(new Person());
 		Mockito.doReturn(this.mockedJPerson).when(this.mockedJPerson).get(ArgumentMatchers.anyString());
 		Mockito.doReturn("anyString").when(this.mockedJPerson).textValue();
-		Mockito.doReturn(notEmptyPersonOptional).when(this.personRepository).findByMail(ArgumentMatchers.anyString());
+		Mockito.doReturn(notEmptyPersonOptional).when(this.personRepository).findByMailAndRole(ArgumentMatchers.anyString(),ArgumentMatchers.any(PersonRole.class));
 		// assert
 		Assertions.assertThat(this.personEntityController.deletePerson(this.mockedJPerson,PersonRole.APPLICANT)).isInstanceOf(OkException.class);
 		// verify
@@ -254,7 +255,7 @@ public class PersonEntityControllerTest {
 		final Optional<Person> notEmptyPersonOptional = Optional.of(new Person());
 		Mockito.doReturn(this.mockedJPerson).when(this.mockedJPerson).get(ArgumentMatchers.anyString());
 		Mockito.doReturn("anyString").when(this.mockedJPerson).textValue();
-		Mockito.doReturn(notEmptyPersonOptional).when(this.personRepository).findByMail(ArgumentMatchers.anyString());
+		Mockito.doReturn(notEmptyPersonOptional).when(this.personRepository).findByMailAndRole(ArgumentMatchers.anyString(),ArgumentMatchers.any(PersonRole.class));
 		// assert
 		Assertions.assertThat(this.personEntityController.deletePerson(this.mockedJPerson,PersonRole.CONSULTANT)).isInstanceOf(OkException.class);
 		// verify
@@ -272,7 +273,7 @@ public class PersonEntityControllerTest {
 		// assert
 		Assertions.assertThat(this.personEntityController.getPersonsByRole(PersonRole.APPLICANT)).isInstanceOf(List.class);
 		// verify
-		Mockito.verify(this.personRepository, Mockito.times(1)).findAll();
+		Mockito.verify(this.personRepository, Mockito.times(1)).findAllByRole(PersonRole.APPLICANT);
 	}
 	
 	/**
@@ -286,103 +287,208 @@ public class PersonEntityControllerTest {
 		// assert
 		Assertions.assertThat(this.personEntityController.getPersonsByRole(PersonRole.CONSULTANT)).isInstanceOf(List.class);
 		// verify
-		Mockito.verify(this.personRepository, Mockito.times(1)).findAll();
+		Mockito.verify(this.personRepository, Mockito.times(1)).findAllByRole(PersonRole.CONSULTANT);
 	}
 
 	/**
-	 * @test get a {@link Person} by name
+	 * @test get a {@link Person} by name of Applicant type
 	 * @context {@link Person} not found in base
 	 * @expected {@link ResourceNotFoundException}
 	 * @author Lucas Royackkers
 	 */
 	@Test(expected = ResourceNotFoundException.class)
-	public void getPerson_with_ResourceNotFound() {
+	public void getApplicant_with_ResourceNotFound() {
 
 		// setup
 		final Optional<Person> emptyPersonOptional = Optional.ofNullable(null);
-		Mockito.when(this.personRepository.findByMail("name")).thenReturn(emptyPersonOptional);
+		Mockito.when(this.personRepository.findByMailAndRole("name",PersonRole.APPLICANT)).thenReturn(emptyPersonOptional);
 		// throw
-		this.personEntityController.getPerson("name");
+		this.personEntityController.getPersonByMailAndType("name",PersonRole.APPLICANT);
+	}
+	
+	/**
+	 * @test get a {@link Person} by name of Consultant type
+	 * @context {@link Person} not found in base
+	 * @expected {@link ResourceNotFoundException}
+	 * @author Lucas Royackkers
+	 */
+	@Test(expected = ResourceNotFoundException.class)
+	public void getConsultant_with_ResourceNotFound() {
+
+		// setup
+		final Optional<Person> emptyPersonOptional = Optional.ofNullable(null);
+		Mockito.when(this.personRepository.findByMailAndRole("name",PersonRole.CONSULTANT)).thenReturn(emptyPersonOptional);
+		// throw
+		this.personEntityController.getPersonByMailAndType("name",PersonRole.CONSULTANT);
 	}
 
+
 	/**
-	 * @test get a {@link Person} by name
+	 * @test get a {@link Person} by name of Applicant type
 	 * @context success
 	 * @expected return instance of {@link Person}
 	 * @author Lucas Royackkers
 	 */
 	@Test
-	public void getPerson_with_success() {
+	public void getApplicant_with_success() {
 
 		// setup
 		final Optional<Person> notEmptyPersonOptional = Optional.of(new Person());
-		Mockito.when(this.personRepository.findByNom("name")).thenReturn(notEmptyPersonOptional);
+		Mockito.when(this.personRepository.findByMailAndRole("name",PersonRole.APPLICANT)).thenReturn(notEmptyPersonOptional);
 		// assert
-		Assertions.assertThat(this.personEntityController.getPerson("name")).isInstanceOf(Person.class);
+		Assertions.assertThat(this.personEntityController.getPersonByMailAndType("name",PersonRole.APPLICANT)).isInstanceOf(Person.class);
 		// verify
-		Mockito.verify(this.personRepository, Mockito.times(1)).findByNom("name");
+		Mockito.verify(this.personRepository, Mockito.times(1)).findByMailAndRole("name",PersonRole.APPLICANT);
 	}
-
+	
 	/**
-	 * @test update a {@link Person}
-	 * @context {@link Person} already existing in base
-	 * @expected {@link ConflictException} save() call only once
+	 * @test get a {@link Person} by name of Consultant type
+	 * @context success
+	 * @expected return instance of {@link Person}
 	 * @author Lucas Royackkers
 	 */
 	@Test
-	public void updatePerson_with_Conflict() {
+	public void getConsultant_with_success() {
+
+		// setup
+		final Optional<Person> notEmptyPersonOptional = Optional.of(new Person());
+		Mockito.when(this.personRepository.findByMailAndRole("name",PersonRole.CONSULTANT)).thenReturn(notEmptyPersonOptional);
+		// assert
+		Assertions.assertThat(this.personEntityController.getPersonByMailAndType("name",PersonRole.CONSULTANT)).isInstanceOf(Person.class);
+		// verify
+		Mockito.verify(this.personRepository, Mockito.times(1)).findByMailAndRole("name",PersonRole.CONSULTANT);
+	}
+
+	/**
+	 * @test update a {@link Person} of Applicant type
+	 * @context {@link Person} already existing in base
+	 * @expected {@link ConflictException} save() call only once
+	 * @author Lucas Royackkers
+	 * @throws ParseException 
+	 */
+	@Test
+	public void updateApplicant_with_Conflict() throws ParseException {
 
 		// setup
 		final Optional<Person> notEmptyPersonOptional = Optional.of(new Person());
 		Mockito.doReturn(this.mockedJPerson).when(this.mockedJPerson).get(ArgumentMatchers.anyString());
 		Mockito.doReturn("anyString").when(this.mockedJPerson).textValue();
-		Mockito.doReturn(notEmptyPersonOptional).when(this.personRepository).findByCode(ArgumentMatchers.anyString());
+		Mockito.doReturn(notEmptyPersonOptional).when(this.personRepository).findByMailAndRole(ArgumentMatchers.anyString(),ArgumentMatchers.any(PersonRole.class));
 		Mockito.when(this.personRepository.save(ArgumentMatchers.any(Person.class)))
 				.thenThrow(this.mockedDuplicateKeyException);
 		// assert
-		Assertions.assertThat(this.personEntityController.updatePerson(this.mockedJPerson))
+		Assertions.assertThat(this.personEntityController.updatePerson(this.mockedJPerson,PersonRole.APPLICANT))
+				.isInstanceOf(ConflictException.class);
+		// verify
+		Mockito.verify(this.personRepository, Mockito.times(1)).save(ArgumentMatchers.any(Person.class));
+	}
+	
+	/**
+	 * @test update a {@link Person} of Consultant type
+	 * @context {@link Person} already existing in base
+	 * @expected {@link ConflictException} save() call only once
+	 * @author Lucas Royackkers
+	 * @throws ParseException 
+	 */
+	@Test
+	public void updateConsultant_with_Conflict() throws ParseException {
+
+		// setup
+		final Optional<Person> notEmptyPersonOptional = Optional.of(new Person());
+		Mockito.doReturn(this.mockedJPerson).when(this.mockedJPerson).get(ArgumentMatchers.anyString());
+		Mockito.doReturn("anyString").when(this.mockedJPerson).textValue();
+		Mockito.doReturn(notEmptyPersonOptional).when(this.personRepository).findByMailAndRole(ArgumentMatchers.anyString(),ArgumentMatchers.any(PersonRole.class));
+		Mockito.when(this.personRepository.save(ArgumentMatchers.any(Person.class)))
+				.thenThrow(this.mockedDuplicateKeyException);
+		// assert
+		Assertions.assertThat(this.personEntityController.updatePerson(this.mockedJPerson,PersonRole.CONSULTANT))
 				.isInstanceOf(ConflictException.class);
 		// verify
 		Mockito.verify(this.personRepository, Mockito.times(1)).save(ArgumentMatchers.any(Person.class));
 	}
 
 	/**
-	 * @test update a {@link Person}
+	 * @test update a {@link Person} of Applicant type
 	 * @context {@link Person} not found in base
 	 * @expected {@link ResourceNotFoundException} save() never called
 	 * @author Lucas Royackkers
+	 * @throws ParseException 
 	 */
 	@Test
-	public void updatePerson_with_resourceNotFound() {
+	public void updateApplicant_with_resourceNotFound() throws ParseException {
 
 		// setup
 		final Optional<Person> emptyPersonOptional = Optional.ofNullable(null);
 		Mockito.doReturn(this.mockedJPerson).when(this.mockedJPerson).get(ArgumentMatchers.anyString());
 		Mockito.doReturn("anyString").when(this.mockedJPerson).textValue();
-		Mockito.doReturn(emptyPersonOptional).when(this.personRepository).findByCode(ArgumentMatchers.anyString());
+		Mockito.doReturn(emptyPersonOptional).when(this.personRepository).findByMailAndRole(ArgumentMatchers.anyString(),ArgumentMatchers.any(PersonRole.class));
 		// assert
-		Assertions.assertThat(this.personEntityController.updatePerson(this.mockedJPerson))
+		Assertions.assertThat(this.personEntityController.updatePerson(this.mockedJPerson,PersonRole.APPLICANT))
+				.isInstanceOf(ResourceNotFoundException.class);
+		// verify
+		Mockito.verify(this.personRepository, Mockito.never()).save(ArgumentMatchers.any(Person.class));
+	}
+	
+	/**
+	 * @test update a {@link Person} of Consultant type
+	 * @context {@link Person} not found in base
+	 * @expected {@link ResourceNotFoundException} save() never called
+	 * @author Lucas Royackkers
+	 * @throws ParseException 
+	 */
+	@Test
+	public void updateConsultant_with_resourceNotFound() throws ParseException {
+
+		// setup
+		final Optional<Person> emptyPersonOptional = Optional.ofNullable(null);
+		Mockito.doReturn(this.mockedJPerson).when(this.mockedJPerson).get(ArgumentMatchers.anyString());
+		Mockito.doReturn("anyString").when(this.mockedJPerson).textValue();
+		Mockito.doReturn(emptyPersonOptional).when(this.personRepository).findByMailAndRole(ArgumentMatchers.anyString(),ArgumentMatchers.any(PersonRole.class));
+		// assert
+		Assertions.assertThat(this.personEntityController.updatePerson(this.mockedJPerson,PersonRole.APPLICANT))
 				.isInstanceOf(ResourceNotFoundException.class);
 		// verify
 		Mockito.verify(this.personRepository, Mockito.never()).save(ArgumentMatchers.any(Person.class));
 	}
 
 	/**
-	 * @test update a {@link Person}
+	 * @test update a {@link Person} of Applicant type
 	 * @context success
 	 * @expected {@link OkException} save() call only once
 	 * @author Lucas Royackkers
+	 * @throws ParseException 
 	 */
 	@Test
-	public void updatePerson_with_success() {
+	public void updateApplicant_with_success() throws ParseException {
 
 		// setup
 		final Optional<Person> notEmptyPersonOptional = Optional.of(new Person());
 		Mockito.doReturn(this.mockedJPerson).when(this.mockedJPerson).get(ArgumentMatchers.anyString());
 		Mockito.doReturn("anyString").when(this.mockedJPerson).textValue();
-		Mockito.doReturn(notEmptyPersonOptional).when(this.personRepository).findByCode(ArgumentMatchers.anyString());
+		Mockito.doReturn(notEmptyPersonOptional).when(this.personRepository).findByMailAndRole(ArgumentMatchers.anyString(),ArgumentMatchers.any(PersonRole.class));
 		// assert
-		Assertions.assertThat(this.personEntityController.updatePerson(this.mockedJPerson)).isInstanceOf(OkException.class);
+		Assertions.assertThat(this.personEntityController.updatePerson(this.mockedJPerson,PersonRole.APPLICANT)).isInstanceOf(OkException.class);
+		// verify
+		Mockito.verify(this.personRepository, Mockito.times(1)).save(ArgumentMatchers.any(Person.class));
+	}
+	
+	/**
+	 * @test update a {@link Person} of Consultant type
+	 * @context success
+	 * @expected {@link OkException} save() call only once
+	 * @author Lucas Royackkers
+	 * @throws ParseException 
+	 */
+	@Test
+	public void updateConsultant_with_success() throws ParseException {
+
+		// setup
+		final Optional<Person> notEmptyPersonOptional = Optional.of(new Person());
+		Mockito.doReturn(this.mockedJPerson).when(this.mockedJPerson).get(ArgumentMatchers.anyString());
+		Mockito.doReturn("anyString").when(this.mockedJPerson).textValue();
+		Mockito.doReturn(notEmptyPersonOptional).when(this.personRepository).findByMailAndRole(ArgumentMatchers.anyString(),ArgumentMatchers.any(PersonRole.class));
+		// assert
+		Assertions.assertThat(this.personEntityController.updatePerson(this.mockedJPerson,PersonRole.CONSULTANT)).isInstanceOf(OkException.class);
 		// verify
 		Mockito.verify(this.personRepository, Mockito.times(1)).save(ArgumentMatchers.any(Person.class));
 	}
