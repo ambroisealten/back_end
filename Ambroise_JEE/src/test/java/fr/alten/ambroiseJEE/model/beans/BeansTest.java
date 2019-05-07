@@ -27,26 +27,63 @@ public class BeansTest {
 	@Autowired
 	private MongoTemplate mongoTemplate;
 
+	/**
+	 * @test Testing city collection presence in base and index with their unicity
+	 * 
+	 * @author Kylian Gehier
+	 */
 	@Test
 	public void check_CityBean() {
-		
+
 		// asserting the collection city exist
 		assertTrue(mongoTemplate.collectionExists("city"));
 
 		// asserting all unique index are present
-		
+
 		HashMap<String, Boolean> indexPresent = new HashMap<>();
 		indexPresent.put("_id_", false);
 		indexPresent.put("code", false);
-		
+
 		// getting all indexed field of the collection "city"
 		List<IndexInfo> indexList = mongoTemplate.indexOps("city").getIndexInfo();
+
+		for (IndexInfo index : indexList) {
+			for (Map.Entry<String, Boolean> indexInMap : indexPresent.entrySet()) {
+				if (index.getName().equals(indexInMap.getKey())) {
+
+					// checking the unicity of unique indexed fields - except for _id_ because
+					// mongoDB consider his unicity as false
+					if (!index.getName().equals("_id_")) {
+						assertTrue(index.isUnique());
+					}
+					indexInMap.setValue(true);
+				}
+			}
+		}
+
+		// Checking the presence of all indexes
+		for (Map.Entry<String, Boolean> indexInMap : indexPresent.entrySet()) {
+			assertTrue(indexInMap.getValue());
+			;
+		}
+
+	}
+	
+	@Test
+	public void check_EmployerBean() {
+
+		assertTrue(mongoTemplate.collectionExists("employer"));
+		
+		HashMap<String, Boolean> indexPresent = new HashMap<>();
+		indexPresent.put("_id_", false);
+		indexPresent.put("name", false);
+		
+		List<IndexInfo> indexList = mongoTemplate.indexOps("employer").getIndexInfo();
 
 		for(IndexInfo index : indexList) {
 			for(Map.Entry<String, Boolean> indexInMap : indexPresent.entrySet()) {
 				if(index.getName().equals(indexInMap.getKey())) {
 					
-					// checking the unicity of unique indexed fields - except for _id_ because mongoDB consider his unicity as false
 					if(!index.getName().equals("_id_")) {assertTrue(index.isUnique());}
 					indexInMap.setValue(true);
 				}
@@ -57,7 +94,6 @@ public class BeansTest {
 		for(Map.Entry<String, Boolean> indexInMap : indexPresent.entrySet()) {			
 			assertTrue(indexInMap.getValue());;	
 		}
-
 	}
 	
 	@Test

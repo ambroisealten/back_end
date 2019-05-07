@@ -80,7 +80,7 @@ public class DepartementEntityController {
 	 *
 	 * @param name the name of departement to fetch
 	 * @return the fetched departement
-	 * @throws @{@link ResourceNotFoundException} if the ressource is not found
+	 * @throws @{@link ResourceNotFoundException} if the resource is not found
 	 * @author Andy Chabalier
 	 */
 	public Departement getDepartement(final String name) {

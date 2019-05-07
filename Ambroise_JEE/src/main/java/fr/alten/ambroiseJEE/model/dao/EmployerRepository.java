@@ -2,6 +2,7 @@ package fr.alten.ambroiseJEE.model.dao;
 
 import java.util.Optional;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import fr.alten.ambroiseJEE.model.beans.Employer;
@@ -17,5 +18,7 @@ public interface EmployerRepository extends MongoRepository<Employer, Long> {
 	 * @author Royackkers Lucas
 	 */
 	Optional<Employer> findByName(String name);
+
+	Optional<Employer> findBy_id(ObjectId objectId);
 
 }

@@ -5,6 +5,7 @@ package fr.alten.ambroiseJEE.controller.business;
 
 import java.util.List;
 
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,7 @@ import fr.alten.ambroiseJEE.model.entityControllers.FileEntityController;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
  * @author Andy Chabalier
@@ -32,7 +34,7 @@ public class FileBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public File createDocument(final String filePath, final String fileName, final UserRole role) {
-		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
+		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role) {
 			return this.fileEntityController.pushDocument(filePath, fileName);
 		} else {
 			throw new ForbiddenException();
@@ -62,6 +64,17 @@ public class FileBusinessController {
 	public List<File> getCollectionFiles(final String path, final UserRole role) {
 		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
 			return this.fileEntityController.getCollectionFiles(path);
+		}
+		throw new ForbiddenException();
+	}
+
+	public File getDocument(final String _id, final UserRole role) {
+		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
+			try {
+				return this.fileEntityController.getFile(new ObjectId(_id));
+			} catch (final IllegalArgumentException iae) {
+				throw new UnprocessableEntityException();
+			}
 		}
 		throw new ForbiddenException();
 	}

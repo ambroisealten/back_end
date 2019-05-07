@@ -1,6 +1,4 @@
-package fr.alten.ambroiseJEE.model;
-
-import fr.alten.ambroiseJEE.model.beans.Skill;
+package fr.alten.ambroiseJEE.model.beans;
 
 /**
  * Defines the relation between a Skill and a grade. Wrap a Skill with a grade

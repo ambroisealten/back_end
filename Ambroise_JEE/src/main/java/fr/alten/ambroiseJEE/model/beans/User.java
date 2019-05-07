@@ -93,4 +93,5 @@ public class User implements Serializable {
 	public void setRole(final UserRole role) {
 		this.role = role;
 	}
+
 }

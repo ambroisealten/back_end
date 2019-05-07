@@ -37,7 +37,7 @@ public class FileEntityController {
 	 *
 	 * @param _id the id of file to delete
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link ResourceNotFoundException} if the ressource is not
+	 *         request ({@link ResourceNotFoundException} if the resource is not
 	 *         found and {@link OkException} if the document is deleted
 	 * @author Andy Chabalier
 	 */
@@ -69,6 +69,19 @@ public class FileEntityController {
 				.withIgnorePaths("dateOfCreation");
 
 		return this.fileRepository.findAll(Example.of(fileExemple, matcher));
+	}
+
+	/**
+	 * Fetch a file with is id
+	 *
+	 * @param _id id of the file to fetch
+	 * @return the fetched file
+	 * @author Andy Chabalier
+	 * @throws {@link UnprocessableEntityException} if the id can't be processed
+	 * @throws {@link ResourceNotFoundException} if the resource is not found
+	 */
+	public File getFile(final ObjectId _id) {
+		return this.fileRepository.findBy_id(_id).orElseThrow(ResourceNotFoundException::new);
 	}
 
 	/**
@@ -104,7 +117,7 @@ public class FileEntityController {
 		file.setPath(path);
 		file.setExtension(FilenameUtils.getExtension(fileName));
 		file.setDateOfCreation(System.currentTimeMillis());
-		file.setName(fileName);
+		file.setDisplayName(fileName);
 		try {
 			return this.fileRepository.save(file);
 		} catch (final Exception e) {
@@ -126,7 +139,7 @@ public class FileEntityController {
 	public HttpException updateFile(final String _id, final String path, final String displayName) {
 		final Optional<File> fileOptionnal = this.fileRepository.findBy_id(new ObjectId(_id));
 		return fileOptionnal.map(file -> {
-			file.setName(displayName);
+			file.setDisplayName(displayName);
 			file.setPath(path);
 			this.fileRepository.save(file);
 			return (HttpException) new OkException();

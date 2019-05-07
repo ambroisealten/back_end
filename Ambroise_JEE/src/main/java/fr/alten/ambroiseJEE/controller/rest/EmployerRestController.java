@@ -33,7 +33,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 @Controller
 public class EmployerRestController {
 
-	public static boolean checkJsonIntegrity(final JsonNode params, final String... fields) {
+	public boolean checkJsonIntegrity(final JsonNode params, final String... fields) {
 		return JsonUtils.checkJsonIntegrity(params, fields);
 	}
 
@@ -64,7 +64,7 @@ public class EmployerRestController {
 	@ResponseBody
 	public HttpException createEmployer(@RequestBody final JsonNode params,
 			@RequestAttribute("role") final UserRole role) {
-		return EmployerRestController.checkJsonIntegrity(params, "name")
+		return checkJsonIntegrity(params, "name")
 				? this.employerBusinessController.createEmployer(params, role)
 				: new UnprocessableEntityException();
 	}
@@ -86,7 +86,7 @@ public class EmployerRestController {
 	@ResponseBody
 	public HttpException deleteEmployer(@RequestBody final JsonNode params,
 			@RequestAttribute("role") final UserRole role) {
-		return EmployerRestController.checkJsonIntegrity(params, "name")
+		return checkJsonIntegrity(params, "name")
 				? this.employerBusinessController.deleteEmployer(params, role)
 				: new UnprocessableEntityException();
 	}
@@ -121,9 +121,11 @@ public class EmployerRestController {
 	@ResponseBody
 	public HttpException updateEmployer(@RequestBody final JsonNode params,
 			@RequestAttribute("role") final UserRole role) {
-		return EmployerRestController.checkJsonIntegrity(params, "name", "oldName")
+		return checkJsonIntegrity(params, "name", "oldName")
 				? this.employerBusinessController.updateEmployer(params, role)
 				: new UnprocessableEntityException();
 	}
+	
+	
 
 }

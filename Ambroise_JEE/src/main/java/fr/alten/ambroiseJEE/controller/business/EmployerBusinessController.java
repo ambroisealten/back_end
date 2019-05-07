@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import fr.alten.ambroiseJEE.model.beans.Employer;
 import fr.alten.ambroiseJEE.model.entityControllers.EmployerEntityController;
 import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.security.UserRoleLists;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
@@ -25,6 +26,8 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
  */
 @Service
 public class EmployerBusinessController {
+
+	private final UserRoleLists roles = UserRoleLists.getInstance();
 
 	@Autowired
 	private EmployerEntityController employerEntityController;
@@ -42,10 +45,8 @@ public class EmployerBusinessController {
 	 * @author Lucas Royackkers
 	 */
 	public HttpException createEmployer(final JsonNode params, final UserRole role) {
-		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
-			return this.employerEntityController.createEmployer(params);
-		}
-		throw new ForbiddenException();
+		return isAdmin(role) ? this.employerEntityController.createEmployer(params) :
+			new ForbiddenException();
 	}
 
 	/**
@@ -61,10 +62,8 @@ public class EmployerBusinessController {
 	 * @author Lucas Royackkers
 	 */
 	public HttpException deleteEmployer(final JsonNode params, final UserRole role) {
-		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
-			return this.employerEntityController.deleteEmployer(params);
-		}
-		throw new ForbiddenException();
+		return isAdmin(role) ? this.employerEntityController.deleteEmployer(params) :
+			new ForbiddenException();
 	}
 
 	/**
@@ -77,8 +76,7 @@ public class EmployerBusinessController {
 	 * @author Lucas Royackkers
 	 */
 	public List<Employer> getEmployers(final UserRole role) {
-		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.CDR == role
-				|| UserRole.MANAGER == role) {
+		if (isNotConsultantOrDeactivated(role)) {
 			return this.employerEntityController.getEmployers();
 		}
 		throw new ForbiddenException();
@@ -97,10 +95,16 @@ public class EmployerBusinessController {
 	 * @author Lucas Royackkers
 	 */
 	public HttpException updateEmployer(final JsonNode params, final UserRole role) {
-		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
-			return this.employerEntityController.updateEmployer(params);
-		}
-		throw new ForbiddenException();
+		return isAdmin(role) ? this.employerEntityController.updateEmployer(params) :
+			new ForbiddenException();
+	}
+
+	public boolean isAdmin(final UserRole role) {
+		return this.roles.isAdmin(role);
+	}
+	
+	public boolean isNotConsultantOrDeactivated(final UserRole role) {
+		return this.roles.isNotConsultantOrDeactivated(role);
 	}
 
 }

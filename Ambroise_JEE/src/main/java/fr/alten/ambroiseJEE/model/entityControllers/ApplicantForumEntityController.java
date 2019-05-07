@@ -101,12 +101,7 @@ public class ApplicantForumEntityController {
 			newApplicant.setSurname(jApplicant.get("surname").textValue());
 			newApplicant.setMonthlyWage(Integer.parseInt(jApplicant.get("monthlyWage").textValue()));
 			newApplicant.setMail(applicantMail);
-			final List<String> docList = new ArrayList<String>();
-			final JsonNode docNode = jApplicant.get("docs");
-			for (final JsonNode doc : docNode) {
-				docList.add(doc.get("url").textValue());
-			}
-			newApplicant.setUrlDocs(docList);
+
 
 			final User personInCharge = this.userEntityController
 					.getUserByMail(jApplicant.get("managerMail").textValue());
@@ -127,8 +122,15 @@ public class ApplicantForumEntityController {
 			newApplicant.setJob(job.getTitle());
 
 			final String employerName = jApplicant.get("employer").textValue();
-			final Employer employer = this.employerEntityController.getEmployer(employerName)
-					.orElseGet(this.employerEntityController.createEmployer(employerName));
+			Employer employer;
+			try {
+				employer = this.employerEntityController.getEmployer(employerName);
+				
+			}
+			catch (ResourceNotFoundException e) {
+				employer = (Employer) this.employerEntityController.createEmployer(employerName);
+			}
+			
 			newApplicant.setEmployer(employer.getName());
 
 			newApplicant.setMobilities(getAllMobilities(jApplicant.get("mobilities")));
@@ -148,6 +150,8 @@ public class ApplicantForumEntityController {
 						.orElseGet(this.skillEntityController.createSkill(skillName, null)).getName());
 			}
 			newApplicant.setSkills(skills);
+			
+			newApplicant.setOpinion(jApplicant.get("opinion").textValue());
 
 			newApplicant.setVehicule(Boolean.getBoolean(jApplicant.get("hasVehicule").textValue()));
 			newApplicant.setDriverLicense(Boolean.getBoolean(jApplicant.get("hasPermis").textValue()));
@@ -183,7 +187,6 @@ public class ApplicantForumEntityController {
 			applicant.setSurname(null);
 			applicant.setMail("deactivated" + System.currentTimeMillis() + "@deactivated.com");
 			applicant.setEmployer(null);
-			applicant.setUrlDocs(null);
 			applicant.setMonthlyWage(Float.NaN);
 			applicant.setHighestDiploma(null);
 			applicant.setPersonInChargeMail(null);
@@ -199,6 +202,7 @@ public class ApplicantForumEntityController {
 			applicant.setVehicule(false);
 			applicant.setDriverLicense(false);
 			applicant.setNationality(Nationality.NONE);
+			applicant.setOpinion(null);
 
 			this.applicantForumRepository.save(applicant);
 		} else {
@@ -290,8 +294,15 @@ public class ApplicantForumEntityController {
 			applicant.setJob(job.getTitle());
 
 			final String employerName = jApplicant.get("employer").textValue();
-			final Employer employer = this.employerEntityController.getEmployer(employerName)
-					.orElseGet(this.employerEntityController.createEmployer(employerName));
+			Employer employer;
+			try {
+				employer = this.employerEntityController.getEmployer(employerName);
+				
+			}
+			catch (ResourceNotFoundException e) {
+				employer = (Employer) this.employerEntityController.createEmployer(employerName);
+			}
+			
 			applicant.setEmployer(employer.getName());
 
 			applicant.setMobilities(getAllMobilities(jApplicant.get("mobilities")));
@@ -311,13 +322,8 @@ public class ApplicantForumEntityController {
 						.orElseGet(this.skillEntityController.createSkill(skillName, null)).getName());
 			}
 			applicant.setSkills(skills);
-
-			final List<String> docList = new ArrayList<String>();
-			final JsonNode docNode = jApplicant.get("docs");
-			for (final JsonNode doc : docNode) {
-				docList.add(doc.get("url").textValue());
-			}
-			applicant.setUrlDocs(docList);
+			
+			applicant.setOpinion(jApplicant.get("opinion").textValue());
 
 			applicant.setMobilities(getAllMobilities(jApplicant.get("mobilities")));
 			applicant.setPhoneNumber(jApplicant.get("phoneNumber").textValue());

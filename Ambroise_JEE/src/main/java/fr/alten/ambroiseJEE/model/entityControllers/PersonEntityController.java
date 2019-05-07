@@ -1,7 +1,5 @@
 package fr.alten.ambroiseJEE.model.entityControllers;
 
-import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -71,11 +69,9 @@ public class PersonEntityController {
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ConflictException} if there is a conflict in the
 	 *         database and {@link CreatedException} if the person is created
-	 * @throws Exception @see ParseException if the date submitted hasn't a good
-	 *                   format
 	 * @author Lucas Royackkers
 	 */
-	public HttpException createPerson(final JsonNode jPerson, final PersonRole type) throws ParseException {
+	public HttpException createPerson(final JsonNode jPerson, final PersonRole type) {
 		try {
 			// if the mail don't match with the mail pattern
 			if (!validateMail(jPerson.get("mail").textValue())) {
@@ -88,12 +84,7 @@ public class PersonEntityController {
 			newPerson.setMonthlyWage(Float.parseFloat(jPerson.get("monthlyWage").textValue()));
 			newPerson.setRole(type);
 			newPerson.setMail(jPerson.get("mail").textValue());
-			final List<String> docList = new ArrayList<String>();
-			final JsonNode docNode = jPerson.get("urlDocs");
-			for (final JsonNode doc : docNode) {
-				docList.add(doc.get("url").textValue());
-			}
-			newPerson.setUrlDocs(docList);
+
 
 			final User personInCharge = this.userEntityController
 					.getUserByMail(jPerson.get("personInChargeMail").textValue());
@@ -114,9 +105,17 @@ public class PersonEntityController {
 			newPerson.setJob(job.getTitle());
 
 			final String employerName = jPerson.get("employer").textValue();
-			final Employer employer = this.employerEntityController.getEmployer(employerName)
-					.orElseGet(this.employerEntityController.createEmployer(employerName));
+			Employer employer;
+			try {
+				employer = this.employerEntityController.getEmployer(employerName);
+				
+			}
+			catch (ResourceNotFoundException e) {
+				employer = (Employer) this.employerEntityController.createEmployer(employerName);
+			}
 			newPerson.setEmployer(employer.getName());
+			
+			newPerson.setOpinion(jPerson.get("opinion").textValue());
 
 			this.personRepository.save(newPerson);
 		} catch (final ResourceNotFoundException rnfe) {
@@ -156,10 +155,10 @@ public class PersonEntityController {
 			}
 			person.setMail("deactivated" + System.currentTimeMillis() + "@deactivated.com");
 			person.setEmployer(null);
-			person.setUrlDocs(null);
 			person.setRole(PersonRole.DEMISSIONAIRE);
 			person.setMonthlyWage(0);
 			person.setJob(null);
+			person.setOpinion(null);
 
 			this.personRepository.save(person);
 		} catch (final ResourceNotFoundException rnfe) {
@@ -175,7 +174,7 @@ public class PersonEntityController {
 	 *
 	 * @param mail the person's mail to fetch
 	 * @return A List of Person that match the searched mail (can be empty).
-	 * @throws @{@link ResourceNotFoundException} if the ressource is not found
+	 * @throws @{@link ResourceNotFoundException} if the resource is not found
 	 * @author Lucas Royackkers
 	 * @author Camille Schnell
 	 */
@@ -189,7 +188,7 @@ public class PersonEntityController {
 	 * @param mail the person's mail to fetch
 	 * @return An Optional with the corresponding person (of the given type) or not.
 	 * @author Lucas Royackkers
-	 * @throws {@link ResourceNotFoundException} if the ressource can't be found
+	 * @throws {@link ResourceNotFoundException} if the resource can't be found
 	 *
 	 */
 	public Person getPersonByMailAndType(final String mail, final PersonRole type) {
@@ -251,6 +250,16 @@ public class PersonEntityController {
 	public List<Person> getPersonsBySurname(final String surname) {
 		return this.personRepository.findBySurname(surname);
 	}
+	
+	/**
+	 * Get a List of all Persons in the database
+	 * 
+	 * @return the list of all persons
+	 * @author Lucas Royackkers
+	 */
+	public List<Person> getAllPersons(){
+		return this.personRepository.findAll();
+	}
 
 	/**
 	 * Method to update a Person. Person type will be defined by business
@@ -262,12 +271,11 @@ public class PersonEntityController {
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ResourceNotFoundException} if the resource isn't in
 	 *         the database and {@link OkException} if the person is updated
-	 * @throws ParseException
 	 * @author Lucas Royackkers
 	 */
-	public HttpException updatePerson(final JsonNode jPerson, final PersonRole role) throws ParseException {
+	public HttpException updatePerson(final JsonNode jPerson, final PersonRole role) {
 		try {
-			final Person person = this.personRepository.findByMailAndRole(jPerson.get("oldMail").textValue(), role)
+			final Person person = this.personRepository.findByMailAndRole(jPerson.get("mail").textValue(), role)
 					.orElseThrow(ResourceNotFoundException::new);
 
 			person.setSurname(jPerson.get("surname").textValue());
@@ -275,15 +283,6 @@ public class PersonEntityController {
 			person.setMonthlyWage(Float.parseFloat(jPerson.get("monthlyWage").textValue()));
 
 			person.setRole(role);
-
-			person.setMail(jPerson.get("mail").textValue());
-
-			final List<String> docList = new ArrayList<String>();
-			final JsonNode docNode = jPerson.get("urlDocs");
-			for (final JsonNode doc : docNode) {
-				docList.add(doc.get("url").textValue());
-			}
-			person.setUrlDocs(docList);
 
 			final User personInCharge = this.userEntityController
 					.getUserByMail(jPerson.get("personInChargeMail").textValue());
@@ -305,9 +304,19 @@ public class PersonEntityController {
 			person.setJob(job.getTitle());
 
 			final String employerName = jPerson.get("employer").textValue();
-			final Employer employer = this.employerEntityController.getEmployer(employerName)
-					.orElseGet(this.employerEntityController.createEmployer(employerName));
+			Employer employer;
+			try {
+				employer = this.employerEntityController.getEmployer(employerName);
+				
+			}
+			catch (ResourceNotFoundException e) {
+				employer = (Employer) this.employerEntityController.createEmployer(employerName);
+			}
+			
 			person.setEmployer(employer.getName());
+			
+			person.setOpinion(jPerson.get("opinion").textValue());
+			
 			this.personRepository.save(person);
 		} catch (final ResourceNotFoundException rnfe) {
 			return rnfe;

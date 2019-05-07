@@ -27,6 +27,7 @@ import fr.alten.ambroiseJEE.controller.business.ApplicantBusinessController;
 import fr.alten.ambroiseJEE.controller.business.ApplicantForumBusinessController;
 import fr.alten.ambroiseJEE.controller.business.ConsultantBusinessController;
 import fr.alten.ambroiseJEE.controller.business.DiplomaBusinessController;
+import fr.alten.ambroiseJEE.controller.business.DocumentSetBusinessController;
 import fr.alten.ambroiseJEE.controller.business.EmployerBusinessController;
 import fr.alten.ambroiseJEE.controller.business.ForumBusinessController;
 import fr.alten.ambroiseJEE.controller.business.JobBusinessController;
@@ -35,16 +36,17 @@ import fr.alten.ambroiseJEE.controller.business.SkillBusinessController;
 import fr.alten.ambroiseJEE.controller.business.SkillsSheetBusinessController;
 import fr.alten.ambroiseJEE.controller.business.UserBusinessController;
 import fr.alten.ambroiseJEE.controller.business.geographic.GeographicBusinessController;
-import fr.alten.ambroiseJEE.model.SkillGraduated;
 import fr.alten.ambroiseJEE.model.beans.Agency;
 import fr.alten.ambroiseJEE.model.beans.ApplicantForum;
 import fr.alten.ambroiseJEE.model.beans.Diploma;
+import fr.alten.ambroiseJEE.model.beans.DocumentSet;
 import fr.alten.ambroiseJEE.model.beans.Employer;
 import fr.alten.ambroiseJEE.model.beans.Forum;
 import fr.alten.ambroiseJEE.model.beans.Job;
 import fr.alten.ambroiseJEE.model.beans.Person;
 import fr.alten.ambroiseJEE.model.beans.Sector;
 import fr.alten.ambroiseJEE.model.beans.Skill;
+import fr.alten.ambroiseJEE.model.beans.SkillGraduated;
 import fr.alten.ambroiseJEE.model.beans.SkillsSheet;
 import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.security.UserRole;
@@ -103,6 +105,9 @@ public class InitBaseWebService {
 	private ApplicantForumBusinessController applicantForumBusinessController;
 
 	private final Gson gson;
+
+	@Autowired
+	private DocumentSetBusinessController documentSetBusinessController;
 
 	public InitBaseWebService() {
 		final GsonBuilder builder = new GsonBuilder();
@@ -307,6 +312,22 @@ public class InitBaseWebService {
 	}
 
 	/**
+	 * populate the base with the forum documentSet
+	 *
+	 * @author Andy Chabalier
+	 * @throws IOException
+	 */
+	private void createDocumentSet() throws IOException {
+		final DocumentSet documentSet = new DocumentSet();
+		documentSet.setMobileDocs(null);
+		documentSet.setName("forum");
+		final JsonNode documentSetJsonNode = JsonUtils.toJsonNode(this.gson.toJsonTree(documentSet).getAsJsonObject());
+		((ObjectNode) documentSetJsonNode).put("files", "[]");
+
+		this.documentSetBusinessController.createDocumentSet(documentSetJsonNode, UserRole.MANAGER_ADMIN);
+	}
+
+	/**
 	 * Create and populate Database with Employers
 	 *
 	 * @author Lucas Royackkers
@@ -449,6 +470,7 @@ public class InitBaseWebService {
 		newCandidatMichel.setHighestDiploma("EiCESI");
 		newCandidatMichel.setHighestDiplomaYear("2019");
 		newCandidatMichel.setPersonInChargeMail("tempUserAdminManager@mail.com");
+		newCandidatMichel.setOpinion("++");
 
 		final JsonNode newCandidatMichelJsonNode = JsonUtils
 				.toJsonNode(this.gson.toJsonTree(newCandidatMichel).getAsJsonObject());
@@ -466,6 +488,7 @@ public class InitBaseWebService {
 		newCandidatPaul.setHighestDiplomaYear("2019");
 		newCandidatPaul.setRole(PersonRole.APPLICANT);
 		newCandidatPaul.setPersonInChargeMail("tempUserAdminManager@mail.com");
+		newCandidatPaul.setOpinion("+");
 
 		final JsonNode newCandidatPaulJsonNode = JsonUtils
 				.toJsonNode(this.gson.toJsonTree(newCandidatPaul).getAsJsonObject());
@@ -483,6 +506,7 @@ public class InitBaseWebService {
 		newCandidatCyprien.setHighestDiplomaYear("2019");
 		newCandidatCyprien.setRole(PersonRole.CONSULTANT);
 		newCandidatCyprien.setPersonInChargeMail("tempUserAdminManager@mail.com");
+		newCandidatCyprien.setOpinion("+++");
 
 		final JsonNode newCandidatCyprienJsonNode = JsonUtils
 				.toJsonNode(this.gson.toJsonTree(newCandidatCyprien).getAsJsonObject());
@@ -500,6 +524,7 @@ public class InitBaseWebService {
 		newCandidatJeanClaude.setHighestDiplomaYear("2019");
 		newCandidatJeanClaude.setRole(PersonRole.CONSULTANT);
 		newCandidatJeanClaude.setPersonInChargeMail("tempUserAdminManager@mail.com");
+		newCandidatJeanClaude.setOpinion("+");
 
 		final JsonNode newCandidatJeanClaudeJsonNode = JsonUtils
 				.toJsonNode(this.gson.toJsonTree(newCandidatJeanClaude).getAsJsonObject());
@@ -604,7 +629,7 @@ public class InitBaseWebService {
 		final SkillsSheet newFirst = new SkillsSheet();
 		newFirst.setName("JTE-mmm-AAA");
 		newFirst.setMailPersonAttachedTo("jc.test@gmail.com");
-		newFirst.setRolePersonAttachedTo("consultant");
+		newFirst.setRolePersonAttachedTo(PersonRole.valueOf("CONSULTANT"));
 		newFirst.setMailVersionAuthor("tempUserAdminManager@mail.com");
 
 		final List<SkillGraduated> newListSkill = new ArrayList<SkillGraduated>();
@@ -650,7 +675,7 @@ public class InitBaseWebService {
 		final SkillsSheet newSecond = new SkillsSheet();
 		newSecond.setName("PTE-mmm-AAA");
 		newSecond.setMailPersonAttachedTo("paul.test@gmail.com");
-		newSecond.setRolePersonAttachedTo("applicant");
+		newSecond.setRolePersonAttachedTo(PersonRole.valueOf("APPLICANT"));
 		newSecond.setMailVersionAuthor("tempUserAdminManager@mail.com");
 
 		final List<SkillGraduated> newListSkillBis = new ArrayList<SkillGraduated>();
@@ -837,6 +862,9 @@ public class InitBaseWebService {
 
 		// peupler la base de données des candidats sur un forum
 		createApplicantForum();
+
+		// peuple la base de donnée avec un dataSet pour les documents
+		createDocumentSet();
 
 		LoggerFactory.getLogger(InitBaseWebService.class).info(String.valueOf(System.currentTimeMillis() - start));
 		return new CreatedException();

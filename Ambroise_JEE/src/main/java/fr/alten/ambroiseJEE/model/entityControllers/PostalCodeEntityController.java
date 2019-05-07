@@ -78,7 +78,7 @@ public class PostalCodeEntityController {
 	 *
 	 * @param name the postal code name to fetch
 	 * @return the fetched postalcode
-	 * @throws @{@link ResourceNotFoundException} if the ressource is not found
+	 * @throws @{@link ResourceNotFoundException} if the resource is not found
 	 * @author Andy Chabalier
 	 */
 	public PostalCode getPostalCode(final String name) {

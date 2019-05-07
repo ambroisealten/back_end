@@ -61,6 +61,16 @@ public class SkillEntityController {
 
 	}
 
+	/**
+	 * Supplier to create a Skill with its name and a String (can be null)
+	 * 
+	 * @param name the name of the Skill
+	 * @param isSoft a String (can be null)
+	 * @return the Skill created
+	 * @throws {@link ConflictException} if there is a conflict in the
+	 *         database or {@link InternalServerErrorException} if there is another problem
+	 * @author Lucas Royackkers, Andy Chabalier
+	 */
 	public Supplier<? extends Skill> createSkill(final String name, @Nullable final String isSoft) {
 		return () -> {
 			Skill newSkill = new Skill();
@@ -78,6 +88,7 @@ public class SkillEntityController {
 	}
 
 	/**
+	 * Method to delete a Skill
 	 *
 	 * @param name the skill name to fetch
 	 * @return {@link HttpException} corresponding to the status of the request
@@ -86,7 +97,7 @@ public class SkillEntityController {
 	 * @author Thomas Decamp
 	 */
 	public HttpException deleteSkill(final JsonNode jSkill) {
-		return this.skillRepository.findByName(jSkill.get("name").textValue())
+		return this.skillRepository.findByNameIgnoreCase(jSkill.get("name").textValue())
 				// optional is present
 				.map(skill -> {
 					skill.setName("deactivated" + System.currentTimeMillis());
@@ -99,17 +110,19 @@ public class SkillEntityController {
 	}
 
 	/**
+	 * Try to fetch a Skill by its name
 	 *
-	 *
-	 * @param name
-	 * @return
+	 * @param name the name of the Skill
+	 * @return an Optional containing the Skill (or not)
 	 * @author Thomas Decamp
 	 */
 	public Optional<Skill> getSkill(final String name) {
-		return this.skillRepository.findByName(name);
+		return this.skillRepository.findByNameIgnoreCase(name);
 	}
 
 	/**
+	 * Method to get all Skills within the database
+	 * 
 	 * @return the list of all skills
 	 * @author Thomas Decamp
 	 */
@@ -118,6 +131,7 @@ public class SkillEntityController {
 	}
 
 	/**
+	 * Method to update a Skill
 	 *
 	 * @param jSkill JsonNode with all skill parameters and the old name to perform
 	 *               the update even if the name is changed
@@ -127,7 +141,7 @@ public class SkillEntityController {
 	 * @author Thomas Decamp
 	 */
 	public HttpException updateSkill(final JsonNode jSkill) {
-		return this.skillRepository.findByName(jSkill.get("oldName").textValue())
+		return this.skillRepository.findByNameIgnoreCase(jSkill.get("oldName").textValue())
 				// optional is present
 				.map(skill -> {
 					skill.setName(jSkill.get("name").textValue());

@@ -82,6 +82,7 @@ public class DiplomaEntityController {
 	}
 
 	/**
+	 * Method to delete a Diploma
 	 *
 	 * @param jDiploma the JsonNode containing all diploma parameters (name,
 	 *                 yearOfResult)
