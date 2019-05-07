@@ -5,6 +5,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -85,7 +86,6 @@ public class PersonEntityController {
 			newPerson.setRole(type);
 			newPerson.setMail(jPerson.get("mail").textValue());
 
-
 			final User personInCharge = this.userEntityController
 					.getUserByMail(jPerson.get("personInChargeMail").textValue());
 			newPerson.setPersonInChargeMail(personInCharge.getMail());
@@ -108,20 +108,21 @@ public class PersonEntityController {
 			Employer employer;
 			try {
 				employer = this.employerEntityController.getEmployer(employerName);
-				
-			}
-			catch (ResourceNotFoundException e) {
+
+			} catch (ResourceNotFoundException e) {
 				employer = (Employer) this.employerEntityController.createEmployer(employerName);
 			}
 			newPerson.setEmployer(employer.getName());
-			
+
 			newPerson.setOpinion(jPerson.get("opinion").textValue());
 
 			this.personRepository.save(newPerson);
 		} catch (final ResourceNotFoundException rnfe) {
 			return rnfe;
-		} catch (final Exception e) {
+		} catch (final DuplicateKeyException dke) {
 			return new ConflictException();
+		} catch (final Exception e) {
+			e.printStackTrace();
 		}
 		return new CreatedException();
 
@@ -250,14 +251,14 @@ public class PersonEntityController {
 	public List<Person> getPersonsBySurname(final String surname) {
 		return this.personRepository.findBySurname(surname);
 	}
-	
+
 	/**
 	 * Get a List of all Persons in the database
 	 * 
 	 * @return the list of all persons
 	 * @author Lucas Royackkers
 	 */
-	public List<Person> getAllPersons(){
+	public List<Person> getAllPersons() {
 		return this.personRepository.findAll();
 	}
 
@@ -307,16 +308,15 @@ public class PersonEntityController {
 			Employer employer;
 			try {
 				employer = this.employerEntityController.getEmployer(employerName);
-				
-			}
-			catch (ResourceNotFoundException e) {
+
+			} catch (ResourceNotFoundException e) {
 				employer = (Employer) this.employerEntityController.createEmployer(employerName);
 			}
-			
+
 			person.setEmployer(employer.getName());
-			
+
 			person.setOpinion(jPerson.get("opinion").textValue());
-			
+
 			this.personRepository.save(person);
 		} catch (final ResourceNotFoundException rnfe) {
 			return rnfe;
