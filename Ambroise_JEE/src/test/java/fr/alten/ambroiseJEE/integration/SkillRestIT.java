@@ -98,10 +98,10 @@ public class SkillRestIT {
 		userRepository.insert(userAdmin);
 
 		if (!mongoTemplate.collectionExists("skill")) {
-			// Recreate the collection with the unique index "code" -> index beeing dropped
+			// Recreate the collection with the unique index "name" -> index beeing dropped
 			// when the collection is dropped.
 			mongoTemplate.createCollection(Skill.class);
-			mongoTemplate.indexOps("skill").ensureIndex(new Index().on("code", Direction.ASC).unique());
+			mongoTemplate.indexOps("skill").ensureIndex(new Index().on("name", Direction.ASC).unique());
 		}
 	}
 
@@ -129,8 +129,8 @@ public class SkillRestIT {
 		// Checking that the ResponseBody contain a CreatedException
 		assertTrue(result.getResponse().getContentAsString().contains("CreatedException"));
 
-		// checking the new city in base and its fields's value
-		Optional<Skill> skillOptional = this.skillRepository.findByNameIgnoreCase("00001");
+		// checking the new skill in base and its fields's value
+		Optional<Skill> skillOptional = this.skillRepository.findByNameIgnoreCase("newSkill");
 		assertTrue(skillOptional.isPresent());
 		assertThat(skillOptional.get().getName()).isEqualTo("newSkill");
 	}
@@ -141,11 +141,11 @@ public class SkillRestIT {
 		// setup
 		String newSkill = "{" + "\"name\":\"newSkill\"" + "}";
 
-		// Pre-inserting a City with name code as this.city to create a
+		// Pre-inserting a Skill with name name as this.skill to create a
 		// ConflictException
 		skillRepository.insert(skill);
 		// Checking pre-insertion
-		assertTrue(this.skillRepository.findByNameIgnoreCase("00000").isPresent());
+		assertTrue(this.skillRepository.findByNameIgnoreCase("newSkill").isPresent());
 
 		MvcResult result = this.mockMvc.perform(post("/skill").contentType(MediaType.APPLICATION_JSON).content(newSkill))
 				.andReturn();
@@ -153,7 +153,7 @@ public class SkillRestIT {
 		// Checking that the ResponseBody contain a ConflictException
 		assertTrue(result.getResponse().getContentAsString().contains("ConflictException"));
 
-		// Checking only this.city is in base
+		// Checking only this.skill is in base
 		assertThat(this.skillRepository.findAll().size()).isEqualTo(1);
 	}
 
@@ -168,7 +168,7 @@ public class SkillRestIT {
 
 		// Checking that the ResponseBody contain a UnprocessableEntityException
 		assertTrue(result.getResponse().getContentAsString().contains("UnprocessableEntityException"));
-		// Checking there is no city in base
+		// Checking there is no skill in base
 		assertThat(this.skillRepository.findAll()).isEmpty();
 	}
 
@@ -176,12 +176,12 @@ public class SkillRestIT {
 	public void deleteSkill_with_success() throws Exception {
 
 		// setup
-		String skillToDelete = "{" + "\"code\":\"00000\"" + "}";
-		// Pre-inserting a City with name code as this.city for having a city to delete
+		String skillToDelete = "{" + "\"name\":\"newSkill\"" + "}";
+		// Pre-inserting a Skill with name name as this.skill for having a skill to delete
 		// with success
 		skillRepository.insert(skill);
 		// Checking pre-insertion
-		assertTrue(this.skillRepository.findByNameIgnoreCase("00000").isPresent());
+		assertTrue(this.skillRepository.findByNameIgnoreCase("newSkill").isPresent());
 
 		MvcResult result = this.mockMvc
 				.perform(delete("/skill").contentType(MediaType.APPLICATION_JSON).content(skillToDelete)).andReturn();
@@ -190,16 +190,16 @@ public class SkillRestIT {
 		assertTrue(result.getResponse().getContentAsString().contains("OkException"));
 
 		// Checking the skillToDelete had been deactivated
-		assertThat(this.skillRepository.findByNameIgnoreCase("00000").get().getName()).startsWith("deactivated");
+		assertThat(this.skillRepository.findByNameIgnoreCase("newSkill").get().getName()).startsWith("deactivated");
 	}
 
 	@Test
 	public void deleteSkill_with_resourceNotFound() throws Exception {
 
 		// setup
-		String skillToDelete = "{" + "\"code\":\"00000\"" + "}";
-		// Checking if there is not already a city in base with the code : 00000
-		assertFalse(this.skillRepository.findByNameIgnoreCase("00000").isPresent());
+		String skillToDelete = "{" + "\"name\":\"newSkill\"" + "}";
+		// Checking if there is not already a skill in base with the name : newSkill
+		assertFalse(this.skillRepository.findByNameIgnoreCase("newSkill").isPresent());
 
 		MvcResult result = this.mockMvc
 				.perform(delete("/skill").contentType(MediaType.APPLICATION_JSON).content(skillToDelete)).andReturn();
@@ -221,32 +221,30 @@ public class SkillRestIT {
 		assertTrue(result.getResponse().getContentAsString().contains("UnprocessableEntityException"));
 	}
 
-	// TODO : Reecrire la pré-insertion en créant des Jsons de retour et vérifiant
+	// TO-DO : Reecrire la pré-insertion en créant des Jsons de retour et vérifiant
 	// bien que
 	// le retour est EGAL à ces Jsons de retour.
 	@Test
-	public void getCities() throws Exception {
+	public void getSkills() throws Exception {
 
-		// Pre-insertion of 20 cities for test
+		// Pre-insertion of 20 skills for test
 		for (int i = 0; i < 20; i++) {
-			City cityForGet = new City();
-			cityForGet.setName("skill" + i);
-			cityForGet.setCode("Code" + i);
-			this.skillRepository.insert(cityForGet);
-			Optional<Skill> skillOptional = this.skillRepository.findByNameIgnoreCase("Code" + i);
+			Skill skillForGet = new Skill();
+			skillForGet.setName("skill" + i);
+			this.skillRepository.insert(skillForGet);
+			Optional<Skill> skillOptional = this.skillRepository.findByNameIgnoreCase("skill" + i);
 			assertTrue(skillOptional.isPresent());
 			assertThat(skillOptional.get().getName()).isEqualTo("skill" + i);
 		}
 
-		MvcResult result = this.mockMvc.perform(get("/cities").contentType(MediaType.APPLICATION_JSON)).andReturn();
+		MvcResult result = this.mockMvc.perform(get("/skills").contentType(MediaType.APPLICATION_JSON)).andReturn();
 
 		String jsonResult = result.getResponse().getContentAsString();
 
-		// verifying that we got the same cities as inserted before
+		// verifying that we got the same skills as inserted before
 		int count = 0;
-		for (JsonElement jcity : gson.fromJson(jsonResult, JsonArray.class)) {
-			JsonObject jsonCity = jSkill.getAsJsonObject();
-			assertThat(jsonSkill.get("code").getAsString()).isEqualTo("Code" + count);
+		for (JsonElement jskill : gson.fromJson(jsonResult, JsonArray.class)) {
+			JsonObject jsonSkill = jskill.getAsJsonObject();
 			assertThat(jsonSkill.get("name").getAsString()).isEqualTo("skill" + count);
 			count++;
 		}
@@ -256,19 +254,19 @@ public class SkillRestIT {
 	public void updateSkill_with_success() throws Exception {
 
 		// setup
-		String updatedCity = "{" + "\"name\":\"newSkill\"," + "\"code\":\"00000\"" + "}";
-		// Pre-inserting a city to update
+		String updatedSkill = "{" + "\"name\":\"newSkill\"" + "}";
+		// Pre-inserting a skill to update
 		skillRepository.insert(skill);
 		// Checking pre-insertion
-		assertTrue(this.skillRepository.findByNameIgnoreCase("00000").isPresent());
+		assertTrue(this.skillRepository.findByNameIgnoreCase("newSkill").isPresent());
 
 		MvcResult result = this.mockMvc
-				.perform(put("/skill").contentType(MediaType.APPLICATION_JSON).content(updatedCity)).andReturn();
+				.perform(put("/skill").contentType(MediaType.APPLICATION_JSON).content(updatedSkill)).andReturn();
 
 		assertTrue(result.getResponse().getContentAsString().contains("OkException"));
 
-		// Checking the updated city in base
-		Optional<Skill> skillOptional = this.skillRepository.findByNameIgnoreCase("00000");
+		// Checking the updated skill in base
+		Optional<Skill> skillOptional = this.skillRepository.findByNameIgnoreCase("newSkill");
 		assertTrue(skillOptional.isPresent());
 		assertThat(skillOptional.get().getName()).isEqualTo("newSkill");
 	}
@@ -277,10 +275,10 @@ public class SkillRestIT {
 	public void updateSkill_with_resourceNotFound() throws Exception {
 
 		// setup
-		String updatedCity = "{" + "\"name\":\"newSkill\"" + "}";
+		String updatedSkill = "{" + "\"name\":\"newSkill\"" + "}";
 
 		MvcResult result = this.mockMvc
-				.perform(put("/skill").contentType(MediaType.APPLICATION_JSON).content(updatedCity)).andReturn();
+				.perform(put("/skill").contentType(MediaType.APPLICATION_JSON).content(updatedSkill)).andReturn();
 
 		assertTrue(result.getResponse().getContentAsString().contains("ResourceNotFoundException"));
 	}
