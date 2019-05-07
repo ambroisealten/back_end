@@ -67,7 +67,26 @@ public class BeansTest {
 		
 		HashMap<String, Boolean> indexPresent = new HashMap<>();
 		indexPresent.put("_id_", false);
-	
+		indexPresent.put("mail", false);
+		
+		List<IndexInfo> indexList = mongoTemplate.indexOps("person").getIndexInfo();
+		
+		for(IndexInfo index : indexList) {
+			for(Map.Entry<String, Boolean> indexInMap : indexPresent.entrySet()) {
+				if(index.getName().equals(indexInMap.getKey())) {
+					if(!index.getName().equals("_id_")) {
+						assertTrue(index.isUnique());
+					}
+					indexInMap.setValue(true);
+				}
+			}
+		}
+		
+		// Checking the presence of all indexes
+		for(Map.Entry<String, Boolean> indexInMap : indexPresent.entrySet()) {
+			System.out.println(indexInMap.getKey());
+			assertTrue(indexInMap.getValue());;	
+		}
 		
 	}
 
