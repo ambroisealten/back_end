@@ -78,7 +78,7 @@ public class MobilityEntityController {
 		case "region":
 			final Region region = this.regionEntityController.getRegion(jMobility.get("place").textValue());
 			try {
-				newMobility.setPlaceName(region.getName());
+				newMobility.setPlaceName(region.getNom());
 			} catch (final ResourceNotFoundException rnfe) {
 			}
 			break;

@@ -102,7 +102,7 @@ public class RegionEntityControllerTest {
 		final Optional<Region> notEmptyRegionOptional = Optional.of(new Region());
 		Mockito.doReturn(this.mockedJRegion).when(this.mockedJRegion).get(ArgumentMatchers.anyString());
 		Mockito.doReturn("anyString").when(this.mockedJRegion).textValue();
-		Mockito.doReturn(notEmptyRegionOptional).when(this.regionRepository).findByName(ArgumentMatchers.anyString());
+		Mockito.doReturn(notEmptyRegionOptional).when(this.regionRepository).findByCode(ArgumentMatchers.anyString());
 		Mockito.when(this.regionRepository.save(ArgumentMatchers.any(Region.class)))
 				.thenThrow(this.mockedDuplicateKeyException);
 		// assert
@@ -125,7 +125,7 @@ public class RegionEntityControllerTest {
 		final Optional<Region> emptyRegionOptional = Optional.ofNullable(null);
 		Mockito.doReturn(this.mockedJRegion).when(this.mockedJRegion).get(ArgumentMatchers.anyString());
 		Mockito.doReturn("anyString").when(this.mockedJRegion).textValue();
-		Mockito.doReturn(emptyRegionOptional).when(this.regionRepository).findByName(ArgumentMatchers.anyString());
+		Mockito.doReturn(emptyRegionOptional).when(this.regionRepository).findByCode(ArgumentMatchers.anyString());
 		// assert
 		Assertions.assertThat(this.regionEntityController.deleteRegion(this.mockedJRegion))
 				.isInstanceOf(ResourceNotFoundException.class);
@@ -146,7 +146,7 @@ public class RegionEntityControllerTest {
 		final Optional<Region> notEmptyRegionOptional = Optional.of(new Region());
 		Mockito.doReturn(this.mockedJRegion).when(this.mockedJRegion).get(ArgumentMatchers.anyString());
 		Mockito.doReturn("anyString").when(this.mockedJRegion).textValue();
-		Mockito.doReturn(notEmptyRegionOptional).when(this.regionRepository).findByName(ArgumentMatchers.anyString());
+		Mockito.doReturn(notEmptyRegionOptional).when(this.regionRepository).findByCode(ArgumentMatchers.anyString());
 		// assert
 		Assertions.assertThat(this.regionEntityController.deleteRegion(this.mockedJRegion))
 				.isInstanceOf(OkException.class);
@@ -179,7 +179,7 @@ public class RegionEntityControllerTest {
 
 		// setup
 		final Optional<Region> emptyRegionOptional = Optional.ofNullable(null);
-		Mockito.when(this.regionRepository.findByName("name")).thenReturn(emptyRegionOptional);
+		Mockito.when(this.regionRepository.findByNom("name")).thenReturn(emptyRegionOptional);
 		// throw
 		this.regionEntityController.getRegion("name");
 	}
@@ -196,11 +196,11 @@ public class RegionEntityControllerTest {
 		// setup
 		final Optional<Region> notEmptyRegionOptional = Optional.of(new Region());
 		// Mockito.when(this.regionRepository.findByName("name")).thenReturn(notEmptyRegionOptional);
-		Mockito.doReturn(notEmptyRegionOptional).when(this.regionRepository).findByName("name");
+		Mockito.doReturn(notEmptyRegionOptional).when(this.regionRepository).findByNom("name");
 		// assert
 		Assertions.assertThat(this.regionEntityController.getRegion("name")).isInstanceOf(Region.class);
 		// verify
-		Mockito.verify(this.regionRepository, Mockito.times(1)).findByName("name");
+		Mockito.verify(this.regionRepository, Mockito.times(1)).findByNom("name");
 	}
 
 	/**

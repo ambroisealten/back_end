@@ -42,7 +42,7 @@ public class RegionEntityController {
 	public HttpException createRegion(final JsonNode jRegion) {
 
 		final Region newRegion = new Region();
-		newRegion.setName(jRegion.get("nom").textValue());
+		newRegion.setNom(jRegion.get("nom").textValue());
 		newRegion.setCode(jRegion.get("code").textValue());
 
 		try {
@@ -64,12 +64,12 @@ public class RegionEntityController {
 	 */
 	public HttpException deleteRegion(final JsonNode jRegion) {
 		try {
-			final Region region = this.regionRepository.findByName(jRegion.get("code").textValue()).orElseThrow(ResourceNotFoundException::new);
-			region.setName("deactivated" + System.currentTimeMillis());
+			final Region region = this.regionRepository.findByCode(jRegion.get("code").textValue()).orElseThrow(ResourceNotFoundException::new);
+			region.setNom("deactivated" + System.currentTimeMillis());
 			this.regionRepository.save(region);
 		} catch (final ResourceNotFoundException rnfe) {
 			return rnfe;
-		} catch (final Exception e) {
+		} catch (final DuplicateKeyException e) {
 			return new ConflictException();
 		}
 		return new OkException();
@@ -84,7 +84,7 @@ public class RegionEntityController {
 	 * @throws {@link ResourceNotFoundException} if the resource is not found
 	 */
 	public Region getRegion(final String name) {
-		return this.regionRepository.findByName(name).orElseThrow(ResourceNotFoundException::new);
+		return this.regionRepository.findByNom(name).orElseThrow(ResourceNotFoundException::new);
 	}
 
 	/**
@@ -110,7 +110,7 @@ public class RegionEntityController {
 		return this.regionRepository.findByCode(jRegion.get("code").textValue())
 				// optional is present
 				.map(region -> {
-					region.setName(jRegion.get("nom").textValue());
+					region.setNom(jRegion.get("nom").textValue());
 					try {
 						this.regionRepository.save(region);
 					} catch (final DuplicateKeyException dke) {
