@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import fr.alten.ambroiseJEE.model.beans.Departement;
 import fr.alten.ambroiseJEE.model.entityControllers.DepartementEntityController;
 import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.security.UserRoleLists;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
@@ -29,6 +30,8 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 @Service
 public class DepartementBusinessController {
 
+	private final UserRoleLists roles = UserRoleLists.getInstance();
+
 	@Autowired
 	private DepartementEntityController departementEntityController;
 
@@ -42,7 +45,7 @@ public class DepartementBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException createDepartement(final JsonNode jDepartement, final UserRole role) {
-		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role
+		return isAdmin(role)
 				? this.departementEntityController.createDepartement(jDepartement)
 				: new ForbiddenException();
 	}
@@ -58,8 +61,8 @@ public class DepartementBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException deleteDepartement(final JsonNode params, final UserRole role) {
-		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role
-				? this.departementEntityController.deleteDepartement(params.get("name").textValue())
+		return isAdmin(role)
+				? this.departementEntityController.deleteDepartement(params)
 				: new ForbiddenException();
 	}
 
@@ -100,9 +103,13 @@ public class DepartementBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException updateDepartement(final JsonNode jDepartement, final UserRole role) {
-		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role
+		return isAdmin(role)
 				? this.departementEntityController.updateDepartement(jDepartement)
 				: new ForbiddenException();
+	}
+	
+	public boolean isAdmin(final UserRole role) {
+		return this.roles.isAdmin(role);
 	}
 
 }

@@ -17,7 +17,6 @@ import org.springframework.dao.DuplicateKeyException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import fr.alten.ambroiseJEE.model.beans.City;
 import fr.alten.ambroiseJEE.model.beans.Region;
 import fr.alten.ambroiseJEE.model.dao.RegionRepository;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;

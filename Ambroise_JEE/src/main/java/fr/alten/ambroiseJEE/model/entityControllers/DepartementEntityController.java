@@ -6,6 +6,7 @@ package fr.alten.ambroiseJEE.model.entityControllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -41,7 +42,7 @@ public class DepartementEntityController {
 	public HttpException createDepartement(final JsonNode jDepartement) {
 
 		final Departement newDepartement = new Departement();
-		newDepartement.setName(jDepartement.get("nom").textValue());
+		newDepartement.setNom(jDepartement.get("nom").textValue());
 		newDepartement.setCode(jDepartement.get("code").textValue());
 		newDepartement.setCodeRegion(jDepartement.get("codeRegion").textValue());
 
@@ -55,17 +56,17 @@ public class DepartementEntityController {
 
 	/**
 	 *
-	 * @param name the departement name to fetch
+	 * @param jDepartement  JsonNode with all departement parameters
 	 * @return {@link HttpException} corresponding to the status of the request
 	 *         ({@link ResourceNotFoundException} if the resource is not found and
 	 *         {@link OkException} if the departement is deactivated
 	 * @author Andy Chabalier
 	 */
-	public HttpException deleteDepartement(final String name) {
+	public HttpException deleteDepartement(final JsonNode jDepartement) {
 		try {
-			final Departement departement = this.departementRepository.findByName(name)
+			final Departement departement = this.departementRepository.findByCode(jDepartement.get("code").textValue())
 					.orElseThrow(ResourceNotFoundException::new);
-			departement.setName("deactivated" + System.currentTimeMillis());
+			departement.setNom("deactivated" + System.currentTimeMillis());
 			this.departementRepository.save(departement);
 		} catch (final ResourceNotFoundException rnfe) {
 			return rnfe;
@@ -84,7 +85,7 @@ public class DepartementEntityController {
 	 * @author Andy Chabalier
 	 */
 	public Departement getDepartement(final String name) {
-		return this.departementRepository.findByName(name).orElseThrow(ResourceNotFoundException::new);
+		return this.departementRepository.findByNom(name).orElseThrow(ResourceNotFoundException::new);
 	}
 
 	/**
@@ -103,19 +104,24 @@ public class DepartementEntityController {
 	 *         request ({@link ResourceNotFoundException} if the resource is not
 	 *         found and {@link OkException} if the departement is updated
 	 * @author Andy Chabalier
+	 * @author Camille Schnell
 	 */
 	public HttpException updateDepartement(final JsonNode jDepartement) {
-		try {
-			final Departement departement = this.departementRepository
-					.findByName(jDepartement.get("oldName").textValue()).orElseThrow(ResourceNotFoundException::new);
-			departement.setName(jDepartement.get("name").textValue());
-			this.departementRepository.save(departement);
-		} catch (final ResourceNotFoundException rnfe) {
-			return rnfe;
-		} catch (final Exception e) {
-			return new ConflictException();
-		}
-		return new OkException();
+		return this.departementRepository.findByCode(jDepartement.get("code").textValue())
+				// optional is present
+				.map(departement -> {
+					departement.setNom(jDepartement.get("nom").textValue());
+					try {
+						this.departementRepository.save(departement);
+					} catch (final DuplicateKeyException dke) {
+						return new ConflictException();
+					} catch (final Exception e) {
+						e.printStackTrace();
+					}
+					return new OkException();
+
+					// optional isn't present
+				}).orElse(new ResourceNotFoundException());
 	}
 
 }
