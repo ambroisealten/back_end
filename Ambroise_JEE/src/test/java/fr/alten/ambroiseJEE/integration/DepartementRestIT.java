@@ -211,7 +211,7 @@ public class DepartementRestIT {
 		assertTrue(result.getResponse().getContentAsString().contains("ConflictException"));
 
 		// Checking only this.departement is in base
-		assertThat(this.departementRepository.findAll().size()).isEqualTo(1);
+		assertThat(this.departementRepository.count()).isEqualTo(1);
 	}
 
 	/**

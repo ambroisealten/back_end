@@ -217,7 +217,7 @@ public class CityRestIT {
 		assertTrue(result.getResponse().getContentAsString().contains("ConflictException"));
 
 		// Checking only this.city is in base
-		assertThat(this.cityRepository.findAll().size()).isEqualTo(1);
+		assertThat(this.cityRepository.count()).isEqualTo(1);
 	}
 
 	/**

@@ -154,7 +154,7 @@ public class EmployerRestIT {
 		assertTrue(result.getResponse().getContentAsString().contains("ConflictException"));
 
 		// Checking only this.employer is in base
-		assertThat(this.employerRepository.findAll().size()).isEqualTo(1);
+		assertThat(this.employerRepository.count()).isEqualTo(1);
 	}
 
 	@Test

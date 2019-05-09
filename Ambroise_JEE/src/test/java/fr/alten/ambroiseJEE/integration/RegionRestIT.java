@@ -210,7 +210,7 @@ public class RegionRestIT {
 		assertTrue(result.getResponse().getContentAsString().contains("ConflictException"));
 
 		// Checking only this.region is in base
-		assertThat(this.regionRepository.findAll().size()).isEqualTo(1);
+		assertThat(this.regionRepository.count()).isEqualTo(1);
 	}
 
 	/**

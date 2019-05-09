@@ -194,7 +194,6 @@ public class DepartementEntityControllerTest {
 
 		// setup
 		final Optional<Departement> notEmptyDepartementOptional = Optional.of(new Departement());
-		// Mockito.when(this.departementRepository.findByName("name")).thenReturn(notEmptyDepartementOptional);
 		Mockito.doReturn(notEmptyDepartementOptional).when(this.departementRepository).findByNom("name");
 		// assert
 		Assertions.assertThat(this.departementEntityController.getDepartement("name")).isInstanceOf(Departement.class);

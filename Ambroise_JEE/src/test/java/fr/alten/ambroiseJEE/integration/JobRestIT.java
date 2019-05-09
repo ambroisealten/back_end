@@ -210,7 +210,7 @@ public class JobRestIT {
 		assertTrue(result.getResponse().getContentAsString().contains("ConflictException"));
 
 		// Checking only this.job is in base
-		assertThat(this.jobRepository.findAll().size()).isEqualTo(1);
+		assertThat(this.jobRepository.count()).isEqualTo(1);
 	}
 
 	/**

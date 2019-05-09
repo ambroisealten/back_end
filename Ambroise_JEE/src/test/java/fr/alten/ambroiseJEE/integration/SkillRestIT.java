@@ -154,7 +154,7 @@ public class SkillRestIT {
 		assertTrue(result.getResponse().getContentAsString().contains("ConflictException"));
 
 		// Checking only this.skill is in base
-		assertThat(this.skillRepository.findAll().size()).isEqualTo(1);
+		assertThat(this.skillRepository.count()).isEqualTo(1);
 	}
 
 	@Test
