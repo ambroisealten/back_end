@@ -27,6 +27,11 @@ public class BeansTest {
 	@Autowired
 	private MongoTemplate mongoTemplate;
 
+	/**
+	 * @test Testing employer collection presence in base and index with their unicity
+	 * 
+	 * @author Lucas Royackkers
+	 */
 	@Test
 	public void check_EmployerBean() {
 
