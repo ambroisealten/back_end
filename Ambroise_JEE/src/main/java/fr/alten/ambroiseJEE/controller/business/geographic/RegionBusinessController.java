@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import fr.alten.ambroiseJEE.model.beans.Region;
 import fr.alten.ambroiseJEE.model.entityControllers.RegionEntityController;
 import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.security.UserRoleLists;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
@@ -28,6 +29,8 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
  */
 @Service
 public class RegionBusinessController {
+	
+	private final UserRoleLists roles = UserRoleLists.getInstance();
 
 	@Autowired
 	private RegionEntityController regionEntityController;
@@ -42,7 +45,7 @@ public class RegionBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException createRegion(final JsonNode jRegion, final UserRole role) {
-		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role
+		return isAdmin(role)
 				? this.regionEntityController.createRegion(jRegion)
 				: new ForbiddenException();
 	}
@@ -58,8 +61,8 @@ public class RegionBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException deleteRegion(final JsonNode params, final UserRole role) {
-		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role
-				? this.regionEntityController.deleteRegion(params.get("name").textValue())
+		return isAdmin(role)
+				? this.regionEntityController.deleteRegion(params)
 				: new ForbiddenException();
 	}
 
@@ -82,7 +85,7 @@ public class RegionBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public List<Region> getRegions(final UserRole role) {
-		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
+		if (isAdmin(role)) {
 			return this.regionEntityController.getRegions();
 		}
 		throw new ForbiddenException();
@@ -100,9 +103,13 @@ public class RegionBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException updateRegion(final JsonNode jRegion, final UserRole role) {
-		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role
+		return isAdmin(role)
 				? this.regionEntityController.updateRegion(jRegion)
 				: new ForbiddenException();
+	}
+	
+	public boolean isAdmin(final UserRole role) {
+		return this.roles.isAdmin(role);
 	}
 
 }

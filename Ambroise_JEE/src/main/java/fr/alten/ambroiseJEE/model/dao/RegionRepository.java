@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 
+import fr.alten.ambroiseJEE.model.beans.City;
 import fr.alten.ambroiseJEE.model.beans.Region;
 
 /**
@@ -21,5 +22,12 @@ public interface RegionRepository extends MongoRepository<Region, Long> {
 	 * @author Andy Chabalier
 	 */
 	Optional<Region> findByName(String name);
+	
+	/**
+	 * @param code the region code
+	 * @return An Optional with the corresponding region or not.
+	 * @author Camille Schnell
+	 */
+	Optional<Region> findByCode(String code);
 
 }
