@@ -14,6 +14,8 @@ import fr.alten.ambroiseJEE.model.entityControllers.FileEntityController;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
+import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
@@ -46,6 +48,10 @@ public class FileBusinessController {
 	 *
 	 * @param _id  the id of file to delete
 	 * @param role the current logged user's role
+	 * @return the {@link HttpException} corresponding to the status of the request
+	 *         ( {@link ResourceNotFoundException} if the resource is not found and
+	 *         {@link OkException} if the document is deleted or
+	 *         {@link ForbiddenException} if the user is not allowed
 	 * @author Andy Chabalier
 	 */
 	public HttpException deleteFile(final String _id, final UserRole role) {

@@ -56,23 +56,27 @@ public class FileStorageBusinessController {
 	 * @return an {@link HttpException} corresponding to the statut
 	 *         ({@link ForbiddenException} if user don't have the right role,
 	 *         {@link OkException} if the file is deleted)
-	 * @throws {@link NoSuchFileException} - if the file does not exist (optional
-	 *         specific exception) {@link DirectoryNotEmptyException} - if the file
-	 *         is a directory and could not otherwise be deleted because the
-	 *         directory is not empty (optional specific exception)
-	 *         {@link IOException} - if an I/O error occurs SecurityException - In
-	 *         the case of the default provider, and a security manager is
-	 *         installed, the SecurityManager.checkDelete(String) method is invoked
-	 *         to check delete access to the file
+	 * @throws {@link DirectoryNotEmptyException} - if the file is a directory and
+	 *         could not otherwise be deleted because the directory is not empty
+	 *         (optional specific exception) {@link IOException} - if an I/O error
+	 *         occurs SecurityException - In the case of the default provider, and a
+	 *         security manager is installed, the
+	 *         SecurityManager.checkDelete(String) method is invoked to check delete
+	 *         access to the file
 	 */
-	public HttpException deleteFile(final String _id, final String path, final String extension, final UserRole role)
-			throws NoSuchFileException, DirectoryNotEmptyException, IOException, SecurityException {
+	public HttpException deleteFile(final String _id, final String path, final String extension, final UserRole role) {
 		if (!(UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)) {
 			return new ForbiddenException();
 		}
 		final Path dirPath = Paths.get(this.fileStorageLocation.toAbsolutePath() + path);
 		final Path targetLocation = dirPath.resolve(_id + "." + extension);
-		Files.delete(targetLocation);
+		try {
+			Files.delete(targetLocation);
+		} catch (final NoSuchFileException nsfe) {
+			return new ResourceNotFoundException();
+		} catch (SecurityException | IOException e) {
+			return new InternalServerErrorException();
+		}
 		return new OkException();
 	}
 
@@ -123,37 +127,25 @@ public class FileStorageBusinessController {
 	 * @return an {@link HttpException} corresponding to the statut
 	 *         ({@link ForbiddenException} if user don't have the right role,
 	 *         {@link OkException} if the file is moved)
-	 * @throws IOException                     - if an I/O error occurs
-	 * @throws SecurityException               - in the case of the default
-	 *                                         provider, and a security manager is
-	 *                                         installed, the checkWrite method is
-	 *                                         invoked prior to attempting to create
-	 *                                         a directory and its checkRead is
-	 *                                         invoked for each parent directory
-	 *                                         that is checked. If dir is not an
-	 *                                         absolute path then its toAbsolutePath
-	 *                                         may need to be invoked to get its
-	 *                                         absolute path. This may invoke the
-	 *                                         security manager's
-	 *                                         checkPropertyAccess method to check
-	 *                                         access to the system property
-	 *                                         user.dir. - In the case of the
-	 *                                         default provider, and a security
-	 *                                         manager is installed, the checkWrite
-	 *                                         method is invoked to check write
-	 *                                         access to both the source and target
-	 *                                         file.
-	 * @throws UnsupportedOperationException   - if the array contains an attribute
-	 *                                         that cannot be set atomically when
-	 *                                         creating the directory
-	 * @throws AtomicMoveNotSupportedException
+	 * @return ResourceNotFoundException - if an I/O error occurs
+	 * @return InternalServerErrorException - in the case of the default provider,
+	 *         and a security manager is installed, the checkWrite method is invoked
+	 *         prior to attempting to create a directory and its checkRead is
+	 *         invoked for each parent directory that is checked. If dir is not an
+	 *         absolute path then its toAbsolutePath may need to be invoked to get
+	 *         its absolute path. This may invoke the security manager's
+	 *         checkPropertyAccess method to check access to the system property
+	 *         user.dir. - In the case of the default provider, and a security
+	 *         manager is installed, the checkWrite method is invoked to check write
+	 *         access to both the source and target file. - if the array contains an
+	 *         attribute that cannot be set atomically when creating the directory
+	 *         AtomicMoveNotSupportedException
 	 * @author Andy Chabalier
 	 */
 	public HttpException moveFile(final String fileName, final String oldPath, final String newPath,
-			final UserRole role) throws DirectoryNotEmptyException, IOException, SecurityException,
-			UnsupportedOperationException, AtomicMoveNotSupportedException {
+			final UserRole role) {
 		if (!(UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)) {
-			throw new ForbiddenException();
+			return new ForbiddenException();
 		}
 
 		// Check if the file's name contains invalid characters or path doesn't end with
@@ -166,9 +158,17 @@ public class FileStorageBusinessController {
 		final Path oldLocation = oldDirPath.resolve(fileName);
 
 		final Path newDirPath = Paths.get(this.fileStorageLocation.toAbsolutePath() + newPath);
-		Files.createDirectories(newDirPath);
-		final Path targetLocation = newDirPath.resolve(fileName);
-		Files.move(oldLocation, targetLocation, StandardCopyOption.ATOMIC_MOVE);
+		try {
+			Files.createDirectories(newDirPath);
+			final Path targetLocation = newDirPath.resolve(fileName);
+
+			Files.move(oldLocation, targetLocation, StandardCopyOption.ATOMIC_MOVE);
+		} catch (SecurityException | UnsupportedOperationException | AtomicMoveNotSupportedException
+				| DirectoryNotEmptyException e) {
+			return new InternalServerErrorException();
+		} catch (final IOException e) {
+			return new ResourceNotFoundException();
+		}
 		return new OkException();
 	}
 
