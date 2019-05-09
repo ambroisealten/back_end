@@ -3,8 +3,6 @@ package fr.alten.ambroiseJEE.controller.business;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.jayway.restassured.specification.Argument;
-
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -79,7 +77,7 @@ public class SkillBusinessControllerTest {
         // assert
         Mockito.doReturn(false).when(this.skillBusinessController).isAdmin(ArgumentMatchers.any(UserRole.class));
         Assertions.assertThat(this.skillBusinessController.createSkill(this.mockedJSkill, UserRole.MANAGER_ADMIN))
-        .isInstanceOf(ForbiddenException.class);
+        		.isInstanceOf(ForbiddenException.class);
     }
 
    	/**
@@ -97,7 +95,7 @@ public class SkillBusinessControllerTest {
 		Mockito.doReturn(true).when(this.skillBusinessController).isAdmin(ArgumentMatchers.any(UserRole.class));
 		Mockito.when(this.skillEntityController.deleteSkill(this.mockedJSkill)).thenReturn(this.mockedHttpException);
 		// assert
-		Assertions.assertThat(this.skillBusinessController.deleteSkill(this.mockedJSkill, UserRole.MANAGER))
+		Assertions.assertThat(this.skillBusinessController.deleteSkill(this.mockedJSkill, UserRole.MANAGER_ADMIN))
 				.isEqualTo(this.mockedHttpException);
     }
 
@@ -116,7 +114,7 @@ public class SkillBusinessControllerTest {
 		Mockito.doReturn(false).when(this.skillBusinessController).isAdmin(ArgumentMatchers.any(UserRole.class));
 		// assert
 		Assertions.assertThat(this.skillBusinessController.deleteSkill(this.mockedJSkill, UserRole.MANAGER_ADMIN))
-				.isEqualTo(this.mockedHttpException);
+				.isInstanceOf(ForbiddenException.class);
     }
 
     /**

@@ -44,7 +44,8 @@ public class SkillBusinessController {
 	 * @author Thomas Decamp
 	 */
 	public HttpException createSkill(final JsonNode jSkill, final UserRole role) {
-		return this.roles.isAdmin(role) ? this.skillEntityController.createSkill(jSkill) : new ForbiddenException();
+		return isAdmin(role) ? this.skillEntityController.createSkill(jSkill) :
+			new ForbiddenException();
 	}
 
 	/**
@@ -57,11 +58,12 @@ public class SkillBusinessController {
 	 * @author Thomas Decamp
 	 */
 	public HttpException deleteSkill(final JsonNode jSkill, final UserRole role) {
-		return this.roles.isAdmin(role) ? this.skillEntityController.deleteSkill(jSkill) : new ForbiddenException();
+		return isAdmin(role) ? this.skillEntityController.deleteSkill(jSkill) : 
+			new ForbiddenException();
 	}
 
 	public Skill getSkill(final JsonNode jSkill, final UserRole role) {
-		if (this.roles.isAdmin(role)) {
+		if (isAdmin(role)) {
 			return this.skillEntityController.getSkill(jSkill.get("name").textValue());
 		}
 		throw new ForbiddenException();
@@ -77,7 +79,7 @@ public class SkillBusinessController {
 	 * @author Thomas Decamp
 	 */
 	public List<Skill> getSkills(final UserRole role) {
-		if (this.roles.isAdmin(role)) {
+		if (isAdmin(role)) {
 			return this.skillEntityController.getSkills();
 		}
 		throw new ForbiddenException();
@@ -94,7 +96,7 @@ public class SkillBusinessController {
 	 * @author Thomas Decamp
 	 */
 	public HttpException updateSkill(final JsonNode jSkill, final UserRole role) {
-		return this.roles.isAdmin(role) ? this.skillEntityController.updateSkill(jSkill) : new ForbiddenException();
+		return isAdmin(role) ? this.skillEntityController.updateSkill(jSkill) : new ForbiddenException();
 	}
 
 }
