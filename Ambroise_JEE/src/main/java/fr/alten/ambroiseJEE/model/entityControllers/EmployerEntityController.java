@@ -57,8 +57,7 @@ public class EmployerEntityController {
 	 * @return the supplier of employer
 	 * @author Andy Chabalier
 	 */
-	public Supplier<? extends Employer> createEmployer(final String name) {
-		return () -> {
+	public Employer createEmployer(final String name) {
 			Employer newEmployer = new Employer();
 			newEmployer.setName(name);
 			try {
@@ -69,7 +68,6 @@ public class EmployerEntityController {
 				throw new InternalServerErrorException();
 			}
 			return newEmployer;
-		};
 	}
 
 	/**
@@ -99,7 +97,8 @@ public class EmployerEntityController {
 	 * Get an Employer by its name
 	 *
 	 * @param name the employer's name
-	 * @return an Optional with the matched employer (can be empty)
+	 * @return the corresponding Employer
+	 * @throws {@link ResourceNotFoundException} when the Employer hasn't been found
 	 * @author Lucas Royackkers
 	 */
 	public Employer getEmployer(final String name) {

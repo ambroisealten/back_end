@@ -1,8 +1,6 @@
 package fr.alten.ambroiseJEE.model.entityControllers;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Supplier;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -56,8 +54,7 @@ public class JobEntityController {
 	 * @return the supplier of job
 	 * @author Andy Chabalier
 	 */
-	public Supplier<? extends Job> createJob(final String title) {
-		return () -> {
+	public Job createJob(final String title) {
 			Job newJob = new Job();
 			newJob.setTitle(title);
 			try {
@@ -68,7 +65,6 @@ public class JobEntityController {
 				throw new InternalServerErrorException();
 			}
 			return newJob;
-		};
 	}
 
 	/**
@@ -98,11 +94,12 @@ public class JobEntityController {
 	 * Fetch a Job given its title
 	 *
 	 * @param title the Job's title
-	 * @return an Optional with the corresponding Job or not
+	 * @return the corresponding Job
+	 * @throws {@link ResourceNotFoundException} when the Job hasn't been found
 	 * @author Lucas Royackkers
 	 */
-	public Optional<Job> getJob(final String title) {
-		return this.jobRepository.findByTitle(title);
+	public Job getJob(final String title) {
+		return this.jobRepository.findByTitle(title).orElseThrow(ResourceNotFoundException::new);
 	}
 
 	/**

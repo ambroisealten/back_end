@@ -107,8 +107,8 @@ public class EmployerRestIT {
 
 	@After
 	public void afterEachTest() {
-		mongoTemplate.getDb().getCollection("user").drop();
-		mongoTemplate.getDb().getCollection("employer").drop();
+		userRepository.deleteAll();
+		employerRepository.deleteAll();
 
 	}
 
@@ -297,10 +297,10 @@ public class EmployerRestIT {
 		assertTrue(result.getResponse().getContentAsString().contains("UnprocessableEntityException"));
 	}
 
-	@Test
-	public void z_DroppingDatabase() {
-		// Last test run to drop the database for next test classes.
-		mongoTemplate.getDb().drop();
-	}
+//	@Test
+//	public void z_DroppingDatabase() {
+//		// Last test run to drop the database for next test classes.
+//		mongoTemplate.getDb().drop();
+//	}
 
 }

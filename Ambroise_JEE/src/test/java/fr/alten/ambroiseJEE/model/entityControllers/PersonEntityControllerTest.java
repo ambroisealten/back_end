@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.text.ParseException;
 
 import org.assertj.core.api.Assertions;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
@@ -12,7 +13,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.dao.DuplicateKeyException;
 
@@ -28,6 +28,7 @@ import fr.alten.ambroiseJEE.model.dao.PersonRepository;
 import fr.alten.ambroiseJEE.utils.PersonRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
+import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 
 /**
  * 
@@ -40,7 +41,7 @@ public class PersonEntityControllerTest {
 	@InjectMocks
 	@Spy
 	private final PersonEntityController personEntityController = new PersonEntityController();
-	
+
 	@Mock
 	private final UserEntityController userEntityController = new UserEntityController();
 	@Mock
@@ -50,6 +51,9 @@ public class PersonEntityControllerTest {
 	@Mock
 	private final JobEntityController jobEntityController = new JobEntityController();
 
+	@Mock
+	private ResourceNotFoundException mockedRNFE;
+	
 	@Mock
 	private PersonRepository personRepository;
 	@Mock
@@ -61,59 +65,72 @@ public class PersonEntityControllerTest {
 	@Mock
 	private JsonNode mockedJPerson;
 	@SpyBean
-	private Person mockedPerson = new Person();
-	@MockBean
-	private User mockedUser;
+	private Person spiedPerson = new Person();
 	@SpyBean
-	private Diploma mockedDiploma = new Diploma();
+	private static User spiedUser = new User();
 	@SpyBean
-	private Job mockedJob = new Job();
+	private static Diploma spiedDiploma = new Diploma();
 	@SpyBean
-	private Employer mockedEmployer = new Employer();
+	private Job spiedJob = new Job();
+	@SpyBean
+	private Employer spiedEmployer = new Employer();
 
 	private ObjectMapper mapper = new ObjectMapper();
-	
+
+	@BeforeClass
+	public static void initUser() {
+		spiedUser.setMail("unmail@orange.fr");
+	}
+
+	@BeforeClass
+	public static void initDiploma() {
+		spiedDiploma.setName("au pif");
+		spiedDiploma.setYearOfResult("un truc au pif");
+	}
+
 	/**
 	 * @test create a {@link Person} of Applicant type
 	 * @context {@link Person} already existing in base
 	 * @expected {@link ConflictException} save() call only once
 	 * @author Lucas Royackkers
-	 * @throws ParseException 
-	 * @throws IOException 
+	 * @throws ParseException
+	 * @throws IOException
 	 */
 	@Test
 	public void createApplicant_with_conflict() throws ParseException, IOException {
-		String test = "{"+ "\"surname\" : \"OSKOUUUR\","+ "\"name\" : \"PAS ça Zinédine\","+"\"monthlyWage\" : \"252525\","+
-				  "\"mail\" : \"oskour@null.com\","+"\"personInChargeMail\" : \"pasimal@cheh.net\","+"\"highestDiploma\" : \"BAC PRO CAMPING\","+
-				  "\"highestDiplomaYear\" : \"1\","+"\"job\" : \"Récurreur de chiottes\","+"\"employer\" : \"La Coopérative Mangin de Boulazac-en-Dordogne\","+
-				  "\"opinion\" : \"++\"" +"}";
+		String test = "{" + "\"surname\" : \"OSKOUUUR\"," + "\"name\" : \"PAS ça Zinédine\","
+				+ "\"monthlyWage\" : \"252525\"," + "\"mail\" : \"oskour@null.com\","
+				+ "\"personInChargeMail\" : \"pasimal@cheh.net\"," + "\"highestDiploma\" : \"BAC PRO CAMPING\","
+				+ "\"highestDiplomaYear\" : \"1\"," + "\"job\" : \"Récurreur de chiottes\","
+				+ "\"employer\" : \"La Coopérative Mangin de Boulazac-en-Dordogne\"," + "\"opinion\" : \"++\"" + "}";
 		JsonNode jPerson = mapper.readTree(test);
 		// setup validated
-		Mockito.doReturn(this.mockedJPerson).when(this.mockedJPerson).get(ArgumentMatchers.anyString());
-		Mockito.doReturn("test").when(this.mockedJPerson).textValue();
+//		Mockito.doReturn(this.mockedJPerson).when(this.mockedJPerson).get(ArgumentMatchers.anyString());
+//		Mockito.doReturn("test").when(this.mockedJPerson).textValue();
 		Mockito.doReturn(true).when(this.personEntityController).validateMail(ArgumentMatchers.anyString());
-//		Mockito.doReturn("test").when(this.mockedUser).getMail();
-//		Mockito.doReturn("test").when(this.mockedDiploma).getName();
-//		Mockito.doReturn("test").when(this.mockedDiploma).getYearOfResult();
-//		Mockito.doReturn("test").when(this.mockedUser).getMail();
+
 		// setup other controllers & types
-		Mockito.doReturn(this.mockedUser).when(this.userEntityController).getUserByMail(ArgumentMatchers.anyString());
-		Mockito.doReturn(this.mockedDiploma).when(this.diplomaEntityController).getDiplomaByNameAndYearOfResult(ArgumentMatchers.anyString(),ArgumentMatchers.anyString());
-		Mockito.doReturn(this.mockedDiploma).when(this.diplomaEntityController).createDiploma(ArgumentMatchers.anyString(),ArgumentMatchers.anyString());
-		Mockito.doReturn(this.mockedJob).when(this.jobEntityController).getJob(ArgumentMatchers.anyString());
-		Mockito.doReturn(this.mockedJob).when(this.jobEntityController).createJob(ArgumentMatchers.anyString());
-		Mockito.doReturn(this.mockedEmployer).when(this.employerEntityController).getEmployer(ArgumentMatchers.anyString());
-		Mockito.doReturn(this.mockedEmployer).when(this.employerEntityController).createEmployer(ArgumentMatchers.anyString());
-		
+		Mockito.doReturn(PersonEntityControllerTest.spiedUser).when(this.userEntityController)
+				.getUserByMail(ArgumentMatchers.anyString());
+//		Mockito.doReturn(PersonEntityControllerTest.spiedDiploma).when(this.diplomaEntityController)
+//				.getDiplomaByNameAndYearOfResult(ArgumentMatchers.anyString(), ArgumentMatchers.anyString());
+		Mockito.when(this.diplomaEntityController.getDiplomaByNameAndYearOfResult(ArgumentMatchers.anyString(), ArgumentMatchers.anyString())).thenReturn(spiedDiploma).thenThrow(mockedRNFE);
+//		Mockito.doReturn(PersonEntityControllerTest.spiedDiploma).when(this.diplomaEntityController).createDiploma(ArgumentMatchers.anyString(),ArgumentMatchers.anyString());
+		Mockito.doReturn(this.spiedJob).when(this.jobEntityController).getJob(ArgumentMatchers.anyString());
+//		Mockito.doReturn(this.spiedJob).when(this.jobEntityController).createJob(ArgumentMatchers.anyString());
+		Mockito.doReturn(this.spiedEmployer).when(this.employerEntityController)
+				.getEmployer(ArgumentMatchers.anyString());
+//		Mockito.doReturn(this.spiedEmployer).when(this.employerEntityController).createEmployer(ArgumentMatchers.anyString());
+
 		Mockito.doThrow(this.mockedDuplicateKeyException).when(this.personRepository)
 				.save(ArgumentMatchers.any(Person.class));
 		// assert
-		Assertions.assertThat(this.personEntityController.createPerson(jPerson,PersonRole.APPLICANT))
+		Assertions.assertThat(this.personEntityController.createPerson(jPerson, PersonRole.APPLICANT))
 				.isInstanceOf(ConflictException.class);
 		// verify
 		Mockito.verify(this.personRepository, Mockito.times(1)).save(ArgumentMatchers.any(Person.class));
 	}
-	
+
 //	/**
 //	 * @test create a {@link Person} of Consultant type
 //	 * @context {@link Person} already existing in base

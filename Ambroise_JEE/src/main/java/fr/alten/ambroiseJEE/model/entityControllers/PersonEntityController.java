@@ -20,6 +20,7 @@ import fr.alten.ambroiseJEE.utils.PersonRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.InternalServerErrorException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
@@ -92,16 +93,24 @@ public class PersonEntityController {
 
 			final String highestDiploma = jPerson.get("highestDiploma").textValue();
 			final String highestDiplomaYear = jPerson.get("highestDiplomaYear").textValue();
-			final Diploma diploma = this.diplomaEntityController
-					.getDiplomaByNameAndYearOfResult(highestDiploma, highestDiplomaYear)
-					.orElseGet(this.diplomaEntityController.createDiploma(highestDiploma, highestDiplomaYear));
+			Diploma diploma;
+			try {
+				diploma = this.diplomaEntityController
+						.getDiplomaByNameAndYearOfResult(highestDiploma, highestDiplomaYear);
+			} catch (ResourceNotFoundException e) {
+				diploma = (Diploma) this.diplomaEntityController.createDiploma(highestDiploma, highestDiplomaYear);
+			}
 
 			newPerson.setHighestDiploma(diploma.getName());
 			newPerson.setHighestDiplomaYear(diploma.getYearOfResult());
 
 			final String jobName = jPerson.get("job").textValue();
-			final Job job = this.jobEntityController.getJob(jobName)
-					.orElseGet(this.jobEntityController.createJob(jobName));
+			Job job;
+			try {
+				job = this.jobEntityController.getJob(jobName);
+			} catch (ResourceNotFoundException e) {
+				job = (Job) this.jobEntityController.createJob(jobName);
+			}
 			newPerson.setJob(job.getTitle());
 
 			final String employerName = jPerson.get("employer").textValue();
@@ -123,6 +132,8 @@ public class PersonEntityController {
 			return new ConflictException();
 		} catch (final Exception e) {
 			e.printStackTrace();
+			// TODO : A enlever par la suite
+			return new InternalServerErrorException();
 		}
 		return new CreatedException();
 
@@ -292,16 +303,24 @@ public class PersonEntityController {
 			final String highestDiploma = jPerson.get("highestDiploma").textValue();
 			final String highestDiplomaYear = jPerson.get("highestDiplomaYear").textValue();
 
-			final Diploma diploma = this.diplomaEntityController
-					.getDiplomaByNameAndYearOfResult(highestDiploma, highestDiplomaYear)
-					.orElseGet(this.diplomaEntityController.createDiploma(highestDiploma, highestDiplomaYear));
+			Diploma diploma;
+			try {
+				diploma = this.diplomaEntityController
+						.getDiplomaByNameAndYearOfResult(highestDiploma, highestDiplomaYear);
+			} catch (ResourceNotFoundException e) {
+				diploma = (Diploma) this.diplomaEntityController.createDiploma(highestDiploma, highestDiplomaYear);
+			}
 
 			person.setHighestDiploma(diploma.getName());
 			person.setHighestDiplomaYear(diploma.getYearOfResult());
 
 			final String jobName = jPerson.get("job").textValue();
-			final Job job = this.jobEntityController.getJob(jobName)
-					.orElseGet(this.jobEntityController.createJob(jobName));
+			Job job;
+			try {
+				job = this.jobEntityController.getJob(jobName);
+			} catch (ResourceNotFoundException e) {
+				job = (Job) this.jobEntityController.createJob(jobName);
+			}
 			person.setJob(job.getTitle());
 
 			final String employerName = jPerson.get("employer").textValue();
