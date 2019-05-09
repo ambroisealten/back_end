@@ -53,15 +53,15 @@ public class PostalCodeEntityController {
 
 	/**
 	 *
-	 * @param name the postalCode name to fetch
+	 * @param jPostalCode JsonNode with all postal code parameters
 	 * @return {@link HttpException} corresponding to the status of the request
 	 *         ({@link ResourceNotFoundException} if the resource is not found and
 	 *         {@link OkException} if the postalCode is deactivated
 	 * @author Andy Chabalier
 	 */
-	public HttpException deletePostalCode(final String name) {
+	public HttpException deletePostalCode(final JsonNode jPostalCode) {
 		try {
-			final PostalCode postalCode = this.postalCodeRepository.findByName(name)
+			final PostalCode postalCode = this.postalCodeRepository.findByName(jPostalCode.get("name").textValue())
 					.orElseThrow(ResourceNotFoundException::new);
 			postalCode.setName("deactivated" + System.currentTimeMillis());
 			this.postalCodeRepository.save(postalCode);
