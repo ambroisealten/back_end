@@ -19,6 +19,7 @@ import com.google.gson.GsonBuilder;
 
 import fr.alten.ambroiseJEE.controller.business.geographic.DepartementBusinessController;
 import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.utils.JsonUtils;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
@@ -33,6 +34,10 @@ import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 @Controller
 public class DepartementRestController {
 
+	public boolean checkJsonIntegrity(final JsonNode params, final String... fields) {
+		return JsonUtils.checkJsonIntegrity(params, fields);
+	}
+	
 	@Autowired
 	private DepartementBusinessController departementBusinessController;
 
@@ -59,7 +64,7 @@ public class DepartementRestController {
 	@ResponseBody
 	public HttpException createDepartement(@RequestBody final JsonNode params,
 			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
-		return params.get("name") != null ? this.departementBusinessController.createDepartement(params, role)
+		return checkJsonIntegrity(params, "nom", "code", "codeRegion") ? this.departementBusinessController.createDepartement(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -79,7 +84,7 @@ public class DepartementRestController {
 	@ResponseBody
 	public HttpException deleteDepartement(@RequestBody final JsonNode params,
 			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
-		return params.get("name") != null ? this.departementBusinessController.deleteDepartement(params, role)
+		return checkJsonIntegrity(params, "code") ? this.departementBusinessController.deleteDepartement(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -114,7 +119,7 @@ public class DepartementRestController {
 	@ResponseBody
 	public HttpException updateDepartement(@RequestBody final JsonNode params,
 			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
-		return params.get("name") != null ? this.departementBusinessController.updateDepartement(params, role)
+		return checkJsonIntegrity(params, "nom", "code") ? this.departementBusinessController.updateDepartement(params, role)
 				: new UnprocessableEntityException();
 	}
 }

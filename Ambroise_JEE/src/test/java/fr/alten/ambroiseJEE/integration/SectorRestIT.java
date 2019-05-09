@@ -153,7 +153,7 @@ public class SectorRestIT {
 		assertTrue(result.getResponse().getContentAsString().contains("ConflictException"));
 
 		// Checking only this.sector is in base
-		assertThat(this.sectorRepository.findAll().size()).isEqualTo(1);
+		assertThat(this.sectorRepository.count()).isEqualTo(1);
 	}
 
 	@Test

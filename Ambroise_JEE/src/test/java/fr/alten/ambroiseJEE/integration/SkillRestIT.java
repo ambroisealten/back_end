@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import java.io.FileNotFoundException;
 import java.util.Optional;
 
+import org.bson.types.ObjectId;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -120,7 +121,7 @@ public class SkillRestIT {
 	public void createSkill_with_success() throws Exception {
 
 		// setup
-		String newSkill = "{" + "\"name\":\"newSkill\"" + "}";
+		String newSkill = "{" + "\"mail\":\"\"," + "\"name\":\"newSkill\"" + "}";
 
 		MvcResult result = this.mockMvc
 				.perform(post("/skill").contentType(MediaType.APPLICATION_JSON).content(newSkill)).andReturn();
@@ -138,7 +139,7 @@ public class SkillRestIT {
 	public void createSkill_with_conflict() throws Exception {
 
 		// setup
-		String newSkill = "{" + "\"name\":\"newSkill\"" + "}";
+		String newSkill = "{" + "\"mail\":\"\"," + "\"name\":\"newSkill\"" + "}";
 
 		// Pre-inserting a Skill with name name as this.skill to create a
 		// ConflictException
@@ -153,7 +154,7 @@ public class SkillRestIT {
 		assertTrue(result.getResponse().getContentAsString().contains("ConflictException"));
 
 		// Checking only this.skill is in base
-		assertThat(this.skillRepository.findAll().size()).isEqualTo(1);
+		assertThat(this.skillRepository.count()).isEqualTo(1);
 	}
 
 	@Test
@@ -175,13 +176,15 @@ public class SkillRestIT {
 	public void deleteSkill_with_success() throws Exception {
 
 		// setup
-		String skillToDelete = "{" + "\"name\":\"newSkill\"" + "}";
-		// Pre-inserting a Skill with name name as this.skill for having a skill to
+		String skillToDelete = "{" + "\"mail\":\"\"," + "\"name\":\"newSkill\"" + "}";
+		// Pre-inserting a Skill with name name as this.skill for having a skill to delete
 		// delete
 		// with success
 		skillRepository.insert(skill);
 		// Checking pre-insertion
-		assertTrue(this.skillRepository.findByNameIgnoreCase("newSkill").isPresent());
+		Optional<Skill> skillOptional = this.skillRepository.findByNameIgnoreCase("newSkill");
+		String skillId = skillOptional.get().get_id().toString();
+		assertTrue(skillOptional.isPresent());
 
 		MvcResult result = this.mockMvc
 				.perform(delete("/skill").contentType(MediaType.APPLICATION_JSON).content(skillToDelete)).andReturn();
@@ -190,14 +193,14 @@ public class SkillRestIT {
 		assertTrue(result.getResponse().getContentAsString().contains("OkException"));
 
 		// Checking the skillToDelete had been deactivated
-		assertThat(this.skillRepository.findByNameIgnoreCase("newSkill").get().getName()).startsWith("deactivated");
+		assertThat(this.skillRepository.findBy_id(skillId).get().getName()).startsWith("deactivated");
 	}
 
 	@Test
 	public void deleteSkill_with_resourceNotFound() throws Exception {
 
 		// setup
-		String skillToDelete = "{" + "\"name\":\"newSkill\"" + "}";
+		String skillToDelete = "{" + "\"mail\":\"\"," + "\"name\":\"newSkill\"" + "}";
 		// Checking if there is not already a skill in base with the name : newSkill
 		assertFalse(this.skillRepository.findByNameIgnoreCase("newSkill").isPresent());
 
@@ -254,7 +257,7 @@ public class SkillRestIT {
 	public void updateSkill_with_success() throws Exception {
 
 		// setup
-		String updatedSkill = "{" + "\"name\":\"updateSkill\"," + "\"oldName\":\"newSkill\"" + "}";
+		String updatedSkill = "{" + "\"mail\":\"\"," + "\"name\":\"updateSkill\"," +  "\"oldName\":\"newSkill\"" + "}";
 		// Pre-inserting a skill to update
 		skillRepository.insert(skill);
 		// Checking pre-insertion
@@ -275,7 +278,7 @@ public class SkillRestIT {
 	public void updateSkill_with_resourceNotFound() throws Exception {
 
 		// setup
-		String updatedSkill = "{" + "\"name\":\"newSkillFalse\"," + "\"oldName\":\"skillNotFound\"" + "}";
+		String updatedSkill = "{" + "\"mail\":\"\"," + "\"name\":\"newSkillFalse\"," +  "\"oldName\":\"skillNotFound\"" + "}";
 
 		MvcResult result = this.mockMvc
 				.perform(put("/skill").contentType(MediaType.APPLICATION_JSON).content(updatedSkill)).andReturn();
@@ -294,4 +297,10 @@ public class SkillRestIT {
 
 		assertTrue(result.getResponse().getContentAsString().contains("UnprocessableEntityException"));
 	}
+
+	//@Test
+//	public void z_DroppingDatabase() {
+//		// Last test run to drop the database for next test classes.
+//		mongoTemplate.getDb().drop();
+//	}
 }

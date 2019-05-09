@@ -40,9 +40,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import fr.alten.ambroiseJEE.model.beans.BeansTest;
-import fr.alten.ambroiseJEE.model.beans.Region;
+import fr.alten.ambroiseJEE.model.beans.Departement;
 import fr.alten.ambroiseJEE.model.beans.User;
-import fr.alten.ambroiseJEE.model.dao.RegionRepository;
+import fr.alten.ambroiseJEE.model.dao.DepartementRepository;
 import fr.alten.ambroiseJEE.model.dao.UserRepository;
 import fr.alten.ambroiseJEE.utils.TokenIgnore;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
@@ -52,7 +52,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
- * Integration test class for RegionRestController
+ * Integration test class for DepartementRestController
  *
  * @author Camille Schnell
  *
@@ -62,10 +62,10 @@ import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class RegionRestIT {
+public class DepartementRestIT {
 
 	private static User userAdmin = new User();
-	private static Region region = new Region();
+	private static Departement departement = new Departement();
 
 	private static Gson gson;
 
@@ -76,14 +76,14 @@ public class RegionRestIT {
 	@Autowired
 	private UserRepository userRepository;
 	@Autowired
-	private RegionRepository regionRepository;
+	private DepartementRepository departementRepository;
 
 	@BeforeClass
 	public static void beforeTests() {
 		// Creating the dev folder and the dev file to ignore the token during tests.
 		TokenIgnore.createDir();
 		initAdminUser();
-		initRegion();
+		initDepartement();
 		initGson();
 	}
 
@@ -99,13 +99,14 @@ public class RegionRestIT {
 	}
 
 	/**
-	 * Setting the {@link Region} that will be insered in base for tests
+	 * Setting the {@link Departement} that will be insered in base for tests
 	 *
 	 * @author Camille Schnell
 	 */
-	private static void initRegion() {
-		region.setNom("region");
-		region.setCode("00000");
+	private static void initDepartement() {
+		departement.setNom("departement");
+		departement.setCode("00000");
+		departement.setCodeRegion("00001");
 	}
 
 	/**
@@ -120,10 +121,10 @@ public class RegionRestIT {
 
 	/**
 	 * Inserting an admin {@link User} in base for incoming tests Creating the
-	 * region collection in base with its unique index "code" if its not existing in
+	 * departement collection in base with its unique index "code" if its not existing in
 	 * base already. Indeed, when the collection is dropped after each test, all the
 	 * indexes are drop also and not recreated. So we need to do it manually and
-	 * test index uniregion in another test @see {@link BeansTest}.
+	 * test index unidepartement in another test @see {@link BeansTest}.
 	 *
 	 * @author Kylian Gehier
 	 */
@@ -133,14 +134,14 @@ public class RegionRestIT {
 	}
 
 	/**
-	 * Droping both collections user and region after each test.
+	 * Droping both collections user and departement after each test.
 	 *
 	 * @author Kylian Gehier
 	 */
 	@After
 	public void afterEachTest() {
 		userRepository.deleteAll();
-		regionRepository.deleteAll();
+		departementRepository.deleteAll();
 	}
 
 	/**
@@ -156,270 +157,273 @@ public class RegionRestIT {
 	}
 
 	/**
-	 * @test creating a new {@link Region}
-	 * @context The {@link Region} doesn't already exist in base. The Json is
+	 * @test creating a new {@link Departement}
+	 * @context The {@link Departement} doesn't already exist in base. The Json is
 	 *          correctly set.
 	 * @expected the response contains a {@link CreatedException} and the
-	 *           {@link Region} in base has the same field's values than the JSON
-	 *           newRegion.
+	 *           {@link Departement} in base has the same field's values than the JSON
+	 *           newDepartement.
 	 * @throws Exception
 	 * @author Camille Schnell
 	 */
 	@Test
-	public void createRegion_with_success() throws Exception {
+	public void createDepartement_with_success() throws Exception {
 
 		// setup
-		String newRegion = "{" + "\"nom\":\"newRegion\"," + "\"code\":\"00001\"" + "}";
+		String newDepartement = "{" + "\"nom\":\"newDepartement\"," + "\"code\":\"00001\"," + "\"codeRegion\":\"00001\"" + "}";
 
 		MvcResult result = this.mockMvc
-				.perform(post("/region").contentType(MediaType.APPLICATION_JSON).content(newRegion)).andReturn();
+				.perform(post("/departement").contentType(MediaType.APPLICATION_JSON).content(newDepartement)).andReturn();
 
 		// Checking that the ResponseBody contains a CreatedException
 		assertTrue(result.getResponse().getContentAsString().contains("CreatedException"));
 
-		// checking the new region in base and its fields's value
-		Optional<Region> regionOptional = this.regionRepository.findByCode("00001");
-		assertTrue(regionOptional.isPresent());
-		assertThat(regionOptional.get().getNom()).isEqualTo("newRegion");
+		// checking the new departement in base and its fields's value
+		Optional<Departement> departementOptional = this.departementRepository.findByCode("00001");
+		assertTrue(departementOptional.isPresent());
+		assertThat(departementOptional.get().getNom()).isEqualTo("newDepartement");
 	}
 
 	/**
-	 * @test creating a new {@link Region}
-	 * @context The {@link Region} already exist in base. The Json is correctly set.
+	 * @test creating a new {@link Departement}
+	 * @context The {@link Departement} already exist in base. The Json is correctly set.
 	 * @expected the response contains a {@link ConflictException} and the
-	 *           {@link Region} has not been inserted in base.
+	 *           {@link Departement} has not been inserted in base.
 	 * @throws Exception
 	 * @author Camille Schnell
 	 */
 	@Test
-	public void createRegion_with_conflict() throws Exception {
+	public void createDepartement_with_conflict() throws Exception {
 
 		// setup
-		String newRegion = "{" + "\"nom\":\"newRegion\"," + "\"code\":\"00000\"" + "}";
+		String newDepartement = "{" + "\"nom\":\"newDepartement\"," + "\"code\":\"00000\"," + "\"codeRegion\":\"00001\"" + "}";
 
-		// Pre-inserting a Region with name code as this.region to create a
+		// Pre-inserting a Departement with name code as this.departement to create a
 		// ConflictException
-		regionRepository.insert(region);
+		departementRepository.insert(departement);
 		// Checking pre-insertion
-		assertTrue(this.regionRepository.findByCode("00000").isPresent());
+		assertTrue(this.departementRepository.findByCode("00000").isPresent());
 
 		MvcResult result = this.mockMvc
-				.perform(post("/region").contentType(MediaType.APPLICATION_JSON).content(newRegion)).andReturn();
+				.perform(post("/departement").contentType(MediaType.APPLICATION_JSON).content(newDepartement)).andReturn();
 
 		// Checking that the ResponseBody contains a ConflictException
 		assertTrue(result.getResponse().getContentAsString().contains("ConflictException"));
 
-		// Checking only this.region is in base
-		assertThat(this.regionRepository.count()).isEqualTo(1);
+		// Checking only this.departement is in base
+		assertThat(this.departementRepository.count()).isEqualTo(1);
 	}
 
 	/**
-	 * @test creating a new {@link Region}
+	 * @test creating a new {@link Departement}
 	 * @context The Json isn't correctly set.
 	 * @expected the response contains a {@link UnprocessableEntityException} and
-	 *           the {@link Region} has not been inserted in base.
+	 *           the {@link Departement} has not been inserted in base.
 	 * @throws Exception
 	 * @author Camille Schnell
 	 */
 	@Test
-	public void createRegion_with_missingRequiredFields() throws Exception {
+	public void createDepartement_with_missingRequiredFields() throws Exception {
 
 		// setup
-		String newRegion = "{}";
+		String newDepartement = "{}";
 
 		MvcResult result = this.mockMvc
-				.perform(post("/region").contentType(MediaType.APPLICATION_JSON).content(newRegion)).andReturn();
+				.perform(post("/departement").contentType(MediaType.APPLICATION_JSON).content(newDepartement)).andReturn();
 
 		// Checking that the ResponseBody contains a UnprocessableEntityException
 		assertTrue(result.getResponse().getContentAsString().contains("UnprocessableEntityException"));
-		// Checking there is no region in base
-		assertThat(this.regionRepository.findAll()).isEmpty();
+		// Checking there is no departement in base
+		assertThat(this.departementRepository.findAll()).isEmpty();
 	}
 
 	/**
-	 * @test deleting a {@link Region} in base.
-	 * @context The {@link Region} to delete exist in base. The Json is correctly
+	 * @test deleting a {@link Departement} in base.
+	 * @context The {@link Departement} to delete exist in base. The Json is correctly
 	 *          set.
 	 * @expected the response contains a {@link OkException} and the
-	 *           {@link Region}'s name to delete in base has been set to
+	 *           {@link Departement}'s name to delete in base has been set to
 	 *           "deactivated..."
 	 * @throws Exception
 	 * @author Camille Schnell
 	 */
 	@Test
-	public void deleteRegion_with_success() throws Exception {
+	public void deleteDepartement_with_success() throws Exception {
 
 		// setup
-		String regionToDelete = "{" + "\"code\":\"00000\"" + "}";
-		// Pre-inserting a Region with code as this.region to have a region to delete
+		String departementToDelete = "{" + "\"code\":\"00000\"" + "}";
+		// Pre-inserting a Departement with code as this.departement to have a departement to delete
 		// with success
-		regionRepository.insert(region);
+		departementRepository.insert(departement);
 		// Checking pre-insertion
-		assertTrue(this.regionRepository.findByCode("00000").isPresent());
+		assertTrue(this.departementRepository.findByCode("00000").isPresent());
 
 		MvcResult result = this.mockMvc
-				.perform(delete("/region").contentType(MediaType.APPLICATION_JSON).content(regionToDelete)).andReturn();
+				.perform(delete("/departement").contentType(MediaType.APPLICATION_JSON).content(departementToDelete)).andReturn();
 
 		// Checking that the ResponseBody contains a OkException
 		assertTrue(result.getResponse().getContentAsString().contains("OkException"));
 
-		// Checking the regionToDelete had been deactivated
-		assertThat(this.regionRepository.findByCode("00000").get().getNom()).startsWith("deactivated");
+		// Checking the departementToDelete had been deactivated
+		assertThat(this.departementRepository.findByCode("00000").get().getNom()).startsWith("deactivated");
 	}
 
 	/**
-	 * @test deleting a {@link Region} in base.
-	 * @context The {@link Region} to delete doesn't exist in base. The Json is
+	 * @test deleting a {@link Departement} in base.
+	 * @context The {@link Departement} to delete doesn't exist in base. The Json is
 	 *          correctly set.
 	 * @expected the response contains a {@link ResourceNotFoundException}.
 	 * @throws Exception
 	 * @author Camille Schnell
 	 */
 	@Test
-	public void deleteRegion_with_resourceNotFound() throws Exception {
+	public void deleteDepartement_with_resourceNotFound() throws Exception {
 
 		// setup
-		String regionToDelete = "{" + "\"code\":\"00000\"" + "}";
-		// Checking if there is not already a region in base with the code : 00000
-		assertFalse(this.regionRepository.findByCode("00000").isPresent());
+		String departementToDelete = "{" + "\"code\":\"00000\"" + "}";
+		// Checking if there is not already a departement in base with the code : 00000
+		assertFalse(this.departementRepository.findByCode("00000").isPresent());
 
 		MvcResult result = this.mockMvc
-				.perform(delete("/region").contentType(MediaType.APPLICATION_JSON).content(regionToDelete)).andReturn();
+				.perform(delete("/departement").contentType(MediaType.APPLICATION_JSON).content(departementToDelete)).andReturn();
 
 		// Checking that the ResponseBody contain a ResourceNotFoundException
 		assertTrue(result.getResponse().getContentAsString().contains("ResourceNotFoundException"));
 	}
 
 	/**
-	 * @test deleting a {@link Region} in base.
+	 * @test deleting a {@link Departement} in base.
 	 * @context The Json isn't correctly set.
 	 * @expected the response contains a {@link UnprocessableEntityException}.
 	 * @throws Exception
 	 * @author Camille Schnell
 	 */
 	@Test
-	public void deleteRegion_with_missingRequiredFields() throws Exception {
+	public void deleteDepartement_with_missingRequiredFields() throws Exception {
 
 		// setup
-		String regionToDelete = "{}";
+		String departementToDelete = "{}";
 
 		MvcResult result = this.mockMvc
-				.perform(delete("/region").contentType(MediaType.APPLICATION_JSON).content(regionToDelete)).andReturn();
+				.perform(delete("/departement").contentType(MediaType.APPLICATION_JSON).content(departementToDelete)).andReturn();
 
 		// Checking that the ResponseBody contain a UnprocessableEntityException
 		assertTrue(result.getResponse().getContentAsString().contains("UnprocessableEntityException"));
 	}
 
 	/**
-	 * @test Getting the {@link List} of all {@link Region} present in base.
-	 * @context pré-inserting 20 {@link Region}
-	 * @expected The {@link List} of {@link Region} contains all of the pre-inserted
-	 *           {@link Region}
+	 * @test Getting the {@link List} of all {@link Departement} present in base.
+	 * @context pré-inserting 20 {@link Departement}
+	 * @expected The {@link List} of {@link Departement} contains all of the pre-inserted
+	 *           {@link Departement}
 	 * @throws Exception
 	 * @author Camille Schnell
 	 */
 	@Test
-	public void getRegions() throws Exception {
+	public void getDepartements() throws Exception {
 
-		// Pre-insertion of 20 regions for test
+		// Pre-insertion of 20 departements for test
 		for (int i = 0; i < 20; i++) {
-			Region regionForGet = new Region();
-			regionForGet.setNom("Region" + i);
-			regionForGet.setCode("Code" + i);
-			this.regionRepository.insert(regionForGet);
-			Optional<Region> regionOptional = this.regionRepository.findByCode("Code" + i);
-			assertTrue(regionOptional.isPresent());
-			assertThat(regionOptional.get().getNom()).isEqualTo("Region" + i);
+			Departement departementForGet = new Departement();
+			departementForGet.setNom("Departement" + i);
+			departementForGet.setCode("Code" + i);
+			departementForGet.setCodeRegion("CodeRegion" + i);
+			this.departementRepository.insert(departementForGet);
+			Optional<Departement> departementOptional = this.departementRepository.findByCode("Code" + i);
+			assertTrue(departementOptional.isPresent());
+			assertThat(departementOptional.get().getNom()).isEqualTo("Departement" + i);
+			assertThat(departementOptional.get().getCodeRegion()).isEqualTo("CodeRegion" + i);
 		}
 
-		MvcResult result = this.mockMvc.perform(get("/regions").contentType(MediaType.APPLICATION_JSON)).andReturn();
+		MvcResult result = this.mockMvc.perform(get("/departements").contentType(MediaType.APPLICATION_JSON)).andReturn();
 
 		String jsonResult = result.getResponse().getContentAsString();
 
 		// verifying that we got the same cities as inserted before
 		int count = 0;
-		for (JsonElement jregion : gson.fromJson(jsonResult, JsonArray.class)) {
-			JsonObject jsonRegion = jregion.getAsJsonObject();
-			assertThat(jsonRegion.get("code").getAsString()).isEqualTo("Code" + count);
-			assertThat(jsonRegion.get("nom").getAsString()).isEqualTo("Region" + count);
+		for (JsonElement jdepartement : gson.fromJson(jsonResult, JsonArray.class)) {
+			JsonObject jsonDepartement = jdepartement.getAsJsonObject();
+			assertThat(jsonDepartement.get("code").getAsString()).isEqualTo("Code" + count);
+			assertThat(jsonDepartement.get("nom").getAsString()).isEqualTo("Departement" + count);
+			assertThat(jsonDepartement.get("codeRegion").getAsString()).isEqualTo("CodeRegion" + count);
 			count++;
 		}
 	}
 
 	/**
-	 * @test updating a {@link Region} in base.
-	 * @context The {@link Region} to update exist in base. The Json is correctly
+	 * @test updating a {@link Departement} in base.
+	 * @context The {@link Departement} to update exist in base. The Json is correctly
 	 *          set.
 	 * @expected the response contains a {@link OkException} and the
-	 *           {@link Region}'s name to update in base has been set with the new
+	 *           {@link Departement}'s name to update in base has been set with the new
 	 *           name.
 	 * @throws Exception
 	 * @author Camille Schnell
 	 */
 	@Test
-	public void updateRegion_with_success() throws Exception {
+	public void updateDepartement_with_success() throws Exception {
 
 		// setup
-		String updatedRegion = "{" + "\"nom\":\"newRegion\"," + "\"code\":\"00000\"" + "}";
-		// Pre-inserting a region to update
-		regionRepository.insert(region);
+		String updatedDepartement = "{" + "\"nom\":\"newDepartement2\"," + "\"code\":\"00000\"," + "\"codeRegion\":\"00001\"" + "}";
+		// Pre-inserting a departement to update
+		departementRepository.insert(departement);
 		// Checking pre-insertion
-		assertTrue(this.regionRepository.findByCode("00000").isPresent());
+		assertTrue(this.departementRepository.findByCode("00000").isPresent());
 
 		MvcResult result = this.mockMvc
-				.perform(put("/region").contentType(MediaType.APPLICATION_JSON).content(updatedRegion)).andReturn();
+				.perform(put("/departement").contentType(MediaType.APPLICATION_JSON).content(updatedDepartement)).andReturn();
 
 		assertTrue(result.getResponse().getContentAsString().contains("OkException"));
 
-		// Checking the updated region in base
-		Optional<Region> regionOptional = this.regionRepository.findByCode("00000");
-		assertTrue(regionOptional.isPresent());
-		assertThat(regionOptional.get().getNom()).isEqualTo("newRegion");
+		// Checking the updated departement in base
+		Optional<Departement> departementOptional = this.departementRepository.findByCode("00000");
+		assertTrue(departementOptional.isPresent());
+		assertThat(departementOptional.get().getNom()).isEqualTo("newDepartement2");
 	}
 
 	/**
-	 * @test updating a {@link Region} in base.
-	 * @context The {@link Region} to update doesn't exist in base. The Json is
+	 * @test updating a {@link Departement} in base.
+	 * @context The {@link Departement} to update doesn't exist in base. The Json is
 	 *          correctly set.
 	 * @expected the response contains a {@link ResourceNotFoundException}.
 	 * @throws Exception
 	 * @author Camille Schnell
 	 */
 	@Test
-	public void updateRegion_with_resourceNotFound() throws Exception {
+	public void updateDepartement_with_resourceNotFound() throws Exception {
 
 		// setup
-		String updatedRegion = "{" + "\"nom\":\"newRegion\"," + "\"code\":\"00000\"" + "}";
+		String updatedDepartement = "{" + "\"nom\":\"newDepartement\"," + "\"code\":\"00000\"," + "\"codeRegion\":\"00001\"" + "}";
 
 		MvcResult result = this.mockMvc
-				.perform(put("/region").contentType(MediaType.APPLICATION_JSON).content(updatedRegion)).andReturn();
+				.perform(put("/departement").contentType(MediaType.APPLICATION_JSON).content(updatedDepartement)).andReturn();
 
 		assertTrue(result.getResponse().getContentAsString().contains("ResourceNotFoundException"));
 	}
 
 	/**
-	 * @test updating a {@link Region} in base.
+	 * @test updating a {@link Departement} in base.
 	 * @context The Json isn't correctly set.
 	 * @expected the response contains a {@link UnprocessableEntityException}.
 	 * @throws Exception
 	 * @author Camille Schnell
 	 */
 	@Test
-	public void updateRegion_with_missingRequiredFields() throws Exception {
+	public void updateDepartement_with_missingRequiredFields() throws Exception {
 
 		// setup
-		String regionToDelete = "{}";
+		String departementToDelete = "{}";
 
 		MvcResult result = this.mockMvc
-				.perform(put("/region").contentType(MediaType.APPLICATION_JSON).content(regionToDelete)).andReturn();
+				.perform(put("/departement").contentType(MediaType.APPLICATION_JSON).content(departementToDelete)).andReturn();
 
 		assertTrue(result.getResponse().getContentAsString().contains("UnprocessableEntityException"));
 	}
 
 	@Test
 	public void y_testIndex() {
-		// asserting the collection region exist
-		assertTrue(mongoTemplate.collectionExists("region"));
+		// asserting the collection departement exist
+		assertTrue(mongoTemplate.collectionExists("departement"));
 
 		// asserting all unique index are present
 
@@ -427,15 +431,15 @@ public class RegionRestIT {
 		indexPresent.put("_id_", false);
 		indexPresent.put("code", false);
 
-		// getting all indexed field of the collection "region"
-		List<IndexInfo> indexList = mongoTemplate.indexOps("region").getIndexInfo();
+		// getting all indexed field of the collection "departement"
+		List<IndexInfo> indexList = mongoTemplate.indexOps("departement").getIndexInfo();
 
 		for (IndexInfo index : indexList) {
 			for (Map.Entry<String, Boolean> indexInMap : indexPresent.entrySet()) {
 				if (index.getName().equals(indexInMap.getKey())) {
 
-					// checking the uniregion of unique indexed fields - except for _id_ because
-					// mongoDB consider his uniregion as false
+					// checking the unidepartement of unique indexed fields - except for _id_ because
+					// mongoDB consider his unidepartement as false
 					if (!index.getName().equals("_id_")) {
 						assertTrue(index.isUnique());
 					}
