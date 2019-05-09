@@ -140,6 +140,7 @@ public class SkillEntityController {
 	 * @author Thomas Decamp
 	 */
 	public HttpException updateSkill(final JsonNode jSkill) {
+		
 		return this.skillRepository.findByNameIgnoreCase(jSkill.get("oldName").textValue())
 				// optional is present
 				.map(skill -> {
