@@ -101,8 +101,8 @@ public class JobEntityController {
 	 * @return an Optional with the corresponding Job or not
 	 * @author Lucas Royackkers
 	 */
-	public Optional<Job> getJob(final String title) {
-		return this.jobRepository.findByTitle(title);
+	public Job getJob(final String title) {
+		return this.jobRepository.findByTitle(title).orElseThrow(ResourceNotFoundException::new);
 	}
 
 	/**

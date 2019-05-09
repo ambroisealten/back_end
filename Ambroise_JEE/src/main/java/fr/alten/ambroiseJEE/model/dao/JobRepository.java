@@ -2,6 +2,7 @@ package fr.alten.ambroiseJEE.model.dao;
 
 import java.util.Optional;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import fr.alten.ambroiseJEE.model.beans.Job;
@@ -18,5 +19,7 @@ public interface JobRepository extends MongoRepository<Job, Long> {
 	 * @author Lucas Royackkers
 	 */
 	Optional<Job> findByTitle(String title);
+
+	Optional<Job> findBy_id(ObjectId objectId);
 
 }
