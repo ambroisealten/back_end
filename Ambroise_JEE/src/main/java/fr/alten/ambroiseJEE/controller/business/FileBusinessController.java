@@ -36,11 +36,22 @@ public class FileBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public File createDocument(final String filePath, final String fileName, final UserRole role) {
-		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role) {
+		if (haveAccess(role)) {
 			return this.fileEntityController.pushDocument(filePath, fileName);
 		} else {
 			throw new ForbiddenException();
 		}
+	}
+
+	/**
+	 * check if the role have access to method
+	 * 
+	 * @param role role to check
+	 * @return true if granted
+	 * @author Andy Chabalier
+	 */
+	public boolean haveAccess(final UserRole role) {
+		return isAdmin(role) || UserRole.MANAGER == role;
 	}
 
 	/**
@@ -55,8 +66,18 @@ public class FileBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException deleteFile(final String _id, final UserRole role) {
-		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role ? this.fileEntityController.deleteFile(_id)
-				: new ForbiddenException();
+		return isAdmin(role) ? this.fileEntityController.deleteFile(_id) : new ForbiddenException();
+	}
+
+	/**
+	 * check if the user is admin
+	 * 
+	 * @param role the user'srole to check
+	 * @return true if admin
+	 * @author Andy Chabalier
+	 */
+	public boolean isAdmin(final UserRole role) {
+		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role;
 	}
 
 	/**
@@ -68,21 +89,25 @@ public class FileBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public List<File> getCollectionFiles(final String path, final UserRole role) {
-		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
+		if (isAdmin(role)) {
 			return this.fileEntityController.getCollectionFiles(path);
 		}
 		throw new ForbiddenException();
 	}
 
 	public File getDocument(final String _id, final UserRole role) {
-		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
-			try {
+		if (haveAccess(role)) {
+			if (isValid(_id)) {
 				return this.fileEntityController.getFile(new ObjectId(_id));
-			} catch (final IllegalArgumentException iae) {
+			} else {
 				throw new UnprocessableEntityException();
 			}
 		}
 		throw new ForbiddenException();
+	}
+
+	public boolean isValid(final String _id) {
+		return ObjectId.isValid(_id);
 	}
 
 	/**
@@ -93,7 +118,10 @@ public class FileBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public List<File> getFiles(final UserRole role) {
-		return this.fileEntityController.getFiles();
+		if (isAdmin(role)) {
+			return this.fileEntityController.getFiles();
+		}
+		throw new ForbiddenException();
 	}
 
 	/**
@@ -104,7 +132,7 @@ public class FileBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public List<File> getFilesForum(final UserRole role) {
-		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
+		if (isAdmin(role)) {
 			return this.fileEntityController.getFilesForum();
 		}
 		throw new ForbiddenException();
@@ -117,13 +145,13 @@ public class FileBusinessController {
 	 * @param path        the path to update
 	 * @param displayName the display name to update
 	 * @param role        the current logged user's role
-	 * @return
+	 * @return the {@link HttpException} corresponding to the status of the request
+	 *         ({@link ResourceNotFoundException} if the document is not found
+	 *         {@link OkException} if the document is updated
 	 * @author Andy Chabalier
 	 */
 	public HttpException updateDocument(final String _id, final String path, final String displayName,
 			final UserRole role) {
-		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role
-				? this.fileEntityController.updateFile(_id, path, displayName)
-				: new ForbiddenException();
+		return isAdmin(role) ? this.fileEntityController.updateFile(_id, path, displayName) : new ForbiddenException();
 	}
 }
