@@ -138,8 +138,8 @@ public class SkillRestController {
 	@ResponseBody
 	public HttpException updateSkill(@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
 			@RequestAttribute("role") final UserRole role) throws Exception {
-		return JsonUtils.checkJsonIntegrity(params, "name", "oldName", "mail")
-				? this.skillBusinessController.createSkill(params, role)
+		return JsonUtils.checkJsonIntegrity(params, "mail", "name", "oldName")
+				? this.skillBusinessController.updateSkill(params, role)
 				: new UnprocessableEntityException();
 	}
 
