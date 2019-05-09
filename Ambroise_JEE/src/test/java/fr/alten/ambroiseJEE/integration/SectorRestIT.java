@@ -323,10 +323,10 @@ public class SectorRestIT {
 		}
 	}
 
-	@Test
-	public void z_DroppingDatabase() {
-		// Last test run to drop the database for next test classes.
-		mongoTemplate.getDb().drop();
-	}
+//	@Test
+//	public void z_DroppingDatabase() {
+//		// Last test run to drop the database for next test classes.
+//		mongoTemplate.getDb().drop();
+//	}
 
 }

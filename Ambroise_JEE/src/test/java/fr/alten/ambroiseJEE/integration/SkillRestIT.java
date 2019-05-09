@@ -55,21 +55,20 @@ import fr.alten.ambroiseJEE.utils.TokenIgnore;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class SkillRestIT {
 
-    private static User userAdmin = new User();
-    private static Skill skill = new Skill();
+	private static User userAdmin = new User();
+	private static Skill skill = new Skill();
 
-    private static Gson gson;
+	private static Gson gson;
 
-    @Autowired
-    private MockMvc mockMvc;
-    @Autowired
-    private MongoTemplate mongoTemplate;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private SkillRepository skillRepository;
+	@Autowired
+	private MockMvc mockMvc;
+	@Autowired
+	private MongoTemplate mongoTemplate;
+	@Autowired
+	private UserRepository userRepository;
+	@Autowired
+	private SkillRepository skillRepository;
 
-    
 	@BeforeClass
 	public static void beforeTests() {
 		TokenIgnore.createDir();
@@ -107,8 +106,8 @@ public class SkillRestIT {
 
 	@After
 	public void afterEachTest() {
-		mongoTemplate.getDb().getCollection("user").drop();
-		mongoTemplate.getDb().getCollection("skill").drop();
+		userRepository.deleteAll();
+		skillRepository.deleteAll();
 
 	}
 
@@ -123,8 +122,8 @@ public class SkillRestIT {
 		// setup
 		String newSkill = "{" + "\"name\":\"newSkill\"" + "}";
 
-		MvcResult result = this.mockMvc.perform(post("/skill").contentType(MediaType.APPLICATION_JSON).content(newSkill))
-				.andReturn();
+		MvcResult result = this.mockMvc
+				.perform(post("/skill").contentType(MediaType.APPLICATION_JSON).content(newSkill)).andReturn();
 
 		// Checking that the ResponseBody contain a CreatedException
 		assertTrue(result.getResponse().getContentAsString().contains("CreatedException"));
@@ -147,8 +146,8 @@ public class SkillRestIT {
 		// Checking pre-insertion
 		assertTrue(this.skillRepository.findByNameIgnoreCase("newSkill").isPresent());
 
-		MvcResult result = this.mockMvc.perform(post("/skill").contentType(MediaType.APPLICATION_JSON).content(newSkill))
-				.andReturn();
+		MvcResult result = this.mockMvc
+				.perform(post("/skill").contentType(MediaType.APPLICATION_JSON).content(newSkill)).andReturn();
 
 		// Checking that the ResponseBody contain a ConflictException
 		assertTrue(result.getResponse().getContentAsString().contains("ConflictException"));
@@ -163,8 +162,8 @@ public class SkillRestIT {
 		// setup
 		String newSkill = "{}";
 
-		MvcResult result = this.mockMvc.perform(post("/skill").contentType(MediaType.APPLICATION_JSON).content(newSkill))
-				.andReturn();
+		MvcResult result = this.mockMvc
+				.perform(post("/skill").contentType(MediaType.APPLICATION_JSON).content(newSkill)).andReturn();
 
 		// Checking that the ResponseBody contain a UnprocessableEntityException
 		assertTrue(result.getResponse().getContentAsString().contains("UnprocessableEntityException"));
@@ -177,7 +176,8 @@ public class SkillRestIT {
 
 		// setup
 		String skillToDelete = "{" + "\"name\":\"newSkill\"" + "}";
-		// Pre-inserting a Skill with name name as this.skill for having a skill to delete
+		// Pre-inserting a Skill with name name as this.skill for having a skill to
+		// delete
 		// with success
 		skillRepository.insert(skill);
 		// Checking pre-insertion
@@ -254,7 +254,7 @@ public class SkillRestIT {
 	public void updateSkill_with_success() throws Exception {
 
 		// setup
-		String updatedSkill = "{" + "\"name\":\"updateSkill\"," +  "\"oldName\":\"newSkill\"" + "}";
+		String updatedSkill = "{" + "\"name\":\"updateSkill\"," + "\"oldName\":\"newSkill\"" + "}";
 		// Pre-inserting a skill to update
 		skillRepository.insert(skill);
 		// Checking pre-insertion
@@ -275,7 +275,7 @@ public class SkillRestIT {
 	public void updateSkill_with_resourceNotFound() throws Exception {
 
 		// setup
-		String updatedSkill = "{" + "\"name\":\"newSkillFalse\"," +  "\"oldName\":\"skillNotFound\"" + "}";
+		String updatedSkill = "{" + "\"name\":\"newSkillFalse\"," + "\"oldName\":\"skillNotFound\"" + "}";
 
 		MvcResult result = this.mockMvc
 				.perform(put("/skill").contentType(MediaType.APPLICATION_JSON).content(updatedSkill)).andReturn();
@@ -293,11 +293,5 @@ public class SkillRestIT {
 				.perform(put("/skill").contentType(MediaType.APPLICATION_JSON).content(skillToDelete)).andReturn();
 
 		assertTrue(result.getResponse().getContentAsString().contains("UnprocessableEntityException"));
-	}
-
-	@Test
-	public void z_DroppingDatabase() {
-		// Last test run to drop the database for next test classes.
-		mongoTemplate.getDb().drop();
 	}
 }

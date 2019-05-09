@@ -65,6 +65,10 @@ public class FileRestController {
 		this.gson = builder.create();
 	}
 
+	public boolean isValid(String _id) {
+		return ObjectId.isValid(_id);
+	}
+
 	/**
 	 * Delete a file from the database and the file system
 	 *
@@ -84,7 +88,7 @@ public class FileRestController {
 	public HttpException deleteFile(@RequestParam("_id") final String _id, @RequestParam("path") final String path,
 			@RequestParam("extension") final String extension, @RequestAttribute("mail") final String mail,
 			@RequestAttribute("role") final UserRole role) {
-		if (ObjectId.isValid(_id)) {
+		if (isValid(_id)) {
 			try {
 				this.fileStorageBusinessController.deleteFile(_id, path, extension, role);
 			} catch (final NoSuchFileException e) {
@@ -143,7 +147,7 @@ public class FileRestController {
 	@GetMapping("/file")
 	public String getFile(@RequestParam("fileName") final String fileName, @RequestAttribute("mail") final String mail,
 			@RequestAttribute("role") final UserRole role) {
-		if (ObjectId.isValid(fileName)) {
+		if (isValid(fileName)) {
 			return gson.toJson(this.fileBusinessController.getDocument(fileName, role));
 		}
 		throw new UnprocessableEntityException();
@@ -209,7 +213,7 @@ public class FileRestController {
 			@RequestParam("extension") final String extension, @RequestParam("displayName") final String displayName,
 			@RequestParam("newPath") final String newPath, @RequestParam("oldPath") final String oldPath,
 			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
-		if (ObjectId.isValid(_id)) {
+		if (isValid(_id)) {
 			try {
 				this.fileStorageBusinessController.moveFile(_id + "." + extension, oldPath, newPath, role);
 			} catch (SecurityException | UnsupportedOperationException | AtomicMoveNotSupportedException

@@ -45,6 +45,7 @@ public class SynchroniserRestIT {
 
 	@Autowired
 	private MockMvc mockMvc;
+	@SuppressWarnings("unused")
 	@Autowired
 	private MongoTemplate mongoTemplate;
 	@Autowired
@@ -89,7 +90,7 @@ public class SynchroniserRestIT {
 	 */
 	@After
 	public void afterEachTest() {
-		mongoTemplate.getDb().getCollection("user").drop();
+		userRepository.deleteAll();
 
 	}
 
@@ -123,19 +124,4 @@ public class SynchroniserRestIT {
 		// Checking that the ResponseBody contain a CreatedException
 		assertTrue(result.getResponse().getContentAsString().contains("OkException"));
 	}
-
-	/**
-	 * This is no a Test ! This method has been set in a {@link Test} because its
-	 * not possible to drop the database in {@link AfterClass}. Indeed,
-	 * {@link Autowired} doesn't work with static access required by
-	 * {@link AfterClass}.
-	 * 
-	 * @author Andy Chabalier
-	 */
-	@Test
-	public void z_DroppingDatabase() {
-		// Last test run to drop the database for next test classes.
-		mongoTemplate.getDb().drop();
-	}
-
 }
