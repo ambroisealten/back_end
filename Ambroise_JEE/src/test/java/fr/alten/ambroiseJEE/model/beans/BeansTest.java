@@ -185,4 +185,38 @@ public class BeansTest {
 		}
 	}
 
+	/**
+	 * @test Testing departement collection presence in base and index with their unicity
+	 *
+	 * @author Camille Schnell
+	 */
+	@Test
+	public void check_DepartementBean() {
+
+		assertTrue(mongoTemplate.collectionExists("departement"));
+
+		HashMap<String, Boolean> indexPresent = new HashMap<>();
+		indexPresent.put("_id_", false);
+		indexPresent.put("code", false);
+
+		List<IndexInfo> indexList = mongoTemplate.indexOps("departement").getIndexInfo();
+
+		for (IndexInfo index : indexList) {
+			for (Map.Entry<String, Boolean> indexInMap : indexPresent.entrySet()) {
+				if (index.getName().equals(indexInMap.getKey())) {
+
+					if (!index.getName().equals("_id_")) {
+						assertTrue(index.isUnique());
+					}
+					indexInMap.setValue(true);
+				}
+			}
+		}
+
+		// Checking the presence of all indexes
+		for (Map.Entry<String, Boolean> indexInMap : indexPresent.entrySet()) {
+			assertTrue(indexInMap.getValue());
+		}
+	}
+
 }

@@ -199,7 +199,7 @@ public class RegionRestControllerTest {
 	 * @author Camille Schnell
 	 */
 	@Test
-	public void getCities_expectingString() {
+	public void getRegions_expectingString() {
 
 		// setup
 		Mockito.when(this.regionBusinessController.getRegions(ArgumentMatchers.any(UserRole.class)))
