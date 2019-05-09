@@ -3,7 +3,6 @@ package fr.alten.ambroiseJEE.model.entityControllers;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -65,8 +64,7 @@ public class DiplomaEntityController {
 	 * @return the supplier of diploma
 	 * @author Andy Chabalier
 	 */
-	public Supplier<? extends Diploma> createDiploma(final String name, final String yearOfResult) {
-		return () -> {
+	public Diploma createDiploma(final String name, final String yearOfResult) {
 			Diploma newDiploma = new Diploma();
 			newDiploma.setName(name);
 			newDiploma.setYearOfResult(yearOfResult);
@@ -78,7 +76,6 @@ public class DiplomaEntityController {
 				throw new InternalServerErrorException();
 			}
 			return newDiploma;
-		};
 	}
 
 	/**
@@ -122,11 +119,12 @@ public class DiplomaEntityController {
 	 *
 	 * @param name         the searched name for this query
 	 * @param yearOfResult the searched year of result for this diploma
-	 * @return an Optional with the corresponding Diploma or not
+	 * @return the corresponding Diploma
+	 * @throws {@link ResourceNotFoundException} when the Diploma hasn't been found
 	 * @author Lucas Royackkers
 	 */
-	public Optional<Diploma> getDiplomaByNameAndYearOfResult(final String name, final String yearOfResult) {
-		return this.diplomaRepository.findByNameAndYearOfResult(name, yearOfResult);
+	public Diploma getDiplomaByNameAndYearOfResult(final String name, final String yearOfResult) {
+		return this.diplomaRepository.findByNameAndYearOfResult(name, yearOfResult).orElseThrow(ResourceNotFoundException::new);
 	}
 
 	/**

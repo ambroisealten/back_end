@@ -34,6 +34,10 @@ import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
  */
 @Controller
 public class JobRestController {
+	
+	public boolean checkJsonIntegrity(final JsonNode params, final String... fields) {
+		return JsonUtils.checkJsonIntegrity(params, fields);
+	}
 
 	@Autowired
 	private JobBusinessController jobBusinessController;
@@ -61,7 +65,7 @@ public class JobRestController {
 	@PostMapping("/job")
 	@ResponseBody
 	public HttpException createJob(@RequestBody final JsonNode params, @RequestAttribute("role") final UserRole role) {
-		return JsonUtils.checkJsonIntegrity(params, "title") ? this.jobBusinessController.createJob(params, role)
+		return checkJsonIntegrity(params, "title") ? this.jobBusinessController.createJob(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -80,7 +84,7 @@ public class JobRestController {
 	@DeleteMapping("/job")
 	@ResponseBody
 	public HttpException deleteJob(@RequestBody final JsonNode params, @RequestAttribute("role") final UserRole role) {
-		return JsonUtils.checkJsonIntegrity(params, "title") ? this.jobBusinessController.deleteJob(params, role)
+		return checkJsonIntegrity(params, "title") ? this.jobBusinessController.deleteJob(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -113,7 +117,7 @@ public class JobRestController {
 	@PutMapping("/job")
 	@ResponseBody
 	public HttpException updateJob(@RequestBody final JsonNode params, @RequestAttribute("role") final UserRole role) {
-		return JsonUtils.checkJsonIntegrity(params, "title","oldTitle") ? this.jobBusinessController.updateJob(params, role)
+		return checkJsonIntegrity(params, "title","oldTitle") ? this.jobBusinessController.updateJob(params, role)
 				: new UnprocessableEntityException();
 	}
 }

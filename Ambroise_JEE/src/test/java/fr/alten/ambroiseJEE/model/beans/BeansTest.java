@@ -16,7 +16,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * 
+ *
  * @author Kylian Gehier s
  */
 @RunWith(SpringRunner.class)
@@ -53,13 +53,12 @@ public class BeansTest {
 		// Checking the presence of all indexes
 		for (Map.Entry<String, Boolean> indexInMap : indexPresent.entrySet()) {
 			assertTrue(indexInMap.getValue());
-			;
 		}
 	}
 
 	/**
 	 * @test Testing file collection presence in base and index with their unicity
-	 * 
+	 *
 	 * @author Andy Chabalier
 	 */
 	@Test
@@ -95,4 +94,95 @@ public class BeansTest {
 			assertTrue(indexInMap.getValue());
 		}
 	}
+
+	@Test
+	public void check_PersonBean() {
+
+		assertTrue(mongoTemplate.collectionExists("person"));
+
+		HashMap<String, Boolean> indexPresent = new HashMap<>();
+		indexPresent.put("_id_", false);
+		indexPresent.put("mail", false);
+
+		List<IndexInfo> indexList = mongoTemplate.indexOps("person").getIndexInfo();
+
+		for (IndexInfo index : indexList) {
+			for (Map.Entry<String, Boolean> indexInMap : indexPresent.entrySet()) {
+				if (index.getName().equals(indexInMap.getKey())) {
+					if (!index.getName().equals("_id_")) {
+						assertTrue(index.isUnique());
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * @test Testing job collection presence in base and index with their unicity
+	 *
+	 * @author Camille Schnell
+	 */
+	@Test
+	public void check_JobBean() {
+
+		assertTrue(mongoTemplate.collectionExists("job"));
+
+		HashMap<String, Boolean> indexPresent = new HashMap<>();
+		indexPresent.put("_id_", false);
+		indexPresent.put("title", false);
+
+		List<IndexInfo> indexList = mongoTemplate.indexOps("job").getIndexInfo();
+
+		for (IndexInfo index : indexList) {
+			for (Map.Entry<String, Boolean> indexInMap : indexPresent.entrySet()) {
+				if (index.getName().equals(indexInMap.getKey())) {
+
+					if (!index.getName().equals("_id_")) {
+						assertTrue(index.isUnique());
+					}
+					indexInMap.setValue(true);
+				}
+			}
+		}
+
+		// Checking the presence of all indexes
+		for (Map.Entry<String, Boolean> indexInMap : indexPresent.entrySet()) {
+			assertTrue(indexInMap.getValue());
+		}
+	}
+
+	/**
+	 * @test Testing region collection presence in base and index with their unicity
+	 *
+	 * @author Camille Schnell
+	 */
+	@Test
+	public void check_RegionBean() {
+
+		assertTrue(mongoTemplate.collectionExists("region"));
+
+		HashMap<String, Boolean> indexPresent = new HashMap<>();
+		indexPresent.put("_id_", false);
+		indexPresent.put("code", false);
+
+		List<IndexInfo> indexList = mongoTemplate.indexOps("region").getIndexInfo();
+
+		for (IndexInfo index : indexList) {
+			for (Map.Entry<String, Boolean> indexInMap : indexPresent.entrySet()) {
+				if (index.getName().equals(indexInMap.getKey())) {
+
+					if (!index.getName().equals("_id_")) {
+						assertTrue(index.isUnique());
+					}
+					indexInMap.setValue(true);
+				}
+			}
+		}
+
+		// Checking the presence of all indexes
+		for (Map.Entry<String, Boolean> indexInMap : indexPresent.entrySet()) {
+			assertTrue(indexInMap.getValue());
+		}
+	}
+
 }

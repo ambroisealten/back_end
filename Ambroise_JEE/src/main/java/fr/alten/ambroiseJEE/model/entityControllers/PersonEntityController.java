@@ -5,6 +5,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -19,6 +20,7 @@ import fr.alten.ambroiseJEE.utils.PersonRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.InternalServerErrorException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
@@ -39,7 +41,7 @@ public class PersonEntityController {
 	 * @return true if the string match with the mail pattern
 	 * @author Lucas Royackkers
 	 */
-	private static boolean validateMail(final String emailStr) {
+	public boolean validateMail(final String emailStr) {
 		final Matcher matcher = PersonEntityController.VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
 		return matcher.find();
 	}
@@ -74,7 +76,7 @@ public class PersonEntityController {
 	public HttpException createPerson(final JsonNode jPerson, final PersonRole type) {
 		try {
 			// if the mail don't match with the mail pattern
-			if (!PersonEntityController.validateMail(jPerson.get("mail").textValue())) {
+			if (!validateMail(jPerson.get("mail").textValue())) {
 				return new UnprocessableEntityException();
 			}
 
@@ -85,43 +87,53 @@ public class PersonEntityController {
 			newPerson.setRole(type);
 			newPerson.setMail(jPerson.get("mail").textValue());
 
-
 			final User personInCharge = this.userEntityController
 					.getUserByMail(jPerson.get("personInChargeMail").textValue());
 			newPerson.setPersonInChargeMail(personInCharge.getMail());
 
 			final String highestDiploma = jPerson.get("highestDiploma").textValue();
 			final String highestDiplomaYear = jPerson.get("highestDiplomaYear").textValue();
-			final Diploma diploma = this.diplomaEntityController
-					.getDiplomaByNameAndYearOfResult(highestDiploma, highestDiplomaYear)
-					.orElseGet(this.diplomaEntityController.createDiploma(highestDiploma, highestDiplomaYear));
+			Diploma diploma;
+			try {
+				diploma = this.diplomaEntityController
+						.getDiplomaByNameAndYearOfResult(highestDiploma, highestDiplomaYear);
+			} catch (ResourceNotFoundException e) {
+				diploma = (Diploma) this.diplomaEntityController.createDiploma(highestDiploma, highestDiplomaYear);
+			}
 
 			newPerson.setHighestDiploma(diploma.getName());
 			newPerson.setHighestDiplomaYear(diploma.getYearOfResult());
 
 			final String jobName = jPerson.get("job").textValue();
-			final Job job = this.jobEntityController.getJob(jobName)
-					.orElseGet(this.jobEntityController.createJob(jobName));
+			Job job;
+			try {
+				job = this.jobEntityController.getJob(jobName);
+			} catch (ResourceNotFoundException e) {
+				job = (Job) this.jobEntityController.createJob(jobName);
+			}
 			newPerson.setJob(job.getTitle());
 
 			final String employerName = jPerson.get("employer").textValue();
 			Employer employer;
 			try {
 				employer = this.employerEntityController.getEmployer(employerName);
-				
-			}
-			catch (ResourceNotFoundException e) {
+
+			} catch (ResourceNotFoundException e) {
 				employer = (Employer) this.employerEntityController.createEmployer(employerName);
 			}
 			newPerson.setEmployer(employer.getName());
-			
+
 			newPerson.setOpinion(jPerson.get("opinion").textValue());
 
 			this.personRepository.save(newPerson);
 		} catch (final ResourceNotFoundException rnfe) {
 			return rnfe;
-		} catch (final Exception e) {
+		} catch (final DuplicateKeyException dke) {
 			return new ConflictException();
+		} catch (final Exception e) {
+			e.printStackTrace();
+			// TODO : A enlever par la suite
+			return new InternalServerErrorException();
 		}
 		return new CreatedException();
 
@@ -250,14 +262,14 @@ public class PersonEntityController {
 	public List<Person> getPersonsBySurname(final String surname) {
 		return this.personRepository.findBySurname(surname);
 	}
-	
+
 	/**
 	 * Get a List of all Persons in the database
 	 * 
 	 * @return the list of all persons
 	 * @author Lucas Royackkers
 	 */
-	public List<Person> getAllPersons(){
+	public List<Person> getAllPersons() {
 		return this.personRepository.findAll();
 	}
 
@@ -291,32 +303,39 @@ public class PersonEntityController {
 			final String highestDiploma = jPerson.get("highestDiploma").textValue();
 			final String highestDiplomaYear = jPerson.get("highestDiplomaYear").textValue();
 
-			final Diploma diploma = this.diplomaEntityController
-					.getDiplomaByNameAndYearOfResult(highestDiploma, highestDiplomaYear)
-					.orElseGet(this.diplomaEntityController.createDiploma(highestDiploma, highestDiplomaYear));
+			Diploma diploma;
+			try {
+				diploma = this.diplomaEntityController
+						.getDiplomaByNameAndYearOfResult(highestDiploma, highestDiplomaYear);
+			} catch (ResourceNotFoundException e) {
+				diploma = (Diploma) this.diplomaEntityController.createDiploma(highestDiploma, highestDiplomaYear);
+			}
 
 			person.setHighestDiploma(diploma.getName());
 			person.setHighestDiplomaYear(diploma.getYearOfResult());
 
 			final String jobName = jPerson.get("job").textValue();
-			final Job job = this.jobEntityController.getJob(jobName)
-					.orElseGet(this.jobEntityController.createJob(jobName));
+			Job job;
+			try {
+				job = this.jobEntityController.getJob(jobName);
+			} catch (ResourceNotFoundException e) {
+				job = (Job) this.jobEntityController.createJob(jobName);
+			}
 			person.setJob(job.getTitle());
 
 			final String employerName = jPerson.get("employer").textValue();
 			Employer employer;
 			try {
 				employer = this.employerEntityController.getEmployer(employerName);
-				
-			}
-			catch (ResourceNotFoundException e) {
+
+			} catch (ResourceNotFoundException e) {
 				employer = (Employer) this.employerEntityController.createEmployer(employerName);
 			}
-			
+
 			person.setEmployer(employer.getName());
-			
+
 			person.setOpinion(jPerson.get("opinion").textValue());
-			
+
 			this.personRepository.save(person);
 		} catch (final ResourceNotFoundException rnfe) {
 			return rnfe;
