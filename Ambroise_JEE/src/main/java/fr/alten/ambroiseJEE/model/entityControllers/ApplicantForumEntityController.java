@@ -133,7 +133,6 @@ public class ApplicantForumEntityController {
 			Employer employer;
 			try {
 				employer = this.employerEntityController.getEmployer(employerName);
-
 			} catch (ResourceNotFoundException e) {
 				employer = (Employer) this.employerEntityController.createEmployer(employerName);
 			}
@@ -319,7 +318,6 @@ public class ApplicantForumEntityController {
 			Employer employer;
 			try {
 				employer = this.employerEntityController.getEmployer(employerName);
-
 			} catch (ResourceNotFoundException e) {
 				employer = (Employer) this.employerEntityController.createEmployer(employerName);
 			}

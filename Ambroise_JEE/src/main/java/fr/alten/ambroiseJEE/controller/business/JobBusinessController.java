@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import fr.alten.ambroiseJEE.model.beans.Job;
 import fr.alten.ambroiseJEE.model.entityControllers.JobEntityController;
 import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.security.UserRoleLists;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
@@ -25,6 +26,8 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
  */
 @Service
 public class JobBusinessController {
+
+	private final UserRoleLists roles = UserRoleLists.getInstance();
 
 	@Autowired
 	private JobEntityController jobEntityController;
@@ -43,10 +46,8 @@ public class JobBusinessController {
 	 * @author Lucas Royackkers
 	 */
 	public HttpException createJob(final JsonNode params, final UserRole role) {
-		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
-			return this.jobEntityController.createJob(params);
-		}
-		throw new ForbiddenException();
+		return isAdmin(role) ? this.jobEntityController.createJob(params) :
+			new ForbiddenException();
 	}
 
 	/**
@@ -64,10 +65,8 @@ public class JobBusinessController {
 	 * @author Lucas Royackkers
 	 */
 	public HttpException deleteJob(final JsonNode params, final UserRole role) {
-		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
-			return this.jobEntityController.deleteJob(params);
-		}
-		throw new ForbiddenException();
+		return isAdmin(role) ? this.jobEntityController.deleteJob(params) :
+			new ForbiddenException();
 	}
 
 	/**
@@ -80,8 +79,7 @@ public class JobBusinessController {
 	 * @author Lucas Royackkers
 	 */
 	public List<Job> getJobs(final UserRole role) {
-		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.CDR == role
-				|| UserRole.MANAGER == role) {
+		if (isNotConsultantOrDeactivated(role)) {
 			return this.jobEntityController.getJobs();
 		}
 		throw new ForbiddenException();
@@ -101,10 +99,16 @@ public class JobBusinessController {
 	 * @author Lucas Royackkers
 	 */
 	public HttpException updateJob(final JsonNode params, final UserRole role) {
-		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
-			return this.jobEntityController.updateJob(params);
-		}
-		throw new ForbiddenException();
+		return isAdmin(role) ? this.jobEntityController.updateJob(params) :
+			new ForbiddenException();
+	}
+	
+	public boolean isAdmin(final UserRole role) {
+		return this.roles.isAdmin(role);
+	}
+	
+	public boolean isNotConsultantOrDeactivated(final UserRole role) {
+		return this.roles.isNotConsultantOrDeactivated(role);
 	}
 
 }
