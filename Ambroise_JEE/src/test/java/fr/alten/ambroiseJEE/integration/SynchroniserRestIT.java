@@ -13,6 +13,7 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,6 +26,10 @@ import org.springframework.test.web.servlet.MvcResult;
 import fr.alten.ambroiseJEE.model.beans.BeansTest;
 import fr.alten.ambroiseJEE.model.beans.City;
 import fr.alten.ambroiseJEE.model.beans.User;
+import fr.alten.ambroiseJEE.model.dao.CityRepository;
+import fr.alten.ambroiseJEE.model.dao.DepartementRepository;
+import fr.alten.ambroiseJEE.model.dao.PostalCodeRepository;
+import fr.alten.ambroiseJEE.model.dao.RegionRepository;
 import fr.alten.ambroiseJEE.model.dao.UserRepository;
 import fr.alten.ambroiseJEE.utils.TokenIgnore;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
@@ -50,6 +55,18 @@ public class SynchroniserRestIT {
 	private MongoTemplate mongoTemplate;
 	@Autowired
 	private UserRepository userRepository;
+
+	@Mock
+	private CityRepository cityRepository;
+
+	@Mock
+	private RegionRepository regionRepository;
+
+	@Mock
+	private DepartementRepository departementRepository;
+
+	@Mock
+	private PostalCodeRepository postalCodeRepository;
 
 	@BeforeClass
 	public static void beforeTests() {
@@ -90,8 +107,10 @@ public class SynchroniserRestIT {
 	 */
 	@After
 	public void afterEachTest() {
-		userRepository.deleteAll();
-
+		cityRepository.deleteAll();
+		regionRepository.deleteAll();
+		departementRepository.deleteAll();
+		postalCodeRepository.deleteAll();
 	}
 
 	/**
