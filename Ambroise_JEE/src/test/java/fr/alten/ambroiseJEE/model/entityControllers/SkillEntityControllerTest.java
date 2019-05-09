@@ -101,10 +101,10 @@ public class SkillEntityControllerTest {
 	@Test
 	public void deleteSkill_with_resourceNotFound() {
 
-		Optional<Skill> skilloptional = Optional.of(new Skill());
+		final Optional<Skill> emptySkillOptional = Optional.ofNullable(null);
 		Mockito.doReturn(this.mockedJSkill).when(this.mockedJSkill).get(ArgumentMatchers.anyString());
 		Mockito.doReturn("anyString").when(this.mockedJSkill).textValue();
-		Mockito.doReturn(skilloptional).when(this.skillRepository).findByNameIgnoreCase(ArgumentMatchers.anyString());
+		Mockito.doReturn(emptySkillOptional).when(this.skillRepository).findByNameIgnoreCase(ArgumentMatchers.anyString());
 		// assert
 		Assertions.assertThat(this.skillEntityController.deleteSkill(this.mockedJSkill))
 				.isInstanceOf(ResourceNotFoundException.class);
@@ -237,8 +237,10 @@ public class SkillEntityControllerTest {
 	@Test
 	public void updateSkill_with_success() {
 
+		final Optional<Skill> notEmptySkillOptional = Optional.of(new Skill());
 		Mockito.doReturn(this.mockedJSkill).when(this.mockedJSkill).get(ArgumentMatchers.anyString());
 		Mockito.doReturn("anyString").when(this.mockedJSkill).textValue();
+		Mockito.doReturn(notEmptySkillOptional).when(this.skillRepository).findByNameIgnoreCase(ArgumentMatchers.anyString());
 		// assert
 		Assertions.assertThat(this.skillEntityController.updateSkill(this.mockedJSkill)).isInstanceOf(OkException.class);
 		// verify
