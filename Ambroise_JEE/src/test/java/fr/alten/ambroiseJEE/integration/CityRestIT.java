@@ -453,18 +453,4 @@ public class CityRestIT {
 		}
 	}
 
-	/**
-	 * This is no a Test ! This method has been set in a {@link Test} because its
-	 * not possible to drop the database in {@link AfterClass}. Indeed,
-	 * {@link Autowired} doesn't work with static access required by
-	 * {@link AfterClass}.
-	 * 
-	 * @author Kylian Gehier
-	 */
-	@Test
-	public void z_DroppingDatabase() {
-		// Last test run to drop the database for next test classes.
-		mongoTemplate.getDb().drop();
-	}
-
 }
