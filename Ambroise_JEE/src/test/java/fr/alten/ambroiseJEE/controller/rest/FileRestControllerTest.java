@@ -102,7 +102,7 @@ public class FileRestControllerTest {
 
 	@After
 	public void afterEachTest() {
-		fileRepository.deleteAll();
+		this.fileRepository.deleteAll();
 	}
 
 	/**

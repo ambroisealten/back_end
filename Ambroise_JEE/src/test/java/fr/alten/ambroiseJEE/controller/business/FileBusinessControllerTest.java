@@ -24,30 +24,19 @@ import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
- * 
+ *
  * @author Andy Chabalier
  *
  */
 @RunWith(MockitoJUnitRunner.class)
 public class FileBusinessControllerTest {
 
-	@InjectMocks
-	@Spy
-	private FileBusinessController fileBusinessController;
-	@Mock
-	private FileEntityController fileEntityController;
-	@Mock
-	private FileRepository fileRepository;
-
-	@Mock
-	private HttpException mockedHttpException;
-
 	@SpyBean
 	private static File spiedFile = new File();
 
 	@BeforeClass
 	public static void init() {
-		initFile();
+		FileBusinessControllerTest.initFile();
 	}
 
 	public static void initFile() {
@@ -55,6 +44,19 @@ public class FileBusinessControllerTest {
 		FileBusinessControllerTest.spiedFile.setExtension("");
 		FileBusinessControllerTest.spiedFile.setPath("");
 	}
+
+	@InjectMocks
+	@Spy
+	private FileBusinessController fileBusinessController;
+
+	@Mock
+	private FileEntityController fileEntityController;
+
+	@Mock
+	private FileRepository fileRepository;
+
+	@Mock
+	private HttpException mockedHttpException;
 
 	@Test
 	public void createDocument() {
@@ -76,6 +78,25 @@ public class FileBusinessControllerTest {
 	}
 
 	@Test
+	public void deleteFile() {
+		Mockito.doReturn(true).when(this.fileBusinessController).isAdmin(ArgumentMatchers.any(UserRole.class));
+		Mockito.when(this.fileEntityController.deleteFile("")).thenReturn(this.mockedHttpException);
+
+		// assert
+		Assertions.assertThat(this.fileBusinessController.deleteFile("", UserRole.MANAGER_ADMIN))
+				.isInstanceOf(HttpException.class);
+	}
+
+	@Test
+	public void deleteFile_with_ForbiddenError() {
+		Mockito.doReturn(false).when(this.fileBusinessController).isAdmin(ArgumentMatchers.any(UserRole.class));
+
+		// assert
+		Assertions.assertThat(this.fileBusinessController.deleteFile("", UserRole.MANAGER_ADMIN))
+				.isInstanceOf(ForbiddenException.class);
+	}
+
+	@Test
 	public void getCollectionFiles() {
 		Mockito.doReturn(true).when(this.fileBusinessController).isAdmin(ArgumentMatchers.any(UserRole.class));
 		Mockito.when(this.fileEntityController.getCollectionFiles(ArgumentMatchers.anyString()))
@@ -92,6 +113,37 @@ public class FileBusinessControllerTest {
 
 		// assert
 		this.fileBusinessController.getCollectionFiles("", UserRole.MANAGER_ADMIN);
+	}
+
+	@Test
+	public void getDocument() {
+		Mockito.doReturn(true).when(this.fileBusinessController).haveAccess(ArgumentMatchers.any(UserRole.class));
+		Mockito.doReturn(true).when(this.fileBusinessController).isValid(ArgumentMatchers.anyString());
+		Mockito.doReturn(FileBusinessControllerTest.spiedFile).when(this.fileEntityController)
+				.getFile(ArgumentMatchers.any(ObjectId.class));
+
+		// assert
+		Assertions
+				.assertThat(this.fileBusinessController.getDocument(
+						FileBusinessControllerTest.spiedFile.get_id().toHexString(), UserRole.MANAGER_ADMIN))
+				.isInstanceOf(File.class);
+	}
+
+	@Test(expected = ForbiddenException.class)
+	public void getDocument_with_ForbiddenException() {
+		Mockito.doReturn(false).when(this.fileBusinessController).haveAccess(ArgumentMatchers.any(UserRole.class));
+
+		// assert
+		this.fileBusinessController.getDocument("", UserRole.MANAGER_ADMIN);
+	}
+
+	@Test(expected = UnprocessableEntityException.class)
+	public void getDocument_with_unprocessableEntityException() {
+		Mockito.doReturn(true).when(this.fileBusinessController).haveAccess(ArgumentMatchers.any(UserRole.class));
+		Mockito.doReturn(false).when(this.fileBusinessController).isValid(ArgumentMatchers.anyString());
+
+		// assert
+		this.fileBusinessController.getDocument(new ObjectId().toHexString(), UserRole.MANAGER_ADMIN);
 	}
 
 	@Test
@@ -147,53 +199,5 @@ public class FileBusinessControllerTest {
 		// assert
 		Assertions.assertThat(this.fileBusinessController.updateDocument("", "", "", UserRole.MANAGER_ADMIN))
 				.isInstanceOf(ForbiddenException.class);
-	}
-
-	@Test
-	public void deleteFile() {
-		Mockito.doReturn(true).when(this.fileBusinessController).isAdmin(ArgumentMatchers.any(UserRole.class));
-		Mockito.when(this.fileEntityController.deleteFile("")).thenReturn(this.mockedHttpException);
-
-		// assert
-		Assertions.assertThat(this.fileBusinessController.deleteFile("", UserRole.MANAGER_ADMIN))
-				.isInstanceOf(HttpException.class);
-	}
-
-	@Test
-	public void deleteFile_with_ForbiddenError() {
-		Mockito.doReturn(false).when(this.fileBusinessController).isAdmin(ArgumentMatchers.any(UserRole.class));
-
-		// assert
-		Assertions.assertThat(this.fileBusinessController.deleteFile("", UserRole.MANAGER_ADMIN))
-				.isInstanceOf(ForbiddenException.class);
-	}
-
-	@Test
-	public void getDocument() {
-		Mockito.doReturn(true).when(this.fileBusinessController).haveAccess(ArgumentMatchers.any(UserRole.class));
-		Mockito.doReturn(true).when(this.fileBusinessController).isValid(ArgumentMatchers.anyString());
-		Mockito.doReturn(spiedFile).when(this.fileEntityController).getFile(ArgumentMatchers.any(ObjectId.class));
-
-		// assert
-		Assertions.assertThat(
-				this.fileBusinessController.getDocument(spiedFile.get_id().toHexString(), UserRole.MANAGER_ADMIN))
-				.isInstanceOf(File.class);
-	}
-
-	@Test(expected = ForbiddenException.class)
-	public void getDocument_with_ForbiddenException() {
-		Mockito.doReturn(false).when(this.fileBusinessController).haveAccess(ArgumentMatchers.any(UserRole.class));
-
-		// assert
-		this.fileBusinessController.getDocument("", UserRole.MANAGER_ADMIN);
-	}
-
-	@Test(expected = UnprocessableEntityException.class)
-	public void getDocument_with_unprocessableEntityException() {
-		Mockito.doReturn(true).when(this.fileBusinessController).haveAccess(ArgumentMatchers.any(UserRole.class));
-		Mockito.doReturn(false).when(this.fileBusinessController).isValid(ArgumentMatchers.anyString());
-
-		// assert
-		this.fileBusinessController.getDocument(new ObjectId().toHexString(), UserRole.MANAGER_ADMIN);
 	}
 }

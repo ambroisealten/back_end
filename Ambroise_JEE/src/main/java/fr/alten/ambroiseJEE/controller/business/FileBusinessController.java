@@ -44,17 +44,6 @@ public class FileBusinessController {
 	}
 
 	/**
-	 * check if the role have access to method
-	 * 
-	 * @param role role to check
-	 * @return true if granted
-	 * @author Andy Chabalier
-	 */
-	public boolean haveAccess(final UserRole role) {
-		return isAdmin(role) || UserRole.MANAGER == role;
-	}
-
-	/**
 	 * delete a file
 	 *
 	 * @param _id  the id of file to delete
@@ -67,17 +56,6 @@ public class FileBusinessController {
 	 */
 	public HttpException deleteFile(final String _id, final UserRole role) {
 		return isAdmin(role) ? this.fileEntityController.deleteFile(_id) : new ForbiddenException();
-	}
-
-	/**
-	 * check if the user is admin
-	 * 
-	 * @param role the user'srole to check
-	 * @return true if admin
-	 * @author Andy Chabalier
-	 */
-	public boolean isAdmin(final UserRole role) {
-		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role;
 	}
 
 	/**
@@ -106,10 +84,6 @@ public class FileBusinessController {
 		throw new ForbiddenException();
 	}
 
-	public boolean isValid(final String _id) {
-		return ObjectId.isValid(_id);
-	}
-
 	/**
 	 * Fetch the list of all files
 	 *
@@ -136,6 +110,32 @@ public class FileBusinessController {
 			return this.fileEntityController.getFilesForum();
 		}
 		throw new ForbiddenException();
+	}
+
+	/**
+	 * check if the role have access to method
+	 *
+	 * @param role role to check
+	 * @return true if granted
+	 * @author Andy Chabalier
+	 */
+	public boolean haveAccess(final UserRole role) {
+		return isAdmin(role) || UserRole.MANAGER == role;
+	}
+
+	/**
+	 * check if the user is admin
+	 *
+	 * @param role the user'srole to check
+	 * @return true if admin
+	 * @author Andy Chabalier
+	 */
+	public boolean isAdmin(final UserRole role) {
+		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role;
+	}
+
+	public boolean isValid(final String _id) {
+		return ObjectId.isValid(_id);
 	}
 
 	/**

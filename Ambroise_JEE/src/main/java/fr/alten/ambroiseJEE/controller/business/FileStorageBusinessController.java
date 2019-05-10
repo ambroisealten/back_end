@@ -87,12 +87,20 @@ public class FileStorageBusinessController {
 	}
 
 	/**
-	 * @param role
+	 * @param fileName
+	 * @param newPath
+	 * @author Andy Chabalier
+	 */
+	public boolean fileNameAndPathIntegrity(final String fileName, final String newPath) {
+		return fileName.contains("['{}[\\]\\\\;':\",./?!@#$%&*()_+=-]") || !newPath.endsWith("/");
+	}
+
+	/**
 	 * @return
 	 * @author Andy Chabalier
 	 */
-	public boolean isAdmin(final UserRole role) {
-		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role;
+	public Path getFileStorageLocationAbsolutePath() {
+		return this.fileStorageLocation.toAbsolutePath();
 	}
 
 	/**
@@ -109,6 +117,15 @@ public class FileStorageBusinessController {
 		} catch (final Exception ex) {
 			throw new ConflictException();
 		}
+	}
+
+	/**
+	 * @param role
+	 * @return
+	 * @author Andy Chabalier
+	 */
+	public boolean isAdmin(final UserRole role) {
+		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role;
 	}
 
 	/**
@@ -196,14 +213,6 @@ public class FileStorageBusinessController {
 	}
 
 	/**
-	 * @return
-	 * @author Andy Chabalier
-	 */
-	public Path getFileStorageLocationAbsolutePath() {
-		return this.fileStorageLocation.toAbsolutePath();
-	}
-
-	/**
 	 * @param fileName
 	 * @param oldLocation
 	 * @param newDirPath
@@ -216,15 +225,6 @@ public class FileStorageBusinessController {
 		final Path targetLocation = newDirPath.resolve(fileName);
 
 		Files.move(oldLocation, targetLocation, StandardCopyOption.ATOMIC_MOVE);
-	}
-
-	/**
-	 * @param fileName
-	 * @param newPath
-	 * @author Andy Chabalier
-	 */
-	public boolean fileNameAndPathIntegrity(final String fileName, final String newPath) {
-		return (fileName.contains("['{}[\\]\\\\;':\",./?!@#$%&*()_+=-]") || !newPath.endsWith("/"));
 	}
 
 	/**
@@ -246,22 +246,33 @@ public class FileStorageBusinessController {
 		if (!(isAdmin(role) || UserRole.MANAGER == role)) {
 			return new ForbiddenException();
 		}
-
 		try {
 			if (fileNameAndPathIntegrity(fileName, path)) {
 				return new UnprocessableEntityException();
 			}
-
-			final Path dirPath = Paths.get(getFileStorageLocationAbsolutePath() + path);
-			Files.createDirectories(dirPath);
-			final Path targetLocation = dirPath.resolve(fileName);
-			final InputStream fileInputStream = file.getInputStream();
-			Files.copy(fileInputStream, targetLocation);
-			fileInputStream.close();
-			return new CreatedException();
+			return storeFileTo(file, path, fileName);
 		} catch (final IOException ex) {
 			return new InternalServerErrorException();
 		}
+	}
+
+	/**
+	 * @param file
+	 * @param path
+	 * @param fileName
+	 * @return
+	 * @throws IOException
+	 * @author Andy Chabalier
+	 */
+	public HttpException storeFileTo(final MultipartFile file, final String path, final String fileName)
+			throws IOException {
+		final Path dirPath = Paths.get(getFileStorageLocationAbsolutePath() + path);
+		Files.createDirectories(dirPath);
+		final Path targetLocation = dirPath.resolve(fileName);
+		final InputStream fileInputStream = file.getInputStream();
+		Files.copy(fileInputStream, targetLocation);
+		fileInputStream.close();
+		return new CreatedException();
 	}
 
 }
