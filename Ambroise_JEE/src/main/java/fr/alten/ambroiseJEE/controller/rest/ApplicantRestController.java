@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -37,6 +36,10 @@ import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 @Controller
 public class ApplicantRestController {
 
+	public boolean checkJsonIntegrity(final JsonNode params, final String... fields) {
+		return JsonUtils.checkJsonIntegrity(params, fields);
+	}
+	
 	@Autowired
 	private ApplicantBusinessController applicantBusinessController;
 
@@ -56,16 +59,15 @@ public class ApplicantRestController {
 	 * @return {@link HttpException} corresponding to the status of the request
 	 *         ({@link ConflictException} if there is a conflict in the database and
 	 *         {@link CreatedException} if the person(applicant) is created
-	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author Lucas Royackkers
+	 * @throws ParseException 
 	 */
 	@PostMapping(value = "/applicant")
 	@ResponseBody
 	public HttpException createApplicant(@RequestBody final JsonNode params,@RequestAttribute("mail") final String mail,
-			@RequestAttribute("role") final UserRole role) throws Exception {
-		((ObjectNode) params).put("personInChargeMail", mail);
-		return JsonUtils.checkJsonIntegrity(params, "mail")
-				? this.applicantBusinessController.createApplicant(params, role)
+			@RequestAttribute("role") final UserRole role) throws ParseException {
+		return checkJsonIntegrity(params, "mail")
+				? this.applicantBusinessController.createApplicant(params, role, mail)
 				: new UnprocessableEntityException();
 	}
 
@@ -84,7 +86,7 @@ public class ApplicantRestController {
 	@ResponseBody
 	public HttpException deleteApplicant(@RequestBody final JsonNode params,
 			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
-		return JsonUtils.checkJsonIntegrity(params, "mail")
+		return checkJsonIntegrity(params, "mail")
 				? this.applicantBusinessController.deleteApplicant(params, role)
 				: new UnprocessableEntityException();
 	}
@@ -137,9 +139,8 @@ public class ApplicantRestController {
 	public HttpException updateApplicant(@RequestBody final JsonNode params,
 			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role)
 			throws ParseException {
-		((ObjectNode) params).put("personInChargeMail", mail);
-		return JsonUtils.checkJsonIntegrity(params, "mail")
-				? this.applicantBusinessController.updateApplicant(params, role)
+		return checkJsonIntegrity(params, "mail")
+				? this.applicantBusinessController.updateApplicant(params, role, mail)
 				: new UnprocessableEntityException();
 	}
 }

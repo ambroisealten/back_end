@@ -34,7 +34,7 @@ public class PersonBusinessController {
 	 * @throws ForbiddenException (if the user hasn't the right to do so)
 	 */
 	public Person getPerson(final String mail, final UserRole role) {
-		if (this.roles.isAdmin(role) || this.roles.isManagerOrCdr(role)) {
+		if (this.isConnected(role)) {
 			try {
 				return this.personEntityController.getPersonByMail(mail);
 			} catch (final ResourceNotFoundException e) {
@@ -42,6 +42,17 @@ public class PersonBusinessController {
 			}
 		}
 		throw new ForbiddenException();
+	}
+	
+	/**
+	 * Method to test if the user is connected (not an consultant or a deactivated user)
+	 * 
+	 * @param role the current logged user's role
+	 * @return true if the user is connected, otherwise false
+	 * @author Lucas Royackkers
+	 */
+	public boolean isConnected(final UserRole role) {
+		return this.roles.isNotConsultantOrDeactivated(role);
 	}
 
 }
