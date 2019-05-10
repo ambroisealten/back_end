@@ -25,15 +25,16 @@ import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 @Service
 public class ConsultantBusinessController {
 	private final UserRoleLists roles = UserRoleLists.getInstance();
-	
+
 	@Autowired
 	private PersonEntityController personEntityController;
 
 	/**
 	 * Method to delegate consultant creation
-	 * @param role  the user's role
+	 * 
+	 * @param role               the user's role
 	 * @param personInChargeMail TODO
-	 * @param jUser JsonNode with all consultant(person) parameters
+	 * @param jUser              JsonNode with all consultant(person) parameters
 	 *
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ForbiddenException} if the current user hasn't the
@@ -41,7 +42,8 @@ public class ConsultantBusinessController {
 	 * @author Lucas Royackkers
 	 * @throws ParseException
 	 */
-	public HttpException createConsultant(final JsonNode jConsultant, final UserRole role, String personInChargeMail) throws ParseException {
+	public HttpException createConsultant(final JsonNode jConsultant, final UserRole role, String personInChargeMail)
+			throws ParseException {
 		if (this.isManagerOrCdrAdmin(role)) {
 			return this.personEntityController.createPerson(jConsultant, PersonRole.CONSULTANT, personInChargeMail);
 		} else {
@@ -100,8 +102,8 @@ public class ConsultantBusinessController {
 	/**
 	 * Method to delegate consultant update
 	 *
-	 * @param params JsonNode with all parameters
-	 * @param role   the user's role
+	 * @param params             JsonNode with all parameters
+	 * @param role               the user's role
 	 * @param personInChargeMail TODO
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ForbiddenException} if the current user hasn't the
@@ -109,14 +111,14 @@ public class ConsultantBusinessController {
 	 * @author Lucas Royackkers
 	 * @throws ParseException
 	 */
-	public HttpException updateConsultant(final JsonNode params, final UserRole role, String personInChargeMail) throws ParseException {
+	public HttpException updateConsultant(final JsonNode params, final UserRole role, String personInChargeMail)
+			throws ParseException {
 		if (this.isManagerOrCdrAdmin(role)) {
 			return this.personEntityController.updatePerson(params, PersonRole.CONSULTANT, personInChargeMail);
 		}
 		return new ForbiddenException();
 	}
-	
-	
+
 	/**
 	 * Method to test if the user is a Manager (Admin or not) or a CDR_Admin
 	 * 
@@ -128,15 +130,15 @@ public class ConsultantBusinessController {
 		return this.roles.isManagerOrCdrAdmin(role);
 	}
 
-	
 	/**
-	 * Method to test if the user is connected (not an consultant or a deactivated user)
+	 * Method to test if the user is connected (not an consultant or a deactivated
+	 * user)
 	 * 
 	 * @param role the current logged user's role
 	 * @return true if the user is connected, otherwise false
 	 * @author Lucas Royackkers
 	 */
 	public boolean isConnected(final UserRole role) {
-		return this.roles.isNotConsultantOrDeactivated(role);
+		return this.roles.isNot_ConsultantOrDeactivated(role);
 	}
 }

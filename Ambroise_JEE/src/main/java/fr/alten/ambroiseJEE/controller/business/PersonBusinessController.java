@@ -43,16 +43,17 @@ public class PersonBusinessController {
 		}
 		throw new ForbiddenException();
 	}
-	
+
 	/**
-	 * Method to test if the user is connected (not an consultant or a deactivated user)
+	 * Method to test if the user is connected (not an consultant or a deactivated
+	 * user)
 	 * 
 	 * @param role the current logged user's role
 	 * @return true if the user is connected, otherwise false
 	 * @author Lucas Royackkers
 	 */
 	public boolean isConnected(final UserRole role) {
-		return this.roles.isNotConsultantOrDeactivated(role);
+		return this.roles.isNot_ConsultantOrDeactivated(role);
 	}
 
 }

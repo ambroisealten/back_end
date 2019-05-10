@@ -27,15 +27,15 @@ import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 @Service
 public class ApplicantBusinessController {
 	private final UserRoleLists roles = UserRoleLists.getInstance();
-	
+
 	@Autowired
 	private PersonEntityController personEntityController;
 
 	/**
 	 * Method to delegate applicant creation
 	 *
-	 * @param jApplicant JsonNode with all applicant(person) parameters
-	 * @param role       the user's role
+	 * @param jApplicant         JsonNode with all applicant(person) parameters
+	 * @param role               the user's role
 	 * @param personInChargeMail TODO
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ForbiddenException} if the current user hasn't the
@@ -44,7 +44,8 @@ public class ApplicantBusinessController {
 	 * @author Lucas Royackkers
 	 * @throws ParseException, ForbiddenException
 	 */
-	public HttpException createApplicant(final JsonNode jApplicant, final UserRole role, String personInChargeMail) throws ParseException {
+	public HttpException createApplicant(final JsonNode jApplicant, final UserRole role, String personInChargeMail)
+			throws ParseException {
 		if (this.isManagerOrCdrAdmin(role)) {
 			return this.personEntityController.createPerson(jApplicant, PersonRole.APPLICANT, personInChargeMail);
 		}
@@ -103,8 +104,8 @@ public class ApplicantBusinessController {
 	/**
 	 * Method to delegate applicant's update
 	 *
-	 * @param params JsonNode containing all the parameters
-	 * @param role   the user's role
+	 * @param params             JsonNode containing all the parameters
+	 * @param role               the user's role
 	 * @param personInChargeMail TODO
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ForbiddenException} if the current user hasn't the
@@ -113,13 +114,14 @@ public class ApplicantBusinessController {
 	 * @author Lucas Royackkers
 	 * @throws ParseException, ForbiddenException
 	 */
-	public HttpException updateApplicant(final JsonNode params, final UserRole role, String personInChargeMail) throws ParseException {
+	public HttpException updateApplicant(final JsonNode params, final UserRole role, String personInChargeMail)
+			throws ParseException {
 		if (this.isManagerOrCdrAdmin(role)) {
 			return this.personEntityController.updatePerson(params, PersonRole.APPLICANT, personInChargeMail);
 		}
 		return new ForbiddenException();
 	}
-	
+
 	/**
 	 * Method to test if the user is a Manager (Admin or not) or a CDR_Admin
 	 * 
@@ -131,16 +133,16 @@ public class ApplicantBusinessController {
 		return this.roles.isManagerOrCdrAdmin(role);
 	}
 
-	
 	/**
-	 * Method to test if the user is connected (not an consultant or a deactivated user)
+	 * Method to test if the user is connected (not an consultant or a deactivated
+	 * user)
 	 * 
 	 * @param role the current logged user's role
 	 * @return true if the user is connected, otherwise false
 	 * @author Lucas Royackkers
 	 */
 	public boolean isConnected(final UserRole role) {
-		return this.roles.isNotConsultantOrDeactivated(role);
+		return this.roles.isNot_ConsultantOrDeactivated(role);
 	}
 
 }
