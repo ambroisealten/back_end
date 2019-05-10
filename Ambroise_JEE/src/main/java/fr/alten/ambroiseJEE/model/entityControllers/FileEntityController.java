@@ -43,7 +43,8 @@ public class FileEntityController {
 	 */
 	public HttpException deleteFile(final String _id) {
 		try {
-			this.fileRepository.delete(this.fileRepository.findBy_id(new ObjectId(_id)).get());
+			final File fileToDelete = this.fileRepository.findBy_id(new ObjectId(_id)).get();
+			this.fileRepository.delete(fileToDelete);
 		} catch (final Exception e) {
 			return new ResourceNotFoundException();
 		}
