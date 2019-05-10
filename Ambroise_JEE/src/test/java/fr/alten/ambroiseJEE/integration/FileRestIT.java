@@ -22,6 +22,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.index.IndexInfo;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
@@ -247,23 +248,24 @@ public class FileRestIT {
 		Assertions.assertThat(this.fileRepository.findAll()).isEmpty();
 	}
 
-//	@Test
-//	public void downloadFile() throws Exception {
-//
-//		File createdFile = this.createFile();
-//
-//		final MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders
-//				.get("/file/" + createdFile.get_id().toHexString()).contentType(MediaType.APPLICATION_JSON)
-//				.param("_id", new ObjectId().toHexString()).param("path", "").param("extension", "")).andReturn();
-//
-//		// Checking that the ResponseBody contain a ResourceNotFoundException
-//		Assert.assertTrue(
-//				result.getResponse().getHeader(HttpHeaders.CONTENT_DISPOSITION).contains("attachment; filename=\""));
-//
-//		// destroy physical file
-//		this.fileStorageBusinessController.deleteFile(createdFile.get_id().toHexString(), createdFile.getPath(),
-//				createdFile.getExtension(), UserRole.MANAGER_ADMIN);
-//	}
+	@Test
+	public void downloadFile() throws Exception {
+
+		File createdFile = this.createFile();
+
+		final MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders
+				.get("/file/" + createdFile.get_id().toHexString() + "." + createdFile.getExtension())
+				.contentType(MediaType.APPLICATION_JSON).param("_id", new ObjectId().toHexString())
+				.param("path", createdFile.getPath())).andReturn();
+
+		// Checking that the ResponseBody contain a ResourceNotFoundException
+		Assert.assertTrue(
+				result.getResponse().getHeader(HttpHeaders.CONTENT_DISPOSITION).contains("attachment; filename=\""));
+
+		// destroy physical file
+		this.fileStorageBusinessController.deleteFile(createdFile.get_id().toHexString(), createdFile.getPath(),
+				createdFile.getExtension(), UserRole.MANAGER_ADMIN);
+	}
 
 	@Test
 	public void y_testIndex() {
