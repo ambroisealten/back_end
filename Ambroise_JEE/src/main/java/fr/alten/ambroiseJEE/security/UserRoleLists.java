@@ -74,7 +74,13 @@ public class UserRoleLists {
 		return role == UserRole.CDR || role == UserRole.MANAGER;
 	}
 	
-	public boolean isNotConsultantOrDeactivated(final UserRole role) {
+	/**
+	 *
+	 * @param role {@link UserRole} to test if he is Consultant or Deactivated
+	 * @return false if Consultant or Deactivated, otherwise true
+	 * @author Kylian Gehier
+	 */
+	public boolean isNot_ConsultantOrDeactivated(final UserRole role) {
 		return role != UserRole.DEACTIVATED && role != UserRole.CONSULTANT; 
 	}
 
