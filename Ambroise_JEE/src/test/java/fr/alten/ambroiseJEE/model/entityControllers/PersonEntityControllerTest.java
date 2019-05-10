@@ -127,7 +127,7 @@ public class PersonEntityControllerTest {
 		Mockito.doReturn(false).when(this.personEntityController).validateMail(ArgumentMatchers.anyString());
 
 		// assert
-		Assertions.assertThat(this.personEntityController.createPerson(jPerson, PersonRole.APPLICANT))
+		Assertions.assertThat(this.personEntityController.createPerson(jPerson, PersonRole.APPLICANT, ""))
 				.isInstanceOf(UnprocessableEntityException.class);
 
 		// verify
@@ -148,7 +148,7 @@ public class PersonEntityControllerTest {
 		Mockito.doReturn(false).when(this.personEntityController).validateMail(ArgumentMatchers.anyString());
 
 		// assert
-		Assertions.assertThat(this.personEntityController.createPerson(jPerson, PersonRole.CONSULTANT))
+		Assertions.assertThat(this.personEntityController.createPerson(jPerson, PersonRole.CONSULTANT, ""))
 				.isInstanceOf(UnprocessableEntityException.class);
 
 		// verify
@@ -191,9 +191,9 @@ public class PersonEntityControllerTest {
 		Mockito.doThrow(this.mockedDuplicateKeyException).when(this.personRepository)
 				.save(ArgumentMatchers.any(Person.class));
 		// assert
-		Assertions.assertThat(this.personEntityController.createPerson(jPerson, PersonRole.APPLICANT))
+		Assertions.assertThat(this.personEntityController.createPerson(jPerson, PersonRole.APPLICANT, ""))
 				.isInstanceOf(ConflictException.class);
-		Assertions.assertThat(this.personEntityController.createPerson(jPerson, PersonRole.APPLICANT))
+		Assertions.assertThat(this.personEntityController.createPerson(jPerson, PersonRole.APPLICANT, ""))
 				.isInstanceOf(ConflictException.class);
 		// verify
 		Mockito.verify(this.personRepository, Mockito.times(2)).save(ArgumentMatchers.any(Person.class));
@@ -236,9 +236,9 @@ public class PersonEntityControllerTest {
 		Mockito.doThrow(this.mockedDuplicateKeyException).when(this.personRepository)
 				.save(ArgumentMatchers.any(Person.class));
 		// assert
-		Assertions.assertThat(this.personEntityController.createPerson(jPerson, PersonRole.CONSULTANT))
+		Assertions.assertThat(this.personEntityController.createPerson(jPerson, PersonRole.CONSULTANT, ""))
 				.isInstanceOf(ConflictException.class);
-		Assertions.assertThat(this.personEntityController.createPerson(jPerson, PersonRole.CONSULTANT))
+		Assertions.assertThat(this.personEntityController.createPerson(jPerson, PersonRole.CONSULTANT, ""))
 				.isInstanceOf(ConflictException.class);
 		// verify
 		Mockito.verify(this.personRepository, Mockito.times(2)).save(ArgumentMatchers.any(Person.class));
@@ -262,7 +262,7 @@ public class PersonEntityControllerTest {
 				.getUserByMail(ArgumentMatchers.anyString());
 
 		// assert
-		Assertions.assertThat(this.personEntityController.createPerson(jPerson, PersonRole.APPLICANT))
+		Assertions.assertThat(this.personEntityController.createPerson(jPerson, PersonRole.APPLICANT, ""))
 				.isInstanceOf(ResourceNotFoundException.class);
 		// verify
 		Mockito.verify(this.personRepository, Mockito.never()).save(ArgumentMatchers.any(Person.class));
@@ -286,7 +286,7 @@ public class PersonEntityControllerTest {
 				.getUserByMail(ArgumentMatchers.anyString());
 
 		// assert
-		Assertions.assertThat(this.personEntityController.createPerson(jPerson, PersonRole.CONSULTANT))
+		Assertions.assertThat(this.personEntityController.createPerson(jPerson, PersonRole.CONSULTANT, ""))
 				.isInstanceOf(ResourceNotFoundException.class);
 		// verify
 		Mockito.verify(this.personRepository, Mockito.never()).save(ArgumentMatchers.any(Person.class));
@@ -325,9 +325,9 @@ public class PersonEntityControllerTest {
 				.thenReturn(spiedEmployer);
 
 		// assert
-		Assertions.assertThat(this.personEntityController.createPerson(jPerson, PersonRole.APPLICANT))
+		Assertions.assertThat(this.personEntityController.createPerson(jPerson, PersonRole.APPLICANT, ""))
 				.isInstanceOf(CreatedException.class);
-		Assertions.assertThat(this.personEntityController.createPerson(jPerson, PersonRole.APPLICANT))
+		Assertions.assertThat(this.personEntityController.createPerson(jPerson, PersonRole.APPLICANT, ""))
 				.isInstanceOf(CreatedException.class);
 		// verify
 		Mockito.verify(this.personRepository, Mockito.times(2)).save(ArgumentMatchers.any(Person.class));
@@ -366,9 +366,9 @@ public class PersonEntityControllerTest {
 				.thenReturn(spiedEmployer);
 
 		// assert
-		Assertions.assertThat(this.personEntityController.createPerson(jPerson, PersonRole.CONSULTANT))
+		Assertions.assertThat(this.personEntityController.createPerson(jPerson, PersonRole.CONSULTANT, ""))
 				.isInstanceOf(CreatedException.class);
-		Assertions.assertThat(this.personEntityController.createPerson(jPerson, PersonRole.CONSULTANT))
+		Assertions.assertThat(this.personEntityController.createPerson(jPerson, PersonRole.CONSULTANT, ""))
 				.isInstanceOf(CreatedException.class);
 		// verify
 		Mockito.verify(this.personRepository, Mockito.times(2)).save(ArgumentMatchers.any(Person.class));
@@ -767,9 +767,9 @@ public class PersonEntityControllerTest {
 		Mockito.doThrow(this.mockedDuplicateKeyException).when(this.personRepository)
 				.save(ArgumentMatchers.any(Person.class));
 		// assert
-		Assertions.assertThat(this.personEntityController.updatePerson(jPerson, PersonRole.APPLICANT))
+		Assertions.assertThat(this.personEntityController.updatePerson(jPerson, PersonRole.APPLICANT, ""))
 				.isInstanceOf(ConflictException.class);
-		Assertions.assertThat(this.personEntityController.updatePerson(jPerson, PersonRole.APPLICANT))
+		Assertions.assertThat(this.personEntityController.updatePerson(jPerson, PersonRole.APPLICANT, ""))
 				.isInstanceOf(ConflictException.class);
 		// verify
 		Mockito.verify(this.personRepository, Mockito.times(2)).save(ArgumentMatchers.any(Person.class));
@@ -811,9 +811,9 @@ public class PersonEntityControllerTest {
 		Mockito.doThrow(this.mockedDuplicateKeyException).when(this.personRepository)
 				.save(ArgumentMatchers.any(Person.class));
 		// assert
-		Assertions.assertThat(this.personEntityController.updatePerson(jPerson, PersonRole.CONSULTANT))
+		Assertions.assertThat(this.personEntityController.updatePerson(jPerson, PersonRole.CONSULTANT, ""))
 				.isInstanceOf(ConflictException.class);
-		Assertions.assertThat(this.personEntityController.updatePerson(jPerson, PersonRole.CONSULTANT))
+		Assertions.assertThat(this.personEntityController.updatePerson(jPerson, PersonRole.CONSULTANT, ""))
 				.isInstanceOf(ConflictException.class);
 		// verify
 		Mockito.verify(this.personRepository, Mockito.times(2)).save(ArgumentMatchers.any(Person.class));
@@ -835,7 +835,7 @@ public class PersonEntityControllerTest {
 		Mockito.doReturn("anyString").when(this.mockedJPerson).textValue();
 		Mockito.doReturn(emptyPersonOptional).when(this.personRepository).findByMailAndRole(ArgumentMatchers.anyString(),ArgumentMatchers.any(PersonRole.class));
 		// assert
-		Assertions.assertThat(this.personEntityController.updatePerson(this.mockedJPerson,PersonRole.APPLICANT))
+		Assertions.assertThat(this.personEntityController.updatePerson(this.mockedJPerson,PersonRole.APPLICANT, ""))
 				.isInstanceOf(ResourceNotFoundException.class);
 		// verify
 		Mockito.verify(this.personRepository, Mockito.never()).save(ArgumentMatchers.any(Person.class));
@@ -857,7 +857,7 @@ public class PersonEntityControllerTest {
 		Mockito.doReturn("anyString").when(this.mockedJPerson).textValue();
 		Mockito.doReturn(emptyPersonOptional).when(this.personRepository).findByMailAndRole(ArgumentMatchers.anyString(),ArgumentMatchers.any(PersonRole.class));
 		// assert
-		Assertions.assertThat(this.personEntityController.updatePerson(this.mockedJPerson,PersonRole.APPLICANT))
+		Assertions.assertThat(this.personEntityController.updatePerson(this.mockedJPerson,PersonRole.APPLICANT, ""))
 				.isInstanceOf(ResourceNotFoundException.class);
 		// verify
 		Mockito.verify(this.personRepository, Mockito.never()).save(ArgumentMatchers.any(Person.class));
@@ -898,9 +898,9 @@ public class PersonEntityControllerTest {
 		Mockito.doReturn(notEmptyPersonOptional).when(this.personRepository)
 				.findByMailAndRole(ArgumentMatchers.anyString(), ArgumentMatchers.any(PersonRole.class));
 		// assert
-		Assertions.assertThat(this.personEntityController.updatePerson(jPerson, PersonRole.APPLICANT))
+		Assertions.assertThat(this.personEntityController.updatePerson(jPerson, PersonRole.APPLICANT, ""))
 				.isInstanceOf(OkException.class);
-		Assertions.assertThat(this.personEntityController.updatePerson(jPerson, PersonRole.APPLICANT))
+		Assertions.assertThat(this.personEntityController.updatePerson(jPerson, PersonRole.APPLICANT, ""))
 				.isInstanceOf(OkException.class);
 		// verify
 		Mockito.verify(this.personRepository, Mockito.times(2)).save(ArgumentMatchers.any(Person.class));
@@ -941,9 +941,9 @@ public class PersonEntityControllerTest {
 		Mockito.doReturn(notEmptyPersonOptional).when(this.personRepository)
 				.findByMailAndRole(ArgumentMatchers.anyString(), ArgumentMatchers.any(PersonRole.class));
 		// assert
-		Assertions.assertThat(this.personEntityController.updatePerson(jPerson, PersonRole.CONSULTANT))
+		Assertions.assertThat(this.personEntityController.updatePerson(jPerson, PersonRole.CONSULTANT, ""))
 				.isInstanceOf(OkException.class);
-		Assertions.assertThat(this.personEntityController.updatePerson(jPerson, PersonRole.CONSULTANT))
+		Assertions.assertThat(this.personEntityController.updatePerson(jPerson, PersonRole.CONSULTANT, ""))
 				.isInstanceOf(OkException.class);
 		// verify
 		Mockito.verify(this.personRepository, Mockito.times(2)).save(ArgumentMatchers.any(Person.class));
