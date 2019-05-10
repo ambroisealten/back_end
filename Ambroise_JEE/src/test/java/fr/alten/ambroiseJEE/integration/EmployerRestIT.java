@@ -107,8 +107,8 @@ public class EmployerRestIT {
 
 	@After
 	public void afterEachTest() {
-		mongoTemplate.getDb().getCollection("user").drop();
-		mongoTemplate.getDb().getCollection("employer").drop();
+		userRepository.deleteAll();
+		employerRepository.deleteAll();
 
 	}
 
@@ -123,8 +123,8 @@ public class EmployerRestIT {
 		// setup
 		String newEmployer = "{" + "\"name\":\"newEmployer\"" + "}";
 
-		MvcResult result = this.mockMvc.perform(post("/employer").contentType(MediaType.APPLICATION_JSON).content(newEmployer))
-				.andReturn();
+		MvcResult result = this.mockMvc
+				.perform(post("/employer").contentType(MediaType.APPLICATION_JSON).content(newEmployer)).andReturn();
 
 		// Checking that the ResponseBody contain a CreatedException
 		assertTrue(result.getResponse().getContentAsString().contains("CreatedException"));
@@ -147,14 +147,14 @@ public class EmployerRestIT {
 		// Checking pre-insertion
 		assertTrue(this.employerRepository.findByName("newEmployer").isPresent());
 
-		MvcResult result = this.mockMvc.perform(post("/employer").contentType(MediaType.APPLICATION_JSON).content(newEmployer))
-				.andReturn();
+		MvcResult result = this.mockMvc
+				.perform(post("/employer").contentType(MediaType.APPLICATION_JSON).content(newEmployer)).andReturn();
 
 		// Checking that the ResponseBody contain a ConflictException
 		assertTrue(result.getResponse().getContentAsString().contains("ConflictException"));
 
 		// Checking only this.employer is in base
-		assertThat(this.employerRepository.findAll().size()).isEqualTo(1);
+		assertThat(this.employerRepository.count()).isEqualTo(1);
 	}
 
 	@Test
@@ -163,8 +163,8 @@ public class EmployerRestIT {
 		// setup
 		String newEmployer = "{}";
 
-		MvcResult result = this.mockMvc.perform(post("/employer").contentType(MediaType.APPLICATION_JSON).content(newEmployer))
-				.andReturn();
+		MvcResult result = this.mockMvc
+				.perform(post("/employer").contentType(MediaType.APPLICATION_JSON).content(newEmployer)).andReturn();
 
 		// Checking that the ResponseBody contain a UnprocessableEntityException
 		assertTrue(result.getResponse().getContentAsString().contains("UnprocessableEntityException"));
@@ -177,7 +177,8 @@ public class EmployerRestIT {
 
 		// setup
 		String employerToDelete = "{" + "\"name\":\"newEmployer\"" + "}";
-		// Pre-inserting a Employer with name code as this.employer for having a employer to delete
+		// Pre-inserting a Employer with name code as this.employer for having a
+		// employer to delete
 		// with success
 		employerRepository.insert(employer);
 		// Checking pre-insertion
@@ -186,7 +187,8 @@ public class EmployerRestIT {
 		assertTrue(employerOptional.isPresent());
 
 		MvcResult result = this.mockMvc
-				.perform(delete("/employer").contentType(MediaType.APPLICATION_JSON).content(employerToDelete)).andReturn();
+				.perform(delete("/employer").contentType(MediaType.APPLICATION_JSON).content(employerToDelete))
+				.andReturn();
 
 		// Checking that the ResponseBody contain a OkException
 		assertTrue(result.getResponse().getContentAsString().contains("OkException"));
@@ -204,7 +206,8 @@ public class EmployerRestIT {
 		assertFalse(this.employerRepository.findByName("employerFalse").isPresent());
 
 		MvcResult result = this.mockMvc
-				.perform(delete("/employer").contentType(MediaType.APPLICATION_JSON).content(employerToDelete)).andReturn();
+				.perform(delete("/employer").contentType(MediaType.APPLICATION_JSON).content(employerToDelete))
+				.andReturn();
 
 		// Checking that the ResponseBody contain a ResourceNotFoundException
 		assertTrue(result.getResponse().getContentAsString().contains("ResourceNotFoundException"));
@@ -217,7 +220,8 @@ public class EmployerRestIT {
 		String employerToDelete = "{}";
 
 		MvcResult result = this.mockMvc
-				.perform(delete("/employer").contentType(MediaType.APPLICATION_JSON).content(employerToDelete)).andReturn();
+				.perform(delete("/employer").contentType(MediaType.APPLICATION_JSON).content(employerToDelete))
+				.andReturn();
 
 		// Checking that the ResponseBody contain a UnprocessableEntityException
 		assertTrue(result.getResponse().getContentAsString().contains("UnprocessableEntityException"));
@@ -292,15 +296,16 @@ public class EmployerRestIT {
 		String employerToDelete = "{}";
 
 		MvcResult result = this.mockMvc
-				.perform(put("/employer").contentType(MediaType.APPLICATION_JSON).content(employerToDelete)).andReturn();
+				.perform(put("/employer").contentType(MediaType.APPLICATION_JSON).content(employerToDelete))
+				.andReturn();
 
 		assertTrue(result.getResponse().getContentAsString().contains("UnprocessableEntityException"));
 	}
 
-	@Test
-	public void z_DroppingDatabase() {
-		// Last test run to drop the database for next test classes.
-		mongoTemplate.getDb().drop();
-	}
+//	@Test
+//	public void z_DroppingDatabase() {
+//		// Last test run to drop the database for next test classes.
+//		mongoTemplate.getDb().drop();
+//	}
 
 }

@@ -6,6 +6,7 @@ package fr.alten.ambroiseJEE.model.entityControllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -41,7 +42,7 @@ public class RegionEntityController {
 	public HttpException createRegion(final JsonNode jRegion) {
 
 		final Region newRegion = new Region();
-		newRegion.setName(jRegion.get("nom").textValue());
+		newRegion.setNom(jRegion.get("nom").textValue());
 		newRegion.setCode(jRegion.get("code").textValue());
 
 		try {
@@ -53,21 +54,22 @@ public class RegionEntityController {
 	}
 
 	/**
-	 *
-	 * @param name the region name to fetch
+	 * Method to delete a region
+	 * 
+	 * @param jRegion JsonNode with all region parameters
 	 * @return {@link HttpException} corresponding to the status of the request
 	 *         ({@link ResourceNotFoundException} if the resource is not found and
 	 *         {@link OkException} if the region is deactivated
 	 * @author Andy Chabalier
 	 */
-	public HttpException deleteRegion(final String name) {
+	public HttpException deleteRegion(final JsonNode jRegion) {
 		try {
-			final Region region = this.regionRepository.findByName(name).orElseThrow(ResourceNotFoundException::new);
-			region.setName("deactivated" + System.currentTimeMillis());
+			final Region region = this.regionRepository.findByCode(jRegion.get("code").textValue()).orElseThrow(ResourceNotFoundException::new);
+			region.setNom("deactivated" + System.currentTimeMillis());
 			this.regionRepository.save(region);
 		} catch (final ResourceNotFoundException rnfe) {
 			return rnfe;
-		} catch (final Exception e) {
+		} catch (final DuplicateKeyException e) {
 			return new ConflictException();
 		}
 		return new OkException();
@@ -82,7 +84,7 @@ public class RegionEntityController {
 	 * @throws {@link ResourceNotFoundException} if the resource is not found
 	 */
 	public Region getRegion(final String name) {
-		return this.regionRepository.findByName(name).orElseThrow(ResourceNotFoundException::new);
+		return this.regionRepository.findByNom(name).orElseThrow(ResourceNotFoundException::new);
 	}
 
 	/**
@@ -99,21 +101,27 @@ public class RegionEntityController {
 	 *                perform the update even if the name is changed
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ResourceNotFoundException} if the resource is not
-	 *         found and {@link OkException} if the region is updated
+	 *         found, {@link ConflictException} if a duplicate unique field is
+	 *         trying to be saved by updating and {@link OkException} if the region is updated
 	 * @author Andy Chabalier
+	 * @author Camille Schnell
 	 */
 	public HttpException updateRegion(final JsonNode jRegion) {
-		try {
-			final Region region = this.regionRepository.findByName(jRegion.get("oldName").textValue())
-					.orElseThrow(ResourceNotFoundException::new);
-			region.setName(jRegion.get("name").textValue());
-			this.regionRepository.save(region);
-		} catch (final ResourceNotFoundException rnfe) {
-			throw rnfe;
-		} catch (final Exception e) {
-			return new ConflictException();
-		}
-		return new OkException();
+		return this.regionRepository.findByCode(jRegion.get("code").textValue())
+				// optional is present
+				.map(region -> {
+					region.setNom(jRegion.get("nom").textValue());
+					try {
+						this.regionRepository.save(region);
+					} catch (final DuplicateKeyException dke) {
+						return new ConflictException();
+					} catch (final Exception e) {
+						e.printStackTrace();
+					}
+					return new OkException();
+
+					// optional isn't present
+				}).orElse(new ResourceNotFoundException());
 	}
 
 }

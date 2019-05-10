@@ -3,10 +3,6 @@
  */
 package fr.alten.ambroiseJEE.controller.rest;
 
-import java.io.IOException;
-import java.nio.file.AtomicMoveNotSupportedException;
-import java.nio.file.DirectoryNotEmptyException;
-import java.nio.file.NoSuchFileException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -84,13 +80,11 @@ public class FileRestController {
 	public HttpException deleteFile(@RequestParam("_id") final String _id, @RequestParam("path") final String path,
 			@RequestParam("extension") final String extension, @RequestAttribute("mail") final String mail,
 			@RequestAttribute("role") final UserRole role) {
-		if (ObjectId.isValid(_id)) {
-			try {
-				this.fileStorageBusinessController.deleteFile(_id, path, extension, role);
-			} catch (final NoSuchFileException e) {
-				return new ResourceNotFoundException();
-			} catch (SecurityException | IOException e) {
-				return new InternalServerErrorException();
+		if (isValid(_id)) {
+			final HttpException deletionResult = this.fileStorageBusinessController.deleteFile(_id, path, extension,
+					role);
+			if (!OkException.class.isInstance(deletionResult)) {
+				return deletionResult;
 			}
 			return this.fileBusinessController.deleteFile(_id, role);
 		}
@@ -131,22 +125,14 @@ public class FileRestController {
 	}
 
 	/**
-	 * Send the requested resources. HTTP Method : GET
+	 * Check if a file is not null
 	 *
-	 * @param fileName the file's name to fetch
-	 * @param mail     the current logged user's mail
-	 * @param role     the current logged user's role
-	 * @param request  Request object with informations
-	 * @return the asked resource wrapped in an ResponseEntity
+	 * @param file file to check
+	 * @return true if the file is not null, else return false
 	 * @author Andy Chabalier
 	 */
-	@GetMapping("/file")
-	public String getFile(@RequestParam("fileName") final String fileName, @RequestAttribute("mail") final String mail,
-			@RequestAttribute("role") final UserRole role) {
-		if (ObjectId.isValid(fileName)) {
-			return gson.toJson(this.fileBusinessController.getDocument(fileName, role));
-		}
-		throw new UnprocessableEntityException();
+	public boolean fileNotNullCheck(final MultipartFile file) {
+		return !file.equals(null);
 	}
 
 	/**
@@ -161,6 +147,25 @@ public class FileRestController {
 	public String getCollectionFiles(@RequestParam("path") final String path,
 			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
 		return this.gson.toJson(this.fileBusinessController.getCollectionFiles(path, role));
+	}
+
+	/**
+	 * Send the requested resources. HTTP Method : GET
+	 *
+	 * @param fileName the file's name to fetch
+	 * @param mail     the current logged user's mail
+	 * @param role     the current logged user's role
+	 * @param request  Request object with informations
+	 * @return the asked resource wrapped in an ResponseEntity
+	 * @author Andy Chabalier
+	 */
+	@GetMapping("/file")
+	public String getFile(@RequestParam("fileName") final String fileName, @RequestAttribute("mail") final String mail,
+			@RequestAttribute("role") final UserRole role) {
+		if (isValid(fileName)) {
+			return this.gson.toJson(this.fileBusinessController.getDocument(fileName, role));
+		}
+		throw new UnprocessableEntityException();
 	}
 
 	/**
@@ -190,6 +195,10 @@ public class FileRestController {
 		return this.gson.toJson(this.fileBusinessController.getFilesForum(role));
 	}
 
+	public boolean isValid(final String _id) {
+		return ObjectId.isValid(_id);
+	}
+
 	/**
 	 *
 	 * @param _id         the id of the file to update
@@ -209,14 +218,11 @@ public class FileRestController {
 			@RequestParam("extension") final String extension, @RequestParam("displayName") final String displayName,
 			@RequestParam("newPath") final String newPath, @RequestParam("oldPath") final String oldPath,
 			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
-		if (ObjectId.isValid(_id)) {
-			try {
-				this.fileStorageBusinessController.moveFile(_id + "." + extension, oldPath, newPath, role);
-			} catch (SecurityException | UnsupportedOperationException | AtomicMoveNotSupportedException
-					| DirectoryNotEmptyException e) {
-				return new InternalServerErrorException();
-			} catch (final IOException e) {
-				return new ResourceNotFoundException();
+		if (isValid(_id)) {
+			final HttpException updateResult = this.fileStorageBusinessController.moveFile(_id + "." + extension,
+					oldPath, newPath, role);
+			if (!OkException.class.isInstance(updateResult)) {
+				return updateResult;
 			}
 			return this.fileBusinessController.updateDocument(_id, newPath, displayName, role);
 		}
@@ -240,7 +246,7 @@ public class FileRestController {
 	public File uploadFile(@RequestParam("file") final MultipartFile file, @RequestParam("path") final String path,
 			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
 
-		if (file != null) {
+		if (fileNotNullCheck(file)) {
 			final File newFile = this.fileBusinessController.createDocument(path, file.getOriginalFilename(), role);
 			this.fileStorageBusinessController.storeFile(file, newFile.getPath(),
 					newFile.get_id() + "." + newFile.getExtension(), role);

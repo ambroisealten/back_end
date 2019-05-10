@@ -63,7 +63,7 @@ public class MobilityEntityController {
 			final Departement departement = this.departementEntityController
 					.getDepartement(jMobility.get("place").textValue());
 			try {
-				newMobility.setPlaceName(departement.getName());
+				newMobility.setPlaceName(departement.getNom());
 			} catch (final ResourceNotFoundException rnfe) {
 			}
 			break;
@@ -78,7 +78,7 @@ public class MobilityEntityController {
 		case "region":
 			final Region region = this.regionEntityController.getRegion(jMobility.get("place").textValue());
 			try {
-				newMobility.setPlaceName(region.getName());
+				newMobility.setPlaceName(region.getNom());
 			} catch (final ResourceNotFoundException rnfe) {
 			}
 			break;

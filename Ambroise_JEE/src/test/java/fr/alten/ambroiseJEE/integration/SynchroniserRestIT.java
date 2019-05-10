@@ -13,6 +13,7 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,9 +23,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import fr.alten.ambroiseJEE.model.beans.BeansTest;
 import fr.alten.ambroiseJEE.model.beans.City;
 import fr.alten.ambroiseJEE.model.beans.User;
+import fr.alten.ambroiseJEE.model.dao.CityRepository;
+import fr.alten.ambroiseJEE.model.dao.DepartementRepository;
+import fr.alten.ambroiseJEE.model.dao.PostalCodeRepository;
+import fr.alten.ambroiseJEE.model.dao.RegionRepository;
 import fr.alten.ambroiseJEE.model.dao.UserRepository;
 import fr.alten.ambroiseJEE.utils.TokenIgnore;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
@@ -45,10 +49,23 @@ public class SynchroniserRestIT {
 
 	@Autowired
 	private MockMvc mockMvc;
+	@SuppressWarnings("unused")
 	@Autowired
 	private MongoTemplate mongoTemplate;
 	@Autowired
 	private UserRepository userRepository;
+
+	@Mock
+	private CityRepository cityRepository;
+
+	@Mock
+	private RegionRepository regionRepository;
+
+	@Mock
+	private DepartementRepository departementRepository;
+
+	@Mock
+	private PostalCodeRepository postalCodeRepository;
 
 	@BeforeClass
 	public static void beforeTests() {
@@ -89,8 +106,10 @@ public class SynchroniserRestIT {
 	 */
 	@After
 	public void afterEachTest() {
-		mongoTemplate.getDb().getCollection("user").drop();
-
+		cityRepository.deleteAll();
+		regionRepository.deleteAll();
+		departementRepository.deleteAll();
+		postalCodeRepository.deleteAll();
 	}
 
 	/**
@@ -123,19 +142,4 @@ public class SynchroniserRestIT {
 		// Checking that the ResponseBody contain a CreatedException
 		assertTrue(result.getResponse().getContentAsString().contains("OkException"));
 	}
-
-	/**
-	 * This is no a Test ! This method has been set in a {@link Test} because its
-	 * not possible to drop the database in {@link AfterClass}. Indeed,
-	 * {@link Autowired} doesn't work with static access required by
-	 * {@link AfterClass}.
-	 * 
-	 * @author Andy Chabalier
-	 */
-	@Test
-	public void z_DroppingDatabase() {
-		// Last test run to drop the database for next test classes.
-		mongoTemplate.getDb().drop();
-	}
-
 }

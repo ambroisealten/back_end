@@ -100,6 +100,8 @@ public class SectorRestIT {
 	@Before
 	public void beforeEachTest() {
 		userRepository.insert(userAdmin);
+		userRepository.deleteAll();
+		sectorRepository.deleteAll();
 	}
 
 	@After
@@ -151,7 +153,7 @@ public class SectorRestIT {
 		assertTrue(result.getResponse().getContentAsString().contains("ConflictException"));
 
 		// Checking only this.sector is in base
-		assertThat(this.sectorRepository.findAll().size()).isEqualTo(1);
+		assertThat(this.sectorRepository.count()).isEqualTo(1);
 	}
 
 	@Test
@@ -323,10 +325,10 @@ public class SectorRestIT {
 		}
 	}
 
-	@Test
-	public void z_DroppingDatabase() {
-		// Last test run to drop the database for next test classes.
-		mongoTemplate.getDb().drop();
-	}
+//	@Test
+//	public void z_DroppingDatabase() {
+//		// Last test run to drop the database for next test classes.
+//		mongoTemplate.getDb().drop();
+//	}
 
 }

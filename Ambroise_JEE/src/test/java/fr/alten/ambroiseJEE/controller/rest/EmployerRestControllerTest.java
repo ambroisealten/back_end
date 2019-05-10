@@ -193,7 +193,7 @@ public class EmployerRestControllerTest {
 	 * @author Lucas Royackkers
 	 */
 	@Test
-	public void getCities_expectingString() {
+	public void getEmployers_expectingString() {
 
 		// setup
 		Mockito.when(this.employerBusinessController.getEmployers(ArgumentMatchers.any(UserRole.class)))

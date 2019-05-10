@@ -19,6 +19,7 @@ import com.google.gson.GsonBuilder;
 
 import fr.alten.ambroiseJEE.controller.business.geographic.RegionBusinessController;
 import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.utils.JsonUtils;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
@@ -32,6 +33,10 @@ import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
  */
 @Controller
 public class RegionRestController {
+	
+	public boolean checkJsonIntegrity(final JsonNode params, final String... fields) {
+		return JsonUtils.checkJsonIntegrity(params, fields);
+	}
 
 	@Autowired
 	private RegionBusinessController regionBusinessController;
@@ -60,7 +65,7 @@ public class RegionRestController {
 	@ResponseBody
 	public HttpException createRegion(@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
 			@RequestAttribute("role") final UserRole role) {
-		return params.get("name") != null ? this.regionBusinessController.createRegion(params, role)
+		return checkJsonIntegrity(params, "nom", "code") ? this.regionBusinessController.createRegion(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -80,7 +85,7 @@ public class RegionRestController {
 	@ResponseBody
 	public HttpException deleteRegion(@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
 			@RequestAttribute("role") final UserRole role) {
-		return params.get("name") != null ? this.regionBusinessController.deleteRegion(params, role)
+		return checkJsonIntegrity(params, "code") ? this.regionBusinessController.deleteRegion(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -115,7 +120,7 @@ public class RegionRestController {
 	@ResponseBody
 	public HttpException updateRegion(@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
 			@RequestAttribute("role") final UserRole role) {
-		return params.get("name") != null ? this.regionBusinessController.updateRegion(params, role)
+		return checkJsonIntegrity(params, "nom", "code") ? this.regionBusinessController.updateRegion(params, role)
 				: new UnprocessableEntityException();
 	}
 }
