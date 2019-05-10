@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -36,6 +35,10 @@ import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
  */
 @Controller
 public class ConsultantRestController {
+	public boolean checkJsonIntegrity(final JsonNode params, final String... fields) {
+		return JsonUtils.checkJsonIntegrity(params, fields);
+	}
+	
 	@Autowired
 	private ConsultantBusinessController consultantBusinessController;
 
@@ -55,17 +58,15 @@ public class ConsultantRestController {
 	 * @return {@link HttpException} corresponding to the status of the request
 	 *         ({@link ConflictException} if the resource is not found and
 	 *         {@link CreatedException} if the person(consultant) is created
-	 * @throws Exception @see ForbiddenException if wrong identifiers
 	 * @author Lucas Royackkers
+	 * @throws ParseException 
 	 */
 	@PostMapping(value = "/consultant")
 	@ResponseBody
 	public HttpException createConsultant(@RequestBody final JsonNode params,
-			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role)
-			throws Exception {
-		((ObjectNode) params).put("personInChargeMail", mail);
-		return JsonUtils.checkJsonIntegrity(params, "mail")
-				? this.consultantBusinessController.createConsultant(params, role)
+			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) throws ParseException {
+		return checkJsonIntegrity(params, "mail")
+				? this.consultantBusinessController.createConsultant(params, role, mail)
 				: new UnprocessableEntityException();
 	}
 
@@ -84,7 +85,7 @@ public class ConsultantRestController {
 	@ResponseBody
 	public HttpException deleteConsultant(@RequestBody final JsonNode params,
 			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
-		return JsonUtils.checkJsonIntegrity(params, "mail")
+		return checkJsonIntegrity(params, "mail")
 				? this.consultantBusinessController.deleteConsultant(params, role)
 				: new UnprocessableEntityException();
 	}
@@ -137,9 +138,8 @@ public class ConsultantRestController {
 	public HttpException updateConsultant(@RequestBody final JsonNode params,
 			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role)
 			throws ParseException {
-		((ObjectNode) params).put("personInChargeMail", mail);
-		return JsonUtils.checkJsonIntegrity(params, "mail")
-				? this.consultantBusinessController.updateConsultant(params, role)
+		return checkJsonIntegrity(params, "mail")
+				? this.consultantBusinessController.updateConsultant(params, role, mail)
 				: new UnprocessableEntityException();
 	}
 

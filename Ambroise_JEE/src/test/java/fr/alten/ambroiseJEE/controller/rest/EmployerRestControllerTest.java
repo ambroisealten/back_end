@@ -35,24 +35,25 @@ public class EmployerRestControllerTest {
 	@InjectMocks
 	@Spy
 	private final EmployerRestController employerRestController = new EmployerRestController();
-	
+
 	@SpyBean
 	private final Employer spiedEmployer = new Employer();
 	@Spy
 	private JsonNode spiedJsonNode;
-	
+
 	@Mock
 	private EmployerBusinessController employerBusinessController;
 	@Mock
 	private JsonNode mockedJsonNode;
 	@Mock
 	private HttpException mockedHttpException;
-	
+
 	private final ObjectMapper mapper = new ObjectMapper();
-	
+
 	/**
 	 * @test testing several Json for integrity when createEmployer
-	 * @expected sucess for all json test cases
+	 * @expected sucess when the Json is fully given, otherwise
+	 *           {@link UnprocessableEntityException}
 	 * @author Lucas Royackkers
 	 */
 	@Test
@@ -90,8 +91,8 @@ public class EmployerRestControllerTest {
 	public void createEmployer_with_rightParam() {
 
 		// setup
-		Mockito.doReturn(true).when(this.employerRestController).checkJsonIntegrity(ArgumentMatchers.any(JsonNode.class),
-				ArgumentMatchers.any());
+		Mockito.doReturn(true).when(this.employerRestController)
+				.checkJsonIntegrity(ArgumentMatchers.any(JsonNode.class), ArgumentMatchers.any());
 		Mockito.when(this.employerBusinessController.createEmployer(this.mockedJsonNode, UserRole.CDR_ADMIN))
 				.thenReturn(this.mockedHttpException);
 
@@ -110,8 +111,8 @@ public class EmployerRestControllerTest {
 	public void createEmployer_with_wrongParam() {
 
 		// setup
-		Mockito.doReturn(false).when(this.employerRestController).checkJsonIntegrity(ArgumentMatchers.any(JsonNode.class),
-				ArgumentMatchers.any());
+		Mockito.doReturn(false).when(this.employerRestController)
+				.checkJsonIntegrity(ArgumentMatchers.any(JsonNode.class), ArgumentMatchers.any());
 
 		// assert
 		Assertions.assertThat(this.employerRestController.createEmployer(this.mockedJsonNode, UserRole.CDR_ADMIN))
@@ -159,8 +160,8 @@ public class EmployerRestControllerTest {
 	public void deleteEmployer_with_rightParam() {
 
 		// setup
-		Mockito.doReturn(true).when(this.employerRestController).checkJsonIntegrity(ArgumentMatchers.any(JsonNode.class),
-				ArgumentMatchers.any());
+		Mockito.doReturn(true).when(this.employerRestController)
+				.checkJsonIntegrity(ArgumentMatchers.any(JsonNode.class), ArgumentMatchers.any());
 		Mockito.when(this.employerBusinessController.deleteEmployer(this.mockedJsonNode, UserRole.CDR_ADMIN))
 				.thenReturn(this.mockedHttpException);
 
@@ -179,8 +180,8 @@ public class EmployerRestControllerTest {
 	public void deleteEmployer_with_wrongParam() {
 
 		// setup
-		Mockito.doReturn(false).when(this.employerRestController).checkJsonIntegrity(ArgumentMatchers.any(JsonNode.class),
-				ArgumentMatchers.any());
+		Mockito.doReturn(false).when(this.employerRestController)
+				.checkJsonIntegrity(ArgumentMatchers.any(JsonNode.class), ArgumentMatchers.any());
 
 		// assert
 		Assertions.assertThat(this.employerRestController.deleteEmployer(this.mockedJsonNode, UserRole.CDR_ADMIN))
@@ -216,7 +217,7 @@ public class EmployerRestControllerTest {
 				.updateEmployer(ArgumentMatchers.any(JsonNode.class), ArgumentMatchers.any(UserRole.class));
 
 		// setup : all needed fields present
-		final String valid = "{"+ " \"oldName\":\"oldName\",\r\n" + "\"name\":\"newName\"" + "}";
+		final String valid = "{" + " \"oldName\":\"oldName\",\r\n" + "\"name\":\"newName\"" + "}";
 
 		this.spiedJsonNode = this.mapper.readTree(valid);
 		// assert all field present
@@ -231,7 +232,6 @@ public class EmployerRestControllerTest {
 		Assertions.assertThat(this.employerRestController.updateEmployer(this.spiedJsonNode, UserRole.CDR))
 				.isInstanceOf(UnprocessableEntityException.class);
 
-
 	}
 
 	/**
@@ -245,8 +245,8 @@ public class EmployerRestControllerTest {
 	public void updateEmployer_with_rightParam() {
 
 		// setup
-		Mockito.doReturn(true).when(this.employerRestController).checkJsonIntegrity(ArgumentMatchers.any(JsonNode.class),
-				ArgumentMatchers.any());
+		Mockito.doReturn(true).when(this.employerRestController)
+				.checkJsonIntegrity(ArgumentMatchers.any(JsonNode.class), ArgumentMatchers.any());
 		Mockito.when(this.employerBusinessController.updateEmployer(this.mockedJsonNode, UserRole.CDR_ADMIN))
 				.thenReturn(this.mockedHttpException);
 
@@ -266,13 +266,13 @@ public class EmployerRestControllerTest {
 	public void updateEmployer_with_wrongParam() {
 
 		// setup
-		Mockito.doReturn(false).when(this.employerRestController).checkJsonIntegrity(ArgumentMatchers.any(JsonNode.class),
-				ArgumentMatchers.any());
+		Mockito.doReturn(false).when(this.employerRestController)
+				.checkJsonIntegrity(ArgumentMatchers.any(JsonNode.class), ArgumentMatchers.any());
 
 		// assert
 		Assertions.assertThat(this.employerRestController.updateEmployer(this.mockedJsonNode, UserRole.CDR_ADMIN))
 				.isInstanceOf(UnprocessableEntityException.class);
 
 	}
-	
+
 }

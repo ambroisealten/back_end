@@ -67,13 +67,14 @@ public class PersonEntityController {
 	 * @param jPerson JsonNode with all Person parameters, except its type (name,
 	 *                mail, job, monthlyWage, startDate)
 	 * @param type    PersonEnum the type of the created Person
+	 * @param personInChargeMail TODO
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request, {@link ResourceNotFoundException} if there is a problem in the parameters given,
 	 *         {@link ConflictException} if there is a conflict in the
 	 *         database and {@link CreatedException} if the person is created
 	 * @author Lucas Royackkers
 	 */
-	public HttpException createPerson(final JsonNode jPerson, final PersonRole type) {
+	public HttpException createPerson(final JsonNode jPerson, final PersonRole type, String personInChargeMail) {
 		try {
 			// if the mail don't match with the mail pattern
 			if (!validateMail(jPerson.get("mail").textValue())) {
@@ -88,7 +89,7 @@ public class PersonEntityController {
 			newPerson.setMail(jPerson.get("mail").textValue());
 
 			final User personInCharge = this.userEntityController
-					.getUserByMail(jPerson.get("personInChargeMail").textValue());
+					.getUserByMail(personInChargeMail);
 			newPerson.setPersonInChargeMail(personInCharge.getMail());
 
 			final String highestDiploma = jPerson.get("highestDiploma").textValue();
@@ -275,12 +276,13 @@ public class PersonEntityController {
 	 * @param jPerson JsonNode containing all parameters
 	 * @param role    the role of the concerned person (if it's an applicant or a
 	 *                consultant)
+	 * @param personInChargeMail TODO
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ResourceNotFoundException} if the resource isn't in
 	 *         the database and {@link OkException} if the person is updated
 	 * @author Lucas Royackkers
 	 */
-	public HttpException updatePerson(final JsonNode jPerson, final PersonRole role) {
+	public HttpException updatePerson(final JsonNode jPerson, final PersonRole role, String personInChargeMail) {
 		try {
 			final Person person = this.getPersonByMailAndType(jPerson.get("mail").textValue(), role);
 
@@ -291,7 +293,7 @@ public class PersonEntityController {
 			person.setRole(role);
 
 			final User personInCharge = this.userEntityController
-					.getUserByMail(jPerson.get("personInChargeMail").textValue());
+					.getUserByMail(personInChargeMail);
 			person.setPersonInChargeMail(personInCharge.getMail());
 
 			final String highestDiploma = jPerson.get("highestDiploma").textValue();

@@ -476,7 +476,7 @@ public class InitBaseWebService {
 				.toJsonNode(this.gson.toJsonTree(newCandidatMichel).getAsJsonObject());
 		((ObjectNode) newCandidatMichelJsonNode).put("monthlyWage", "2525");
 		((ObjectNode) newCandidatMichelJsonNode).putNull("urlDocs");
-		this.applicantBusinessController.createApplicant(newCandidatMichelJsonNode, UserRole.MANAGER_ADMIN);
+		this.applicantBusinessController.createApplicant(newCandidatMichelJsonNode, UserRole.MANAGER_ADMIN, null);
 
 		final Person newCandidatPaul = new Person();
 		newCandidatPaul.setSurname("Paul");
@@ -494,7 +494,7 @@ public class InitBaseWebService {
 				.toJsonNode(this.gson.toJsonTree(newCandidatPaul).getAsJsonObject());
 		((ObjectNode) newCandidatPaulJsonNode).put("monthlyWage", "2150");
 		((ObjectNode) newCandidatPaulJsonNode).putNull("urlDocs");
-		this.applicantBusinessController.createApplicant(newCandidatPaulJsonNode, UserRole.MANAGER_ADMIN);
+		this.applicantBusinessController.createApplicant(newCandidatPaulJsonNode, UserRole.MANAGER_ADMIN, null);
 
 		final Person newCandidatCyprien = new Person();
 		newCandidatCyprien.setSurname("Cyprien");
@@ -512,7 +512,7 @@ public class InitBaseWebService {
 				.toJsonNode(this.gson.toJsonTree(newCandidatCyprien).getAsJsonObject());
 		((ObjectNode) newCandidatCyprienJsonNode).put("monthlyWage", "4525");
 		((ObjectNode) newCandidatCyprienJsonNode).putNull("urlDocs");
-		this.consultantBusinessController.createConsultant(newCandidatCyprienJsonNode, UserRole.MANAGER_ADMIN);
+		this.consultantBusinessController.createConsultant(newCandidatCyprienJsonNode, UserRole.MANAGER_ADMIN, null);
 
 		final Person newCandidatJeanClaude = new Person();
 		newCandidatJeanClaude.setSurname("Jean-Claude");
@@ -530,7 +530,7 @@ public class InitBaseWebService {
 				.toJsonNode(this.gson.toJsonTree(newCandidatJeanClaude).getAsJsonObject());
 		((ObjectNode) newCandidatJeanClaudeJsonNode).put("monthlyWage", "3215");
 		((ObjectNode) newCandidatJeanClaudeJsonNode).putNull("urlDocs");
-		this.consultantBusinessController.createConsultant(newCandidatJeanClaudeJsonNode, UserRole.MANAGER_ADMIN);
+		this.consultantBusinessController.createConsultant(newCandidatJeanClaudeJsonNode, UserRole.MANAGER_ADMIN, null);
 
 	}
 
