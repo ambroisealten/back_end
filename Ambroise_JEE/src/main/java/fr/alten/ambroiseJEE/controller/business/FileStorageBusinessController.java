@@ -51,33 +51,48 @@ public class FileStorageBusinessController {
 	 * @param _id       the id of file to delete
 	 * @param path      the path of file to delete
 	 * @param extension the extension of file to delete
-	 * @param role      the current loggend user's role
+	 * @param role      the current logged user's role
 	 * @author Andy Chabalier
 	 * @return an {@link HttpException} corresponding to the statut
 	 *         ({@link ForbiddenException} if user don't have the right role,
-	 *         {@link OkException} if the file is deleted)
-	 * @throws {@link DirectoryNotEmptyException} - if the file is a directory and
-	 *         could not otherwise be deleted because the directory is not empty
-	 *         (optional specific exception) {@link IOException} - if an I/O error
-	 *         occurs SecurityException - In the case of the default provider, and a
-	 *         security manager is installed, the
-	 *         SecurityManager.checkDelete(String) method is invoked to check delete
-	 *         access to the file
+	 *         {@link OkException} if the file is deleted,
+	 *         {@link ResourceNotFoundException} if no such file,
+	 *         {@link InternalServerErrorException} if IO or security problems occur
 	 */
 	public HttpException deleteFile(final String _id, final String path, final String extension, final UserRole role) {
-		if (!(UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)) {
+		if (!isAdmin(role)) {
 			return new ForbiddenException();
 		}
-		final Path dirPath = Paths.get(this.fileStorageLocation.toAbsolutePath() + path);
-		final Path targetLocation = dirPath.resolve(_id + "." + extension);
 		try {
-			Files.delete(targetLocation);
+			deleteFileInStorage(_id, path, extension);
 		} catch (final NoSuchFileException nsfe) {
 			return new ResourceNotFoundException();
 		} catch (SecurityException | IOException e) {
 			return new InternalServerErrorException();
 		}
 		return new OkException();
+	}
+
+	/**
+	 * @param _id
+	 * @param path
+	 * @param extension
+	 * @throws IOException
+	 * @author Andy Chabalier
+	 */
+	public void deleteFileInStorage(final String _id, final String path, final String extension) throws IOException {
+		final Path dirPath = Paths.get(getFileStorageLocationAbsolutePath() + path);
+		final Path targetLocation = dirPath.resolve(_id + "." + extension);
+		Files.delete(targetLocation);
+	}
+
+	/**
+	 * @param role
+	 * @return
+	 * @author Andy Chabalier
+	 */
+	public boolean isAdmin(final UserRole role) {
+		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role;
 	}
 
 	/**
@@ -105,16 +120,27 @@ public class FileStorageBusinessController {
 	 */
 	public Resource loadFileAsResource(final String fileName) {
 		try {
-			final Path filePath = Paths.get(this.fileStorageLocation.toAbsolutePath() + fileName).normalize();
-			final Resource resource = new UrlResource(filePath.toUri());
+			final Resource resource = loadResource(fileName);
 			if (resource.exists()) {
 				return resource;
 			} else {
 				throw new ResourceNotFoundException();
 			}
 		} catch (final MalformedURLException ex) {
-			throw new ResourceNotFoundException();
+			throw new UnprocessableEntityException();
 		}
+	}
+
+	/**
+	 * @param fileName
+	 * @return
+	 * @throws MalformedURLException
+	 * @author Andy Chabalier
+	 */
+	public Resource loadResource(final String fileName) throws MalformedURLException {
+		final Path filePath = Paths.get(getFileStorageLocationAbsolutePath() + fileName).normalize();
+		final Resource resource = new UrlResource(filePath.toUri());
+		return resource;
 	}
 
 	/**
@@ -144,25 +170,22 @@ public class FileStorageBusinessController {
 	 */
 	public HttpException moveFile(final String fileName, final String oldPath, final String newPath,
 			final UserRole role) {
-		if (!(UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role)) {
+		if (!isAdmin(role)) {
 			return new ForbiddenException();
 		}
 
 		// Check if the file's name contains invalid characters or path doesn't end with
 		// "/"
-		if (fileName.contains("['{}[\\]\\\\;':\",./?!@#$%&*()_+=-]") || !newPath.endsWith("/")) {
+		if (fileNameAndPathIntegrity(fileName, newPath)) {
 			return new UnprocessableEntityException();
 		}
 
-		final Path oldDirPath = Paths.get(this.fileStorageLocation.toAbsolutePath() + oldPath);
+		final Path oldDirPath = Paths.get(getFileStorageLocationAbsolutePath() + oldPath);
 		final Path oldLocation = oldDirPath.resolve(fileName);
 
-		final Path newDirPath = Paths.get(this.fileStorageLocation.toAbsolutePath() + newPath);
+		final Path newDirPath = Paths.get(getFileStorageLocationAbsolutePath() + newPath);
 		try {
-			Files.createDirectories(newDirPath);
-			final Path targetLocation = newDirPath.resolve(fileName);
-
-			Files.move(oldLocation, targetLocation, StandardCopyOption.ATOMIC_MOVE);
+			moveFileFromTo(fileName, oldLocation, newDirPath);
 		} catch (SecurityException | UnsupportedOperationException | AtomicMoveNotSupportedException
 				| DirectoryNotEmptyException e) {
 			return new InternalServerErrorException();
@@ -170,6 +193,38 @@ public class FileStorageBusinessController {
 			return new ResourceNotFoundException();
 		}
 		return new OkException();
+	}
+
+	/**
+	 * @return
+	 * @author Andy Chabalier
+	 */
+	public Path getFileStorageLocationAbsolutePath() {
+		return this.fileStorageLocation.toAbsolutePath();
+	}
+
+	/**
+	 * @param fileName
+	 * @param oldLocation
+	 * @param newDirPath
+	 * @throws IOException
+	 * @author Andy Chabalier
+	 */
+	public void moveFileFromTo(final String fileName, final Path oldLocation, final Path newDirPath)
+			throws IOException {
+		Files.createDirectories(newDirPath);
+		final Path targetLocation = newDirPath.resolve(fileName);
+
+		Files.move(oldLocation, targetLocation, StandardCopyOption.ATOMIC_MOVE);
+	}
+
+	/**
+	 * @param fileName
+	 * @param newPath
+	 * @author Andy Chabalier
+	 */
+	public boolean fileNameAndPathIntegrity(final String fileName, final String newPath) {
+		return (fileName.contains("['{}[\\]\\\\;':\",./?!@#$%&*()_+=-]") || !newPath.endsWith("/"));
 	}
 
 	/**
@@ -188,18 +243,16 @@ public class FileStorageBusinessController {
 	 */
 	public HttpException storeFile(final MultipartFile file, final String path, final String fileName,
 			final UserRole role) {
-		if (!(UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role)) {
+		if (!(isAdmin(role) || UserRole.MANAGER == role)) {
 			return new ForbiddenException();
 		}
 
 		try {
-			// Check if the file's name contains invalid characters or path doesn't end with
-			// "/"
-			if (fileName.contains("['{}[\\]\\\\;':\",./?!@#$%&*()_+=-]") || !path.endsWith("/")) {
+			if (fileNameAndPathIntegrity(fileName, path)) {
 				return new UnprocessableEntityException();
 			}
 
-			final Path dirPath = Paths.get(this.fileStorageLocation.toAbsolutePath() + path);
+			final Path dirPath = Paths.get(getFileStorageLocationAbsolutePath() + path);
 			Files.createDirectories(dirPath);
 			final Path targetLocation = dirPath.resolve(fileName);
 			final InputStream fileInputStream = file.getInputStream();
