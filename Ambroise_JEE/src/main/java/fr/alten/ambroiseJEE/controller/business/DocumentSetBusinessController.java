@@ -31,7 +31,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 public class DocumentSetBusinessController {
 
 	private final UserRoleLists roles = UserRoleLists.getInstance();
-	
+
 	@Autowired
 	private DocumentSetEntityController documentSetEntityController;
 
@@ -49,8 +49,7 @@ public class DocumentSetBusinessController {
 	 * @author MAQUINGHEN MAXIME
 	 */
 	public HttpException createDocumentSet(JsonNode jDocumentSet, UserRole role) {
-		return isAdmin(role) ? documentSetEntityController.createDocumentSet(jDocumentSet)
-						: new ForbiddenException();
+		return isAdmin(role) ? documentSetEntityController.createDocumentSet(jDocumentSet) : new ForbiddenException();
 	}
 
 	/**
@@ -68,9 +67,7 @@ public class DocumentSetBusinessController {
 	 * @author MAQUINGHEN MAXIME
 	 */
 	public HttpException updateDocumentSet(JsonNode jDocumentSet, UserRole role) {
-		return isAdmin(role)
-				? documentSetEntityController.updateDocumentSet(jDocumentSet)
-				: new ForbiddenException();
+		return isAdmin(role) ? documentSetEntityController.updateDocumentSet(jDocumentSet) : new ForbiddenException();
 	}
 
 	/**
@@ -119,11 +116,11 @@ public class DocumentSetBusinessController {
 		}
 		throw new ForbiddenException();
 	}
-	
+
 	public boolean isConnected(final UserRole role) {
-		return this.roles.isNotConsultantOrDeactivated(role);
+		return this.roles.isNot_ConsultantOrDeactivated(role);
 	}
-	
+
 	public boolean isAdmin(final UserRole role) {
 		return this.roles.isAdmin(role);
 	}
