@@ -104,7 +104,7 @@ public class EmployerBusinessController {
 	}
 	
 	public boolean isNotConsultantOrDeactivated(final UserRole role) {
-		return this.roles.isNotConsultantOrDeactivated(role);
+		return this.roles.isNot_ConsultantOrDeactivated(role);
 	}
 
 }
