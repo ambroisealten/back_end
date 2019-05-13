@@ -148,6 +148,8 @@ public class SkillsSheetEntityController {
 		} catch (final ResourceNotFoundException rnfe) {
 			return rnfe;
 		} catch (final Exception e) {
+			e.printStackTrace();
+			
 			return new ConflictException();
 		}
 		return new CreatedException();
@@ -166,13 +168,13 @@ public class SkillsSheetEntityController {
 
 		for (final JsonNode skillGraduated : jSkills) {
 			final String skillName = skillGraduated.get("skill").get("name").textValue();
-			final JsonNode jIsSoft = skillGraduated.get("skill").get("isSoft");
 			Skill skill = null;
 			try {
 				skill = this.skillEntityController.getSkill(skillName);
 
 			} catch (ResourceNotFoundException e) {
-				this.skillEntityController.createSkill(skillName, jIsSoft != null ? jIsSoft.textValue() : null);
+				final JsonNode jIsSoft = skillGraduated.get("skill");
+				skill = this.skillEntityController.createSkill(skillName, jIsSoft.has("isSoft") ? jIsSoft.get("isSoft").textValue() : null).get();
 			}
 			
 			final double skillGrade = skillGraduated.get("grade").asDouble();
