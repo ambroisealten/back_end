@@ -761,30 +761,36 @@ public class InitBaseWebService {
 
 		final JsonNode userAdminManagerJsonNode = JsonUtils
 				.toJsonNode(this.gson.toJsonTree(userAdminManager).getAsJsonObject());
-		((ObjectNode) userAdminManagerJsonNode).put("pswd", "pass");
+		((ObjectNode) userAdminManagerJsonNode).put("pswd",
+				"5b722b307fce6c944905d132691d5e4a2214b7fe92b738920eb3fce3a90420a19511c3010a0e7712b054daef5b57bad59ecbd93b3280f210578f547f4aed4d25");
 		((ObjectNode) userAdminManagerJsonNode).put("role", "MANAGER_ADMIN");
 		((ObjectNode) userAdminManagerJsonNode).put("agency", "Strasbourg");
 		final JsonNode userAdminCDRJsonNode = JsonUtils
 				.toJsonNode(this.gson.toJsonTree(userAdminCDR).getAsJsonObject());
-		((ObjectNode) userAdminCDRJsonNode).put("pswd", "pass");
+		((ObjectNode) userAdminCDRJsonNode).put("pswd",
+				"5b722b307fce6c944905d132691d5e4a2214b7fe92b738920eb3fce3a90420a19511c3010a0e7712b054daef5b57bad59ecbd93b3280f210578f547f4aed4d25");
 		((ObjectNode) userAdminCDRJsonNode).put("role", "CDR_ADMIN");
 		((ObjectNode) userAdminCDRJsonNode).put("agency", "Strasbourg");
 		final JsonNode userManagerJsonNode = JsonUtils.toJsonNode(this.gson.toJsonTree(userManager).getAsJsonObject());
-		((ObjectNode) userManagerJsonNode).put("pswd", "pass");
+		((ObjectNode) userManagerJsonNode).put("pswd",
+				"5b722b307fce6c944905d132691d5e4a2214b7fe92b738920eb3fce3a90420a19511c3010a0e7712b054daef5b57bad59ecbd93b3280f210578f547f4aed4d25");
 		((ObjectNode) userManagerJsonNode).put("role", "MANAGER");
 		((ObjectNode) userManagerJsonNode).put("agency", "Strasbourg");
 		final JsonNode userCDRJsonNode = JsonUtils.toJsonNode(this.gson.toJsonTree(userCDR).getAsJsonObject());
-		((ObjectNode) userCDRJsonNode).put("pswd", "pass");
+		((ObjectNode) userCDRJsonNode).put("pswd",
+				"5b722b307fce6c944905d132691d5e4a2214b7fe92b738920eb3fce3a90420a19511c3010a0e7712b054daef5b57bad59ecbd93b3280f210578f547f4aed4d25");
 		((ObjectNode) userCDRJsonNode).put("role", "CDR");
 		((ObjectNode) userCDRJsonNode).put("agency", "Strasbourg");
 		final JsonNode userConsultantJsonNode = JsonUtils
 				.toJsonNode(this.gson.toJsonTree(userConsultant).getAsJsonObject());
-		((ObjectNode) userConsultantJsonNode).put("pswd", "pass");
+		((ObjectNode) userConsultantJsonNode).put("pswd",
+				"5b722b307fce6c944905d132691d5e4a2214b7fe92b738920eb3fce3a90420a19511c3010a0e7712b054daef5b57bad59ecbd93b3280f210578f547f4aed4d25");
 		((ObjectNode) userConsultantJsonNode).put("role", "CONSULTANT");
 		((ObjectNode) userConsultantJsonNode).put("agency", "Strasbourg");
 		final JsonNode userDeactivatedJsonNode = JsonUtils
 				.toJsonNode(this.gson.toJsonTree(userDeactivated).getAsJsonObject());
-		((ObjectNode) userDeactivatedJsonNode).put("pswd", "pass");
+		((ObjectNode) userDeactivatedJsonNode).put("pswd",
+				"5b722b307fce6c944905d132691d5e4a2214b7fe92b738920eb3fce3a90420a19511c3010a0e7712b054daef5b57bad59ecbd93b3280f210578f547f4aed4d25");
 		((ObjectNode) userDeactivatedJsonNode).put("role", "DEACTIVATED");
 		((ObjectNode) userDeactivatedJsonNode).put("agency", "Strasbourg");
 
@@ -803,7 +809,8 @@ public class InitBaseWebService {
 			useri.setName("tempUserAdminName");
 
 			final JsonNode useriJsonNode = JsonUtils.toJsonNode(this.gson.toJsonTree(useri).getAsJsonObject());
-			((ObjectNode) useriJsonNode).put("pswd", "pass");
+			((ObjectNode) useriJsonNode).put("pswd",
+					"5b722b307fce6c944905d132691d5e4a2214b7fe92b738920eb3fce3a90420a19511c3010a0e7712b054daef5b57bad59ecbd93b3280f210578f547f4aed4d25");
 			((ObjectNode) useriJsonNode).put("role", "CONSULTANT");
 			((ObjectNode) useriJsonNode).put("agency", "Strasbourg");
 
