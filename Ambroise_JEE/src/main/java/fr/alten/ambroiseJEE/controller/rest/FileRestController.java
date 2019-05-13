@@ -132,7 +132,7 @@ public class FileRestController {
 	 * @author Andy Chabalier
 	 */
 	public boolean fileNotNullCheck(final MultipartFile file) {
-		return !file.equals(null);
+		return !(file.equals(null) || file.isEmpty());
 	}
 
 	/**

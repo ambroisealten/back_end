@@ -78,7 +78,6 @@ public class FileEntityController {
 	 * @param _id id of the file to fetch
 	 * @return the fetched file
 	 * @author Andy Chabalier
-	 * @throws {@link UnprocessableEntityException} if the id can't be processed
 	 * @throws {@link ResourceNotFoundException} if the resource is not found
 	 */
 	public File getFile(final ObjectId _id) {

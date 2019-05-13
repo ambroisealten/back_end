@@ -9,6 +9,7 @@ import java.net.MalformedURLException;
 import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -143,7 +144,7 @@ public class FileStorageBusinessController {
 			} else {
 				throw new ResourceNotFoundException();
 			}
-		} catch (final MalformedURLException ex) {
+		} catch (final MalformedURLException | InvalidPathException ex) {
 			throw new UnprocessableEntityException();
 		}
 	}
