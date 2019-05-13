@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import fr.alten.ambroiseJEE.model.beans.Agency;
 import fr.alten.ambroiseJEE.model.entityControllers.AgencyEntityController;
 import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.security.UserRoleLists;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
@@ -28,6 +29,8 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
  */
 @Service
 public class AgencyBusinessController {
+	
+	private final UserRoleLists roles = UserRoleLists.getInstance();
 
 	@Autowired
 	private AgencyEntityController agencyEntityController;
@@ -43,7 +46,7 @@ public class AgencyBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException createAgency(final JsonNode jAgency, final UserRole role) {
-		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role
+		return isAdmin(role)
 				? this.agencyEntityController.createAgency(jAgency)
 				: new ForbiddenException();
 	}
@@ -59,8 +62,8 @@ public class AgencyBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException deleteAgency(final JsonNode params, final UserRole role) {
-		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role
-				? this.agencyEntityController.deleteAgency(params.get("name").textValue())
+		return isAdmin(role)
+				? this.agencyEntityController.deleteAgency(params)
 				: new ForbiddenException();
 	}
 
@@ -72,7 +75,7 @@ public class AgencyBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public List<Agency> getAgencies(final UserRole role) {
-		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role) {
+		if (isAdmin(role)) {
 			return this.agencyEntityController.getAgencies();
 		}
 		throw new ForbiddenException();
@@ -103,9 +106,12 @@ public class AgencyBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException updateAgency(final JsonNode jAgency, final UserRole role) {
-		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role
+		return isAdmin(role)
 				? this.agencyEntityController.updateAgency(jAgency)
 				: new ForbiddenException();
 	}
-
+	
+	public boolean isAdmin(final UserRole role) {
+		return this.roles.isAdmin(role);
+	}
 }

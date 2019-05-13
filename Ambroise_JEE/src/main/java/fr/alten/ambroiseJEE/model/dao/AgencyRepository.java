@@ -21,5 +21,12 @@ public interface AgencyRepository extends MongoRepository<Agency, Long> {
 	 * @author Andy Chabalier
 	 */
 	Optional<Agency> findByName(String name);
+	
+	/**
+	 * @param id the agency id
+	 * @return An Optional with the corresponding agency or not.
+	 * @author Camille Schnell
+	 */
+	Optional<Agency> findBy_id(String id);
 
 }
