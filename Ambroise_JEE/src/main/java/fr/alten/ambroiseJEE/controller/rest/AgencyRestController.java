@@ -19,6 +19,7 @@ import com.google.gson.GsonBuilder;
 
 import fr.alten.ambroiseJEE.controller.business.AgencyBusinessController;
 import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.utils.JsonUtils;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
@@ -32,6 +33,10 @@ import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
  */
 @Controller
 public class AgencyRestController {
+	
+	public boolean checkJsonIntegrity(final JsonNode params, final String... fields) {
+		return JsonUtils.checkJsonIntegrity(params, fields);
+	}
 
 	@Autowired
 	private AgencyBusinessController agencyBusinessController;
@@ -58,8 +63,8 @@ public class AgencyRestController {
 	@PostMapping(value = "/agency")
 	@ResponseBody
 	public HttpException createAgency(@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
-			@RequestAttribute("role") final UserRole role) throws Exception {
-		return params.get("name") != null ? this.agencyBusinessController.createAgency(params, role)
+			@RequestAttribute("role") final UserRole role) {
+		return checkJsonIntegrity(params, "name", "place", "placeType") ? this.agencyBusinessController.createAgency(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -78,8 +83,8 @@ public class AgencyRestController {
 	@DeleteMapping(value = "/agency")
 	@ResponseBody
 	public HttpException deleteAgency(@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
-			@RequestAttribute("role") final UserRole role) throws Exception {
-		return params.get("name") != null ? this.agencyBusinessController.deleteAgency(params, role)
+			@RequestAttribute("role") final UserRole role) {
+		return checkJsonIntegrity(params, "name") ? this.agencyBusinessController.deleteAgency(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -113,8 +118,8 @@ public class AgencyRestController {
 	@PutMapping(value = "/agency")
 	@ResponseBody
 	public HttpException updateAgency(@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
-			@RequestAttribute("role") final UserRole role) throws Exception {
-		return params.get("name") != null ? this.agencyBusinessController.updateAgency(params, role)
+			@RequestAttribute("role") final UserRole role) {
+		return checkJsonIntegrity(params, "oldName", "name", "place", "placeType") ? this.agencyBusinessController.updateAgency(params, role)
 				: new UnprocessableEntityException();
 	}
 }
