@@ -1,6 +1,5 @@
 package fr.alten.ambroiseJEE.controller.rest;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import org.assertj.core.api.Assertions;
@@ -54,9 +53,10 @@ public class SkillRestControllerTest {
 	 * @test testing several Json for integrity when createSkill
 	 * @expected sucess for all json test cases
 	 * @author Thomas Decamp
+	 * @throws Exception 
 	 */
 	@Test
-	public void createSkill_checkJsonIntegrity() throws IOException {
+	public void createSkill_checkJsonIntegrity() throws Exception {
 
 		// globalSetup
 		Mockito.doReturn(this.mockedHttpException).when(this.skillBusinessController)
@@ -85,9 +85,10 @@ public class SkillRestControllerTest {
 	 * @expected same {@link HttpException} returned by the
 	 *           {@link SkillBusinessController}
 	 * @author Thomas Decamp
+	 * @throws Exception 
 	 */
 	@Test
-	public void createSkill_with_rightParam() {
+	public void createSkill_with_rightParam() throws Exception {
 
 		// setup
 		Mockito.doReturn(true).when(this.skillRestController).checkJsonIntegrity(ArgumentMatchers.any(JsonNode.class),
@@ -105,9 +106,10 @@ public class SkillRestControllerTest {
 	 * @context {@link JsonNode} params not containing field "name"
 	 * @expected {@link UnprocessableEntityException}
 	 * @author Thomas Decamp
+	 * @throws Exception 
 	 */
 	@Test
-	public void createSkill_with_wrongParam() {
+	public void createSkill_with_wrongParam() throws Exception {
 
 		// setup
 		Mockito.doReturn(false).when(this.skillRestController).checkJsonIntegrity(ArgumentMatchers.any(JsonNode.class),
@@ -122,9 +124,10 @@ public class SkillRestControllerTest {
 	 * @test testing several Json for integrity when deleteSkill
 	 * @expected sucess for all json test cases
 	 * @author Thomas Decamp
+	 * @throws Exception 
 	 */
 	@Test
-	public void deleteSkill_checkJsonIntegrity() throws IOException {
+	public void deleteSkill_checkJsonIntegrity() throws Exception {
 
 		// globalSetup
 		Mockito.doReturn(this.mockedHttpException).when(this.skillBusinessController)
@@ -154,9 +157,10 @@ public class SkillRestControllerTest {
 	 * @expected same {@link HttpException} returned by the
 	 *           {@link SkillBusinessController}
 	 * @author Thomas Decamp
+	 * @throws Exception 
 	 */
 	@Test
-	public void deleteSkill_with_rightParam() {
+	public void deleteSkill_with_rightParam() throws Exception {
 
 		// setup
 		Mockito.doReturn(true).when(this.skillRestController).checkJsonIntegrity(ArgumentMatchers.any(JsonNode.class),
@@ -174,9 +178,10 @@ public class SkillRestControllerTest {
 	 * @context {@link JsonNode} params not containing field "name"
 	 * @expected {@link UnprocessableEntityException}
 	 * @author Thomas Decamp
+	 * @throws Exception 
 	 */
 	@Test
-	public void deleteSkill_with_wrongParam() {
+	public void deleteSkill_with_wrongParam() throws Exception {
 
 		// setup
 		Mockito.doReturn(false).when(this.skillRestController).checkJsonIntegrity(ArgumentMatchers.any(JsonNode.class),
@@ -207,9 +212,10 @@ public class SkillRestControllerTest {
 	 * @test testing several Json for integrity when updateSkill
 	 * @expected sucess for all json test cases
 	 * @author Thomas Decamp
+	 * @throws Exception 
 	 */
 	@Test
-	public void updateSkill_checkJsonIntegrity() throws IOException {
+	public void updateSkill_checkJsonIntegrity() throws Exception {
 
 		// globalSetup
 		Mockito.doReturn(this.mockedHttpException).when(this.skillBusinessController)
@@ -240,9 +246,10 @@ public class SkillRestControllerTest {
 	 * @expected same {@link HttpException} returned by the
 	 *           {@link SkillBusinessController}
 	 * @author Thomas Decamp
+	 * @throws Exception 
 	 */
 	@Test
-	public void updateSkill_with_rightParam() {
+	public void updateSkill_with_rightParam() throws Exception {
 
 		// setup
 		Mockito.doReturn(true).when(this.skillRestController).checkJsonIntegrity(ArgumentMatchers.any(JsonNode.class),
@@ -261,9 +268,10 @@ public class SkillRestControllerTest {
 	 * @context {@link JsonNode} params not containing field "name"
 	 * @expected {@link UnprocessableEntityException}
 	 * @author Thomas Decamp
+	 * @throws Exception 
 	 */
 	@Test
-	public void updateSkill_with_wrongParam() {
+	public void updateSkill_with_wrongParam() throws Exception {
 
 		// setup
 		Mockito.doReturn(false).when(this.skillRestController).checkJsonIntegrity(ArgumentMatchers.any(JsonNode.class),
