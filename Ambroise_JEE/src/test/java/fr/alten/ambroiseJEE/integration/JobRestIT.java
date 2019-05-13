@@ -40,7 +40,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import fr.alten.ambroiseJEE.model.beans.BeansTest;
 import fr.alten.ambroiseJEE.model.beans.Job;
 import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.model.dao.JobRepository;

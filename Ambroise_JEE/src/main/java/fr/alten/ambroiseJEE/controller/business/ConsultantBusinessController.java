@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import fr.alten.ambroiseJEE.model.beans.Person;
 import fr.alten.ambroiseJEE.model.entityControllers.PersonEntityController;
 import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.security.UserRoleLists;
 import fr.alten.ambroiseJEE.utils.PersonRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
@@ -23,25 +24,30 @@ import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
  */
 @Service
 public class ConsultantBusinessController {
+	private final UserRoleLists roles = UserRoleLists.getInstance();
+
 	@Autowired
 	private PersonEntityController personEntityController;
 
 	/**
 	 * Method to delegate consultant creation
+	 * 
+	 * @param role               the user's role
+	 * @param personInChargeMail TODO
+	 * @param jUser              JsonNode with all consultant(person) parameters
 	 *
-	 * @param jUser JsonNode with all consultant(person) parameters
-	 * @param role  the user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ForbiddenException} if the current user hasn't the
 	 *         rights to perform this action
 	 * @author Lucas Royackkers
 	 * @throws ParseException
 	 */
-	public HttpException createConsultant(final JsonNode jConsultant, final UserRole role) throws ParseException {
-		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role) {
-			return this.personEntityController.createPerson(jConsultant, PersonRole.CONSULTANT);
+	public HttpException createConsultant(final JsonNode jConsultant, final UserRole role, String personInChargeMail)
+			throws ParseException {
+		if (this.isManagerOrCdrAdmin(role)) {
+			return this.personEntityController.createPerson(jConsultant, PersonRole.CONSULTANT, personInChargeMail);
 		} else {
-			throw new ForbiddenException();
+			return new ForbiddenException();
 		}
 
 	}
@@ -57,10 +63,10 @@ public class ConsultantBusinessController {
 	 * @author Lucas Royackkers
 	 */
 	public HttpException deleteConsultant(final JsonNode params, final UserRole role) {
-		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role) {
+		if (this.isManagerOrCdrAdmin(role)) {
 			return this.personEntityController.deletePerson(params, PersonRole.CONSULTANT);
 		}
-		throw new ForbiddenException();
+		return new ForbiddenException();
 	}
 
 	/**
@@ -73,20 +79,21 @@ public class ConsultantBusinessController {
 	 * @throws ForbiddenException (if the user hasn't the right to do so)
 	 */
 	public Person getConsultant(final String mail, final UserRole role) {
-		if (UserRole.MANAGER == role || UserRole.MANAGER_ADMIN == role || UserRole.CDR_ADMIN == role
-				|| UserRole.CDR == role) {
+		if (this.isConnected(role)) {
 			return this.personEntityController.getPersonByMailAndType(mail, PersonRole.CONSULTANT);
 		}
 		throw new ForbiddenException();
 	}
 
 	/**
+	 * Get all Consultants
+	 * 
 	 * @param role the user's role
 	 * @return the list of all consultants
 	 * @author Lucas Royackkers
 	 */
 	public List<Person> getConsultants(final UserRole role) {
-		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role) {
+		if (this.isConnected(role)) {
 			return this.personEntityController.getPersonsByRole(PersonRole.CONSULTANT);
 		}
 		throw new ForbiddenException();
@@ -95,18 +102,43 @@ public class ConsultantBusinessController {
 	/**
 	 * Method to delegate consultant update
 	 *
-	 * @param params JsonNode with all parameters
-	 * @param role   the user's role
+	 * @param params             JsonNode with all parameters
+	 * @param role               the user's role
+	 * @param personInChargeMail TODO
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ForbiddenException} if the current user hasn't the
 	 *         rights to perform this action
 	 * @author Lucas Royackkers
 	 * @throws ParseException
 	 */
-	public HttpException updateConsultant(final JsonNode params, final UserRole role) throws ParseException {
-		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role) {
-			return this.personEntityController.updatePerson(params, PersonRole.CONSULTANT);
+	public HttpException updateConsultant(final JsonNode params, final UserRole role, String personInChargeMail)
+			throws ParseException {
+		if (this.isManagerOrCdrAdmin(role)) {
+			return this.personEntityController.updatePerson(params, PersonRole.CONSULTANT, personInChargeMail);
 		}
-		throw new ForbiddenException();
+		return new ForbiddenException();
+	}
+
+	/**
+	 * Method to test if the user is a Manager (Admin or not) or a CDR_Admin
+	 * 
+	 * @param role the current logged user's role
+	 * @return true if it's a CDR or a Manager (Admin or not), otherwise false
+	 * @author Lucas Royackkers
+	 */
+	public boolean isManagerOrCdrAdmin(final UserRole role) {
+		return this.roles.isManagerOrCdrAdmin(role);
+	}
+
+	/**
+	 * Method to test if the user is connected (not an consultant or a deactivated
+	 * user)
+	 * 
+	 * @param role the current logged user's role
+	 * @return true if the user is connected, otherwise false
+	 * @author Lucas Royackkers
+	 */
+	public boolean isConnected(final UserRole role) {
+		return this.roles.isNot_ConsultantOrDeactivated(role);
 	}
 }

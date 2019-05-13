@@ -100,6 +100,8 @@ public class SectorRestIT {
 	@Before
 	public void beforeEachTest() {
 		userRepository.insert(userAdmin);
+		userRepository.deleteAll();
+		sectorRepository.deleteAll();
 	}
 
 	@After

@@ -19,6 +19,7 @@ import com.google.gson.GsonBuilder;
 
 import fr.alten.ambroiseJEE.controller.business.geographic.PostalCodeBusinessController;
 import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.utils.JsonUtils;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
@@ -32,6 +33,10 @@ import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
  */
 @Controller
 public class PostalCodeRestController {
+	
+	public boolean checkJsonIntegrity(final JsonNode params, final String... fields) {
+		return JsonUtils.checkJsonIntegrity(params, fields);
+	}
 
 	@Autowired
 	private PostalCodeBusinessController postalCodeBusinessController;
@@ -58,9 +63,8 @@ public class PostalCodeRestController {
 	@PostMapping(value = "/postalCode")
 	@ResponseBody
 	public HttpException createPostalCode(@RequestBody final JsonNode params,
-			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role)
-			throws Exception {
-		return params.get("name") != null ? this.postalCodeBusinessController.createPostalCode(params, role)
+			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
+		return checkJsonIntegrity(params, "name") ? this.postalCodeBusinessController.createPostalCode(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -79,9 +83,8 @@ public class PostalCodeRestController {
 	@DeleteMapping(value = "/postalCode")
 	@ResponseBody
 	public HttpException deletePostalCode(@RequestBody final JsonNode params,
-			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role)
-			throws Exception {
-		return params.get("name") != null ? this.postalCodeBusinessController.deletePostalCode(params, role)
+			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
+		return checkJsonIntegrity(params, "name") ? this.postalCodeBusinessController.deletePostalCode(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -115,9 +118,8 @@ public class PostalCodeRestController {
 	@PutMapping(value = "/postalCode")
 	@ResponseBody
 	public HttpException updatePostalCode(@RequestBody final JsonNode params,
-			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role)
-			throws Exception {
-		return params.get("name") != null ? this.postalCodeBusinessController.updatePostalCode(params, role)
+			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
+		return checkJsonIntegrity(params, "name", "oldName") ? this.postalCodeBusinessController.updatePostalCode(params, role)
 				: new UnprocessableEntityException();
 	}
 }
