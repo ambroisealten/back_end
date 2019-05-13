@@ -33,10 +33,6 @@ public class SectorBusinessController {
 	@Autowired
 	private SectorEntityController sectorEntityController;
 
-	public boolean isAdmin(final UserRole role) {
-		return UserRoleLists.getInstance().isAdmin(role);
-	}
-
 	/**
 	 * Method to delegate sector creation
 	 *
@@ -77,6 +73,10 @@ public class SectorBusinessController {
 			return this.sectorEntityController.getSectors();
 		}
 		throw new ForbiddenException();
+	}
+
+	public boolean isAdmin(final UserRole role) {
+		return UserRoleLists.getInstance().isAdmin(role);
 	}
 
 	/**
