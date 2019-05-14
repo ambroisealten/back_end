@@ -47,10 +47,11 @@ public class SkillRestController {
 
 	/**
 	 * Method to create a Skill
-	 * 
-	 * @param params the JsonNode containing all parameters to create a Skill (name, eventually a String if the Skill is a Soft Skill)
-	 * @param mail the current logged user's mail
-	 * @param role the current logged user's role
+	 *
+	 * @param params the JsonNode containing all parameters to create a Skill (name,
+	 *               eventually a String if the Skill is a Soft Skill)
+	 * @param mail   the current logged user's mail
+	 * @param role   the current logged user's role
 	 * @return {@link HttpException} corresponding to the status of the request,
 	 *         {@link UnprocessableEntityException} if we can't create the resource,
 	 *         {@link ConflictException} if there is a conflict in the database,
@@ -63,16 +64,17 @@ public class SkillRestController {
 	@ResponseBody
 	public HttpException createSkill(@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
 			@RequestAttribute("role") final UserRole role) throws Exception {
-		return JsonUtils.checkJsonIntegrity(params, "mail","name") ? this.skillBusinessController.createSkill(params, role)
+		return JsonUtils.checkJsonIntegrity(params, "mail", "name")
+				? this.skillBusinessController.createSkill(params, role)
 				: new UnprocessableEntityException();
 	}
 
 	/**
 	 * Method to delete a Skill
-	 * 
-	 * @param params the JsonNode containing post parameters from HTTP 
-	 * @param mail the current logged user's mail
-	 * @param role the current logged user's role
+	 *
+	 * @param params the JsonNode containing post parameters from HTTP
+	 * @param mail   the current logged user's mail
+	 * @param role   the current logged user's role
 	 * @return {@link HttpException} corresponding to the status of the request,
 	 *         {@link UnprocessableEntityException} if we can't create the resource,
 	 *         {@link ConflictException} if there is a conflict in the database,
@@ -85,16 +87,18 @@ public class SkillRestController {
 	@ResponseBody
 	public HttpException deleteSkill(@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
 			@RequestAttribute("role") final UserRole role) throws Exception {
-		return JsonUtils.checkJsonIntegrity(params, "mail","name") ? this.skillBusinessController.deleteSkill(params, role)
+		return JsonUtils.checkJsonIntegrity(params, "mail", "name")
+				? this.skillBusinessController.deleteSkill(params, role)
 				: new UnprocessableEntityException();
 	}
 
 	/**
 	 * Fetch a skill given a name
-	 * 
-	 * @param params the JsonNode containing all parameters (name of the searched skill)
-	 * @param mail the current logged user's mail
-	 * @param role the current logged user's role
+	 *
+	 * @param params the JsonNode containing all parameters (name of the searched
+	 *               skill)
+	 * @param mail   the current logged user's mail
+	 * @param role   the current logged user's role
 	 * @return a JsonNode containing the searched skill (can be empty)
 	 * @author Thomas Decamp
 	 */
@@ -107,10 +111,11 @@ public class SkillRestController {
 
 	/**
 	 * Fetch all skills
-	 * 
+	 *
 	 * @param mail the current logged user's mail
 	 * @param role the current logged user's role
-	 * @return a JsonNode containing all the skills within the database (can be empty)
+	 * @return a JsonNode containing all the skills within the database (can be
+	 *         empty)
 	 * @author Thomas Decamp
 	 */
 	@GetMapping(value = "/skills")
@@ -120,12 +125,21 @@ public class SkillRestController {
 		return this.gson.toJson(this.skillBusinessController.getSkills(role));
 	}
 
+	@GetMapping(value = "/softskills")
+	@ResponseBody
+	public String getSoftSkills(@RequestAttribute("mail") final String mail,
+			@RequestAttribute("role") final UserRole role) {
+		return this.gson.toJson(this.skillBusinessController.getSoftSkills(role));
+
+	}
+
 	/**
-	 * Method to update a Skill 
-	 * 
-	 * @param params the JsonNode containing all the parameters (old name and the new name of the skill)
-	 * @param mail the current logged user's mail
-	 * @param role the current logged user's role
+	 * Method to update a Skill
+	 *
+	 * @param params the JsonNode containing all the parameters (old name and the
+	 *               new name of the skill)
+	 * @param mail   the current logged user's mail
+	 * @param role   the current logged user's role
 	 * @return {@link HttpException} corresponding to the status of the request,
 	 *         {@link UnprocessableEntityException} if we can't create the resource,
 	 *         {@link ConflictException} if there is a conflict in the database,
@@ -142,5 +156,4 @@ public class SkillRestController {
 				? this.skillBusinessController.updateSkill(params, role)
 				: new UnprocessableEntityException();
 	}
-
 }

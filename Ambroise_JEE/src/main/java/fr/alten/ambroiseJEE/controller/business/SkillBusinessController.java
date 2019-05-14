@@ -44,8 +44,7 @@ public class SkillBusinessController {
 	 * @author Thomas Decamp
 	 */
 	public HttpException createSkill(final JsonNode jSkill, final UserRole role) {
-		return isAdmin(role) ? this.skillEntityController.createSkill(jSkill) :
-			new ForbiddenException();
+		return isAdmin(role) ? this.skillEntityController.createSkill(jSkill) : new ForbiddenException();
 	}
 
 	/**
@@ -58,8 +57,7 @@ public class SkillBusinessController {
 	 * @author Thomas Decamp
 	 */
 	public HttpException deleteSkill(final JsonNode jSkill, final UserRole role) {
-		return isAdmin(role) ? this.skillEntityController.deleteSkill(jSkill) : 
-			new ForbiddenException();
+		return isAdmin(role) ? this.skillEntityController.deleteSkill(jSkill) : new ForbiddenException();
 	}
 
 	public Skill getSkill(final JsonNode jSkill, final UserRole role) {
@@ -67,10 +65,6 @@ public class SkillBusinessController {
 			return this.skillEntityController.getSkill(jSkill.get("name").textValue());
 		}
 		throw new ForbiddenException();
-	}
-
-	public boolean isAdmin(final UserRole role) {
-		return this.roles.isAdmin(role);
 	}
 
 	/**
@@ -86,6 +80,24 @@ public class SkillBusinessController {
 	}
 
 	/**
+	 * fetch the soft skills
+	 *
+	 * @param role current logged user role
+	 * @return the list of all soft skills
+	 * @author Andy Chabalier
+	 */
+	public List<Skill> getSoftSkills(final UserRole role) {
+		if (isAdmin(role) || UserRole.MANAGER.equals(role)) {
+			return this.skillEntityController.getSoftSkills();
+		}
+		throw new ForbiddenException();
+	}
+
+	public boolean isAdmin(final UserRole role) {
+		return this.roles.isAdmin(role);
+	}
+
+	/**
 	 *
 	 * @param jSkill JsonNode with all skill parameters and the old name to perform
 	 *               the update even if the name is changed
@@ -98,5 +110,4 @@ public class SkillBusinessController {
 	public HttpException updateSkill(final JsonNode jSkill, final UserRole role) {
 		return isAdmin(role) ? this.skillEntityController.updateSkill(jSkill) : new ForbiddenException();
 	}
-
 }
