@@ -283,8 +283,8 @@ public class SkillsSheetEntityController {
 	/**
 	 * Try to fetch all skills sheets
 	 *
-	 * @return A List with all skills sheets (might be empty)
-	 * @author Lucas Royackkers
+	 * @return A List with all skills sheets (might be empty) sorted by date
+	 * @author Lucas Royackkers, Camille Schnell
 	 */
 	public List<JsonNode> getSkillsSheets() {
 		final List<SkillsSheet> allSkillsSheets = this.skillsSheetRepository.findAll();
@@ -311,6 +311,8 @@ public class SkillsSheetEntityController {
 			}
 
 		}
+		finalResult.sort((e1,e2) -> (Double.valueOf(e2.get("skillsSheet").get("versionDate").asDouble())).compareTo(Double.valueOf(e1.get("skillsSheet").get("versionDate").asDouble())));
+		
 		return finalResult;
 	}
 
