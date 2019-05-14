@@ -595,6 +595,30 @@ public class InitBaseWebService {
 		newCSharp.setIsSoft(null);
 		final JsonNode newCSharpJsonNode = JsonUtils.toJsonNode(this.gson.toJsonTree(newCSharp).getAsJsonObject());
 		this.skillBusinessController.createSkill(newCSharpJsonNode, UserRole.MANAGER_ADMIN);
+		
+		final Skill newJava = new Skill();
+		newJava.setName("Java");
+		newJava.setIsSoft(null);
+		final JsonNode newJavaJsonNode = JsonUtils.toJsonNode(this.gson.toJsonTree(newJava).getAsJsonObject());
+		this.skillBusinessController.createSkill(newJavaJsonNode, UserRole.MANAGER_ADMIN);
+		
+		final Skill newPHP = new Skill();
+		newPHP.setName("PHP");
+		newPHP.setIsSoft(null);
+		final JsonNode newPHPJsonNode = JsonUtils.toJsonNode(this.gson.toJsonTree(newPHP).getAsJsonObject());
+		this.skillBusinessController.createSkill(newPHPJsonNode, UserRole.MANAGER_ADMIN);
+		
+		final Skill newSQL = new Skill();
+		newSQL.setName("SQL");
+		newSQL.setIsSoft(null);
+		final JsonNode newSQLJsonNode = JsonUtils.toJsonNode(this.gson.toJsonTree(newSQL).getAsJsonObject());
+		this.skillBusinessController.createSkill(newSQLJsonNode, UserRole.MANAGER_ADMIN);
+		
+		final Skill newDotNET = new Skill();
+		newDotNET.setName(".NET");
+		newDotNET.setIsSoft(null);
+		final JsonNode newDotNETJsonNode = JsonUtils.toJsonNode(this.gson.toJsonTree(newDotNET).getAsJsonObject());
+		this.skillBusinessController.createSkill(newDotNETJsonNode, UserRole.MANAGER_ADMIN);
 
 		final Skill newJS = new Skill();
 		newJS.setName("JavaScript");
