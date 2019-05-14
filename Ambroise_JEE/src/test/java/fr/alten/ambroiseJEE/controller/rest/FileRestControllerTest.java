@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.assertj.core.api.Assertions;
 import org.bson.types.ObjectId;
+import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,6 +28,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import fr.alten.ambroiseJEE.controller.business.FileBusinessController;
 import fr.alten.ambroiseJEE.controller.business.FileStorageBusinessController;
 import fr.alten.ambroiseJEE.model.beans.File;
+import fr.alten.ambroiseJEE.model.dao.FileRepository;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
@@ -94,6 +96,14 @@ public class FileRestControllerTest {
 
 	@Mock
 	private ResponseEntity<Resource> mockedResponseEntity;
+
+	@Mock
+	private FileRepository fileRepository;
+
+	@After
+	public void afterEachTest() {
+		this.fileRepository.deleteAll();
+	}
 
 	/**
 	 * @test testing deletion with valid parameters and errors

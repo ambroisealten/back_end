@@ -100,6 +100,8 @@ public class DocumentSetEntityController {
 	 *
 	 * @param jDocumentSet the AppMobile Version
 	 * @return an HashMap with 3 List: additions, changes, deletions
+	 *         {@link ResourceNotFoundException} when the name doesn't exist in the
+	 *         database
 	 * @author MAQUINGHEN MAXIME, Andy Chabalier
 	 */
 	public HashMap<String, List<MobileDoc>> getDocumentSetChanges(final JsonNode jDocumentSet) {
@@ -130,6 +132,7 @@ public class DocumentSetEntityController {
 	}
 
 	/**
+	 * fetch all documentSet
 	 * 
 	 * @return the List of the all the document Version on the server
 	 * @author MAQUINGHEN MAXIME
@@ -142,7 +145,8 @@ public class DocumentSetEntityController {
 	 * fetch a Document set
 	 * 
 	 * @param set the set name to fetch
-	 * @return the document set
+	 * @return the document set or {@link RessourceNotFoundException} when the name
+	 *         doesn't exist in the database
 	 * @author Andy Chabalier
 	 */
 	public DocumentSet getSpecificDocumentSet(String set) {

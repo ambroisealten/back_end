@@ -28,7 +28,6 @@ import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
  * @author Kylian Gehier
  *
  */
-
 @RunWith(MockitoJUnitRunner.class)
 public class CityRestControllerTest {
 
