@@ -44,8 +44,16 @@ public class SkillForumBusinessController {
 	 * @author Thomas Decamp
 	 */
 	public HttpException createSkillForum(final JsonNode jSkillForum, final UserRole role) {
-		return this.roles.isAdmin(role) ? this.skillForumEntityController.createSkillForum(jSkillForum)
-				: new ForbiddenException();
+		return isAdmin(role) ? this.skillForumEntityController.createSkillForum(jSkillForum) : new ForbiddenException();
+	}
+
+	/**
+	 * @param role role to check
+	 * @return true if the role is admin
+	 * @author Andy Chabalier
+	 */
+	public boolean isAdmin(final UserRole role) {
+		return this.roles.isAdmin(role);
 	}
 
 	/**
@@ -58,12 +66,11 @@ public class SkillForumBusinessController {
 	 * @author Thomas Decamp
 	 */
 	public HttpException deleteSkillForum(final JsonNode params, final UserRole role) {
-		return this.roles.isAdmin(role) ? this.skillForumEntityController.deleteSkillForum(params)
-				: new ForbiddenException();
+		return isAdmin(role) ? this.skillForumEntityController.deleteSkillForum(params) : new ForbiddenException();
 	}
 
 	public SkillForum getSkillForum(final JsonNode params, final UserRole role) {
-		if (this.roles.isAdmin(role)) {
+		if (isAdmin(role)) {
 			return this.skillForumEntityController.getSkillForum(params);
 		}
 		throw new ForbiddenException();
@@ -75,7 +82,7 @@ public class SkillForumBusinessController {
 	 * @author Thomas Decamp
 	 */
 	public List<SkillForum> getSkillsForum(final UserRole role) {
-		if (this.roles.isAdmin(role)) {
+		if (isAdmin(role)) {
 			return this.skillForumEntityController.getSkillsForum();
 		}
 		throw new ForbiddenException();
@@ -92,7 +99,6 @@ public class SkillForumBusinessController {
 	 * @author Thomas Decamp
 	 */
 	public HttpException updateSkillForum(final JsonNode jSkillForum, final UserRole role) {
-		return this.roles.isAdmin(role) ? this.skillForumEntityController.updateSkillForum(jSkillForum)
-				: new ForbiddenException();
+		return isAdmin(role) ? this.skillForumEntityController.updateSkillForum(jSkillForum) : new ForbiddenException();
 	}
 }
