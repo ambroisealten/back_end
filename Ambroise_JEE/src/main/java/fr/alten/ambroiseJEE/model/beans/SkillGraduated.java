@@ -45,5 +45,9 @@ public class SkillGraduated {
 	public void setGrade(final double grade) {
 		this.grade = grade;
 	}
+	
+	public boolean isSoft() {
+		return this.getSkill().isSoft();
+	}
 
 }

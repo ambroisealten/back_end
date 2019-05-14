@@ -144,6 +144,8 @@ public class SkillsSheetEntityController {
 
 			newSkillsSheet.setVersionDate(String.valueOf(System.currentTimeMillis()));
 
+			newSkillsSheet.setSoftSkillAverage(this.softSkillAverageCalculation(newSkillsSheet.getSkillsList()));
+
 			this.skillsSheetRepository.save(newSkillsSheet);
 		} catch (final ResourceNotFoundException rnfe) {
 			return rnfe;
@@ -153,6 +155,20 @@ public class SkillsSheetEntityController {
 			return new ConflictException();
 		}
 		return new CreatedException();
+	}
+
+	private double softSkillAverageCalculation(List<SkillGraduated> softSkillList) {
+			
+		double sum = 0;
+		int count = 0;
+		
+		for(SkillGraduated skill : softSkillList) {
+			if(skill.isSoft())  { sum += skill.getGrade(); count++; }	
+		}
+		
+		double average = (count!=0) ? sum/count : 1;
+		
+		return (double) Math.round( average* 100) / 100;
 	}
 
 	/**
