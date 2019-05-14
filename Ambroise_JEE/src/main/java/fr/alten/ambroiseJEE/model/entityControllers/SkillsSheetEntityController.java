@@ -145,6 +145,8 @@ public class SkillsSheetEntityController {
 
 			newSkillsSheet.setVersionDate(String.valueOf(System.currentTimeMillis()));
 
+			newSkillsSheet.setSoftSkillAverage(this.softSkillAverageCalculation(newSkillsSheet.getSkillsList()));
+
 			this.skillsSheetRepository.save(newSkillsSheet);
 		} catch (final ResourceNotFoundException rnfe) {
 			return rnfe;
@@ -154,6 +156,20 @@ public class SkillsSheetEntityController {
 			return new ConflictException();
 		}
 		return new CreatedException();
+	}
+
+	private double softSkillAverageCalculation(List<SkillGraduated> softSkillList) {
+			
+		double sum = 0;
+		int count = 0;
+		
+		for(SkillGraduated skill : softSkillList) {
+			if(skill.isSoft())  { sum += skill.getGrade(); count++; }	
+		}
+		
+		double average = (count!=0) ? sum/count : 1;
+		
+		return (double) Math.round( average* 100) / 100;
 	}
 
 	/**
@@ -344,8 +360,8 @@ public class SkillsSheetEntityController {
 		List<JsonNode> finalResult = listToSort;
 		if (fieldSort.equals("softskillsAverage")) { // sort on soft skill average grade
 			finalResult.sort(
-					(e1, e2) -> (Double.valueOf(getAverageSoftSkillsGrade(e1.get("skillsSheet").get("skillsList"))))
-							.compareTo(Double.valueOf(getAverageSoftSkillsGrade(e2.get("skillsSheet").get("skillsList")))));
+					(e1, e2) -> (Double.valueOf(e1.get("skillsSheet").get("softSkillAverage").asDouble()))
+							.compareTo(Double.valueOf(e2.get("skillsSheet").get("softSkillAverage").asDouble())));
 		} else if (fieldSort.equals("name") || fieldSort.equals("job") || fieldSort.equals("opinion")
 				|| fieldSort.equals("disponibility")) { // sort on specific identity field
 			if (fieldSort.equals("name")) { // compare name + surname string
@@ -395,6 +411,7 @@ public class SkillsSheetEntityController {
 		final ObjectMapper mapper = new ObjectMapper();
 		final List<String> identitiesList = Arrays.asList(identity.split(","));
 		final List<String> skillsList = Arrays.asList(skills.toLowerCase().split(","));
+		String allFilters = "";
 
 		final HashSet<Skill> filteredSkills = new HashSet<Skill>();
 		final List<Person> allPersons = this.personEntityController.getAllPersons();
@@ -402,12 +419,14 @@ public class SkillsSheetEntityController {
 		final PersonSetWithFilters filteredPersons = new PersonSetWithFilters(identitiesList);
 
 		filteredPersons.addAll(allPersons);
+		allFilters += filteredPersons.toString();
 
 		// Get all Skills in the filter that are in the database
 		for (final String skillFilter : skillsList) {
 			Skill filterSkill = new Skill();
 			filterSkill.setName(skillFilter);
 			filteredSkills.add(filterSkill);
+			allFilters += filterSkill.toString();
 		}
 
 		final Set<SkillsSheet> result = new HashSet<SkillsSheet>();
@@ -473,6 +492,29 @@ public class SkillsSheetEntityController {
 					.compareTo(Double.valueOf(e1.get("fiability").asDouble())));
 			return finalResult;
 		}
+	}
+
+	/**
+	 * Sort the list of JsonNodes after a query on Skills Sheets objects, with their
+	 * "fiability" grade if there are filters (identity, skills) or given their
+	 * version date, with decreasing order
+	 * 
+	 * @param result  the result of the query, a List of JsonNode containing Skill
+	 *                Sheet and Person objects
+	 * @param filters the user filters in the query (might be an empty string if
+	 *                there are no filters used)
+	 * @return the same JsonNode "result" as given on our params, but sorted
+	 * @author Lucas Royackkers
+	 */
+	private List<JsonNode> sortSkillSheetResult(final List<JsonNode> result, final String filters) {
+		if (filters.length() > 0) {
+			result.sort((e1, e2) -> Double.valueOf(e2.get("fiability").asDouble())
+					.compareTo(Double.valueOf(e1.get("fiability").asDouble())));
+		} else {
+			result.sort((e1, e2) -> Long.valueOf(e2.get("skillsSheet").get("versionDate").asLong())
+					.compareTo(Long.valueOf(e1.get("skillsSheet").get("versionDate").asLong())));
+		}
+		return result;
 	}
 
 	/**

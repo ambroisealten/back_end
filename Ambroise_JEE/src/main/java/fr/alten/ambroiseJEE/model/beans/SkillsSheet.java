@@ -21,6 +21,7 @@ public class SkillsSheet implements Serializable {
 	private static final long serialVersionUID = 4878950681041229894L;
 	@Id
 	private transient ObjectId _id;
+	
 	private String name;
 	private String mailPersonAttachedTo;
 	private PersonRole rolePersonAttachedTo;
@@ -29,82 +30,92 @@ public class SkillsSheet implements Serializable {
 	private List<SkillGraduated> skillsList;
 	private String versionDate;
 	private File cvPerson;
+	private double softSkillAverage;
 
 	public SkillsSheet() {
 		super();
 	}
 
 	public ObjectId get_id() {
-		return this._id;
+		return _id;
 	}
 
-	public String getMailPersonAttachedTo() {
-		return this.mailPersonAttachedTo;
-	}
-
-	public String getMailVersionAuthor() {
-		return this.mailVersionAuthor;
-	}
-
-	public String getName() {
-		return this.name;
-	}
-
-	public PersonRole getRolePersonAttachedTo() {
-		return this.rolePersonAttachedTo;
-	}
-
-	public List<SkillGraduated> getSkillsList() {
-		return this.skillsList;
-	}
-
-	public String getVersionDate() {
-		return this.versionDate;
-	}
-
-	public long getVersionNumber() {
-		return this.versionNumber;
-	}
-
-	public void set_id(final ObjectId _id) {
+	public void set_id(ObjectId _id) {
 		this._id = _id;
 	}
 
-	public void setMailPersonAttachedTo(final String mailPersonAttachedTo) {
-		this.mailPersonAttachedTo = mailPersonAttachedTo;
+	public String getName() {
+		return name;
 	}
 
-	public void setMailVersionAuthor(final String mailVersionAuthor) {
-		this.mailVersionAuthor = mailVersionAuthor;
-	}
-
-	public void setName(final String name) {
+	public void setName(String name) {
 		this.name = name;
 	}
 
-	public void setRolePersonAttachedTo(final PersonRole rolePersonAttachedTo) {
+	public String getMailPersonAttachedTo() {
+		return mailPersonAttachedTo;
+	}
+
+	public void setMailPersonAttachedTo(String mailPersonAttachedTo) {
+		this.mailPersonAttachedTo = mailPersonAttachedTo;
+	}
+
+	public PersonRole getRolePersonAttachedTo() {
+		return rolePersonAttachedTo;
+	}
+
+	public void setRolePersonAttachedTo(PersonRole rolePersonAttachedTo) {
 		this.rolePersonAttachedTo = rolePersonAttachedTo;
 	}
 
-	public void setSkillsList(final List<SkillGraduated> skillsList) {
+	public String getMailVersionAuthor() {
+		return mailVersionAuthor;
+	}
+
+	public void setMailVersionAuthor(String mailVersionAuthor) {
+		this.mailVersionAuthor = mailVersionAuthor;
+	}
+
+	public long getVersionNumber() {
+		return versionNumber;
+	}
+
+	public void setVersionNumber(long versionNumber) {
+		this.versionNumber = versionNumber;
+	}
+
+	public List<SkillGraduated> getSkillsList() {
+		return skillsList;
+	}
+
+	public void setSkillsList(List<SkillGraduated> skillsList) {
 		this.skillsList = skillsList;
 	}
 
-	public void setVersionDate(final String versionDate) {
-		this.versionDate = versionDate;
+	public String getVersionDate() {
+		return versionDate;
 	}
 
-	public void setVersionNumber(final long versionNumber) {
-		this.versionNumber = versionNumber;
+	public void setVersionDate(String versionDate) {
+		this.versionDate = versionDate;
 	}
 
 	public File getCvPerson() {
 		return cvPerson;
 	}
-	
+
 	public void setCvPerson(File cvPerson) {
 		this.cvPerson = cvPerson;
 	}
+
+	public double getSoftSkillAverage() {
+		return softSkillAverage;
+	}
+
+	public void setSoftSkillAverage(double softSkillAverage) {
+		this.softSkillAverage = softSkillAverage;
+	}
+
 	
 
 }
