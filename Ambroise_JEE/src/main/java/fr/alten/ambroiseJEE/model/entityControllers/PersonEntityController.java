@@ -288,7 +288,7 @@ public class PersonEntityController {
 
 			person.setSurname(jPerson.get("surname").textValue());
 			person.setName(jPerson.get("name").textValue());
-			person.setMonthlyWage(Float.parseFloat(jPerson.get("monthlyWage").textValue()));
+			person.setMonthlyWage(Float.parseFloat(jPerson.get("monthlyWage").asText()));
 
 			person.setRole(role);
 
