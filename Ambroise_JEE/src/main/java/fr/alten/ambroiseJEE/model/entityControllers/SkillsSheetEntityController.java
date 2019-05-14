@@ -173,8 +173,7 @@ public class SkillsSheetEntityController {
 				skill = this.skillEntityController.getSkill(skillName);
 
 			} catch (ResourceNotFoundException e) {
-				final JsonNode jIsSoft = skillGraduated.get("skill");
-				skill = this.skillEntityController.createSkill(skillName, jIsSoft.has("isSoft") ? jIsSoft.get("isSoft").textValue() : null).get();
+				skill = this.skillEntityController.createSkill(skillName, null).get();
 			}
 			
 			final double skillGrade = skillGraduated.get("grade").asDouble();
