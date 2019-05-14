@@ -3,6 +3,8 @@
  */
 package fr.alten.ambroiseJEE.utils.httpStatus;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -17,8 +19,15 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class InternalServerErrorException extends HttpException {
 
 	private static final long serialVersionUID = 6695487880532171802L;
-
+	private final Logger logger = LoggerFactory.getLogger(InternalServerErrorException.class);
+	
 	public InternalServerErrorException() {
 		super("Internal Server Error");
+	}
+	
+	public InternalServerErrorException(Exception e) {
+		super("Internal Server Error");
+		logger.error(e.getStackTrace().toString());
+		
 	}
 }
