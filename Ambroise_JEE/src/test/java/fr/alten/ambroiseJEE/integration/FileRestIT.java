@@ -22,6 +22,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.index.IndexInfo;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
@@ -29,6 +30,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.google.gson.Gson;
@@ -101,7 +103,7 @@ public class FileRestIT {
 	 */
 	private static void initFile() {
 		FileRestIT.file.set_id(new ObjectId());
-		;
+
 	}
 
 	/**
@@ -155,31 +157,8 @@ public class FileRestIT {
 	}
 
 	/**
-	 * @test delete a {@link File}
-	 * @context The param are correctly set.
-	 * @expected the response contains a {@link OkException} and the {@link File}
-	 *           has not been inserted in base.
-	 * @throws Exception
-	 * @author Andy Chabalier
-	 */
-	@Test
-	public void deleteFile() throws Exception {
-
-		final File fileToDelete = this.createFile();
-
-		final MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.delete("/file")
-				.contentType(MediaType.APPLICATION_JSON).param("_id", fileToDelete.get_id().toHexString())
-				.param("path", fileToDelete.getPath()).param("extension", fileToDelete.getExtension())).andReturn();
-
-		// Checking that the ResponseBody contain a UnprocessableEntityException
-		Assert.assertTrue(result.getResponse().getContentAsString().contains("OkException"));
-		// Checking there is no file in base
-		Assertions.assertThat(this.fileRepository.findAll()).isEmpty();
-	}
-
-	/**
 	 * create a file in base, store it in physical storage and return it
-	 * 
+	 *
 	 * @return the created file
 	 * @author Andy Chabalier
 	 */
@@ -205,22 +184,23 @@ public class FileRestIT {
 
 	/**
 	 * @test delete a {@link File}
-	 * @context The param are'nt correctly set.
-	 * @expected the response contains a {@link UnprocessableEntityException} and
-	 *           the {@link File} has not been deleted.
+	 * @context The param are correctly set.
+	 * @expected the response contains a {@link OkException} and the {@link File}
+	 *           has not been inserted in base.
 	 * @throws Exception
 	 * @author Andy Chabalier
 	 */
 	@Test
-	public void deleteFile_with_unprocessableEntityException() throws Exception {
+	public void deleteFile() throws Exception {
 
-		// send request with a not valid id (empty)
+		final File fileToDelete = createFile();
+
 		final MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.delete("/file")
-				.contentType(MediaType.APPLICATION_JSON).param("_id", "").param("path", "").param("extension", ""))
-				.andReturn();
+				.contentType(MediaType.APPLICATION_JSON).param("_id", fileToDelete.get_id().toHexString())
+				.param("path", fileToDelete.getPath()).param("extension", fileToDelete.getExtension())).andReturn();
 
 		// Checking that the ResponseBody contain a UnprocessableEntityException
-		Assert.assertTrue(result.getResponse().getContentAsString().contains("UnprocessableEntityException"));
+		Assert.assertTrue(result.getResponse().getContentAsString().contains("OkException"));
 		// Checking there is no file in base
 		Assertions.assertThat(this.fileRepository.findAll()).isEmpty();
 	}
@@ -247,23 +227,204 @@ public class FileRestIT {
 		Assertions.assertThat(this.fileRepository.findAll()).isEmpty();
 	}
 
-//	@Test
-//	public void downloadFile() throws Exception {
-//
-//		File createdFile = this.createFile();
-//
-//		final MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders
-//				.get("/file/" + createdFile.get_id().toHexString()).contentType(MediaType.APPLICATION_JSON)
-//				.param("_id", new ObjectId().toHexString()).param("path", "").param("extension", "")).andReturn();
-//
-//		// Checking that the ResponseBody contain a ResourceNotFoundException
-//		Assert.assertTrue(
-//				result.getResponse().getHeader(HttpHeaders.CONTENT_DISPOSITION).contains("attachment; filename=\""));
-//
-//		// destroy physical file
-//		this.fileStorageBusinessController.deleteFile(createdFile.get_id().toHexString(), createdFile.getPath(),
-//				createdFile.getExtension(), UserRole.MANAGER_ADMIN);
-//	}
+	/**
+	 * @test delete a {@link File}
+	 * @context The param are'nt correctly set.
+	 * @expected the response contains a {@link UnprocessableEntityException} and
+	 *           the {@link File} has not been deleted.
+	 * @throws Exception
+	 * @author Andy Chabalier
+	 */
+	@Test
+	public void deleteFile_with_unprocessableEntityException() throws Exception {
+
+		// send request with a not valid id (empty)
+		final MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.delete("/file")
+				.contentType(MediaType.APPLICATION_JSON).param("_id", "").param("path", "").param("extension", ""))
+				.andReturn();
+
+		// Checking that the ResponseBody contain a UnprocessableEntityException
+		Assert.assertTrue(result.getResponse().getContentAsString().contains("UnprocessableEntityException"));
+		// Checking there is no file in base
+		Assertions.assertThat(this.fileRepository.findAll()).isEmpty();
+	}
+
+	@Test
+	public void downloadFile() throws Exception {
+
+		final File createdFile = createFile();
+
+		final MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders
+				.get("/file/" + createdFile.get_id().toHexString() + "." + createdFile.getExtension())
+				.contentType(MediaType.APPLICATION_JSON).param("_id", new ObjectId().toHexString())
+				.param("path", createdFile.getPath())).andReturn();
+
+		// Checking that the ResponseBody contain a ResourceNotFoundException
+		Assert.assertTrue(
+				result.getResponse().getHeader(HttpHeaders.CONTENT_DISPOSITION).contains("attachment; filename=\""));
+
+		// destroy physical file
+		this.fileStorageBusinessController.deleteFile(createdFile.get_id().toHexString(), createdFile.getPath(),
+				createdFile.getExtension(), UserRole.MANAGER_ADMIN);
+	}
+
+	@Test
+	public void downloadFile_with_resourceNotFoundException() throws Exception {
+
+		final MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.get("/file/" + "xxxx")
+				.contentType(MediaType.APPLICATION_JSON).param("_id", new ObjectId().toHexString()).param("path", "xx"))
+				.andReturn();
+		Assert.assertTrue(result.getResponse().getStatus() == 404);
+	}
+
+	@Test
+	public void downloadFile_with_unprocessableEntityException() throws Exception {
+		// send request with unauthorized character
+		// invalid path
+		final MvcResult result = this.mockMvc
+				.perform(MockMvcRequestBuilders.get("/file/" + "xx").contentType(MediaType.APPLICATION_JSON)
+						.param("_id", new ObjectId().toHexString()).param("path", "://"))
+				.andReturn();
+		Assert.assertTrue(result.getResponse().getStatus() == 422);
+
+		// invalid filename
+		final MvcResult result2 = this.mockMvc.perform(MockMvcRequestBuilders.get("/file/" + "://")
+				.contentType(MediaType.APPLICATION_JSON).param("_id", new ObjectId().toHexString()).param("path", ""))
+				.andReturn();
+		Assert.assertTrue(result2.getResponse().getStatus() == 422);
+	}
+
+	@Test
+	public void getCollectionFiles() throws Exception {
+		final MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.get("/files/collection")
+				.contentType(MediaType.APPLICATION_JSON).param("path", "xxx")).andReturn();
+		Assert.assertTrue(result.getResponse().getContentAsString().matches("\\[.*\\]"));
+	}
+
+	@Test
+	public void getFile() throws Exception {
+		final File createdFile = createFile();
+		final MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.get("/file")
+				.contentType(MediaType.APPLICATION_JSON).param("fileName", createdFile.get_id().toHexString()))
+				.andReturn();
+		Assert.assertTrue(result.getResponse().getStatus() == 200);
+
+		// destroy physical file
+		this.fileStorageBusinessController.deleteFile(createdFile.get_id().toHexString(), createdFile.getPath(),
+				createdFile.getExtension(), UserRole.MANAGER_ADMIN);
+	}
+
+	@Test
+	public void getFile_with_resourceNotFoundException() throws Exception {
+		final MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.get("/file")
+				.contentType(MediaType.APPLICATION_JSON).param("fileName", new ObjectId().toHexString())).andReturn();
+		Assert.assertTrue(result.getResponse().getStatus() == 404);
+	}
+
+	@Test
+	public void getFile_with_unprocessableEntityException() throws Exception {
+		final MvcResult result = this.mockMvc.perform(
+				MockMvcRequestBuilders.get("/file").contentType(MediaType.APPLICATION_JSON).param("fileName", "xx"))
+				.andReturn();
+		Assert.assertTrue(result.getResponse().getStatus() == 422);
+	}
+
+	@Test
+	public void getFiles() throws Exception {
+		final MvcResult result = this.mockMvc
+				.perform(MockMvcRequestBuilders.get("/files").contentType(MediaType.APPLICATION_JSON)).andReturn();
+		Assert.assertTrue(result.getResponse().getStatus() == 200);
+	}
+
+	@Test
+	public void getFilesForum() throws Exception {
+		final MvcResult result = this.mockMvc
+				.perform(MockMvcRequestBuilders.get("/files/forum").contentType(MediaType.APPLICATION_JSON))
+				.andReturn();
+		Assert.assertTrue(result.getResponse().getStatus() == 200);
+	}
+
+	@Test
+	public void updateFile() throws Exception {
+		final File createdFile = createFile();
+		// invalid id
+		final MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.put("/file")
+				.contentType(MediaType.APPLICATION_JSON).param("_id", createdFile.get_id().toHexString())
+				.param("extension", createdFile.getExtension()).param("displayName", createdFile.getDisplayName())
+				.param("newPath", "/newPath/").param("oldPath", createdFile.getPath())).andReturn();
+		Assert.assertTrue(result.getResponse().getContentAsString().contains("OkException"));
+
+		// destroy physical file
+		this.fileStorageBusinessController.deleteFile(createdFile.get_id().toHexString(), createdFile.getPath(),
+				createdFile.getExtension(), UserRole.MANAGER_ADMIN);
+	}
+
+	@Test
+	public void updateFile_with_resourceNotFoundException() throws Exception {
+		final MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.put("/file")
+				.contentType(MediaType.APPLICATION_JSON).param("_id", new ObjectId().toHexString())
+				.param("extension", "").param("displayName", "").param("newPath", "/").param("oldPath", "/"))
+				.andReturn();
+		Assert.assertTrue(result.getResponse().getContentAsString().contains("ResourceNotFoundException"));
+	}
+
+	@Test
+	public void updateFile_with_unprocessableEntityException_id() throws Exception {
+		// invalid id
+		final MvcResult result = this.mockMvc
+				.perform(MockMvcRequestBuilders.put("/file").contentType(MediaType.APPLICATION_JSON).param("_id", "")
+						.param("extension", "").param("displayName", "").param("newPath", "").param("oldPath", ""))
+				.andReturn();
+		Assert.assertTrue(result.getResponse().getContentAsString().contains("UnprocessableEntityException"));
+	}
+
+	@Test
+	public void updateFile_with_unprocessableEntityException_nameAndPath() throws Exception {
+		final File createdFile = createFile();
+		// invalid id
+		final MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.put("/file")
+				.contentType(MediaType.APPLICATION_JSON).param("_id", createdFile.get_id().toHexString())
+				.param("extension", createdFile.getExtension()).param("displayName", createdFile.getDisplayName())
+				.param("newPath", "").param("oldPath", createdFile.getPath())).andReturn();
+		Assert.assertTrue(result.getResponse().getContentAsString().contains("UnprocessableEntityException"));
+
+		// destroy physical file
+		this.fileStorageBusinessController.deleteFile(createdFile.get_id().toHexString(), createdFile.getPath(),
+				createdFile.getExtension(), UserRole.MANAGER_ADMIN);
+	}
+
+	@Test
+	public void uploadFile() throws Exception {
+		final byte[] file = new byte[1];
+		file[0] = ' ';
+		final MockMultipartFile multipartFile = new MockMultipartFile("file", file);
+
+		final MvcResult result = this.mockMvc
+				.perform(MockMvcRequestBuilders.multipart("/file").file(multipartFile).param("path", "/"))
+				.andExpect(MockMvcResultMatchers.status().is(200)).andReturn();
+
+		final File uploadedFile = FileRestIT.gson.fromJson(result.getResponse().getContentAsString(), File.class);
+
+		// destroy physical file
+		this.fileStorageBusinessController.deleteFile(uploadedFile.get_id().toHexString(), uploadedFile.getPath(),
+				uploadedFile.getExtension(), UserRole.MANAGER_ADMIN);
+	}
+
+	@Test
+	public void uploadFile_with_unprocessableEntityException() throws Exception {
+		final byte[] file = null;
+		final MockMultipartFile multipartFile = new MockMultipartFile("file", file);
+
+		this.mockMvc.perform(MockMvcRequestBuilders.multipart("/file").file(multipartFile).param("path", "/"))
+				.andExpect(MockMvcResultMatchers.status().is(422));
+	}
+
+	@Test
+	public void uploadMultipleFiles() throws Exception {
+		this.mockMvc
+				.perform(MockMvcRequestBuilders.multipart("/file/multiples").param("files", "[]").param("path", "/"))
+				.andExpect(MockMvcResultMatchers.status().is(200));
+	}
 
 	@Test
 	public void y_testIndex() {

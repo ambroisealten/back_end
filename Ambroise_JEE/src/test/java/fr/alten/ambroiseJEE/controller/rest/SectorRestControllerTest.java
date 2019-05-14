@@ -23,7 +23,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
- * 
+ *
  * @author Andy Chabalier
  *
  */

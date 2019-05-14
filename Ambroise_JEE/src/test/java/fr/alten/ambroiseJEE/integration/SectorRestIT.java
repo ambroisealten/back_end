@@ -1,15 +1,7 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.integration;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 import java.io.FileNotFoundException;
 import java.util.HashMap;
@@ -17,8 +9,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.assertj.core.api.Assertions;
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
@@ -35,6 +29,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -65,254 +60,264 @@ public class SectorRestIT {
 
 	private static Gson gson;
 
-	@Autowired
-	private MockMvc mockMvc;
-	@Autowired
-	private MongoTemplate mongoTemplate;
-	@Autowired
-	private UserRepository userRepository;
-	@Autowired
-	private SectorRepository sectorRepository;
-
-	@BeforeClass
-	public static void beforeTests() {
-		TokenIgnore.createDir();
-		initAdminUser();
-		initSector();
-		initGson();
-	}
-
-	private static void initAdminUser() {
-		userAdmin.setForname("tempUserAdmin");
-		userAdmin.setMail("tempUserAdmin@mail.com");
-		userAdmin.setName("tempUserAdminName");
-	}
-
-	private static void initSector() {
-		sector.setName("newSector");
-	}
-
-	private static void initGson() {
-		final GsonBuilder builder = new GsonBuilder();
-		gson = builder.create();
-	}
-
-	@Before
-	public void beforeEachTest() {
-		userRepository.insert(userAdmin);
-		userRepository.deleteAll();
-		sectorRepository.deleteAll();
-	}
-
-	@After
-	public void afterEachTest() {
-		userRepository.deleteAll();
-		sectorRepository.deleteAll();
-
-	}
-
 	@AfterClass
 	public static void afterTests() throws FileNotFoundException {
 		TokenIgnore.deleteDir();
 	}
 
-	@Test
-	public void createSector_with_success() throws Exception {
+	@BeforeClass
+	public static void beforeTests() {
+		TokenIgnore.createDir();
+		SectorRestIT.initAdminUser();
+		SectorRestIT.initSector();
+		SectorRestIT.initGson();
+	}
 
-		// setup
-		String newSector = "{" + "\"name\":\"newSector\"" + "}";
+	private static void initAdminUser() {
+		SectorRestIT.userAdmin.setForname("tempUserAdmin");
+		SectorRestIT.userAdmin.setMail("tempUserAdmin@mail.com");
+		SectorRestIT.userAdmin.setName("tempUserAdminName");
+	}
 
-		MvcResult result = this.mockMvc
-				.perform(post("/sector").contentType(MediaType.APPLICATION_JSON).content(newSector)).andReturn();
+	private static void initGson() {
+		final GsonBuilder builder = new GsonBuilder();
+		SectorRestIT.gson = builder.create();
+	}
 
-		// Checking that the ResponseBody contain a CreatedException
-		assertTrue(result.getResponse().getContentAsString().contains("CreatedException"));
+	private static void initSector() {
+		SectorRestIT.sector.setName("newSector");
+	}
 
-		// checking the new sector in base and its fields's value
-		Optional<Sector> sectorOptional = this.sectorRepository.findByName("newSector");
-		assertTrue(sectorOptional.isPresent());
-		assertThat(sectorOptional.get().getName()).isEqualTo("newSector");
+	@Autowired
+	private MockMvc mockMvc;
+
+	@Autowired
+	private MongoTemplate mongoTemplate;
+
+	@Autowired
+	private UserRepository userRepository;
+
+	@Autowired
+	private SectorRepository sectorRepository;
+
+	@After
+	public void afterEachTest() {
+		this.userRepository.deleteAll();
+		this.sectorRepository.deleteAll();
+
+	}
+
+	@Before
+	public void beforeEachTest() {
+		this.userRepository.insert(SectorRestIT.userAdmin);
+		this.userRepository.deleteAll();
+		this.sectorRepository.deleteAll();
 	}
 
 	@Test
 	public void createSector_with_conflict() throws Exception {
 
 		// setup
-		String newSector = "{" + "\"name\":\"newSector\"" + "}";
+		final String newSector = "{" + "\"name\":\"newSector\"" + "}";
 
 		// Pre-inserting a Sector with name code as this.sector to create a
 		// ConflictException
-		sectorRepository.insert(sector);
+		this.sectorRepository.insert(SectorRestIT.sector);
 		// Checking pre-insertion
-		assertTrue(this.sectorRepository.findByName("newSector").isPresent());
+		Assert.assertTrue(this.sectorRepository.findByName("newSector").isPresent());
 
-		MvcResult result = this.mockMvc
-				.perform(post("/sector").contentType(MediaType.APPLICATION_JSON).content(newSector)).andReturn();
+		final MvcResult result = this.mockMvc.perform(
+				MockMvcRequestBuilders.post("/sector").contentType(MediaType.APPLICATION_JSON).content(newSector))
+				.andReturn();
 
 		// Checking that the ResponseBody contain a ConflictException
-		assertTrue(result.getResponse().getContentAsString().contains("ConflictException"));
+		Assert.assertTrue(result.getResponse().getContentAsString().contains("ConflictException"));
 
 		// Checking only this.sector is in base
-		assertThat(this.sectorRepository.count()).isEqualTo(1);
+		Assertions.assertThat(this.sectorRepository.count()).isEqualTo(1);
 	}
 
 	@Test
 	public void createSector_with_missingRequiredFields() throws Exception {
 
 		// setup
-		String newSector = "{}";
+		final String newSector = "{}";
 
-		MvcResult result = this.mockMvc
-				.perform(post("/sector").contentType(MediaType.APPLICATION_JSON).content(newSector)).andReturn();
+		final MvcResult result = this.mockMvc.perform(
+				MockMvcRequestBuilders.post("/sector").contentType(MediaType.APPLICATION_JSON).content(newSector))
+				.andReturn();
 
 		// Checking that the ResponseBody contain a UnprocessableEntityException
-		assertTrue(result.getResponse().getContentAsString().contains("UnprocessableEntityException"));
+		Assert.assertTrue(result.getResponse().getContentAsString().contains("UnprocessableEntityException"));
 		// Checking there is no sector in base
-		assertThat(this.sectorRepository.findAll()).isEmpty();
+		Assertions.assertThat(this.sectorRepository.findAll()).isEmpty();
 	}
 
 	@Test
-	public void deleteSector_with_success() throws Exception {
+	public void createSector_with_success() throws Exception {
 
 		// setup
-		String sectorToDelete = "{" + "\"name\":\"newSector\"" + "}";
-		// Pre-inserting a Sector with name code as this.sector for having a sector to
-		// delete
-		// with success
-		sectorRepository.insert(sector);
-		// Checking pre-insertion
-		Optional<Sector> sectorOptional = this.sectorRepository.findByName("newSector");
-		assertTrue(sectorOptional.isPresent());
+		final String newSector = "{" + "\"name\":\"newSector\"" + "}";
 
-		MvcResult result = this.mockMvc
-				.perform(delete("/sector").contentType(MediaType.APPLICATION_JSON).content(sectorToDelete)).andReturn();
+		final MvcResult result = this.mockMvc.perform(
+				MockMvcRequestBuilders.post("/sector").contentType(MediaType.APPLICATION_JSON).content(newSector))
+				.andReturn();
 
-		// Checking that the ResponseBody contain a OkException
-		assertTrue(result.getResponse().getContentAsString().contains("OkException"));
+		// Checking that the ResponseBody contain a CreatedException
+		Assert.assertTrue(result.getResponse().getContentAsString().contains("CreatedException"));
 
-	}
-
-	@Test
-	public void deleteSector_with_resourceNotFound() throws Exception {
-
-		// setup
-		String sectorToDelete = "{" + "\"name\":\"sectorFalse\"" + "}";
-		// Checking if there is not already a sector in base with the code : 00000
-		assertFalse(this.sectorRepository.findByName("sectorFalse").isPresent());
-
-		MvcResult result = this.mockMvc
-				.perform(delete("/sector").contentType(MediaType.APPLICATION_JSON).content(sectorToDelete)).andReturn();
-
-		// Checking that the ResponseBody contain a ResourceNotFoundException
-		assertTrue(result.getResponse().getContentAsString().contains("ResourceNotFoundException"));
+		// checking the new sector in base and its fields's value
+		final Optional<Sector> sectorOptional = this.sectorRepository.findByName("newSector");
+		Assert.assertTrue(sectorOptional.isPresent());
+		Assertions.assertThat(sectorOptional.get().getName()).isEqualTo("newSector");
 	}
 
 	@Test
 	public void deleteSector_with_missingRequiredFields() throws Exception {
 
 		// setup
-		String sectorToDelete = "{}";
+		final String sectorToDelete = "{}";
 
-		MvcResult result = this.mockMvc
-				.perform(delete("/sector").contentType(MediaType.APPLICATION_JSON).content(sectorToDelete)).andReturn();
+		final MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.delete("/sector")
+				.contentType(MediaType.APPLICATION_JSON).content(sectorToDelete)).andReturn();
 
 		// Checking that the ResponseBody contain a UnprocessableEntityException
-		assertTrue(result.getResponse().getContentAsString().contains("UnprocessableEntityException"));
+		Assert.assertTrue(result.getResponse().getContentAsString().contains("UnprocessableEntityException"));
+	}
+
+	@Test
+	public void deleteSector_with_resourceNotFound() throws Exception {
+
+		// setup
+		final String sectorToDelete = "{" + "\"name\":\"sectorFalse\"" + "}";
+		// Checking if there is not already a sector in base with the code : 00000
+		Assert.assertFalse(this.sectorRepository.findByName("sectorFalse").isPresent());
+
+		final MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.delete("/sector")
+				.contentType(MediaType.APPLICATION_JSON).content(sectorToDelete)).andReturn();
+
+		// Checking that the ResponseBody contain a ResourceNotFoundException
+		Assert.assertTrue(result.getResponse().getContentAsString().contains("ResourceNotFoundException"));
+	}
+
+	@Test
+	public void deleteSector_with_success() throws Exception {
+
+		// setup
+		final String sectorToDelete = "{" + "\"name\":\"newSector\"" + "}";
+		// Pre-inserting a Sector with name code as this.sector for having a sector to
+		// delete
+		// with success
+		this.sectorRepository.insert(SectorRestIT.sector);
+		// Checking pre-insertion
+		final Optional<Sector> sectorOptional = this.sectorRepository.findByName("newSector");
+		Assert.assertTrue(sectorOptional.isPresent());
+
+		final MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.delete("/sector")
+				.contentType(MediaType.APPLICATION_JSON).content(sectorToDelete)).andReturn();
+
+		// Checking that the ResponseBody contain a OkException
+		Assert.assertTrue(result.getResponse().getContentAsString().contains("OkException"));
+
 	}
 
 	@Test
 	public void getSectors() throws Exception {
 
-		// Pre-insertion of 20 cities for test
+		// Pre-insertion of 20 sectors for test
 		for (int i = 0; i < 20; i++) {
-			Sector sectorForGet = new Sector();
+			final Sector sectorForGet = new Sector();
 			sectorForGet.setName("Sector" + i);
 			this.sectorRepository.insert(sectorForGet);
-			Optional<Sector> sectorOptional = this.sectorRepository.findByName("Sector" + i);
-			assertTrue(sectorOptional.isPresent());
-			assertThat(sectorOptional.get().getName()).isEqualTo("Sector" + i);
+			final Optional<Sector> sectorOptional = this.sectorRepository.findByName("Sector" + i);
+			Assert.assertTrue(sectorOptional.isPresent());
+			Assertions.assertThat(sectorOptional.get().getName()).isEqualTo("Sector" + i);
 		}
 
-		MvcResult result = this.mockMvc.perform(get("/cities").contentType(MediaType.APPLICATION_JSON)).andReturn();
+		final MvcResult result = this.mockMvc
+				.perform(MockMvcRequestBuilders.get("/sectors").contentType(MediaType.APPLICATION_JSON)).andReturn();
 
-		String jsonResult = result.getResponse().getContentAsString();
+		final String jsonResult = result.getResponse().getContentAsString();
 
 		// verifying that we got the same cities as inserted before
 		int count = 0;
-		for (JsonElement jsector : gson.fromJson(jsonResult, JsonArray.class)) {
-			JsonObject jsonSector = jsector.getAsJsonObject();
-			assertThat(jsonSector.get("name").getAsString()).isEqualTo("Sector" + count);
+		for (final JsonElement jsector : SectorRestIT.gson.fromJson(jsonResult, JsonArray.class)) {
+			final JsonObject jsonSector = jsector.getAsJsonObject();
+			Assertions.assertThat(jsonSector.get("name").getAsString()).isEqualTo("Sector" + count);
 			count++;
 		}
-	}
-
-	@Test
-	public void updateSector_with_success() throws Exception {
-
-		// setup
-		String updatedSector = "{" + "\"name\":\"updateSector\"," + "\"oldName\":\"newSector\"" + "}";
-		// Pre-inserting a sector to update
-		sectorRepository.insert(sector);
-		// Checking pre-insertion
-		assertTrue(this.sectorRepository.findByName("newSector").isPresent());
-
-		MvcResult result = this.mockMvc
-				.perform(put("/sector").contentType(MediaType.APPLICATION_JSON).content(updatedSector)).andReturn();
-
-		assertTrue(result.getResponse().getContentAsString().contains("OkException"));
-
-		// Checking the updated sector in base
-		Optional<Sector> sectorOptional = this.sectorRepository.findByName("updateSector");
-		assertTrue(sectorOptional.isPresent());
-		assertThat(sectorOptional.get().getName()).isEqualTo("updateSector");
-	}
-
-	@Test
-	public void updateSector_with_resourceNotFound() throws Exception {
-
-		// setup
-		String updatedSector = "{" + "\"name\":\"newSectorFalse\"," + "\"oldName\":\"sectorNotFound\"" + "}";
-
-		MvcResult result = this.mockMvc
-				.perform(put("/sector").contentType(MediaType.APPLICATION_JSON).content(updatedSector)).andReturn();
-
-		assertTrue(result.getResponse().getContentAsString().contains("ResourceNotFoundException"));
 	}
 
 	@Test
 	public void updateSector_with_missingRequiredFields() throws Exception {
 
 		// setup
-		String sectorToDelete = "{}";
+		final String sectorToDelete = "{}";
 
-		MvcResult result = this.mockMvc
-				.perform(put("/sector").contentType(MediaType.APPLICATION_JSON).content(sectorToDelete)).andReturn();
+		final MvcResult result = this.mockMvc.perform(
+				MockMvcRequestBuilders.put("/sector").contentType(MediaType.APPLICATION_JSON).content(sectorToDelete))
+				.andReturn();
 
-		assertTrue(result.getResponse().getContentAsString().contains("UnprocessableEntityException"));
+		Assert.assertTrue(result.getResponse().getContentAsString().contains("UnprocessableEntityException"));
+	}
+
+	@Test
+	public void updateSector_with_resourceNotFound() throws Exception {
+
+		// setup
+		final String updatedSector = "{" + "\"name\":\"newSectorFalse\"," + "\"oldName\":\"sectorNotFound\"" + "}";
+
+		final MvcResult result = this.mockMvc.perform(
+				MockMvcRequestBuilders.put("/sector").contentType(MediaType.APPLICATION_JSON).content(updatedSector))
+				.andReturn();
+
+		Assert.assertTrue(result.getResponse().getContentAsString().contains("ResourceNotFoundException"));
+	}
+
+	@Test
+	public void updateSector_with_success() throws Exception {
+
+		// setup
+		final String updatedSector = "{" + "\"name\":\"updateSector\"," + "\"oldName\":\"newSector\"" + "}";
+		// Pre-inserting a sector to update
+		this.sectorRepository.insert(SectorRestIT.sector);
+		// Checking pre-insertion
+		Assert.assertTrue(this.sectorRepository.findByName("newSector").isPresent());
+
+		final MvcResult result = this.mockMvc.perform(
+				MockMvcRequestBuilders.put("/sector").contentType(MediaType.APPLICATION_JSON).content(updatedSector))
+				.andReturn();
+
+		Assert.assertTrue(result.getResponse().getContentAsString().contains("OkException"));
+
+		// Checking the updated sector in base
+		final Optional<Sector> sectorOptional = this.sectorRepository.findByName("updateSector");
+		Assert.assertTrue(sectorOptional.isPresent());
+		Assertions.assertThat(sectorOptional.get().getName()).isEqualTo("updateSector");
 	}
 
 	@Test
 	public void y_testIndex() {
 		// asserting the collection city exist
-		assertTrue(mongoTemplate.collectionExists("sector"));
+		Assert.assertTrue(this.mongoTemplate.collectionExists("sector"));
 
 		// asserting all unique index are present
 
-		HashMap<String, Boolean> indexPresent = new HashMap<>();
+		final HashMap<String, Boolean> indexPresent = new HashMap<>();
 		indexPresent.put("_id_", false);
 		indexPresent.put("name", false);
 
 		// getting all indexed field of the collection "sector"
-		List<IndexInfo> indexList = mongoTemplate.indexOps("sector").getIndexInfo();
+		final List<IndexInfo> indexList = this.mongoTemplate.indexOps("sector").getIndexInfo();
 
-		for (IndexInfo index : indexList) {
-			for (Map.Entry<String, Boolean> indexInMap : indexPresent.entrySet()) {
+		for (final IndexInfo index : indexList) {
+			for (final Map.Entry<String, Boolean> indexInMap : indexPresent.entrySet()) {
 				if (index.getName().equals(indexInMap.getKey())) {
 
 					// checking the unicity of unique indexed fields - except for _id_ because
 					// mongoDB consider his unicity as false
 					if (!index.getName().equals("_id_")) {
-						assertTrue(index.isUnique());
+						Assert.assertTrue(index.isUnique());
 					}
 					indexInMap.setValue(true);
 				}
@@ -320,15 +325,8 @@ public class SectorRestIT {
 		}
 
 		// Checking the presence of all indexes
-		for (Map.Entry<String, Boolean> indexInMap : indexPresent.entrySet()) {
-			assertTrue(indexInMap.getValue());
+		for (final Map.Entry<String, Boolean> indexInMap : indexPresent.entrySet()) {
+			Assert.assertTrue(indexInMap.getValue());
 		}
 	}
-
-//	@Test
-//	public void z_DroppingDatabase() {
-//		// Last test run to drop the database for next test classes.
-//		mongoTemplate.getDb().drop();
-//	}
-
 }

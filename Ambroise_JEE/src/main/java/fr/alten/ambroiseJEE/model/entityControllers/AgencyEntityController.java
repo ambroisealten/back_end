@@ -49,9 +49,12 @@ public class AgencyEntityController {
 			newAgency.setName(jAgency.get("name").textValue());
 
 			final String placeType = jAgency.get("placeType").textValue();
-			final Geographic place = this.geographicBusinessController
-					.getPlace(jAgency.get("place").textValue(), placeType).orElseThrow(ResourceNotFoundException::new);
-			newAgency.setPlace(place.getIdentifier());
+			final Optional<Geographic> place = this.geographicBusinessController
+					.getPlace(jAgency.get("place").textValue(), placeType);
+			if (place.isPresent()) {
+				newAgency.setPlace(place.get().getIdentifier());
+				newAgency.setPlaceType(placeType);
+			}
 			newAgency.setPlaceType(placeType);
 
 			this.agencyRepository.save(newAgency);
@@ -65,15 +68,15 @@ public class AgencyEntityController {
 
 	/**
 	 *
-	 * @param name the agency name to fetch
+	 * @param jAgency JsonNode with all agency parameters
 	 * @return {@link HttpException} corresponding to the status of the request
 	 *         ({@link ResourceNotFoundException} if the resource is not found and
 	 *         {@link OkException} if the agency is deactivated
 	 * @author MAQUINGHEN MAXIME
 	 */
-	public HttpException deleteAgency(final String name) {
+	public HttpException deleteAgency(final JsonNode jAgency) {
 		try {
-			final Agency agency = this.agencyRepository.findByName(name).orElseThrow(ResourceNotFoundException::new);
+			final Agency agency = this.agencyRepository.findByName(jAgency.get("name").textValue()).orElseThrow(ResourceNotFoundException::new);
 			agency.setName("deactivated" + System.currentTimeMillis());
 			agency.setPlace(null);
 			this.agencyRepository.save(agency);

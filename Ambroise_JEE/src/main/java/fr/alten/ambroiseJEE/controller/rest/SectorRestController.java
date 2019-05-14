@@ -97,7 +97,7 @@ public class SectorRestController {
 	 * @return the list of all sectors
 	 * @author Andy Chabalier
 	 */
-	@GetMapping(value = "/sector")
+	@GetMapping(value = "/sectors")
 	@ResponseBody
 	public String getSectors(@RequestAttribute("mail") final String mail,
 			@RequestAttribute("role") final UserRole role) {
