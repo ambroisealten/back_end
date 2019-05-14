@@ -3,6 +3,7 @@ package fr.alten.ambroiseJEE.model.entityControllers;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -149,7 +150,7 @@ public class SkillsSheetEntityController {
 			return rnfe;
 		} catch (final Exception e) {
 			e.printStackTrace();
-			
+
 			return new ConflictException();
 		}
 		return new CreatedException();
@@ -175,7 +176,7 @@ public class SkillsSheetEntityController {
 			} catch (ResourceNotFoundException e) {
 				skill = this.skillEntityController.createSkill(skillName, null).get();
 			}
-			
+
 			final double skillGrade = skillGraduated.get("grade").asDouble();
 			if (checkGrade(skillGrade)) {
 				allSkills.add(new SkillGraduated(skill, skillGrade));
@@ -311,7 +312,55 @@ public class SkillsSheetEntityController {
 			}
 
 		}
-		finalResult.sort((e1,e2) -> (Double.valueOf(e2.get("skillsSheet").get("versionDate").asDouble())).compareTo(Double.valueOf(e1.get("skillsSheet").get("versionDate").asDouble())));
+		finalResult.sort((e1, e2) -> (Double.valueOf(e2.get("skillsSheet").get("versionDate").asDouble()))
+				.compareTo(Double.valueOf(e1.get("skillsSheet").get("versionDate").asDouble())));
+
+		return finalResult;
+	}
+
+	public double getAverageSoftSkillsGrade(JsonNode jSkillsList) {
+		double sumGrades = 0;
+		int softSkillNb = 0;
+		for (JsonNode skill : jSkillsList) {
+			if (skill.get("skill").get("isSoft") != null) {
+				sumGrades += skill.get("grade").asDouble();
+				softSkillNb++;
+			}
+		}
+		
+		return softSkillNb > 0 ? sumGrades / softSkillNb : 1;
+	}
+	
+	/**
+	 * Sort a skills sheets' list given a specific sort field
+	 * 
+	 * @param listToSort JsonNode containing skillsSheets' list to sort
+	 * @param fieldSort field to sort on
+	 * @param isAsc boolean if true sort ascending, else descending
+	 * @return a sorted list of skillsSheets
+	 * @author Camille Schnell
+	 */
+	public List<JsonNode> getSkillsSheetsWithFieldSorting(List<JsonNode> listToSort, String fieldSort, boolean isAsc) {
+		List<JsonNode> finalResult = listToSort;
+		if (fieldSort.equals("softskillsAverage")) { // sort on soft skill average grade
+			finalResult.sort(
+					(e1, e2) -> (Double.valueOf(getAverageSoftSkillsGrade(e1.get("skillsSheet").get("skillsList"))))
+							.compareTo(Double.valueOf(getAverageSoftSkillsGrade(e2.get("skillsSheet").get("skillsList")))));
+		} else if (fieldSort.equals("name") || fieldSort.equals("job") || fieldSort.equals("opinion")
+				|| fieldSort.equals("disponibility")) { // sort on specific identity field
+			if (fieldSort.equals("name")) { // compare name + surname string
+				finalResult.sort((e1,e2) -> (e1.get("person").get("surname").textValue()).compareToIgnoreCase(e2.get("person").get("surname").textValue()));
+			} else {
+				finalResult.sort((e1, e2) -> (e1.get("person").get(fieldSort).textValue())
+						.compareToIgnoreCase((e2.get("person").get(fieldSort).textValue())));
+			}
+		} else { // sort on specific skill grade field
+			return null;
+		}
+
+		if (!isAsc) {
+			Collections.reverse(finalResult);
+		}
 		
 		return finalResult;
 	}
@@ -322,13 +371,22 @@ public class SkillsSheetEntityController {
 	 * @param identity the filters about the Person (name, surname, job, etc.)
 	 * @param skills   the filters about Skills (name)
 	 * @return a List of Skills Sheets that match the query
-	 * @author Lucas Royackkers
+	 * @author Lucas Royackkers, Camille Schnell
 	 */
-	public List<JsonNode> getSkillsSheetsByIdentityAndSkills(final String identity, final String skills) {
+	public List<JsonNode> getSkillsSheetsByIdentityAndSkills(final String identity, final String skills,
+			final String columnSorting) {
+
 		// If there is no parameters given (e.g. a space for identity and skills
 		// filter), returns all skills sheets
 		if ((identity.length() == 1 && identity.equals(",")) && (skills.length() == 1 && skills.equals(","))) {
-			return getSkillsSheets();
+			// if we need to sort given a specific column
+			if (!columnSorting.equals(",")) {
+				String fieldSort = columnSorting.split(",")[0];
+				boolean isAsc = columnSorting.split(",")[1].equals("asc");
+				return getSkillsSheetsWithFieldSorting(getSkillsSheets(), fieldSort, isAsc);
+			} else {
+				return getSkillsSheets();
+			}
 		}
 
 		// Initialize variables
@@ -403,10 +461,18 @@ public class SkillsSheetEntityController {
 				}
 			}
 		}
-		finalResult.sort((e1, e2) -> Double.valueOf(e2.get("fiability").asDouble())
-				.compareTo(Double.valueOf(e1.get("fiability").asDouble())));
-
-		return finalResult;
+		
+		// if we need to sort given a specific column
+		if (!columnSorting.equals(",")) {
+			String columnSort = columnSorting.split(",")[0];
+			boolean isAsc = columnSorting.split(",")[1].equals("asc");
+			return getSkillsSheetsWithFieldSorting(finalResult, columnSort, isAsc);
+		}
+		else { // sorted by default on fiability grade
+			finalResult.sort((e1, e2) -> Double.valueOf(e2.get("fiability").asDouble())
+					.compareTo(Double.valueOf(e1.get("fiability").asDouble())));
+			return finalResult;
+		}
 	}
 
 	/**

@@ -113,10 +113,10 @@ public class SkillsSheetBusinessController {
 	 *         rights to perform this action
 	 * @author Lucas Royackkers
 	 */
-	public List<JsonNode> getSkillsSheetsByIdentityAndSkills(final String identity, final String skills,
+	public List<JsonNode> getSkillsSheetsByIdentityAndSkills(final String identity, final String skills, final String columnSorting,
 			final UserRole role) {
 		if (UserRole.MANAGER == role || UserRole.MANAGER_ADMIN == role) {
-			return this.skillsSheetEntityController.getSkillsSheetsByIdentityAndSkills(identity, skills);
+			return this.skillsSheetEntityController.getSkillsSheetsByIdentityAndSkills(identity, skills, columnSorting);
 		}
 		throw new ForbiddenException();
 	}
