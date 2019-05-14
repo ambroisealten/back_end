@@ -47,8 +47,6 @@ public class SkillForumEntityController {
 			this.skillForumRepository.save(newSkillForum);
 		} catch (final DuplicateKeyException dke) {
 			return new ConflictException();
-		} catch (final Exception e) {
-			e.printStackTrace();
 		}
 		return new CreatedException();
 	}
