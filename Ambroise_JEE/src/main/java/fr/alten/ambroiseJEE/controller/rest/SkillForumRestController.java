@@ -46,7 +46,7 @@ public class SkillForumRestController {
 	@ResponseBody
 	public HttpException createSkill(@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
 			@RequestAttribute("role") final UserRole role) throws Exception {
-		return JsonUtils.checkJsonIntegrity(params, "mail")
+		return JsonUtils.checkJsonIntegrity(params, "name")
 				? this.skillForumBusinessController.createSkillForum(params, role)
 				: new UnprocessableEntityException();
 	}
@@ -55,7 +55,7 @@ public class SkillForumRestController {
 	@ResponseBody
 	public HttpException deleteSkill(@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
 			@RequestAttribute("role") final UserRole role) throws Exception {
-		return JsonUtils.checkJsonIntegrity(params, "mail")
+		return JsonUtils.checkJsonIntegrity(params, "name")
 				? this.skillForumBusinessController.deleteSkillForum(params, role)
 				: new UnprocessableEntityException();
 	}
@@ -64,7 +64,10 @@ public class SkillForumRestController {
 	@ResponseBody
 	public String getSkill(@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
 			@RequestAttribute("role") final UserRole role) throws Exception {
-		return this.gson.toJson(this.skillForumBusinessController.getSkillForum(params, role));
+		if (JsonUtils.checkJsonIntegrity(params, "name")) {
+			return this.gson.toJson(this.skillForumBusinessController.getSkillForum(params, role));
+		}
+		throw new UnprocessableEntityException();
 	}
 
 	@GetMapping(value = "/forum/skills")
@@ -78,8 +81,8 @@ public class SkillForumRestController {
 	@ResponseBody
 	public HttpException updateSkill(@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
 			@RequestAttribute("role") final UserRole role) throws Exception {
-		return JsonUtils.checkJsonIntegrity(params, "mail")
-				? this.skillForumBusinessController.createSkillForum(params, role)
+		return JsonUtils.checkJsonIntegrity(params, "name", "oldName")
+				? this.skillForumBusinessController.updateSkillForum(params, role)
 				: new UnprocessableEntityException();
 	}
 }
