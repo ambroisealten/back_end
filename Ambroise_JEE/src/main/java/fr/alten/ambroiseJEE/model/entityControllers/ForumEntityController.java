@@ -16,6 +16,7 @@ import fr.alten.ambroiseJEE.model.dao.ForumRepository;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.InternalServerErrorException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 
@@ -36,9 +37,10 @@ public class ForumEntityController {
 	 * @return {@link HttpException} corresponding to the status of the request
 	 *         ({@link ConflictException} if the resource cannot be create
 	 *         {@link CreatedException} if the forum is create
-	 * @author MAQUINGHEN MAXIME
+	 * @author MAQUINGHEN MAXIME, Kylian Gehier
 	 */
 	public HttpException createForum(final JsonNode jForum) {
+
 		try {
 			final Optional<Forum> forumOptional = this.forumRepository.findByNameAndDateAndPlace(
 					jForum.get("name").textValue(), jForum.get("date").textValue(), jForum.get("place").textValue());
@@ -54,31 +56,32 @@ public class ForumEntityController {
 			newForum.setPlace(jForum.get("place").textValue());
 
 			this.forumRepository.save(newForum);
-		} catch (final Exception e) {
-			return new ConflictException();
+		} catch (Exception e) {
+			return new InternalServerErrorException(e);
 		}
+		
 		return new CreatedException();
 	}
 
 	/**
 	 * Delete a Forum
 	 *
-	 * @param params contain the name, date and place of the forum to delete
+	 * @param jForum contain the name, date and place of the forum to delete
 	 * @return {@link HttpException} corresponding to the status of the request
 	 *         ({@link ResourceNotFoundException} if the resource cannot be found
 	 *         {@link OkException} if the forum is deleted
-	 * @author MAQUINGHEN MAXIME
+	 * @author MAQUINGHEN MAXIME, Kylian Gehier
 	 */
-	public HttpException deleteForum(final JsonNode params) {
+	public HttpException deleteForum(final JsonNode jForum) {
 		try {
-			final Forum forum = this.forumRepository.findByNameAndDateAndPlace(params.get("name").textValue(),
-					params.get("date").textValue(), params.get("place").textValue())
+			final Forum forum = this.forumRepository.findByNameAndDateAndPlace(jForum.get("name").textValue(),
+					jForum.get("date").textValue(), jForum.get("place").textValue())
 					.orElseThrow(ResourceNotFoundException::new);
 			this.forumRepository.delete(forum);
 		} catch (final ResourceNotFoundException rnfe) {
 			return rnfe;
 		} catch (final Exception e) {
-			return new ConflictException();
+			return new InternalServerErrorException(e);
 		}
 		return new OkException();
 	}
@@ -114,23 +117,29 @@ public class ForumEntityController {
 	 * @return {@link HttpException} corresponding to the status of the request
 	 *         ({@link ResourceNotFoundException} if the resource cannot be found
 	 *         {@link OkException} if the forum is updated
-	 * @author MAQUINGHEN MAXIME
+	 * @author MAQUINGHEN MAXIME, Kylian Gehier
 	 */
 	public HttpException updateForum(final JsonNode params) {
 		try {
-			final Forum forum = this.forumRepository.findByNameAndDateAndPlace(params.get("oldname").textValue(),
-					params.get("olddate").textValue(), params.get("oldplace").textValue())
+			this.forumRepository.findByNameAndDateAndPlace(params.get("name").textValue(),
+					params.get("date").textValue(), params.get("place").textValue())
+					.orElseThrow(ConflictException::new);
+
+			final Forum forum = this.forumRepository.findByNameAndDateAndPlace(params.get("oldName").textValue(),
+					params.get("oldDate").textValue(), params.get("oldPlace").textValue())
 					.orElseThrow(ResourceNotFoundException::new);
+
 			forum.setName(params.get("name").textValue());
 			forum.setDate(params.get("date").textValue());
 			forum.setPlace(params.get("place").textValue());
 			this.forumRepository.save(forum);
 
-			this.forumRepository.save(forum);
 		} catch (final ResourceNotFoundException rnfe) {
 			return rnfe;
+		} catch (final ConflictException ce) {
+			return ce;
 		} catch (final Exception e) {
-			return new ConflictException();
+			return new InternalServerErrorException(e);
 		}
 		return new OkException();
 	}

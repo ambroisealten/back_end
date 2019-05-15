@@ -149,7 +149,7 @@ public class SkillsSheetEntityController {
 			return rnfe;
 		} catch (final Exception e) {
 			e.printStackTrace();
-			
+
 			return new ConflictException();
 		}
 		return new CreatedException();
@@ -175,7 +175,7 @@ public class SkillsSheetEntityController {
 			} catch (ResourceNotFoundException e) {
 				skill = this.skillEntityController.createSkill(skillName, null).get();
 			}
-			
+
 			final double skillGrade = skillGraduated.get("grade").asDouble();
 			if (checkGrade(skillGrade)) {
 				allSkills.add(new SkillGraduated(skill, skillGrade));
@@ -311,7 +311,7 @@ public class SkillsSheetEntityController {
 			}
 
 		}
-		return finalResult;
+		return this.sortSkillSheetResult(finalResult, "");
 	}
 
 	/**
@@ -335,6 +335,7 @@ public class SkillsSheetEntityController {
 		final ObjectMapper mapper = new ObjectMapper();
 		final List<String> identitiesList = Arrays.asList(identity.split(","));
 		final List<String> skillsList = Arrays.asList(skills.toLowerCase().split(","));
+		String allFilters = "";
 
 		final HashSet<Skill> filteredSkills = new HashSet<Skill>();
 		final List<Person> allPersons = this.personEntityController.getAllPersons();
@@ -342,12 +343,14 @@ public class SkillsSheetEntityController {
 		final PersonSetWithFilters filteredPersons = new PersonSetWithFilters(identitiesList);
 
 		filteredPersons.addAll(allPersons);
+		allFilters += filteredPersons.toString();
 
 		// Get all Skills in the filter that are in the database
 		for (final String skillFilter : skillsList) {
 			Skill filterSkill = new Skill();
 			filterSkill.setName(skillFilter);
 			filteredSkills.add(filterSkill);
+			allFilters += filterSkill.toString();
 		}
 
 		final Set<SkillsSheet> result = new HashSet<SkillsSheet>();
@@ -401,10 +404,30 @@ public class SkillsSheetEntityController {
 				}
 			}
 		}
-		finalResult.sort((e1, e2) -> Double.valueOf(e2.get("fiability").asDouble())
-				.compareTo(Double.valueOf(e1.get("fiability").asDouble())));
+		return this.sortSkillSheetResult(finalResult, allFilters);
+	}
 
-		return finalResult;
+	/**
+	 * Sort the list of JsonNodes after a query on Skills Sheets objects, with their
+	 * "fiability" grade if there are filters (identity, skills) or given their
+	 * version date, with decreasing order
+	 * 
+	 * @param result  the result of the query, a List of JsonNode containing Skill
+	 *                Sheet and Person objects
+	 * @param filters the user filters in the query (might be an empty string if
+	 *                there are no filters used)
+	 * @return the same JsonNode "result" as given on our params, but sorted
+	 * @author Lucas Royackkers
+	 */
+	private List<JsonNode> sortSkillSheetResult(final List<JsonNode> result, final String filters) {
+		if (filters.length() > 0) {
+			result.sort((e1, e2) -> Double.valueOf(e2.get("fiability").asDouble())
+					.compareTo(Double.valueOf(e1.get("fiability").asDouble())));
+		} else {
+			result.sort((e1, e2) -> Long.valueOf(e2.get("skillsSheet").get("versionDate").asLong())
+					.compareTo(Long.valueOf(e1.get("skillsSheet").get("versionDate").asLong())));
+		}
+		return result;
 	}
 
 	/**
