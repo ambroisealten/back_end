@@ -462,7 +462,7 @@ public class SkillsSheetEntityController {
 
 			final ExampleMatcher matcher = ExampleMatcher.matching().withIgnoreNullValues()
 					.withMatcher("mailPersonAttachedTo", GenericPropertyMatchers.exact())
-					.withIgnorePaths("versionNumber");
+					.withIgnorePaths("versionNumber").withIgnorePaths("softSkillAverage");
 			final List<SkillsSheet> personSkillSheet = this.skillsSheetRepository
 					.findAll(Example.of(skillsSheetExample, matcher));
 			result.addAll(personSkillSheet);
