@@ -95,13 +95,13 @@ public class SkillsSheetRestController {
 	 * @throws {@link ForbiddenException} if the current logged user hasn't the
 	 *         rights to perform this action, IOException
 	 */
-	@GetMapping(value = "/skillsheetSearch/{identity}/{skills}")
+	@GetMapping(value = "/skillsheetSearch/{identity}/{skills}/{columnSorting}")
 	@ResponseBody
 	public String getSkillsSheetByIdentityAndSkills(@PathVariable("identity") final String identity,
-			@PathVariable("skills") final String skills, @RequestAttribute("role") final UserRole role)
+			@PathVariable("skills") final String skills, @PathVariable("columnSorting") final String columnSorting, @RequestAttribute("role") final UserRole role)
 			throws IOException {
 		return "{\"results\" : " + this.skillsSheetBusinessController
-				.getSkillsSheetsByIdentityAndSkills(identity, skills, role).toString() + "}";
+				.getSkillsSheetsByIdentityAndSkills(identity, skills, columnSorting, role).toString() + "}";
 	}
 
 	/**
