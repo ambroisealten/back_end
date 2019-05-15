@@ -21,4 +21,13 @@ public interface SkillForumRepository extends MongoRepository<SkillForum, Long> 
 	 * @author Thomas Decamp
 	 */
 	Optional<SkillForum> findByName(String name);
+
+	/**
+	 * fetch a Skill forum by is id
+	 * 
+	 * @param _id the id to fetch
+	 * @return An Optional with the corresponding skill or empty.
+	 * @author Andy Chabalier
+	 */
+	Optional<SkillForum> findBy_id(String _id);
 }
