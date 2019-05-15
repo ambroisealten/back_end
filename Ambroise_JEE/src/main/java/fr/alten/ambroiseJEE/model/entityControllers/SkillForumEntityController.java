@@ -64,8 +64,12 @@ public class SkillForumEntityController {
 				// optional is present
 				.map(skillForum -> {
 					skillForum.setName("deactivated" + System.currentTimeMillis());
-					this.skillForumRepository.save(skillForum);
-					return (HttpException) new OkException();
+					try {
+						this.skillForumRepository.save(skillForum);
+					} catch (final DuplicateKeyException dke) {
+						return new ConflictException();
+					}
+					return new OkException();
 				})
 				// optional isn't present
 				.orElse(new ResourceNotFoundException());
@@ -102,8 +106,6 @@ public class SkillForumEntityController {
 						this.skillForumRepository.save(skillForum);
 					} catch (final DuplicateKeyException dke) {
 						return new ConflictException();
-					} catch (final Exception e) {
-						e.printStackTrace();
 					}
 					return (HttpException) new OkException();
 				})
