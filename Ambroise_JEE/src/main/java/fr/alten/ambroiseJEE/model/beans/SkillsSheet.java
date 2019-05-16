@@ -31,6 +31,7 @@ public class SkillsSheet implements Serializable {
 	private String versionDate;
 	private File cvPerson;
 	private double softSkillAverage;
+	private String comment;
 
 	public SkillsSheet() {
 		super();
@@ -114,6 +115,14 @@ public class SkillsSheet implements Serializable {
 
 	public void setSoftSkillAverage(double softSkillAverage) {
 		this.softSkillAverage = softSkillAverage;
+	}
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
 	}
 
 	

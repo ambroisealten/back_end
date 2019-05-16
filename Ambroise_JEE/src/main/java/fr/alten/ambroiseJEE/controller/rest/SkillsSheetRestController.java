@@ -75,7 +75,7 @@ public class SkillsSheetRestController {
 			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role)
 			throws Exception {
 		((ObjectNode) params).put("mailVersionAuthor", mail);
-		return JsonUtils.checkJsonIntegrity(params,"name","mailPersonAttachedTo","mailVersionAuthor") ?
+		return JsonUtils.checkJsonIntegrity(params,"name","mailPersonAttachedTo","mailVersionAuthor", "comment") ?
 				this.skillsSheetBusinessController.createSkillsSheet(params, role) : new UnprocessableEntityException();
 	}
 
@@ -221,7 +221,7 @@ public class SkillsSheetRestController {
 	public HttpException updateSkillsSheet(@RequestBody final JsonNode params,
 			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
 		((ObjectNode) params).put("mailVersionAuthor", mail);
-		return JsonUtils.checkJsonIntegrity(params, "name","mailPersonAttachedTo","mailVersionAuthor") ?
+		return JsonUtils.checkJsonIntegrity(params, "name","mailPersonAttachedTo","mailVersionAuthor", "comment") ?
 				this.skillsSheetBusinessController.updateSkillsSheet(params, role)
 						: new UnprocessableEntityException();
 	}
