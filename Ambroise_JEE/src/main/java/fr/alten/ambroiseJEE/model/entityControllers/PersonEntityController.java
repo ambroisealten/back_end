@@ -90,7 +90,7 @@ public class PersonEntityController {
 			final Person newPerson = new Person();
 			newPerson.setSurname(jPerson.get("surname").textValue());
 			newPerson.setName(jPerson.get("name").textValue());
-			newPerson.setMonthlyWage(Float.parseFloat(jPerson.get("monthlyWage").textValue()));
+			newPerson.setMonthlyWage(Float.parseFloat(jPerson.get("monthlyWage").asText()));
 			newPerson.setRole(type);
 			newPerson.setMail(jPerson.get("mail").textValue());
 
