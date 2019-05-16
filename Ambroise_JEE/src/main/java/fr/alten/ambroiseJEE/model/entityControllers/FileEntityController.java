@@ -14,7 +14,9 @@ import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers;
 import org.springframework.stereotype.Service;
 
+import fr.alten.ambroiseJEE.model.beans.DocumentSet;
 import fr.alten.ambroiseJEE.model.beans.File;
+import fr.alten.ambroiseJEE.model.dao.DocumentSetRepository;
 import fr.alten.ambroiseJEE.model.dao.FileRepository;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
@@ -32,6 +34,9 @@ public class FileEntityController {
 	@Autowired
 	private FileRepository fileRepository;
 
+	@Autowired
+	private DocumentSetRepository documentSetRepository;
+
 	/**
 	 * Method to delete a file by is Id
 	 *
@@ -45,10 +50,31 @@ public class FileEntityController {
 		try {
 			final File fileToDelete = this.fileRepository.findBy_id(new ObjectId(_id)).get();
 			this.fileRepository.delete(fileToDelete);
+			this.deleteMobileDocOnCascade(_id);
 		} catch (final Exception e) {
 			return new ResourceNotFoundException();
 		}
 		return new OkException();
+	}
+
+	/**
+	 * For all document set in the database, this method read each mobile doc and if
+	 * correspond to the deleted file, we delete it from the document set list and
+	 * save it to the base
+	 * 
+	 * @param _id the id of the deleted file
+	 * @author Andy Chabalier
+	 */
+	private void deleteMobileDocOnCascade(String _id) {
+		List<DocumentSet> documentSets = this.documentSetRepository.findAll();
+		documentSets.parallelStream().forEach(documentSet -> {
+			documentSet.getMobileDocs().parallelStream().forEach(mobileDoc -> {
+				if (mobileDoc.getName().equals(_id)) {
+					documentSet.getMobileDocs().remove(mobileDoc);
+					documentSetRepository.save(documentSet);
+				}
+			});
+		});
 	}
 
 	/**
