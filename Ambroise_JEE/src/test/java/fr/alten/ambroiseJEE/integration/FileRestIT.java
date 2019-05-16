@@ -1,6 +1,7 @@
 package fr.alten.ambroiseJEE.integration;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,8 +38,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import fr.alten.ambroiseJEE.controller.business.FileStorageBusinessController;
+import fr.alten.ambroiseJEE.model.beans.DocumentSet;
 import fr.alten.ambroiseJEE.model.beans.File;
 import fr.alten.ambroiseJEE.model.beans.User;
+import fr.alten.ambroiseJEE.model.beans.mobileDoc.MobileDoc;
+import fr.alten.ambroiseJEE.model.dao.DocumentSetRepository;
 import fr.alten.ambroiseJEE.model.dao.FileRepository;
 import fr.alten.ambroiseJEE.model.dao.UserRepository;
 import fr.alten.ambroiseJEE.security.UserRole;
@@ -58,6 +62,9 @@ import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 @ActiveProfiles("test")
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class FileRestIT {
+
+	@Autowired
+	private DocumentSetRepository documentSetRepository;
 
 	private static User userAdmin = new User();
 	private static File file = new File();
@@ -140,6 +147,7 @@ public class FileRestIT {
 	public void afterEachTest() {
 		this.userRepository.deleteAll();
 		this.fileRepository.deleteAll();
+		this.documentSetRepository.deleteAll();
 	}
 
 	/**
@@ -203,6 +211,29 @@ public class FileRestIT {
 		Assert.assertTrue(result.getResponse().getContentAsString().contains("OkException"));
 		// Checking there is no file in base
 		Assertions.assertThat(this.fileRepository.findAll()).isEmpty();
+	}
+
+	@Test
+	public void deleteFile_with_cascade() throws Exception {
+
+		final File fileToDelete = createFile();
+		DocumentSet documentSet = new DocumentSet();
+		documentSet.setName("test");
+		ArrayList<MobileDoc> mobileDocs = new ArrayList<MobileDoc>();
+		mobileDocs.add(new MobileDoc(fileToDelete.get_id().toHexString(), 1));
+		documentSet.setMobileDocs(mobileDocs);
+		this.documentSetRepository.insert(documentSet);
+
+		final MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.delete("/file")
+				.contentType(MediaType.APPLICATION_JSON).param("_id", fileToDelete.get_id().toHexString())
+				.param("path", fileToDelete.getPath()).param("extension", fileToDelete.getExtension())).andReturn();
+
+		// Checking that the ResponseBody contain a UnprocessableEntityException
+		Assert.assertTrue(result.getResponse().getContentAsString().contains("OkException"));
+		// Checking there is no file in base
+		Assertions.assertThat(this.fileRepository.findAll()).isEmpty();
+		// Checking there is no mobileDoc in base
+		Assertions.assertThat(this.documentSetRepository.findByName("test").get().getMobileDocs()).isEmpty();
 	}
 
 	/**
