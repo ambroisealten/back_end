@@ -38,21 +38,20 @@ public class DiplomaEntityController {
 	 *         request ({@link ConflictException} if there is a conflict in the
 	 *         database and {@link CreatedException} if the diploma is created
 	 * @author Lucas Royackkers
+	 * @author Thomas Decamp
 	 * @throws ParseException
 	 */
 	public HttpException createDiploma(final JsonNode jDiploma) throws ParseException {
-		final Optional<Diploma> diplomaOptional = this.diplomaRepository
-				.findByNameAndYearOfResult(jDiploma.get("name").textValue(), jDiploma.get("yearOfResult").textValue());
-		if (diplomaOptional.isPresent()) {
-			return new ConflictException();
-		}
-
 		final Diploma newDiploma = new Diploma();
 		newDiploma.setName(jDiploma.get("name").textValue());
 		newDiploma.setYearOfResult(jDiploma.get("yearOfResult").textValue());
-
-		this.diplomaRepository.save(newDiploma);
-
+		try {
+			this.diplomaRepository.save(newDiploma);
+		} catch (final DuplicateKeyException dke) {
+			return new ConflictException();
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
 		return new CreatedException();
 	}
 
@@ -146,31 +145,47 @@ public class DiplomaEntityController {
 	 *         request ({@link ResourceNotFoundException} if the diploma is not
 	 *         found and {@link CreatedException} if the diploma is updated
 	 * @author Lucas Royackkers
-	 * @throws ParseException
 	 */
-	public HttpException updateDiploma(final JsonNode jDiploma) throws ParseException {
-		try {
-			final Optional<Diploma> newDiplomaOptional = this.diplomaRepository.findByNameAndYearOfResult(
-					jDiploma.get("name").textValue(), jDiploma.get("yearOfResult").textValue());
-			if (newDiplomaOptional.isPresent()) {
-				return new ConflictException();
-			}
+	public HttpException updateDiploma(final JsonNode jDiploma) {//} throws ParseException {
+		// try {
+		// 	final Optional<Diploma> newDiplomaOptional = this.diplomaRepository.findByNameAndYearOfResult(
+		// 			jDiploma.get("name").textValue(), jDiploma.get("yearOfResult").textValue());
+		// 	if (newDiplomaOptional.isPresent()) {
+		// 		return new ConflictException();
+		// 	}
 
-			final Diploma diploma = this.diplomaRepository
-					.findByNameAndYearOfResult(jDiploma.get("oldName").textValue(),
-							jDiploma.get("oldYearOfResult").textValue())
-					.orElseThrow(ResourceNotFoundException::new);
+		// 	final Diploma diploma = this.diplomaRepository
+		// 			.findByNameAndYearOfResult(jDiploma.get("oldName").textValue(),
+		// 					jDiploma.get("oldYearOfResult").textValue())
+		// 			.orElseThrow(ResourceNotFoundException::new);
 
+		// 	diploma.setName(jDiploma.get("name").textValue());
+		// 	diploma.setYearOfResult(jDiploma.get("yearOfResult").textValue());
+
+		// 	this.diplomaRepository.save(diploma);
+		// } catch (final ResourceNotFoundException rnfe) {
+		// 	return rnfe;
+		// } catch (final Exception e) {
+		// 	return new ConflictException();
+		// }
+		// return new OkException();
+
+		return this.diplomaRepository.findByNameAndYearOfResult(
+			jDiploma.get("oldName").textValue(), jDiploma.get("yearOfResult").textValue())
+		// optional is present
+		.map(diploma -> {
 			diploma.setName(jDiploma.get("name").textValue());
-			diploma.setYearOfResult(jDiploma.get("yearOfResult").textValue());
-
-			this.diplomaRepository.save(diploma);
-		} catch (final ResourceNotFoundException rnfe) {
-			return rnfe;
-		} catch (final Exception e) {
-			return new ConflictException();
-		}
-		return new OkException();
+			try {
+				this.diplomaRepository.save(diploma);
+			} catch (final DuplicateKeyException dke) {
+				return new ConflictException();
+			} catch (final Exception e) {
+				e.printStackTrace();
+			}
+			return (HttpException) new OkException();
+		})
+		// optional isn't present
+		.orElse(new ResourceNotFoundException());
 	}
 
 }

@@ -107,7 +107,7 @@ public class DiplomaEntityControllerTest {
 		final Optional<Diploma> emptyDiplomaOptional = Optional.ofNullable(null);
 		Mockito.doReturn(this.mockedJDiploma).when(this.mockedJDiploma).get(ArgumentMatchers.anyString());
 		Mockito.doReturn("anyString").when(this.mockedJDiploma).textValue();
-		Mockito.doReturn(emptyDiplomaOptional).when(this.diplomaRepository).findByName(ArgumentMatchers.anyString());
+		Mockito.doReturn(emptyDiplomaOptional).when(this.diplomaRepository).findByNameAndYearOfResult(ArgumentMatchers.anyString(), ArgumentMatchers.anyString());
 		// assert
 		Assertions.assertThat(this.diplomaEntityController.deleteDiploma(this.mockedJDiploma))
 				.isInstanceOf(ResourceNotFoundException.class);
@@ -128,7 +128,7 @@ public class DiplomaEntityControllerTest {
 		Optional<Diploma> diplomaoptional = Optional.of(new Diploma());
 		Mockito.doReturn(this.mockedJDiploma).when(this.mockedJDiploma).get(ArgumentMatchers.anyString());
 		Mockito.doReturn("anyString").when(this.mockedJDiploma).textValue();
-		Mockito.doReturn(diplomaoptional).when(this.diplomaRepository).findByName(ArgumentMatchers.anyString());
+		Mockito.doReturn(diplomaoptional).when(this.diplomaRepository).findByNameAndYearOfResult(ArgumentMatchers.anyString(), ArgumentMatchers.anyString());
 		// assert
 		Assertions.assertThat(this.diplomaEntityController.deleteDiploma(this.mockedJDiploma)).isInstanceOf(OkException.class);
 		// verify
@@ -157,14 +157,50 @@ public class DiplomaEntityControllerTest {
 	 * 
      * @author Thomas Decamp
 	 */
+	//@Test(expected = ResourceNotFoundException.class)
+//	public void getDiplomaList_with_ResourceNotFound() {
+//
+//		// setup
+//		final Optional<Diploma> emptyDiplomaOptional = Optional.ofNullable(null);
+//		Mockito.when(this.diplomaRepository.findByName("name")).thenReturn(emptyDiplomaOptional);
+//		// throw
+//		this.diplomaEntityController.getDiplomaByName("name");
+//	}
+
+	/**
+	 * @test get a {@link Diploma} by name
+	 * @context success
+	 * @expected return instance of {@link Diploma}
+	 * 
+     * @author Thomas Decamp
+	 */
+	//@Test
+//	public void getDiplomaList_with_success() {
+//
+//		// setup
+//		final Optional<Diploma> notEmptyDiplomaOptional = Optional.of(new Diploma());
+//		Mockito.when(this.diplomaRepository.findByName("name")).thenReturn(notEmptyDiplomaOptional);
+//		// assert
+//		Assertions.assertThat(this.diplomaEntityController.getDiplomaByName("name")).isInstanceOf(Diploma.class);
+//		// verify
+//		Mockito.verify(this.diplomaRepository, Mockito.times(1)).findByName("name");
+//	}
+	
+	/**
+	 * @test get a {@link Diploma} by name
+	 * @context {@link Diploma} not found in base
+	 * @expected {@link ResourceNotFoundException}
+	 * 
+     * @author Thomas Decamp
+	 */
 	@Test(expected = ResourceNotFoundException.class)
 	public void getDiploma_with_ResourceNotFound() {
 
 		// setup
 		final Optional<Diploma> emptyDiplomaOptional = Optional.ofNullable(null);
-		Mockito.when(this.diplomaRepository.findByName("name")).thenReturn(emptyDiplomaOptional);
+		Mockito.when(this.diplomaRepository.findByNameAndYearOfResult("name", "XXXX")).thenReturn(emptyDiplomaOptional);
 		// throw
-		this.diplomaEntityController.getDiplomaByName("name");
+		this.diplomaEntityController.getDiplomaByNameAndYearOfResult("name", "XXXX");
 	}
 
 	/**
@@ -179,11 +215,11 @@ public class DiplomaEntityControllerTest {
 
 		// setup
 		final Optional<Diploma> notEmptyDiplomaOptional = Optional.of(new Diploma());
-		Mockito.when(this.diplomaRepository.findByName("name")).thenReturn(notEmptyDiplomaOptional);
+		Mockito.when(this.diplomaRepository.findByNameAndYearOfResult("name", "2010")).thenReturn(notEmptyDiplomaOptional);
 		// assert
-		Assertions.assertThat(this.diplomaEntityController.getDiplomaByName("name")).isInstanceOf(Diploma.class);
+		Assertions.assertThat(this.diplomaEntityController.getDiplomaByNameAndYearOfResult("name", "2010")).isInstanceOf(Diploma.class);
 		// verify
-		Mockito.verify(this.diplomaRepository, Mockito.times(1)).findByName("name");
+		Mockito.verify(this.diplomaRepository, Mockito.times(1)).findByNameAndYearOfResult("name", "2010");
 	}
 
 	/**
@@ -200,7 +236,7 @@ public class DiplomaEntityControllerTest {
 		Mockito.doReturn(this.mockedJDiploma).when(this.mockedJDiploma).get(ArgumentMatchers.anyString());
 		Mockito.doReturn("anyString").when(this.mockedJDiploma).textValue();
 		final Optional<Diploma> notEmptyDiplomaOptional = Optional.of(new Diploma());
-		Mockito.doReturn(notEmptyDiplomaOptional).when(this.diplomaRepository).findByName(ArgumentMatchers.anyString());
+		Mockito.doReturn(notEmptyDiplomaOptional).when(this.diplomaRepository).findByNameAndYearOfResult(ArgumentMatchers.anyString(), ArgumentMatchers.anyString());
 		
 		Mockito.when(this.diplomaRepository.save(ArgumentMatchers.any(Diploma.class)))
 				.thenThrow(this.mockedDuplicateKeyException);
@@ -245,7 +281,7 @@ public class DiplomaEntityControllerTest {
 		final Optional<Diploma> notEmptyDiplomaOptional = Optional.of(new Diploma());
 		Mockito.doReturn(this.mockedJDiploma).when(this.mockedJDiploma).get(ArgumentMatchers.anyString());
 		Mockito.doReturn("anyString").when(this.mockedJDiploma).textValue();
-		Mockito.doReturn(notEmptyDiplomaOptional).when(this.diplomaRepository).findByName(ArgumentMatchers.anyString());
+		Mockito.doReturn(notEmptyDiplomaOptional).when(this.diplomaRepository).findByNameAndYearOfResult(ArgumentMatchers.anyString(), ArgumentMatchers.anyString());
 		// assert
 		Assertions.assertThat(this.diplomaEntityController.updateDiploma(this.mockedJDiploma)).isInstanceOf(OkException.class);
 		// verify
