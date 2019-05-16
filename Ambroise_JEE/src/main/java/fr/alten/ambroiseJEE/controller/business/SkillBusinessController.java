@@ -44,8 +44,7 @@ public class SkillBusinessController {
 	 * @author Thomas Decamp
 	 */
 	public HttpException createSkill(final JsonNode jSkill, final UserRole role) {
-		return isAdmin(role) ? this.skillEntityController.createSkill(jSkill) :
-			new ForbiddenException();
+		return isAdmin(role) ? this.skillEntityController.createSkill(jSkill) : new ForbiddenException();
 	}
 
 	/**
@@ -58,8 +57,7 @@ public class SkillBusinessController {
 	 * @author Thomas Decamp
 	 */
 	public HttpException deleteSkill(final JsonNode jSkill, final UserRole role) {
-		return isAdmin(role) ? this.skillEntityController.deleteSkill(jSkill) : 
-			new ForbiddenException();
+		return isAdmin(role) ? this.skillEntityController.deleteSkill(jSkill) : new ForbiddenException();
 	}
 
 	public Skill getSkill(final JsonNode jSkill, final UserRole role) {
@@ -67,10 +65,6 @@ public class SkillBusinessController {
 			return this.skillEntityController.getSkill(jSkill.get("name").textValue());
 		}
 		throw new ForbiddenException();
-	}
-
-	public boolean isAdmin(final UserRole role) {
-		return this.roles.isAdmin(role);
 	}
 
 	/**
@@ -83,6 +77,38 @@ public class SkillBusinessController {
 			return this.skillEntityController.getSkills();
 		}
 		throw new ForbiddenException();
+	}
+
+	/**
+	 * fetch the soft skills
+	 *
+	 * @param role current logged user role
+	 * @return the list of all soft skills
+	 * @author Andy Chabalier
+	 */
+	public List<Skill> getSoftSkills(final UserRole role) {
+		if (isAdmin(role) || UserRole.MANAGER.equals(role)) {
+			return this.skillEntityController.getSoftSkills();
+		}
+		throw new ForbiddenException();
+	}
+
+	/**
+	 * Fetch all the tech skills
+	 * 
+	 * @param role current logged user's role
+	 * @return the list of all tech skills
+	 * @author Lucas Royackkers
+	 */
+	public List<Skill> getTechSkills(UserRole role) {
+		if (isAdmin(role) || UserRole.MANAGER.equals(role)) {
+			return this.skillEntityController.getTechSkills();
+		}
+		throw new ForbiddenException();
+	}
+
+	public boolean isAdmin(final UserRole role) {
+		return this.roles.isAdmin(role);
 	}
 
 	/**
