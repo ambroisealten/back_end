@@ -135,6 +135,38 @@ public class SkillRestController {
 	}
 
 	/**
+	 * Fetch all soft skills
+	 * 
+	 * @param mail the current logged user's mail
+	 * @param role the current logged user's role
+	 * @return a JsonNode containing all the soft skills within the database (can be
+	 *         empty)
+	 * @author Andy Chabalier
+	 */
+	@GetMapping(value = "/softskills")
+	@ResponseBody
+	public String getSoftSkills(@RequestAttribute("mail") final String mail,
+			@RequestAttribute("role") final UserRole role) {
+		return this.gson.toJson(this.skillBusinessController.getSoftSkills(role));
+	}
+
+	/**
+	 * Fetch all tech skills
+	 * 
+	 * @param mail the current logged user's mail
+	 * @param role the current logged user's role
+	 * @return a JsonNode containing all the tech skills within the database (can be
+	 *         empty)
+	 * @author Lucas Royackkers
+	 */
+	@GetMapping(value = "/techskills")
+	@ResponseBody
+	public String getTechSkills(@RequestAttribute("mail") final String mail,
+			@RequestAttribute("role") final UserRole role) {
+		return this.gson.toJson(this.skillBusinessController.getTechSkills(role));
+	}
+
+	/**
 	 * Method to update a Skill
 	 *
 	 * @param params the JsonNode containing all the parameters (old name and the

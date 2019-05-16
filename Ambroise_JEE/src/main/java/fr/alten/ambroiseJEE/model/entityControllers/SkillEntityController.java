@@ -5,6 +5,7 @@ package fr.alten.ambroiseJEE.model.entityControllers;
 
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -149,6 +150,11 @@ public class SkillEntityController {
 				.withIgnoreNullValues();
 
 		return this.skillRepository.findAll(Example.of(skillExample, matcher));
+	}
+
+	public List<Skill> getTechSkills() {
+		List<Skill> firstList = this.skillRepository.findAll();
+		return firstList.parallelStream().filter(skill -> !skill.isSoft()).collect(Collectors.toList());
 	}
 
 	/**
