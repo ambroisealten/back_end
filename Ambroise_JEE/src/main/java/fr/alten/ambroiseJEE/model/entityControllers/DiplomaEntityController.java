@@ -39,9 +39,8 @@ public class DiplomaEntityController {
 	 *         database and {@link CreatedException} if the diploma is created
 	 * @author Lucas Royackkers
 	 * @author Thomas Decamp
-	 * @throws ParseException
 	 */
-	public HttpException createDiploma(final JsonNode jDiploma) throws ParseException {
+	public HttpException createDiploma(final JsonNode jDiploma) {
 		final Diploma newDiploma = new Diploma();
 		newDiploma.setName(jDiploma.get("name").textValue());
 		newDiploma.setYearOfResult(jDiploma.get("yearOfResult").textValue());

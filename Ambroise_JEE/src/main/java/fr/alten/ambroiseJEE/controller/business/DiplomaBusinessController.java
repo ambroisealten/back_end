@@ -55,7 +55,7 @@ public class DiplomaBusinessController {
 	 * @author Lucas Royackkers
 	 * @author Thomas Decamp
 	 */
-	public HttpException createDiploma(final JsonNode params, final UserRole role) throws ParseException {
+	public HttpException createDiploma(final JsonNode params, final UserRole role) {
 		return isAdmin(role) ? this.diplomaEntityController.createDiploma(params) : new ForbiddenException();
 	}
 
@@ -122,7 +122,7 @@ public class DiplomaBusinessController {
 	 * @author Lucas Royackkers
 	 * @author Thomas Decamp
 	 */
-	public HttpException updateDiploma(final JsonNode params, final UserRole role) throws ParseException {
+	public HttpException updateDiploma(final JsonNode params, final UserRole role) {
 		return isAdmin(role) ? this.diplomaEntityController.updateDiploma(params) : new ForbiddenException();
 	}
 
