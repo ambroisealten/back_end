@@ -65,7 +65,7 @@ public class FileEntityController {
 	 * @param _id the id of the deleted file
 	 * @author Andy Chabalier
 	 */
-	private void deleteMobileDocOnCascade(String _id) {
+	public void deleteMobileDocOnCascade(String _id) {
 		List<DocumentSet> documentSets = this.documentSetRepository.findAll();
 		documentSets.parallelStream().forEach(documentSet -> {
 			documentSet.getMobileDocs().parallelStream().forEach(mobileDoc -> {
