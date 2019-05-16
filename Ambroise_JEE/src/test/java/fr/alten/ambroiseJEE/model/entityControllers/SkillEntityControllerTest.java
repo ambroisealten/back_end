@@ -196,7 +196,6 @@ public class SkillEntityControllerTest {
 		Mockito.doReturn(this.mockedJSkill).when(this.mockedJSkill).get(ArgumentMatchers.anyString());
 		Mockito.doReturn("anyString").when(this.mockedJSkill).textValue();
 		final Optional<Skill> notEmptySkillOptional = Optional.of(new Skill());
-		//Mockito.when(this.skillRepository.findByNameIgnoreCase(ArgumentMatchers.anyString())).thenReturn(notEmptySkillOptional);
 		Mockito.doReturn(notEmptySkillOptional).when(this.skillRepository).findByNameIgnoreCase(ArgumentMatchers.anyString());
 		
 		Mockito.when(this.skillRepository.save(ArgumentMatchers.any(Skill.class)))

@@ -475,7 +475,9 @@ public class InitBaseWebService {
 		final JsonNode newCandidatMichelJsonNode = JsonUtils
 				.toJsonNode(this.gson.toJsonTree(newCandidatMichel).getAsJsonObject());
 		((ObjectNode) newCandidatMichelJsonNode).put("monthlyWage", "2525");
+		((ObjectNode) newCandidatMichelJsonNode).put("experienceTime", "2");
 		((ObjectNode) newCandidatMichelJsonNode).putNull("urlDocs");
+		
 		this.applicantBusinessController.createApplicant(newCandidatMichelJsonNode, UserRole.MANAGER_ADMIN,
 				"tempUserAdminManager@mail.com");
 
@@ -494,6 +496,7 @@ public class InitBaseWebService {
 		final JsonNode newCandidatPaulJsonNode = JsonUtils
 				.toJsonNode(this.gson.toJsonTree(newCandidatPaul).getAsJsonObject());
 		((ObjectNode) newCandidatPaulJsonNode).put("monthlyWage", "2150");
+		((ObjectNode) newCandidatPaulJsonNode).put("experienceTime", "5");
 		((ObjectNode) newCandidatPaulJsonNode).putNull("urlDocs");
 		this.applicantBusinessController.createApplicant(newCandidatPaulJsonNode, UserRole.MANAGER_ADMIN,
 				"tempUserAdminManager@mail.com");
@@ -513,6 +516,7 @@ public class InitBaseWebService {
 		final JsonNode newCandidatCyprienJsonNode = JsonUtils
 				.toJsonNode(this.gson.toJsonTree(newCandidatCyprien).getAsJsonObject());
 		((ObjectNode) newCandidatCyprienJsonNode).put("monthlyWage", "4525");
+		((ObjectNode) newCandidatCyprienJsonNode).put("experienceTime", "15");
 		((ObjectNode) newCandidatCyprienJsonNode).putNull("urlDocs");
 		this.consultantBusinessController.createConsultant(newCandidatCyprienJsonNode, UserRole.MANAGER_ADMIN,
 				"tempUserAdminManager@mail.com");
@@ -532,6 +536,7 @@ public class InitBaseWebService {
 		final JsonNode newCandidatJeanClaudeJsonNode = JsonUtils
 				.toJsonNode(this.gson.toJsonTree(newCandidatJeanClaude).getAsJsonObject());
 		((ObjectNode) newCandidatJeanClaudeJsonNode).put("monthlyWage", "3215");
+		((ObjectNode) newCandidatJeanClaudeJsonNode).put("experienceTime", "20");
 		((ObjectNode) newCandidatJeanClaudeJsonNode).putNull("urlDocs");
 		this.consultantBusinessController.createConsultant(newCandidatJeanClaudeJsonNode, UserRole.MANAGER_ADMIN,
 				"tempUserAdminManager@mail.com");
@@ -659,6 +664,7 @@ public class InitBaseWebService {
 		newFirst.setMailPersonAttachedTo("jc.test@gmail.com");
 		newFirst.setRolePersonAttachedTo(PersonRole.valueOf("CONSULTANT"));
 		newFirst.setMailVersionAuthor("tempUserAdminManager@mail.com");
+		newFirst.setComment("Bonne appréciation générale");
 
 		final List<SkillGraduated> newListSkill = new ArrayList<SkillGraduated>();
 
@@ -705,6 +711,7 @@ public class InitBaseWebService {
 		newSecond.setMailPersonAttachedTo("paul.test@gmail.com");
 		newSecond.setRolePersonAttachedTo(PersonRole.valueOf("APPLICANT"));
 		newSecond.setMailVersionAuthor("tempUserAdminManager@mail.com");
+		newSecond.setComment("A revoir dans 5 mois !");
 
 		final List<SkillGraduated> newListSkillBis = new ArrayList<SkillGraduated>();
 
