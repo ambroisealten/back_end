@@ -8,11 +8,12 @@ import java.io.Serializable;
  *
  */
 
-public abstract class Availability implements Serializable {
+public abstract class Availability{
 
-	private static final long serialVersionUID = 2571407068970184920L;
 	private long initDate;
 
+	public Availability() {}
+	
 	public Availability(long initDate) {
 		this.initDate = initDate;
 	}
