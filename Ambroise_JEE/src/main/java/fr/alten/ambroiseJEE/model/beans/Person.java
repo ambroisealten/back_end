@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import fr.alten.ambroiseJEE.utils.PersonRole;
+import fr.alten.ambroiseJEE.utils.availability.Availability;
 
 /**
  * Defines what a person is in our app
@@ -34,6 +35,7 @@ public class Person implements Serializable {
 	private String highestDiplomaYear;
 	private String opinion;
 	private int experienceTime;
+	private Availability availability;
 
 	public Person() {
 		super();
@@ -142,6 +144,14 @@ public class Person implements Serializable {
 
 	public void setExperienceTime(int experienceTime) {
 		this.experienceTime = experienceTime;
+	}
+
+	public Availability getAvailability() {
+		return availability;
+	}
+
+	public void setAvailability(Availability availability) {
+		this.availability = availability;
 	}
 
 	/**
