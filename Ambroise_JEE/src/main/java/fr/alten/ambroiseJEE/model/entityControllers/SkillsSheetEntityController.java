@@ -146,6 +146,8 @@ public class SkillsSheetEntityController {
 			newSkillsSheet.setVersionDate(String.valueOf(System.currentTimeMillis()));
 
 			newSkillsSheet.setSoftSkillAverage(this.softSkillAverageCalculation(newSkillsSheet.getSkillsList()));
+			
+			newSkillsSheet.setComment(jSkillsSheet.get("comment").textValue());
 
 			this.skillsSheetRepository.save(newSkillsSheet);
 		} catch (final ResourceNotFoundException rnfe) {
