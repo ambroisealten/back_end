@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import fr.alten.ambroiseJEE.model.beans.Diploma;
 import fr.alten.ambroiseJEE.model.entityControllers.DiplomaEntityController;
 import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.security.UserRoleLists;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
@@ -30,6 +31,16 @@ public class DiplomaBusinessController {
 	@Autowired
 	private DiplomaEntityController diplomaEntityController;
 
+	private final UserRoleLists roles = UserRoleLists.getInstance();
+
+	public boolean isAdmin(final UserRole role) {
+		return this.roles.isAdmin(role);
+	}
+
+	public boolean isManagerOrCdrOrAdmin(final UserRole role) {
+		return this.roles.isManagerOrCdrOrAdmin(role);
+	}
+	
 	/**
 	 * Method to delegate diploma creation
 	 *
@@ -42,12 +53,10 @@ public class DiplomaBusinessController {
 	 * @throws {@link ForbiddenException} if the current logged user hasn't the
 	 *         rights to perform this action, ParseException
 	 * @author Lucas Royackkers
+	 * @author Thomas Decamp
 	 */
 	public HttpException createDiploma(final JsonNode params, final UserRole role) throws ParseException {
-		if (UserRole.MANAGER_ADMIN == role || UserRole.CDR_ADMIN == role) {
-			return this.diplomaEntityController.createDiploma(params);
-		}
-		throw new ForbiddenException();
+		return isAdmin(role) ? this.diplomaEntityController.createDiploma(params) : new ForbiddenException();
 	}
 
 	/**
@@ -63,12 +72,10 @@ public class DiplomaBusinessController {
 	 * @throws {@link ForbiddenException} if the current logged user hasn't the
 	 *         rights to perform this action
 	 * @author Lucas Royackkers
+	 * @author Thomas Decamp
 	 */
 	public HttpException deleteDiploma(final JsonNode params, final UserRole role) {
-		if (UserRole.MANAGER_ADMIN == role || UserRole.CDR_ADMIN == role) {
-			return this.diplomaEntityController.deleteDiploma(params);
-		}
-		throw new ForbiddenException();
+		return isAdmin(role) ? this.diplomaEntityController.deleteDiploma(params) : new ForbiddenException();
 	}
 
 	/**
@@ -78,10 +85,10 @@ public class DiplomaBusinessController {
 	 * @return a List of Diploma objects (can be empty)
 	 *
 	 * @author Lucas Royackkers
+	 * @author Thomas Decamp
 	 */
 	public List<Diploma> getDiplomas(final UserRole role) {
-		if (UserRole.MANAGER_ADMIN == role || UserRole.CDR_ADMIN == role || UserRole.CDR == role
-				|| UserRole.MANAGER == role) {
+		if (isManagerOrCdrOrAdmin(role)) {
 			return this.diplomaEntityController.getDiplomas();
 		}
 		throw new ForbiddenException();
@@ -113,12 +120,10 @@ public class DiplomaBusinessController {
 	 * @throws ParseException, {@link ForbiddenException} if the current logged user
 	 *                         hasn't the rights to perform this action
 	 * @author Lucas Royackkers
+	 * @author Thomas Decamp
 	 */
 	public HttpException updateDiploma(final JsonNode params, final UserRole role) throws ParseException {
-		if (UserRole.MANAGER_ADMIN == role || UserRole.CDR_ADMIN == role) {
-			return this.diplomaEntityController.updateDiploma(params);
-		}
-		throw new ForbiddenException();
+		return isAdmin(role) ? this.diplomaEntityController.updateDiploma(params) : new ForbiddenException();
 	}
 
 }
