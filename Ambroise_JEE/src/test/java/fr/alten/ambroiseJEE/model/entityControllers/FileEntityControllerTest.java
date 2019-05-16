@@ -40,6 +40,7 @@ public class FileEntityControllerTest {
 		Mockito.doReturn(Optional.ofNullable(new File())).when(this.fileRepository)
 				.findBy_id(ArgumentMatchers.any(ObjectId.class));
 		Mockito.doNothing().when(this.fileRepository).delete(ArgumentMatchers.any(File.class));
+		Mockito.doNothing().when(this.fileEntityController).deleteMobileDocOnCascade(ArgumentMatchers.anyString());
 
 		// assert
 		Assertions.assertThat(this.fileEntityController.deleteFile(new ObjectId().toHexString()))

@@ -29,6 +29,14 @@ public class DocumentSet implements Serializable {
 	private String name;
 	private List<MobileDoc> mobileDocs;
 
+	public ObjectId get_id() {
+		return _id;
+	}
+
+	public void set_id(ObjectId _id) {
+		this._id = _id;
+	}
+
 	public String getName() {
 		return name;
 	}
