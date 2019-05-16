@@ -56,13 +56,12 @@ public class DiplomaRestController {
 	 *         database, {@link UnprocessableEntityException} if there are not
 	 *         enough parameters to perform the action and {@link CreatedException}
 	 *         if the diploma is created
-	 * @throws ParseException
 	 * @author Lucas Royackkers
 	 */
 	@PostMapping("/diploma")
 	@ResponseBody
 	public HttpException createDiploma(@RequestBody final JsonNode params,
-			@RequestAttribute("role") final UserRole role) throws ParseException {
+			@RequestAttribute("role") final UserRole role) throws Exception {
 		return JsonUtils.checkJsonIntegrity(params, "name", "yearOfResult")
 				? this.diplomaBusinessController.createDiploma(params, role)
 				: new UnprocessableEntityException();

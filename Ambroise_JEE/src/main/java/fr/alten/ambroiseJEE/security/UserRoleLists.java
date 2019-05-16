@@ -76,6 +76,16 @@ public class UserRoleLists {
 	
 	/**
 	 *
+	 * @param role {@link UserRole} to test if he is Cdr or Manager or Admin
+	 * @return true if Cdr or Manager or Admin, otherwise false
+	 * @author Thomas Decamp
+	 */
+	public boolean isManagerOrCdrOrAdmin(final UserRole role) {
+		return role == UserRole.CDR || role == UserRole.MANAGER || this.isAdmin(role);
+	}
+	
+	/**
+	 *
 	 * @param role {@link UserRole} to test if he is Consultant or Deactivated
 	 * @return false if Consultant or Deactivated, otherwise true
 	 * @author Kylian Gehier

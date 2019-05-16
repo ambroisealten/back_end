@@ -120,7 +120,7 @@ public class SkillRestIT {
 	public void createSkill_with_success() throws Exception {
 
 		// setup
-		String newSkill = "{" + "\"mail\":\"\"," + "\"name\":\"newSkill\"" + "}";
+		String newSkill = "{" + "\"name\":\"newSkill\"" + "}";
 
 		MvcResult result = this.mockMvc
 				.perform(post("/skill").contentType(MediaType.APPLICATION_JSON).content(newSkill)).andReturn();
@@ -138,7 +138,7 @@ public class SkillRestIT {
 	public void createSkill_with_conflict() throws Exception {
 
 		// setup
-		String newSkill = "{" + "\"mail\":\"\"," + "\"name\":\"newSkill\"" + "}";
+		String newSkill = "{" + "\"name\":\"newSkill\"" + "}";
 
 		// Pre-inserting a Skill with name name as this.skill to create a
 		// ConflictException
@@ -175,7 +175,7 @@ public class SkillRestIT {
 	public void deleteSkill_with_success() throws Exception {
 
 		// setup
-		String skillToDelete = "{" + "\"mail\":\"\"," + "\"name\":\"newSkill\"" + "}";
+		String skillToDelete = "{" + "\"name\":\"newSkill\"" + "}";
 		// Pre-inserting a Skill with name name as this.skill for having a skill to delete
 		// delete
 		// with success
@@ -199,7 +199,7 @@ public class SkillRestIT {
 	public void deleteSkill_with_resourceNotFound() throws Exception {
 
 		// setup
-		String skillToDelete = "{" + "\"mail\":\"\"," + "\"name\":\"newSkill\"" + "}";
+		String skillToDelete = "{" + "\"name\":\"newSkill\"" + "}";
 		// Checking if there is not already a skill in base with the name : newSkill
 		assertFalse(this.skillRepository.findByNameIgnoreCase("newSkill").isPresent());
 
@@ -256,7 +256,7 @@ public class SkillRestIT {
 	public void updateSkill_with_success() throws Exception {
 
 		// setup
-		String updatedSkill = "{" + "\"mail\":\"\"," + "\"name\":\"updateSkill\"," +  "\"oldName\":\"newSkill\"" + "}";
+		String updatedSkill = "{" + "\"name\":\"updateSkill\"," +  "\"oldName\":\"newSkill\"" + "}";
 		// Pre-inserting a skill to update
 		skillRepository.insert(skill);
 		// Checking pre-insertion
@@ -277,7 +277,7 @@ public class SkillRestIT {
 	public void updateSkill_with_resourceNotFound() throws Exception {
 
 		// setup
-		String updatedSkill = "{" + "\"mail\":\"\"," + "\"name\":\"newSkillFalse\"," +  "\"oldName\":\"skillNotFound\"" + "}";
+		String updatedSkill = "{" + "\"name\":\"newSkillFalse\"," +  "\"oldName\":\"skillNotFound\"" + "}";
 
 		MvcResult result = this.mockMvc
 				.perform(put("/skill").contentType(MediaType.APPLICATION_JSON).content(updatedSkill)).andReturn();
