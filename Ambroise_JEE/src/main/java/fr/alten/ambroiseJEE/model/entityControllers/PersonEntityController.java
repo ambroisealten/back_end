@@ -87,6 +87,7 @@ public class PersonEntityController {
 			newPerson.setMonthlyWage(Float.parseFloat(jPerson.get("monthlyWage").textValue()));
 			newPerson.setRole(type);
 			newPerson.setMail(jPerson.get("mail").textValue());
+			newPerson.setExperienceTime(Integer.parseInt(jPerson.get("experienceTime").textValue()));
 
 			final User personInCharge = this.userEntityController
 					.getUserByMail(personInChargeMail);
@@ -156,10 +157,13 @@ public class PersonEntityController {
 				person.setSurname("Deactivated");
 				person.setName("Deactivated");
 				break;
-			default:
+			case CONSULTANT:
 				person.setSurname("Demissionaire");
 				person.setName("Demissionaire");
 				break;
+			default:
+				throw new UnprocessableEntityException();
+				
 			}
 			person.setMail("deactivated" + System.currentTimeMillis() + "@deactivated.com");
 			person.setEmployer(null);
@@ -289,6 +293,7 @@ public class PersonEntityController {
 			person.setSurname(jPerson.get("surname").textValue());
 			person.setName(jPerson.get("name").textValue());
 			person.setMonthlyWage(Float.parseFloat(jPerson.get("monthlyWage").asText()));
+			person.setExperienceTime(Integer.parseInt(jPerson.get("experienceTime").textValue()));
 
 			person.setRole(role);
 

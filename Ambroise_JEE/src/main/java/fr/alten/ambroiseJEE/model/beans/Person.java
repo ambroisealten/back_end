@@ -33,6 +33,7 @@ public class Person implements Serializable {
 	private String highestDiploma;
 	private String highestDiplomaYear;
 	private String opinion;
+	private int experienceTime;
 
 	public Person() {
 		super();
@@ -133,6 +134,14 @@ public class Person implements Serializable {
 
 	public void setOpinion(String opinion) {
 		this.opinion = opinion;
+	}
+
+	public int getExperienceTime() {
+		return experienceTime;
+	}
+
+	public void setExperienceTime(int experienceTime) {
+		this.experienceTime = experienceTime;
 	}
 
 	/**

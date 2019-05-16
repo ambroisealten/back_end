@@ -84,7 +84,7 @@ public class PersonEntityControllerTest {
 			+ "\"monthlyWage\" : \"252525\"," + "\"mail\" : \"oskour@null.com\","
 			+ "\"personInChargeMail\" : \"pasimal@cheh.net\"," + "\"highestDiploma\" : \"BAC PRO CAMPING\","
 			+ "\"highestDiplomaYear\" : \"1\"," + "\"job\" : \"Récurreur de chiottes\","
-			+ "\"employer\" : \"La Coopérative Mangin de Boulazac-en-Dordogne\"," + "\"opinion\" : \"++\"" + "}";
+			+ "\"employer\" : \"La Coopérative Mangin de Boulazac-en-Dordogne\"," + "\"opinion\" : \"++\","+ "\"experienceTime\" : \"2\"" + "}";
 
 	private ObjectMapper mapper = new ObjectMapper();
 

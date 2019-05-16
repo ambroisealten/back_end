@@ -39,7 +39,7 @@ public class ApplicantRestController {
 	public boolean checkJsonIntegrity(final JsonNode params, final String... fields) {
 		return JsonUtils.checkJsonIntegrity(params, fields);
 	}
-	
+
 	@Autowired
 	private ApplicantBusinessController applicantBusinessController;
 
@@ -52,7 +52,7 @@ public class ApplicantRestController {
 
 	/**
 	 * Method to create an Applicant (Person)
- 	 *
+	 *
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the current logged user's mail
 	 * @param role   the user's role
@@ -60,15 +60,17 @@ public class ApplicantRestController {
 	 *         ({@link ConflictException} if there is a conflict in the database and
 	 *         {@link CreatedException} if the person(applicant) is created
 	 * @author Lucas Royackkers
-	 * @throws ParseException 
+	 * @throws ParseException
 	 */
 	@PostMapping(value = "/applicant")
 	@ResponseBody
-	public HttpException createApplicant(@RequestBody final JsonNode params,@RequestAttribute("mail") final String mail,
-			@RequestAttribute("role") final UserRole role) throws ParseException {
-		return checkJsonIntegrity(params, "mail")
-				? this.applicantBusinessController.createApplicant(params, role, mail)
-				: new UnprocessableEntityException();
+	public HttpException createApplicant(@RequestBody final JsonNode params,
+			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role)
+			throws ParseException {
+		return checkJsonIntegrity(params, "mail", "surname", "name", "monthlyWage", "experienceTime", "highestDiploma",
+				"highestDiplomaYear", "job", "employer", "opinion")
+						? this.applicantBusinessController.createApplicant(params, role, mail)
+						: new UnprocessableEntityException();
 	}
 
 	/**
@@ -86,8 +88,7 @@ public class ApplicantRestController {
 	@ResponseBody
 	public HttpException deleteApplicant(@RequestBody final JsonNode params,
 			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
-		return checkJsonIntegrity(params, "mail")
-				? this.applicantBusinessController.deleteApplicant(params, role)
+		return checkJsonIntegrity(params, "mail") ? this.applicantBusinessController.deleteApplicant(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -139,8 +140,9 @@ public class ApplicantRestController {
 	public HttpException updateApplicant(@RequestBody final JsonNode params,
 			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role)
 			throws ParseException {
-		return checkJsonIntegrity(params, "mail")
-				? this.applicantBusinessController.updateApplicant(params, role, mail)
-				: new UnprocessableEntityException();
+		return checkJsonIntegrity(params, "mail", "surname", "name", "monthlyWage", "experienceTime", "highestDiploma",
+				"highestDiplomaYear", "job", "employer", "opinion")
+						? this.applicantBusinessController.updateApplicant(params, role, mail)
+						: new UnprocessableEntityException();
 	}
 }
