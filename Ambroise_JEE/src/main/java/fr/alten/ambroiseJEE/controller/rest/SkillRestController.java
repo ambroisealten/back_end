@@ -126,14 +126,6 @@ public class SkillRestController {
 		return this.gson.toJson(this.skillBusinessController.getSkills(role));
 	}
 
-	@GetMapping(value = "/softskills")
-	@ResponseBody
-	public String getSoftSkills(@RequestAttribute("mail") final String mail,
-			@RequestAttribute("role") final UserRole role) {
-		return this.gson.toJson(this.skillBusinessController.getSoftSkills(role));
-
-	}
-
 	/**
 	 * Fetch all soft skills
 	 * 
