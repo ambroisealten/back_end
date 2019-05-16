@@ -91,6 +91,7 @@ public class PersonEntityController {
 			newPerson.setSurname(jPerson.get("surname").textValue());
 			newPerson.setName(jPerson.get("name").textValue());
 			newPerson.setMonthlyWage(Float.parseFloat(jPerson.get("monthlyWage").asText()));
+			newPerson.setExperienceTime(Integer.parseInt(jPerson.get("experienceTime").asText()));
 			newPerson.setRole(type);
 			newPerson.setMail(jPerson.get("mail").textValue());
 
@@ -321,7 +322,7 @@ public class PersonEntityController {
 			person.setSurname(jPerson.get("surname").textValue());
 			person.setName(jPerson.get("name").textValue());
 			person.setMonthlyWage(Float.parseFloat(jPerson.get("monthlyWage").asText()));
-			person.setExperienceTime(Integer.parseInt(jPerson.get("experienceTime").textValue()));
+			person.setExperienceTime(Integer.parseInt(jPerson.get("experienceTime").asText()));
 
 			person.setRole(role);
 
