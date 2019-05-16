@@ -62,7 +62,8 @@ public class SkillsSheetRestController {
 	 * @param role   the current logged user's role
 	 * @return {@link HttpException} corresponding to the status of the request,
 	 *         {@link UnprocessableEntityException} if we can't create the resource,
-	 *         {@link ResourceNotFoundException} if there is no such resource (such as User, PersonRole, etc.) as the one that are given,
+	 *         {@link ResourceNotFoundException} if there is no such resource (such
+	 *         as User, PersonRole, etc.) as the one that are given,
 	 *         {@link ConflictException} if there is a conflict in the database,
 	 *         {@link ForbiddenException} if the current logged user hasn't the
 	 *         rights to perform this action and {@link CreatedException} if the
@@ -75,8 +76,10 @@ public class SkillsSheetRestController {
 			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role)
 			throws Exception {
 		((ObjectNode) params).put("mailVersionAuthor", mail);
-		return JsonUtils.checkJsonIntegrity(params,"name","mailPersonAttachedTo","mailVersionAuthor") ?
-				this.skillsSheetBusinessController.createSkillsSheet(params, role) : new UnprocessableEntityException();
+		return JsonUtils.checkJsonIntegrity(params, "name", "mailPersonAttachedTo", "mailVersionAuthor", "comment",
+				"rolePersonAttachedTo", "skillsList", "cv")
+						? this.skillsSheetBusinessController.createSkillsSheet(params, role)
+						: new UnprocessableEntityException();
 	}
 
 	/**
@@ -98,8 +101,8 @@ public class SkillsSheetRestController {
 	@GetMapping(value = "/skillsheetSearch/{identity}/{skills}/{columnSorting}")
 	@ResponseBody
 	public String getSkillsSheetByIdentityAndSkills(@PathVariable("identity") final String identity,
-			@PathVariable("skills") final String skills, @PathVariable("columnSorting") final String columnSorting, @RequestAttribute("role") final UserRole role)
-			throws IOException {
+			@PathVariable("skills") final String skills, @PathVariable("columnSorting") final String columnSorting,
+			@RequestAttribute("role") final UserRole role) throws IOException {
 		return "{\"results\" : " + this.skillsSheetBusinessController
 				.getSkillsSheetsByIdentityAndSkills(identity, skills, columnSorting, role).toString() + "}";
 	}
@@ -179,17 +182,17 @@ public class SkillsSheetRestController {
 			@RequestAttribute("mail") final String mail) {
 		return this.gson.toJson(this.skillsSheetBusinessController.getSkillsSheetVersion(name, mailPerson, role));
 	}
-	
-	
+
 	/**
 	 * Checks if a version of a specific Skills Sheet exists
 	 * 
-	 * @param mailPerson the mail of the person attached to this Skills Sheet
-	 * @param role the current logged user's role
-	 * @param name the name of the Skills Sheet
-	 * @param mail the current logged user's mail
+	 * @param mailPerson    the mail of the person attached to this Skills Sheet
+	 * @param role          the current logged user's role
+	 * @param name          the name of the Skills Sheet
+	 * @param mail          the current logged user's mail
 	 * @param versionNumber the version Number of this Skills Sheet
-	 * @return true if the specific version of this Skills Sheet exists, otherwise false
+	 * @return true if the specific version of this Skills Sheet exists, otherwise
+	 *         false
 	 * @throws {@link ForbiddenException} if the current logged user hasn't the
 	 *         rights to perform this action
 	 * @author Lucas Royackkers
@@ -199,7 +202,8 @@ public class SkillsSheetRestController {
 	public boolean checkIfSkillsSheetVersionExists(@PathVariable("mail") final String mailPerson,
 			@RequestAttribute("role") final UserRole role, @PathVariable("name") final String name,
 			@RequestAttribute("mail") final String mail, @PathVariable("versionNumber") String versionNumber) {
-		return this.skillsSheetBusinessController.checkIfSkillsSheetVersionExists(name, mailPerson, Long.parseLong(versionNumber), role);
+		return this.skillsSheetBusinessController.checkIfSkillsSheetVersionExists(name, mailPerson,
+				Long.parseLong(versionNumber), role);
 	}
 
 	/**
@@ -210,10 +214,10 @@ public class SkillsSheetRestController {
 	 * @param role   the current logged user's role
 	 * @return {@link HttpException} corresponding to the status of the request,
 	 *         {@link UnprocessableEntityException} if we can't update the resource,
-	 *         {@link ResourceNotFoundException} if there is no such resource as the one that are given,
-	 *         {@link ForbiddenException} if the current logged user hasn't the
-	 *         rights to perform this action and {@link CreatedException} if the
-	 *         skills sheet is updated
+	 *         {@link ResourceNotFoundException} if there is no such resource as the
+	 *         one that are given, {@link ForbiddenException} if the current logged
+	 *         user hasn't the rights to perform this action and
+	 *         {@link CreatedException} if the skills sheet is updated
 	 * @author Lucas Royackkers
 	 */
 	@PutMapping(value = "/skillsheet")
@@ -221,25 +225,27 @@ public class SkillsSheetRestController {
 	public HttpException updateSkillsSheet(@RequestBody final JsonNode params,
 			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
 		((ObjectNode) params).put("mailVersionAuthor", mail);
-		return JsonUtils.checkJsonIntegrity(params, "name","mailPersonAttachedTo","mailVersionAuthor") ?
-				this.skillsSheetBusinessController.updateSkillsSheet(params, role)
+		return JsonUtils.checkJsonIntegrity(params, "name", "mailPersonAttachedTo", "mailVersionAuthor", "comment",
+				"versionNumber", "rolePersonAttachedTo", "skillsList", "cv")
+						? this.skillsSheetBusinessController.updateSkillsSheet(params, role)
 						: new UnprocessableEntityException();
 	}
 
 	/**
 	 * Method to update a CV on a existent {@link SkillsSheet}
 	 * 
-	 * @param file the CV as a File 
-	 * @param name the name of the Skills Sheet
-	 * @param mailPersonAttachedTo the mail of the person attached to this Skills Sheet
-	 * @param versionNumber the versionNumber of this Skills Sheet
-	 * @param mail the mail of the current logged user's 
-	 * @param role the role of the current logged user's
+	 * @param file                 the CV as a File
+	 * @param name                 the name of the Skills Sheet
+	 * @param mailPersonAttachedTo the mail of the person attached to this Skills
+	 *                             Sheet
+	 * @param versionNumber        the versionNumber of this Skills Sheet
+	 * @param mail                 the mail of the current logged user's
+	 * @param role                 the role of the current logged user's
 	 * @return {@link HttpException} corresponding to the status of the request,
 	 *         {@link UnprocessableEntityException} if we can't update the resource,
 	 *         {@link ForbiddenException} if the current logged user hasn't the
-	 *         rights to perform this action and {@link OkException} if the
-	 *         skills sheet is updated with the CV
+	 *         rights to perform this action and {@link OkException} if the skills
+	 *         sheet is updated with the CV
 	 * @author Lucas Royackkers
 	 */
 	@PutMapping(value = "/skillsheet/CV")
