@@ -8,9 +8,10 @@ package fr.alten.ambroiseJEE.utils.availability;
 
 public class OnTimeAvailability extends Availability{
 
-	private static final long serialVersionUID = -8717490827291064942L;
 	private int duration;
 	private DurationType durationtype;
+	
+	public OnTimeAvailability() {}
 	
 	public OnTimeAvailability(long initDate, int duration, DurationType durationType) {
 		super(initDate);
