@@ -67,7 +67,12 @@ public class ApplicantRestControllerTest {
 				ArgumentMatchers.anyString());
 
 		// setup : all needed fields present
-		final String valid = "{" + "\"mail\" : \"test@gmail.com\"" + "}";
+		final String valid = "{" + "\"surname\" : \"OSKOUUUR\"," + "\"name\" : \"PAS ça Zinédine\","
+				+ "\"monthlyWage\" : \"252525\"," + "\"mail\" : \"oskour@null.com\","
+				+ "\"personInChargeMail\" : \"pasimal@cheh.net\"," + "\"highestDiploma\" : \"BAC PRO CAMPING\","
+				+ "\"highestDiplomaYear\" : \"1\"," + "\"job\" : \"Récurreur de chiottes\","
+				+ "\"employer\" : \"La Coopérative Mangin de Boulazac-en-Dordogne\"," + "\"opinion\" : \"++\","
+				+ "\"experienceTime\" : \"2\"" + "}";
 
 		this.spiedJsonNode = this.mapper.readTree(valid);
 
@@ -76,10 +81,139 @@ public class ApplicantRestControllerTest {
 				.isNotInstanceOf(UnprocessableEntityException.class);
 
 		// setup : missing mail of the Person (Applicant)
-		final String missingMail = "{" + "}";
+		final String missingMail = "{" + "\"surname\" : \"OSKOUUUR\"," + "\"name\" : \"PAS ça Zinédine\","
+				+ "\"monthlyWage\" : \"252525\"," + "\"personInChargeMail\" : \"pasimal@cheh.net\","
+				+ "\"highestDiploma\" : \"BAC PRO CAMPING\"," + "\"highestDiplomaYear\" : \"1\","
+				+ "\"job\" : \"Récurreur de chiottes\","
+				+ "\"employer\" : \"La Coopérative Mangin de Boulazac-en-Dordogne\"," + "\"opinion\" : \"++\","
+				+ "\"experienceTime\" : \"2\"" + "}";
 
 		this.spiedJsonNode = this.mapper.readTree(missingMail);
 		// assert missing mail
+		Assertions.assertThat(this.applicantRestController.createApplicant(this.spiedJsonNode, "mail", UserRole.CDR))
+				.isInstanceOf(UnprocessableEntityException.class);
+
+		// setup : missing surname of the Person (Applicant)
+		final String missingSurname = "{" + "\"name\" : \"PAS ça Zinédine\"," + "\"monthlyWage\" : \"252525\","
+				+ "\"mail\" : \"oskour@null.com\"," + "\"personInChargeMail\" : \"pasimal@cheh.net\","
+				+ "\"highestDiploma\" : \"BAC PRO CAMPING\"," + "\"highestDiplomaYear\" : \"1\","
+				+ "\"job\" : \"Récurreur de chiottes\","
+				+ "\"employer\" : \"La Coopérative Mangin de Boulazac-en-Dordogne\"," + "\"opinion\" : \"++\","
+				+ "\"experienceTime\" : \"2\"" + "}";
+
+		this.spiedJsonNode = this.mapper.readTree(missingSurname);
+
+		// assert missing surname
+		Assertions.assertThat(this.applicantRestController.createApplicant(this.spiedJsonNode, "mail", UserRole.CDR))
+				.isInstanceOf(UnprocessableEntityException.class);
+
+		// setup : missing name of the Person (Applicant)
+		final String missingName = "{" + "\"surname\" : \"OSKOUUUR\"," + "\"monthlyWage\" : \"252525\","
+				+ "\"mail\" : \"oskour@null.com\"," + "\"personInChargeMail\" : \"pasimal@cheh.net\","
+				+ "\"highestDiploma\" : \"BAC PRO CAMPING\"," + "\"highestDiplomaYear\" : \"1\","
+				+ "\"job\" : \"Récurreur de chiottes\","
+				+ "\"employer\" : \"La Coopérative Mangin de Boulazac-en-Dordogne\"," + "\"opinion\" : \"++\","
+				+ "\"experienceTime\" : \"2\"" + "}";
+
+		this.spiedJsonNode = this.mapper.readTree(missingName);
+
+		// assert missing name
+		Assertions.assertThat(this.applicantRestController.createApplicant(this.spiedJsonNode, "mail", UserRole.CDR))
+				.isInstanceOf(UnprocessableEntityException.class);
+
+		// setup : missing monthlyWage of the Person (Applicant)
+		final String missingMonthlyWage = "{" + "\"surname\" : \"OSKOUUUR\"," + "\"name\" : \"PAS ça Zinédine\","
+				+ "\"mail\" : \"oskour@null.com\"," + "\"personInChargeMail\" : \"pasimal@cheh.net\","
+				+ "\"highestDiploma\" : \"BAC PRO CAMPING\"," + "\"highestDiplomaYear\" : \"1\","
+				+ "\"job\" : \"Récurreur de chiottes\","
+				+ "\"employer\" : \"La Coopérative Mangin de Boulazac-en-Dordogne\"," + "\"opinion\" : \"++\","
+				+ "\"experienceTime\" : \"2\"" + "}";
+
+		this.spiedJsonNode = this.mapper.readTree(missingMonthlyWage);
+
+		// assert missing monthlyWage
+		Assertions.assertThat(this.applicantRestController.createApplicant(this.spiedJsonNode, "mail", UserRole.CDR))
+				.isInstanceOf(UnprocessableEntityException.class);
+
+		// setup : missing experienceTime of the Person (Applicant)
+		final String missingExperienceTime = "{" + "\"surname\" : \"OSKOUUUR\"," + "\"name\" : \"PAS ça Zinédine\","
+				+ "\"monthlyWage\" : \"252525\"," + "\"mail\" : \"oskour@null.com\","
+				+ "\"personInChargeMail\" : \"pasimal@cheh.net\"," + "\"highestDiploma\" : \"BAC PRO CAMPING\","
+				+ "\"highestDiplomaYear\" : \"1\"," + "\"job\" : \"Récurreur de chiottes\","
+				+ "\"employer\" : \"La Coopérative Mangin de Boulazac-en-Dordogne\"," + "\"opinion\" : \"++\"" + "}";
+
+		this.spiedJsonNode = this.mapper.readTree(missingExperienceTime);
+
+		// assert missing experienceTime
+		Assertions.assertThat(this.applicantRestController.createApplicant(this.spiedJsonNode, "mail", UserRole.CDR))
+				.isInstanceOf(UnprocessableEntityException.class);
+
+		// setup : missing highestDiploma of the Person (Applicant)
+		final String missingHighestDiploma = "{" + "\"surname\" : \"OSKOUUUR\"," + "\"name\" : \"PAS ça Zinédine\","
+				+ "\"monthlyWage\" : \"252525\"," + "\"mail\" : \"oskour@null.com\","
+				+ "\"personInChargeMail\" : \"pasimal@cheh.net\"," + "\"highestDiplomaYear\" : \"1\","
+				+ "\"job\" : \"Récurreur de chiottes\","
+				+ "\"employer\" : \"La Coopérative Mangin de Boulazac-en-Dordogne\"," + "\"opinion\" : \"++\","
+				+ "\"experienceTime\" : \"2\"" + "}";
+
+		this.spiedJsonNode = this.mapper.readTree(missingHighestDiploma);
+
+		// assert missing highestDiploma
+		Assertions.assertThat(this.applicantRestController.createApplicant(this.spiedJsonNode, "mail", UserRole.CDR))
+				.isInstanceOf(UnprocessableEntityException.class);
+
+		// setup : missing highestDiplomaYear of the Person (Applicant)
+		final String missingHighestDiplomaYear = "{" + "\"surname\" : \"OSKOUUUR\"," + "\"name\" : \"PAS ça Zinédine\","
+				+ "\"monthlyWage\" : \"252525\"," + "\"mail\" : \"oskour@null.com\","
+				+ "\"personInChargeMail\" : \"pasimal@cheh.net\"," + "\"highestDiploma\" : \"BAC PRO CAMPING\","
+				+ "\"job\" : \"Récurreur de chiottes\","
+				+ "\"employer\" : \"La Coopérative Mangin de Boulazac-en-Dordogne\"," + "\"opinion\" : \"++\","
+				+ "\"experienceTime\" : \"2\"" + "}";
+
+		this.spiedJsonNode = this.mapper.readTree(missingHighestDiplomaYear);
+
+		// assert missing highestDiplomaYear
+		Assertions.assertThat(this.applicantRestController.createApplicant(this.spiedJsonNode, "mail", UserRole.CDR))
+				.isInstanceOf(UnprocessableEntityException.class);
+
+		// setup : missing job of the Person (Applicant)
+		final String missingJob = "{" + "\"surname\" : \"OSKOUUUR\"," + "\"name\" : \"PAS ça Zinédine\","
+				+ "\"monthlyWage\" : \"252525\"," + "\"mail\" : \"oskour@null.com\","
+				+ "\"personInChargeMail\" : \"pasimal@cheh.net\"," + "\"highestDiploma\" : \"BAC PRO CAMPING\","
+				+ "\"highestDiplomaYear\" : \"1\","
+				+ "\"employer\" : \"La Coopérative Mangin de Boulazac-en-Dordogne\"," + "\"opinion\" : \"++\","
+				+ "\"experienceTime\" : \"2\"" + "}";
+
+		this.spiedJsonNode = this.mapper.readTree(missingJob);
+
+		// assert missing job
+		Assertions.assertThat(this.applicantRestController.createApplicant(this.spiedJsonNode, "mail", UserRole.CDR))
+				.isInstanceOf(UnprocessableEntityException.class);
+
+		// setup : missing employer of the Person (Applicant)
+		final String missingEmployer = "{" + "\"surname\" : \"OSKOUUUR\"," + "\"name\" : \"PAS ça Zinédine\","
+				+ "\"monthlyWage\" : \"252525\"," + "\"mail\" : \"oskour@null.com\","
+				+ "\"personInChargeMail\" : \"pasimal@cheh.net\"," + "\"highestDiploma\" : \"BAC PRO CAMPING\","
+				+ "\"highestDiplomaYear\" : \"1\"," + "\"job\" : \"Récurreur de chiottes\"," + "\"opinion\" : \"++\","
+				+ "\"experienceTime\" : \"2\"" + "}";
+
+		this.spiedJsonNode = this.mapper.readTree(missingEmployer);
+
+		// assert missing employer
+		Assertions.assertThat(this.applicantRestController.createApplicant(this.spiedJsonNode, "mail", UserRole.CDR))
+				.isInstanceOf(UnprocessableEntityException.class);
+
+		// setup : missing opinion of the Person (Applicant)
+		final String missingOpinion = "{" + "\"surname\" : \"OSKOUUUR\"," + "\"name\" : \"PAS ça Zinédine\","
+				+ "\"monthlyWage\" : \"252525\"," + "\"mail\" : \"oskour@null.com\","
+				+ "\"personInChargeMail\" : \"pasimal@cheh.net\"," + "\"highestDiploma\" : \"BAC PRO CAMPING\","
+				+ "\"highestDiplomaYear\" : \"1\"," + "\"job\" : \"Récurreur de chiottes\","
+				+ "\"employer\" : \"La Coopérative Mangin de Boulazac-en-Dordogne\"," + "\"experienceTime\" : \"2\""
+				+ "}";
+
+		this.spiedJsonNode = this.mapper.readTree(missingOpinion);
+
+		// assert missing opinion
 		Assertions.assertThat(this.applicantRestController.createApplicant(this.spiedJsonNode, "mail", UserRole.CDR))
 				.isInstanceOf(UnprocessableEntityException.class);
 	}
@@ -219,7 +353,7 @@ public class ApplicantRestControllerTest {
 		Assertions.assertThat(this.applicantRestController.getApplicants("", UserRole.CDR_ADMIN))
 				.isInstanceOf(String.class);
 	}
-	
+
 	/**
 	 * @test get a specific {@link Person} (of type Applicant) given its mail
 	 * @expected returning a String
@@ -228,11 +362,11 @@ public class ApplicantRestControllerTest {
 	@Test
 	public void getApplicant_expectingString() {
 		// setup
-		Mockito.when(this.applicantBusinessController.getApplicant(ArgumentMatchers.anyString(),ArgumentMatchers.any(UserRole.class)))
-				.thenReturn(new Person());
+		Mockito.when(this.applicantBusinessController.getApplicant(ArgumentMatchers.anyString(),
+				ArgumentMatchers.any(UserRole.class))).thenReturn(new Person());
 
 		// assert
-		Assertions.assertThat(this.applicantRestController.getApplicant("","", UserRole.CDR_ADMIN))
+		Assertions.assertThat(this.applicantRestController.getApplicant("", "", UserRole.CDR_ADMIN))
 				.isInstanceOf(String.class);
 	}
 
@@ -252,18 +386,153 @@ public class ApplicantRestControllerTest {
 				ArgumentMatchers.anyString());
 
 		// setup : all needed fields present
-		final String valid = "{" + "\"mail\":\"test@gmail.com\"" + "}";
+		final String valid = "{" + "\"surname\" : \"OSKOUUUR\"," + "\"name\" : \"PAS ça Zinédine\","
+				+ "\"monthlyWage\" : \"252525\"," + "\"mail\" : \"oskour@null.com\","
+				+ "\"personInChargeMail\" : \"pasimal@cheh.net\"," + "\"highestDiploma\" : \"BAC PRO CAMPING\","
+				+ "\"highestDiplomaYear\" : \"1\"," + "\"job\" : \"Récurreur de chiottes\","
+				+ "\"employer\" : \"La Coopérative Mangin de Boulazac-en-Dordogne\"," + "\"opinion\" : \"++\","
+				+ "\"experienceTime\" : \"2\"" + "}";
 
 		this.spiedJsonNode = this.mapper.readTree(valid);
-		// assert all field present
+
+		// assert all fields are present
 		Assertions.assertThat(this.applicantRestController.updateApplicant(this.spiedJsonNode, "mail", UserRole.CDR))
 				.isNotInstanceOf(UnprocessableEntityException.class);
 
-		// setup : missing name
-		final String missingName = "{" + "}";
+		// setup : missing mail of the Person (Applicant)
+		final String missingMail = "{" + "\"surname\" : \"OSKOUUUR\"," + "\"name\" : \"PAS ça Zinédine\","
+				+ "\"monthlyWage\" : \"252525\"," + "\"personInChargeMail\" : \"pasimal@cheh.net\","
+				+ "\"highestDiploma\" : \"BAC PRO CAMPING\"," + "\"highestDiplomaYear\" : \"1\","
+				+ "\"job\" : \"Récurreur de chiottes\","
+				+ "\"employer\" : \"La Coopérative Mangin de Boulazac-en-Dordogne\"," + "\"opinion\" : \"++\","
+				+ "\"experienceTime\" : \"2\"" + "}";
+
+		this.spiedJsonNode = this.mapper.readTree(missingMail);
+		// assert missing mail
+		Assertions.assertThat(this.applicantRestController.updateApplicant(this.spiedJsonNode, "mail", UserRole.CDR))
+				.isInstanceOf(UnprocessableEntityException.class);
+
+		// setup : missing surname of the Person (Applicant)
+		final String missingSurname = "{" + "\"name\" : \"PAS ça Zinédine\"," + "\"monthlyWage\" : \"252525\","
+				+ "\"mail\" : \"oskour@null.com\"," + "\"personInChargeMail\" : \"pasimal@cheh.net\","
+				+ "\"highestDiploma\" : \"BAC PRO CAMPING\"," + "\"highestDiplomaYear\" : \"1\","
+				+ "\"job\" : \"Récurreur de chiottes\","
+				+ "\"employer\" : \"La Coopérative Mangin de Boulazac-en-Dordogne\"," + "\"opinion\" : \"++\","
+				+ "\"experienceTime\" : \"2\"" + "}";
+
+		this.spiedJsonNode = this.mapper.readTree(missingSurname);
+
+		// assert missing surname
+		Assertions.assertThat(this.applicantRestController.updateApplicant(this.spiedJsonNode, "mail", UserRole.CDR))
+				.isInstanceOf(UnprocessableEntityException.class);
+
+		// setup : missing name of the Person (Applicant)
+		final String missingName = "{" + "\"surname\" : \"OSKOUUUR\"," + "\"monthlyWage\" : \"252525\","
+				+ "\"mail\" : \"oskour@null.com\"," + "\"personInChargeMail\" : \"pasimal@cheh.net\","
+				+ "\"highestDiploma\" : \"BAC PRO CAMPING\"," + "\"highestDiplomaYear\" : \"1\","
+				+ "\"job\" : \"Récurreur de chiottes\","
+				+ "\"employer\" : \"La Coopérative Mangin de Boulazac-en-Dordogne\"," + "\"opinion\" : \"++\","
+				+ "\"experienceTime\" : \"2\"" + "}";
 
 		this.spiedJsonNode = this.mapper.readTree(missingName);
+
 		// assert missing name
+		Assertions.assertThat(this.applicantRestController.updateApplicant(this.spiedJsonNode, "mail", UserRole.CDR))
+				.isInstanceOf(UnprocessableEntityException.class);
+
+		// setup : missing monthlyWage of the Person (Applicant)
+		final String missingMonthlyWage = "{" + "\"surname\" : \"OSKOUUUR\"," + "\"name\" : \"PAS ça Zinédine\","
+				+ "\"mail\" : \"oskour@null.com\"," + "\"personInChargeMail\" : \"pasimal@cheh.net\","
+				+ "\"highestDiploma\" : \"BAC PRO CAMPING\"," + "\"highestDiplomaYear\" : \"1\","
+				+ "\"job\" : \"Récurreur de chiottes\","
+				+ "\"employer\" : \"La Coopérative Mangin de Boulazac-en-Dordogne\"," + "\"opinion\" : \"++\","
+				+ "\"experienceTime\" : \"2\"" + "}";
+
+		this.spiedJsonNode = this.mapper.readTree(missingMonthlyWage);
+
+		// assert missing monthlyWage
+		Assertions.assertThat(this.applicantRestController.updateApplicant(this.spiedJsonNode, "mail", UserRole.CDR))
+				.isInstanceOf(UnprocessableEntityException.class);
+
+		// setup : missing experienceTime of the Person (Applicant)
+		final String missingExperienceTime = "{" + "\"surname\" : \"OSKOUUUR\"," + "\"name\" : \"PAS ça Zinédine\","
+				+ "\"monthlyWage\" : \"252525\"," + "\"mail\" : \"oskour@null.com\","
+				+ "\"personInChargeMail\" : \"pasimal@cheh.net\"," + "\"highestDiploma\" : \"BAC PRO CAMPING\","
+				+ "\"highestDiplomaYear\" : \"1\"," + "\"job\" : \"Récurreur de chiottes\","
+				+ "\"employer\" : \"La Coopérative Mangin de Boulazac-en-Dordogne\"," + "\"opinion\" : \"++\"" + "}";
+
+		this.spiedJsonNode = this.mapper.readTree(missingExperienceTime);
+
+		// assert missing experienceTime
+		Assertions.assertThat(this.applicantRestController.updateApplicant(this.spiedJsonNode, "mail", UserRole.CDR))
+				.isInstanceOf(UnprocessableEntityException.class);
+
+		// setup : missing highestDiploma of the Person (Applicant)
+		final String missingHighestDiploma = "{" + "\"surname\" : \"OSKOUUUR\"," + "\"name\" : \"PAS ça Zinédine\","
+				+ "\"monthlyWage\" : \"252525\"," + "\"mail\" : \"oskour@null.com\","
+				+ "\"personInChargeMail\" : \"pasimal@cheh.net\"," + "\"highestDiplomaYear\" : \"1\","
+				+ "\"job\" : \"Récurreur de chiottes\","
+				+ "\"employer\" : \"La Coopérative Mangin de Boulazac-en-Dordogne\"," + "\"opinion\" : \"++\","
+				+ "\"experienceTime\" : \"2\"" + "}";
+
+		this.spiedJsonNode = this.mapper.readTree(missingHighestDiploma);
+
+		// assert missing highestDiploma
+		Assertions.assertThat(this.applicantRestController.updateApplicant(this.spiedJsonNode, "mail", UserRole.CDR))
+				.isInstanceOf(UnprocessableEntityException.class);
+
+		// setup : missing highestDiplomaYear of the Person (Applicant)
+		final String missingHighestDiplomaYear = "{" + "\"surname\" : \"OSKOUUUR\"," + "\"name\" : \"PAS ça Zinédine\","
+				+ "\"monthlyWage\" : \"252525\"," + "\"mail\" : \"oskour@null.com\","
+				+ "\"personInChargeMail\" : \"pasimal@cheh.net\"," + "\"highestDiploma\" : \"BAC PRO CAMPING\","
+				+ "\"job\" : \"Récurreur de chiottes\","
+				+ "\"employer\" : \"La Coopérative Mangin de Boulazac-en-Dordogne\"," + "\"opinion\" : \"++\","
+				+ "\"experienceTime\" : \"2\"" + "}";
+
+		this.spiedJsonNode = this.mapper.readTree(missingHighestDiplomaYear);
+
+		// assert missing highestDiplomaYear
+		Assertions.assertThat(this.applicantRestController.updateApplicant(this.spiedJsonNode, "mail", UserRole.CDR))
+				.isInstanceOf(UnprocessableEntityException.class);
+
+		// setup : missing job of the Person (Applicant)
+		final String missingJob = "{" + "\"surname\" : \"OSKOUUUR\"," + "\"name\" : \"PAS ça Zinédine\","
+				+ "\"monthlyWage\" : \"252525\"," + "\"mail\" : \"oskour@null.com\","
+				+ "\"personInChargeMail\" : \"pasimal@cheh.net\"," + "\"highestDiploma\" : \"BAC PRO CAMPING\","
+				+ "\"highestDiplomaYear\" : \"1\","
+				+ "\"employer\" : \"La Coopérative Mangin de Boulazac-en-Dordogne\"," + "\"opinion\" : \"++\","
+				+ "\"experienceTime\" : \"2\"" + "}";
+
+		this.spiedJsonNode = this.mapper.readTree(missingJob);
+
+		// assert missing job
+		Assertions.assertThat(this.applicantRestController.updateApplicant(this.spiedJsonNode, "mail", UserRole.CDR))
+				.isInstanceOf(UnprocessableEntityException.class);
+
+		// setup : missing employer of the Person (Applicant)
+		final String missingEmployer = "{" + "\"surname\" : \"OSKOUUUR\"," + "\"name\" : \"PAS ça Zinédine\","
+				+ "\"monthlyWage\" : \"252525\"," + "\"mail\" : \"oskour@null.com\","
+				+ "\"personInChargeMail\" : \"pasimal@cheh.net\"," + "\"highestDiploma\" : \"BAC PRO CAMPING\","
+				+ "\"highestDiplomaYear\" : \"1\"," + "\"job\" : \"Récurreur de chiottes\"," + "\"opinion\" : \"++\","
+				+ "\"experienceTime\" : \"2\"" + "}";
+
+		this.spiedJsonNode = this.mapper.readTree(missingEmployer);
+
+		// assert missing employer
+		Assertions.assertThat(this.applicantRestController.updateApplicant(this.spiedJsonNode, "mail", UserRole.CDR))
+				.isInstanceOf(UnprocessableEntityException.class);
+
+		// setup : missing opinion of the Person (Applicant)
+		final String missingOpinion = "{" + "\"surname\" : \"OSKOUUUR\"," + "\"name\" : \"PAS ça Zinédine\","
+				+ "\"monthlyWage\" : \"252525\"," + "\"mail\" : \"oskour@null.com\","
+				+ "\"personInChargeMail\" : \"pasimal@cheh.net\"," + "\"highestDiploma\" : \"BAC PRO CAMPING\","
+				+ "\"highestDiplomaYear\" : \"1\"," + "\"job\" : \"Récurreur de chiottes\","
+				+ "\"employer\" : \"La Coopérative Mangin de Boulazac-en-Dordogne\"," + "\"experienceTime\" : \"2\""
+				+ "}";
+
+		this.spiedJsonNode = this.mapper.readTree(missingOpinion);
+
+		// assert missing opinion
 		Assertions.assertThat(this.applicantRestController.updateApplicant(this.spiedJsonNode, "mail", UserRole.CDR))
 				.isInstanceOf(UnprocessableEntityException.class);
 	}

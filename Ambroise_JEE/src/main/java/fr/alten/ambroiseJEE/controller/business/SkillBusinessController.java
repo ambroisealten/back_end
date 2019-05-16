@@ -93,6 +93,20 @@ public class SkillBusinessController {
 		throw new ForbiddenException();
 	}
 
+	/**
+	 * Fetch all the tech skills
+	 * 
+	 * @param role current logged user's role
+	 * @return the list of all tech skills
+	 * @author Lucas Royackkers
+	 */
+	public List<Skill> getTechSkills(UserRole role) {
+		if (isAdmin(role) || UserRole.MANAGER.equals(role)) {
+			return this.skillEntityController.getTechSkills();
+		}
+		throw new ForbiddenException();
+	}
+
 	public boolean isAdmin(final UserRole role) {
 		return this.roles.isAdmin(role);
 	}
