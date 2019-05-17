@@ -91,6 +91,7 @@ public class PersonEntityController {
 			newPerson.setSurname(jPerson.get("surname").textValue());
 			newPerson.setName(jPerson.get("name").textValue());
 			newPerson.setMonthlyWage(Float.parseFloat(jPerson.get("monthlyWage").asText()));
+			newPerson.setExperienceTime(Integer.parseInt(jPerson.get("experienceTime").asText()));
 			newPerson.setRole(type);
 			newPerson.setMail(jPerson.get("mail").textValue());
 
@@ -131,23 +132,21 @@ public class PersonEntityController {
 				}
 				newPerson.setEmployer(employer.getName());
 
-				if (jPerson.has("duration") && jPerson.has("durationType")) {
-					if (!jPerson.has("finalDate")) {
-						newPerson.setAvailability(new OnTimeAvailability(jPerson.get("initDate").asLong(),
-								jPerson.get("duration").asInt(),
-								DurationType.valueOf(jPerson.get("durationType").textValue())));
-					} else {
-						throw new ToManyFieldsException();
+				if (jPerson.has("onTimeAvailability")) {
+					JsonNode jOnTimeAvailability = jPerson.get("onTimeAvailability");
+					if (this.hasOnTimeAvailabilityFields(jOnTimeAvailability)) {
+						newPerson.setOnTimeAvailability(
+								new OnTimeAvailability(jOnTimeAvailability.get("initDate").asLong(),
+										jOnTimeAvailability.get("duration").asInt(),
+										DurationType.valueOf(jOnTimeAvailability.get("durationType").textValue())));
 					}
-				} else if (jPerson.has("finalDate")) {
-					if (!(jPerson.has("duration") || jPerson.has("durationType"))) {
-						newPerson.setAvailability(new OnDateAvailability(jPerson.get("initDate").asLong(),
-								jPerson.get("finalDate").asLong()));
-					} else {
-						throw new ToManyFieldsException();
+				} else if (jPerson.has("onDateAvailability")) {
+					JsonNode jOnDateAvailability = jPerson.get("onDateAvailability");
+					if (this.hasOnDateAvailabilityFields(jOnDateAvailability)) {
+						newPerson.setOnDateAvailability(
+								new OnDateAvailability(jOnDateAvailability.get("initDate").asLong(),
+										jOnDateAvailability.get("finalDate").asLong()));
 					}
-				} else {
-					throw new MissingFieldException();
 				}
 
 			}
@@ -159,7 +158,7 @@ public class PersonEntityController {
 		} catch (final DuplicateKeyException dke) {
 			return new ConflictException();
 		} catch (final MissingFieldException | ToManyFieldsException fe) {
-			return new UnprocessableEntityException();
+			return new UnprocessableEntityException(fe);
 		}
 		return new CreatedException();
 
@@ -321,7 +320,6 @@ public class PersonEntityController {
 			person.setSurname(jPerson.get("surname").textValue());
 			person.setName(jPerson.get("name").textValue());
 			person.setMonthlyWage(Float.parseFloat(jPerson.get("monthlyWage").asText()));
-			person.setExperienceTime(Integer.parseInt(jPerson.get("experienceTime").textValue()));
 
 			person.setRole(role);
 
@@ -342,25 +340,36 @@ public class PersonEntityController {
 			person.setHighestDiploma(diploma.getName());
 			person.setHighestDiplomaYear(diploma.getYearOfResult());
 
-			final String jobName = jPerson.get("job").textValue();
-			Job job;
-			try {
-				job = this.jobEntityController.getJob(jobName);
-			} catch (ResourceNotFoundException e) {
-				job = (Job) this.jobEntityController.createJob(jobName);
+			if (role.equals(PersonRole.APPLICANT)) {
+				person.setExperienceTime(jPerson.get("experienceTime").asInt());
+				final String employerName = jPerson.get("employer").textValue();
+				Employer employer;
+				try {
+					employer = this.employerEntityController.getEmployer(employerName);
+
+				} catch (ResourceNotFoundException e) {
+					employer = (Employer) this.employerEntityController.createEmployer(employerName);
+				}
+				person.setEmployer(employer.getName());
+
+				if (jPerson.has("onTimeAvailability")) {
+					JsonNode jOnTimeAvailability = jPerson.get("onTimeAvailability");
+					if (this.hasOnTimeAvailabilityFields(jOnTimeAvailability)) {
+						person.setOnTimeAvailability(
+								new OnTimeAvailability(jOnTimeAvailability.get("initDate").asLong(),
+										jOnTimeAvailability.get("duration").asInt(),
+										DurationType.valueOf(jOnTimeAvailability.get("durationType").textValue())));
+					}
+				} else if (jPerson.has("onDateAvailability")) {
+					JsonNode jOnDateAvailability = jPerson.get("onDateAvailability");
+					if (this.hasOnDateAvailabilityFields(jOnDateAvailability)) {
+						person.setOnDateAvailability(
+								new OnDateAvailability(jOnDateAvailability.get("initDate").asLong(),
+										jOnDateAvailability.get("finalDate").asLong()));
+					}
+				}
+
 			}
-			person.setJob(job.getTitle());
-
-			final String employerName = jPerson.get("employer").textValue();
-			Employer employer;
-			try {
-				employer = this.employerEntityController.getEmployer(employerName);
-
-			} catch (ResourceNotFoundException e) {
-				employer = (Employer) this.employerEntityController.createEmployer(employerName);
-			}
-
-			person.setEmployer(employer.getName());
 
 			person.setOpinion(jPerson.get("opinion").textValue());
 
@@ -369,8 +378,30 @@ public class PersonEntityController {
 			return rnfe;
 		} catch (final DuplicateKeyException dke) {
 			return new ConflictException();
+		} catch (final MissingFieldException | ToManyFieldsException fe) {
+			return new UnprocessableEntityException(fe);
 		}
 		return new OkException();
+	}
+
+	public boolean hasOnTimeAvailabilityFields(JsonNode jOnTimeAvailability) throws ToManyFieldsException, MissingFieldException {
+		if (jOnTimeAvailability.has("duration") && jOnTimeAvailability.has("durationType")) {
+			if (!jOnTimeAvailability.has("finalDate")) {
+				return true;
+			} else
+				throw new ToManyFieldsException();
+		}
+		else throw new MissingFieldException();
+	}
+
+	public boolean hasOnDateAvailabilityFields(JsonNode jOnTimeAvailability) throws ToManyFieldsException, MissingFieldException {
+		if (jOnTimeAvailability.has("finalDate")) {
+			if (!(jOnTimeAvailability.has("duration") || jOnTimeAvailability.has("durationType"))) {
+				return true;
+			} else
+				throw new ToManyFieldsException();
+		}
+		else throw new MissingFieldException();
 	}
 
 }
