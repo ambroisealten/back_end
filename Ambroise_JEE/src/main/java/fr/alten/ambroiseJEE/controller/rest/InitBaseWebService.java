@@ -704,7 +704,7 @@ public class InitBaseWebService {
 
 		final JsonNode newFirstJsonNode = JsonUtils.toJsonNode(this.gson.toJsonTree(newFirst).getAsJsonObject());
 		((ObjectNode) newFirstJsonNode).put("role", "consultant");
-		this.skillsSheetBusinessController.createSkillsSheet(newFirstJsonNode, UserRole.MANAGER_ADMIN);
+		this.skillsSheetBusinessController.createSkillsSheet(newFirstJsonNode, UserRole.MANAGER_ADMIN,"tempUserAdminManager@mail.com");
 
 		final SkillsSheet newSecond = new SkillsSheet();
 		newSecond.setName("PTE-mmm-AAA");
@@ -751,7 +751,7 @@ public class InitBaseWebService {
 
 		final JsonNode newSecondJsonNode = JsonUtils.toJsonNode(this.gson.toJsonTree(newSecond).getAsJsonObject());
 		((ObjectNode) newSecondJsonNode).put("role", "applicant");
-		this.skillsSheetBusinessController.createSkillsSheet(newSecondJsonNode, UserRole.MANAGER_ADMIN);
+		this.skillsSheetBusinessController.createSkillsSheet(newSecondJsonNode, UserRole.MANAGER_ADMIN,"tempUserAdminManager@mail.com");
 	}
 
 	/**

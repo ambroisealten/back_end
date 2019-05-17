@@ -35,6 +35,8 @@ public class SkillsSheetBusinessController {
 	 *
 	 * @param jSkillsSheet JsonNode with all skills sheet parameters
 	 * @param role         the current logged user's role
+	 * @param versionAuthor the mail of the author of this version of this Skills
+	 *                      Sheet
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request, {@link ResourceNotFoundException} if there is no such resource as the one that are given,
 	 *         {@link ConflictException} if there is a conflict in the
@@ -44,9 +46,9 @@ public class SkillsSheetBusinessController {
 	 * @author Lucas Royackkers
 	 * @throws ParseException
 	 */
-	public HttpException createSkillsSheet(final JsonNode jSkillsSheet, final UserRole role) {
+	public HttpException createSkillsSheet(final JsonNode jSkillsSheet, final UserRole role, final String mailAuthor) {
 		return UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role
-				? this.skillsSheetEntityController.createSkillsSheet(jSkillsSheet)
+				? this.skillsSheetEntityController.createSkillsSheet(jSkillsSheet,mailAuthor)
 				: new ForbiddenException();
 	}
 
@@ -146,6 +148,8 @@ public class SkillsSheetBusinessController {
 	 *
 	 * @param jSkillsSheet JsonNode with all skills sheet parameters
 	 * @param role         the current logged user's role
+	 * @param versionAuthor the mail of the author of this version of this Skills
+	 *                      Sheet
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ConflictException} if there is a conflict in the
 	 *         database, {@link ForbiddenException} if the current logged user
@@ -155,9 +159,9 @@ public class SkillsSheetBusinessController {
 	 * @author Lucas Royackkers
 	 * @throws ParseException
 	 */
-	public HttpException updateSkillsSheet(final JsonNode jSkillsSheet, final UserRole role) {
+	public HttpException updateSkillsSheet(final JsonNode jSkillsSheet, final UserRole role, final String versionAuthor) {
 		return UserRole.MANAGER == role || UserRole.MANAGER_ADMIN == role
-				? this.skillsSheetEntityController.updateSkillsSheet(jSkillsSheet)
+				? this.skillsSheetEntityController.updateSkillsSheet(jSkillsSheet, versionAuthor)
 				: new ForbiddenException();
 	}
 
