@@ -133,7 +133,7 @@ public class PersonEntityController {
 
 				if (jPerson.has("duration") && jPerson.has("durationType")) {
 					if (!jPerson.has("finalDate")) {
-						newPerson.setAvailability(new OnTimeAvailability(jPerson.get("initDate").asLong(),
+						newPerson.setOnTimeAvailability(new OnTimeAvailability(jPerson.get("initDate").asLong(),
 								jPerson.get("duration").asInt(),
 								DurationType.valueOf(jPerson.get("durationType").textValue())));
 					} else {
@@ -141,7 +141,7 @@ public class PersonEntityController {
 					}
 				} else if (jPerson.has("finalDate")) {
 					if (!(jPerson.has("duration") || jPerson.has("durationType"))) {
-						newPerson.setAvailability(new OnDateAvailability(jPerson.get("initDate").asLong(),
+						newPerson.setOnDateAvailability(new OnDateAvailability(jPerson.get("initDate").asLong(),
 								jPerson.get("finalDate").asLong()));
 					} else {
 						throw new ToManyFieldsException();
@@ -355,7 +355,7 @@ public class PersonEntityController {
 
 				if (jPerson.has("duration") && jPerson.has("durationType")) {
 					if (!jPerson.has("finalDate")) {
-						person.setAvailability(new OnTimeAvailability(jPerson.get("initDate").asLong(),
+						person.setOnTimeAvailability(new OnTimeAvailability(jPerson.get("initDate").asLong(),
 								jPerson.get("duration").asInt(),
 								DurationType.valueOf(jPerson.get("durationType").textValue())));
 					} else {
@@ -363,7 +363,7 @@ public class PersonEntityController {
 					}
 				} else if (jPerson.has("finalDate")) {
 					if (!(jPerson.has("duration") || jPerson.has("durationType"))) {
-						person.setAvailability(new OnDateAvailability(jPerson.get("initDate").asLong(),
+						person.setOnDateAvailability(new OnDateAvailability(jPerson.get("initDate").asLong(),
 								jPerson.get("finalDate").asLong()));
 					} else {
 						throw new ToManyFieldsException();
