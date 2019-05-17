@@ -1,8 +1,6 @@
 package fr.alten.ambroiseJEE.model.entityControllers;
 
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -14,8 +12,11 @@ import fr.alten.ambroiseJEE.model.beans.Diploma;
 import fr.alten.ambroiseJEE.model.beans.Employer;
 import fr.alten.ambroiseJEE.model.beans.Job;
 import fr.alten.ambroiseJEE.model.beans.Person;
+import fr.alten.ambroiseJEE.model.beans.SkillsSheet;
 import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.model.dao.PersonRepository;
+import fr.alten.ambroiseJEE.model.dao.SkillsSheetRepository;
+import fr.alten.ambroiseJEE.utils.MailUtils;
 import fr.alten.ambroiseJEE.utils.PersonRole;
 import fr.alten.ambroiseJEE.utils.availability.DurationType;
 import fr.alten.ambroiseJEE.utils.availability.OnDateAvailability;
@@ -35,20 +36,6 @@ import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
  */
 @Service
 public class PersonEntityController {
-	public static final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
-			Pattern.CASE_INSENSITIVE);
-
-	/**
-	 * Method to validate if the mail math with the mail pattern
-	 *
-	 * @param emailStr the string to validate
-	 * @return true if the string match with the mail pattern
-	 * @author Lucas Royackkers
-	 */
-	public boolean validateMail(final String emailStr) {
-		final Matcher matcher = PersonEntityController.VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
-		return matcher.find();
-	}
 
 	@Autowired
 	private PersonRepository personRepository;
@@ -64,6 +51,9 @@ public class PersonEntityController {
 
 	@Autowired
 	private JobEntityController jobEntityController;
+
+	@Autowired
+	private SkillsSheetRepository skillsSheetRepository;
 
 	/**
 	 * Method to create a Person. Person type will be defined by business
@@ -165,6 +155,15 @@ public class PersonEntityController {
 	}
 
 	/**
+	 * @param jPerson
+	 * @return
+	 * @author Andy Chabalier
+	 */
+	public boolean validateMail(String mail) {
+		return MailUtils.validateMail(mail);
+	}
+
+	/**
 	 * Method to delete a Person. Person type will be defined by business
 	 * controllers ahead of this object.
 	 *
@@ -175,9 +174,10 @@ public class PersonEntityController {
 	 *         the database and {@link OkException} if the person is deleted
 	 * @author Lucas Royackkers
 	 */
-	public HttpException deletePerson(final JsonNode jPerson, final PersonRole role) {
+	public HttpException deletePersonByRole(final JsonNode jPerson, final PersonRole role) {
 		try {
-			Person person = this.getPersonByMailAndType(jPerson.get("mail").textValue(), role);
+			String mail = jPerson.get("mail").textValue();
+			Person person = this.getPersonByMailAndType(mail, role);
 
 			switch (role) {
 			case APPLICANT:
@@ -198,7 +198,65 @@ public class PersonEntityController {
 			person.setMonthlyWage(0);
 			person.setJob(null);
 			person.setOpinion(null);
+			updatePersonMailOnSkillSheetOnCascade(mail, person.getMail());
+			this.personRepository.save(person);
+		} catch (final ResourceNotFoundException rnfe) {
+			return rnfe;
+		} catch (final DuplicateKeyException e) {
+			return new ConflictException();
+		}
+		return new OkException();
+	}
 
+	/**
+	 * update associated skillSheet on cascade
+	 * 
+	 * @param oldMail
+	 * @param newMail
+	 * @author Andy Chabalier
+	 */
+	private void updatePersonMailOnSkillSheetOnCascade(String oldMail, String newMail) {
+		List<SkillsSheet> skillSheets = this.skillsSheetRepository.findByMailPersonAttachedToIgnoreCase(oldMail);
+		skillSheets.parallelStream().forEach(skillSheet -> {
+			skillSheet.setMailPersonAttachedTo(newMail);
+		});
+		this.skillsSheetRepository.saveAll(skillSheets);
+	}
+
+	/**
+	 * Method to delete a Person. Person type will be defined by business
+	 * controllers ahead of this object.
+	 *
+	 * @param jPerson contains at least the person's name
+	 * @param role    the role of person
+	 * @return the @see {@link HttpException} corresponding to the status of the
+	 *         request ({@link ResourceNotFoundException} if the resource isn't in
+	 *         the database and {@link OkException} if the person is deleted
+	 * @author Lucas Royackkers
+	 */
+	public HttpException deletePerson(String mail) {
+		try {
+			Person person = this.getPersonByMail(mail);
+
+			switch (person.getRole()) {
+			case APPLICANT:
+				person.setSurname("Deactivated");
+				person.setName("Deactivated");
+				break;
+			case CONSULTANT:
+				person.setSurname("Demissionaire");
+				person.setName("Demissionaire");
+				break;
+			default:
+				throw new UnprocessableEntityException();
+			}
+			person.setMail("deactivated" + System.currentTimeMillis() + "@deactivated.com");
+			person.setEmployer(null);
+			person.setRole(PersonRole.DEMISSIONAIRE);
+			person.setMonthlyWage(0);
+			person.setJob(null);
+			person.setOpinion(null);
+			updatePersonMailOnSkillSheetOnCascade(mail, person.getMail());
 			this.personRepository.save(person);
 		} catch (final ResourceNotFoundException rnfe) {
 			return rnfe;
@@ -315,7 +373,8 @@ public class PersonEntityController {
 	 */
 	public HttpException updatePerson(final JsonNode jPerson, final PersonRole role, String personInChargeMail) {
 		try {
-			final Person person = this.getPersonByMailAndType(jPerson.get("mail").textValue(), role);
+			String oldMail = jPerson.get("mail").textValue();
+			final Person person = this.getPersonByMailAndType(oldMail, role);
 
 			person.setSurname(jPerson.get("surname").textValue());
 			person.setName(jPerson.get("name").textValue());
@@ -372,7 +431,7 @@ public class PersonEntityController {
 			}
 
 			person.setOpinion(jPerson.get("opinion").textValue());
-
+			updatePersonMailOnSkillSheetOnCascade(oldMail, person.getMail());
 			this.personRepository.save(person);
 		} catch (final ResourceNotFoundException rnfe) {
 			return rnfe;
@@ -384,24 +443,26 @@ public class PersonEntityController {
 		return new OkException();
 	}
 
-	public boolean hasOnTimeAvailabilityFields(JsonNode jOnTimeAvailability) throws ToManyFieldsException, MissingFieldException {
+	public boolean hasOnTimeAvailabilityFields(JsonNode jOnTimeAvailability)
+			throws ToManyFieldsException, MissingFieldException {
 		if (jOnTimeAvailability.has("duration") && jOnTimeAvailability.has("durationType")) {
 			if (!jOnTimeAvailability.has("finalDate")) {
 				return true;
 			} else
 				throw new ToManyFieldsException();
-		}
-		else throw new MissingFieldException();
+		} else
+			throw new MissingFieldException();
 	}
 
-	public boolean hasOnDateAvailabilityFields(JsonNode jOnTimeAvailability) throws ToManyFieldsException, MissingFieldException {
+	public boolean hasOnDateAvailabilityFields(JsonNode jOnTimeAvailability)
+			throws ToManyFieldsException, MissingFieldException {
 		if (jOnTimeAvailability.has("finalDate")) {
 			if (!(jOnTimeAvailability.has("duration") || jOnTimeAvailability.has("durationType"))) {
 				return true;
 			} else
 				throw new ToManyFieldsException();
-		}
-		else throw new MissingFieldException();
+		} else
+			throw new MissingFieldException();
 	}
 
 }
