@@ -85,6 +85,7 @@ public class DiplomaRestIT {
 
 	private static void initDiploma() {
 		diploma.setName("newDiploma");
+		diploma.setYearOfResult("2019");
 	}
 
 	private static void initGson() {
@@ -100,7 +101,7 @@ public class DiplomaRestIT {
 			// Recreate the collection with the unique index "name" -> index beeing dropped
 			// when the collection is dropped.
 			mongoTemplate.createCollection(Diploma.class);
-			mongoTemplate.indexOps("diploma").ensureIndex(new Index().on("name", Direction.ASC).unique());
+			mongoTemplate.indexOps("diploma").ensureIndex(new Index().on("_id", Direction.ASC).unique());
 		}
 	}
 
@@ -120,7 +121,7 @@ public class DiplomaRestIT {
 	public void createDiploma_with_success() throws Exception {
 
 		// setup
-		String newDiploma = "{" + "\"name\":\"newDiploma\"" + "\"yearOfResult\":\"2010\"" + "}";
+		String newDiploma = "{" + "\"name\":\"newDiploma\"," + "\"yearOfResult\":\"2019\"" + "}";
 
 		MvcResult result = this.mockMvc
 				.perform(post("/diploma").contentType(MediaType.APPLICATION_JSON).content(newDiploma)).andReturn();
@@ -129,7 +130,7 @@ public class DiplomaRestIT {
 		assertTrue(result.getResponse().getContentAsString().contains("CreatedException"));
 
 		// checking the new diploma in base and its fields's value
-		Optional<Diploma> diplomaOptional = this.diplomaRepository.findByNameAndYearOfResult("newDiploma", "2010");
+		Optional<Diploma> diplomaOptional = this.diplomaRepository.findByNameAndYearOfResult("newDiploma", "2019");
 		assertTrue(diplomaOptional.isPresent());
 		assertThat(diplomaOptional.get().getName()).isEqualTo("newDiploma");
 	}
@@ -138,13 +139,13 @@ public class DiplomaRestIT {
 	public void createDiploma_with_conflict() throws Exception {
 
 		// setup
-		String newDiploma = "{" + "\"name\":\"newDiploma\"," + "\"yearOfResult\":\"2010\"" + "}";
+		String newDiploma = "{" + "\"name\":\"newDiploma\"," + "\"yearOfResult\":\"2019\"" + "}";
 
 		// Pre-inserting a Diploma with name name as this.diploma to create a
 		// ConflictException
 		diplomaRepository.insert(diploma);
 		// Checking pre-insertion
-		assertTrue(this.diplomaRepository.findByNameAndYearOfResult("newDiploma", "2010").isPresent());
+		assertTrue(this.diplomaRepository.findByNameAndYearOfResult("newDiploma", "2019").isPresent());
 
 		MvcResult result = this.mockMvc
 				.perform(post("/diploma").contentType(MediaType.APPLICATION_JSON).content(newDiploma)).andReturn();
@@ -175,13 +176,13 @@ public class DiplomaRestIT {
 	public void deleteDiploma_with_success() throws Exception {
 
 		// setup
-		String diplomaToDelete = "{" + "\"name\":\"newDiploma\"," + "\"yearOfResult\":\"2010\"" + "}";
+		String diplomaToDelete = "{" + "\"name\":\"newDiploma\"," + "\"yearOfResult\":\"2019\"" + "}";
 		// Pre-inserting a Diploma with name name as this.diploma for having a diploma to delete
 		// delete
 		// with success
 		diplomaRepository.insert(diploma);
 		// Checking pre-insertion
-		Optional<Diploma> diplomaOptional = this.diplomaRepository.findByNameAndYearOfResult("newDiploma", "2010");
+		Optional<Diploma> diplomaOptional = this.diplomaRepository.findByNameAndYearOfResult("newDiploma", "2019");
 		String diplomaId = diplomaOptional.get().get_id().toString();
 		assertTrue(diplomaOptional.isPresent());
 
@@ -199,9 +200,9 @@ public class DiplomaRestIT {
 	public void deleteDiploma_with_resourceNotFound() throws Exception {
 
 		// setup
-		String diplomaToDelete = "{" + "\"name\":\"newDiploma\"," + "\"yearOfResult\":\"2010\"" + "}";
+		String diplomaToDelete = "{" + "\"name\":\"newDiploma\"," + "\"yearOfResult\":\"2019\"" + "}";
 		// Checking if there is not already a diploma in base with the name : newDiploma
-		assertFalse(this.diplomaRepository.findByNameAndYearOfResult("newDiploma", "2010").isPresent());
+		assertFalse(this.diplomaRepository.findByNameAndYearOfResult("newDiploma", "2019").isPresent());
 
 		MvcResult result = this.mockMvc
 				.perform(delete("/diploma").contentType(MediaType.APPLICATION_JSON).content(diplomaToDelete)).andReturn();
@@ -257,11 +258,11 @@ public class DiplomaRestIT {
 	public void updateDiploma_with_success() throws Exception {
 
 		// setup
-		String updatedDiploma = "{" + "\"name\":\"updateDiploma\"," +  "\"oldName\":\"newDiploma\"," + "\"yearOfResult\":\"2010\"," + "\"oldYearOfResult\":\"2020\"" + "}";
+		String updatedDiploma = "{" + "\"name\":\"updateDiploma\"," +  "\"oldName\":\"newDiploma\"," + "\"yearOfResult\":\"2019\"," + "\"oldYearOfResult\":\"2020\"" + "}";
 		// Pre-inserting a diploma to update
 		diplomaRepository.insert(diploma);
 		// Checking pre-insertion
-		assertTrue(this.diplomaRepository.findByNameAndYearOfResult("newDiploma", "2010").isPresent());
+		assertTrue(this.diplomaRepository.findByNameAndYearOfResult("newDiploma", "2019").isPresent());
 
 		MvcResult result = this.mockMvc
 				.perform(put("/diploma").contentType(MediaType.APPLICATION_JSON).content(updatedDiploma)).andReturn();
@@ -269,7 +270,7 @@ public class DiplomaRestIT {
 		assertTrue(result.getResponse().getContentAsString().contains("OkException"));
 
 		// Checking the updated diploma in base
-		Optional<Diploma> diplomaOptional = this.diplomaRepository.findByNameAndYearOfResult("updateDiploma", "2010");
+		Optional<Diploma> diplomaOptional = this.diplomaRepository.findByNameAndYearOfResult("updateDiploma", "2019");
 		assertTrue(diplomaOptional.isPresent());
 		assertThat(diplomaOptional.get().getName()).isEqualTo("updateDiploma");
 	}
@@ -278,7 +279,7 @@ public class DiplomaRestIT {
 	public void updateDiploma_with_resourceNotFound() throws Exception {
 
 		// setup
-		String updatedDiploma = "{" + "\"name\":\"newDiplomaFalse\"," +  "\"oldName\":\"diplomaNotFound\"," + "\"yearOfResult\":\"2010\"," + "\"oldYearOfResult\":\"2020\"" + "}";
+		String updatedDiploma = "{" + "\"name\":\"newDiplomaFalse\"," +  "\"oldName\":\"diplomaNotFound\"," + "\"yearOfResult\":\"2019\"," + "\"oldYearOfResult\":\"2020\"" + "}";
 
 		MvcResult result = this.mockMvc
 				.perform(put("/diploma").contentType(MediaType.APPLICATION_JSON).content(updatedDiploma)).andReturn();
