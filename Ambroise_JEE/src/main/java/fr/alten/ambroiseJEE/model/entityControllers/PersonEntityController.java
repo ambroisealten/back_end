@@ -134,18 +134,18 @@ public class PersonEntityController {
 				if (jPerson.has("onTimeAvailability")) {
 					JsonNode jOnTimeAvailability = jPerson.get("onTimeAvailability");
 					if (this.hasOnTimeAvailabilityFields(jOnTimeAvailability)) {
-						newPerson.setOnTimeAvailability(new OnTimeAvailability(jOnTimeAvailability.get("initDate").asLong(),
-								jOnTimeAvailability.get("duration").asInt(),
-								DurationType.valueOf(jOnTimeAvailability.get("durationType").textValue())));
-					} 
+						newPerson.setOnTimeAvailability(
+								new OnTimeAvailability(jOnTimeAvailability.get("initDate").asLong(),
+										jOnTimeAvailability.get("duration").asInt(),
+										DurationType.valueOf(jOnTimeAvailability.get("durationType").textValue())));
+					}
 				} else if (jPerson.has("onDateAvailability")) {
 					JsonNode jOnDateAvailability = jPerson.get("onDateAvailability");
 					if (this.hasOnDateAvailabilityFields(jOnDateAvailability)) {
-						newPerson.setOnDateAvailability(new OnDateAvailability(jOnDateAvailability.get("initDate").asLong(),
-								jOnDateAvailability.get("finalDate").asLong()));
+						newPerson.setOnDateAvailability(
+								new OnDateAvailability(jOnDateAvailability.get("initDate").asLong(),
+										jOnDateAvailability.get("finalDate").asLong()));
 					}
-				} else {
-					throw new MissingFieldException();
 				}
 
 			}
@@ -157,30 +157,10 @@ public class PersonEntityController {
 		} catch (final DuplicateKeyException dke) {
 			return new ConflictException();
 		} catch (final MissingFieldException | ToManyFieldsException fe) {
-			return new UnprocessableEntityException();
+			return new UnprocessableEntityException(fe);
 		}
 		return new CreatedException();
 
-	}
-	
-	public boolean hasOnTimeAvailabilityFields(JsonNode jOnTimeAvailability) throws ToManyFieldsException {
-		if (jOnTimeAvailability.has("duration") && jOnTimeAvailability.has("durationType")) {
-			if(!jOnTimeAvailability.has("finalDate")) {
-				return true;
-			}
-			else throw new ToManyFieldsException();
-		}
-		return false;
-	}
-	
-	public boolean hasOnDateAvailabilityFields(JsonNode jOnTimeAvailability) throws ToManyFieldsException {
-		if (jOnTimeAvailability.has("finalDate")) {
-			if(!(jOnTimeAvailability.has("duration") || jOnTimeAvailability.has("durationType"))) {
-				return true;
-			}
-			else throw new ToManyFieldsException();
-		}
-		return false;
 	}
 
 	/**
@@ -371,23 +351,21 @@ public class PersonEntityController {
 				}
 				person.setEmployer(employer.getName());
 
-				if (jPerson.has("duration") && jPerson.has("durationType")) {
-					if (!jPerson.has("finalDate")) {
-						person.setOnTimeAvailability(new OnTimeAvailability(jPerson.get("initDate").asLong(),
-								jPerson.get("duration").asInt(),
-								DurationType.valueOf(jPerson.get("durationType").textValue())));
-					} else {
-						throw new ToManyFieldsException();
+				if (jPerson.has("onTimeAvailability")) {
+					JsonNode jOnTimeAvailability = jPerson.get("onTimeAvailability");
+					if (this.hasOnTimeAvailabilityFields(jOnTimeAvailability)) {
+						person.setOnTimeAvailability(
+								new OnTimeAvailability(jOnTimeAvailability.get("initDate").asLong(),
+										jOnTimeAvailability.get("duration").asInt(),
+										DurationType.valueOf(jOnTimeAvailability.get("durationType").textValue())));
 					}
-				} else if (jPerson.has("finalDate")) {
-					if (!(jPerson.has("duration") || jPerson.has("durationType"))) {
-						person.setOnDateAvailability(new OnDateAvailability(jPerson.get("initDate").asLong(),
-								jPerson.get("finalDate").asLong()));
-					} else {
-						throw new ToManyFieldsException();
+				} else if (jPerson.has("onDateAvailability")) {
+					JsonNode jOnDateAvailability = jPerson.get("onDateAvailability");
+					if (this.hasOnDateAvailabilityFields(jOnDateAvailability)) {
+						person.setOnDateAvailability(
+								new OnDateAvailability(jOnDateAvailability.get("initDate").asLong(),
+										jOnDateAvailability.get("finalDate").asLong()));
 					}
-				} else {
-					throw new MissingFieldException();
 				}
 
 			}
@@ -400,9 +378,29 @@ public class PersonEntityController {
 		} catch (final DuplicateKeyException dke) {
 			return new ConflictException();
 		} catch (final MissingFieldException | ToManyFieldsException fe) {
-			return new UnprocessableEntityException();
+			return new UnprocessableEntityException(fe);
 		}
 		return new OkException();
+	}
+
+	public boolean hasOnTimeAvailabilityFields(JsonNode jOnTimeAvailability) throws ToManyFieldsException, MissingFieldException {
+		if (jOnTimeAvailability.has("duration") && jOnTimeAvailability.has("durationType")) {
+			if (!jOnTimeAvailability.has("finalDate")) {
+				return true;
+			} else
+				throw new ToManyFieldsException();
+		}
+		else throw new MissingFieldException();
+	}
+
+	public boolean hasOnDateAvailabilityFields(JsonNode jOnTimeAvailability) throws ToManyFieldsException, MissingFieldException {
+		if (jOnTimeAvailability.has("finalDate")) {
+			if (!(jOnTimeAvailability.has("duration") || jOnTimeAvailability.has("durationType"))) {
+				return true;
+			} else
+				throw new ToManyFieldsException();
+		}
+		else throw new MissingFieldException();
 	}
 
 }
