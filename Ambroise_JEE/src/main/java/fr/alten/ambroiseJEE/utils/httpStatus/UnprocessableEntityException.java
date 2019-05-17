@@ -3,6 +3,8 @@
  */
 package fr.alten.ambroiseJEE.utils.httpStatus;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class UnprocessableEntityException extends HttpException {
 
 	private static final long serialVersionUID = 900489820760681258L;
+	private final Logger logger = LoggerFactory.getLogger(UnprocessableEntityException.class);
 
 	public UnprocessableEntityException() {
 		super("Unprocessable Entity.");
@@ -24,9 +27,15 @@ public class UnprocessableEntityException extends HttpException {
 				HttpStatus.UNPROCESSABLE_ENTITY.name(), "", HttpStatus.UNPROCESSABLE_ENTITY.value()) };
 		setStackTrace(newStackTrace);
 	}
+	
+	public UnprocessableEntityException(Exception e) {
+		super("Internal Server Error");
+		logger.error(e.toString());
+	}
 
 	@Override
 	public String getLocalizedMessage() {
 		return "L’entité fournie avec la requête est incompréhensible ou incomplète.";
 	}
+	
 }
