@@ -30,12 +30,12 @@ public class UnprocessableEntityException extends HttpException {
 	
 	public UnprocessableEntityException(Exception e) {
 		super("Internal Server Error");
-		logger.error(e.getStackTrace().toString());
-		
+		logger.error(e.toString());
 	}
 
 	@Override
 	public String getLocalizedMessage() {
 		return "L’entité fournie avec la requête est incompréhensible ou incomplète.";
 	}
+	
 }
