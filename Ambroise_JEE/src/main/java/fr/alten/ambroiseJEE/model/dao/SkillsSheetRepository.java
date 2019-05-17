@@ -86,5 +86,5 @@ public interface SkillsSheetRepository extends MongoRepository<SkillsSheet, Long
 	 * @return the corresponding list of skillsSheets
 	 * @author Andy Chabalier
 	 */
-	public List<SkillsSheet> findByMailVersionAuthorIgnoreCaseOrder(String mailAuthor);
+	public List<SkillsSheet> findByMailVersionAuthorIgnoreCase(String mailAuthor);
 }
