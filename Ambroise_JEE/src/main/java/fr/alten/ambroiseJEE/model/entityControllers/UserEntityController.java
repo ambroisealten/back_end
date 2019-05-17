@@ -5,8 +5,6 @@ package fr.alten.ambroiseJEE.model.entityControllers;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +16,7 @@ import fr.alten.ambroiseJEE.model.beans.Agency;
 import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.model.dao.UserRepository;
 import fr.alten.ambroiseJEE.security.UserRole;
-import fr.alten.ambroiseJEE.utils.MailCreator;
+import fr.alten.ambroiseJEE.utils.MailUtils;
 import fr.alten.ambroiseJEE.utils.RandomString;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
@@ -35,20 +33,6 @@ import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
  */
 @Service
 public class UserEntityController {
-
-	public static final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
-			Pattern.CASE_INSENSITIVE);
-
-	/**
-	 * Method to validate if the mail math with the mail pattern
-	 *
-	 * @param emailStr the string to validate
-	 * @return true if the string match with the mail pattern
-	 */
-	private static boolean validateMail(final String emailStr) {
-		final Matcher matcher = UserEntityController.VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
-		return matcher.find();
-	}
 
 	@Autowired
 	private UserRepository userRepository;
@@ -70,7 +54,7 @@ public class UserEntityController {
 	public HttpException createUser(final JsonNode jUser) {
 		try {
 			// if the mail don't match with the mail pattern
-			if (!UserEntityController.validateMail(jUser.get("mail").textValue())) {
+			if (!validateMail(jUser.get("mail").textValue())) {
 				return new UnprocessableEntityException();
 			}
 
@@ -96,6 +80,15 @@ public class UserEntityController {
 			return new ConflictException();
 		}
 		return new CreatedException();
+	}
+
+	/**
+	 * @param mail
+	 * @return
+	 * @author Andy Chabalier
+	 */
+	public boolean validateMail(final String mail) {
+		return MailUtils.validateMail(mail);
 	}
 
 	/**
@@ -190,7 +183,7 @@ public class UserEntityController {
 			final String new_pass = RandomString.getAlphaNumericString(20);
 			user.setPswd(new_pass);
 			this.userRepository.save(user);
-			MailCreator.AdminUserResetPassword(new_pass); // TODO
+			MailUtils.AdminUserResetPassword(new_pass); // TODO
 		} catch (final ResourceNotFoundException rnfe) {
 			return rnfe;
 		} catch (final Exception e) {

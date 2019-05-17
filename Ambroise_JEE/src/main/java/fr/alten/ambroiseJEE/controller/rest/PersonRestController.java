@@ -2,6 +2,7 @@ package fr.alten.ambroiseJEE.controller.rest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestAttribute;
@@ -12,6 +13,9 @@ import com.google.gson.GsonBuilder;
 
 import fr.alten.ambroiseJEE.controller.business.PersonBusinessController;
 import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.utils.MailUtils;
+import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
  * Rest Controller for Person
@@ -45,6 +49,14 @@ public class PersonRestController {
 	public String getPerson(@PathVariable("mail") final String personMail, @RequestAttribute("mail") final String mail,
 			@RequestAttribute("role") final UserRole role) {
 		return this.gson.toJson(this.personBusinessController.getPerson(personMail, role));
+	}
+
+	@DeleteMapping(value = "/person/{mail}")
+	@ResponseBody
+	public HttpException deletePerson(@PathVariable("mail") final String personMail,
+			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
+		return MailUtils.validateMail(personMail) ? this.personBusinessController.deletePerson(personMail, role)
+				: new UnprocessableEntityException();
 	}
 
 }

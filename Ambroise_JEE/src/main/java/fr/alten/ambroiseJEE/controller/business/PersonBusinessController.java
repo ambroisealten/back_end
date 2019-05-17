@@ -8,6 +8,7 @@ import fr.alten.ambroiseJEE.model.entityControllers.PersonEntityController;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.security.UserRoleLists;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
+import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 
 /**
@@ -54,6 +55,16 @@ public class PersonBusinessController {
 	 */
 	public boolean isConnected(final UserRole role) {
 		return this.roles.isNot_ConsultantOrDeactivated(role);
+	}
+
+	/**
+	 * @return
+	 * @author Andy Chabalier
+	 * @param role the current logged user's role
+	 * @param mail the person mail to delete
+	 */
+	public HttpException deletePerson(String mail, UserRole role) {
+		return this.roles.isAdmin(role) ? this.personEntityController.deletePerson(mail) : new ForbiddenException();
 	}
 
 }
