@@ -63,7 +63,7 @@ public class ApplicantBusinessController {
 				HttpException createSkillsSheetResult = this.skillsSheetBusinessController
 						.createSkillsSheet(jSkillsSheet,role,personInChargeMail);
 				if (!(createSkillsSheetResult instanceof CreatedException)) {
-					this.personEntityController.deletePerson(jApplicant, PersonRole.APPLICANT);
+					this.personEntityController.deletePersonByRole(jApplicant, PersonRole.APPLICANT);
 					return new UnprocessableEntityException();
 				} else {
 					return createSkillsSheetResult;
