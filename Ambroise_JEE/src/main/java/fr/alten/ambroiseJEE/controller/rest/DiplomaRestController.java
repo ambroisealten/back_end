@@ -36,6 +36,10 @@ import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 @Controller
 public class DiplomaRestController {
 
+	public boolean checkJsonIntegrity(final JsonNode params, final String... fields) {
+		return JsonUtils.checkJsonIntegrity(params, fields);
+	}
+
 	@Autowired
 	private DiplomaBusinessController diplomaBusinessController;
 
@@ -62,7 +66,7 @@ public class DiplomaRestController {
 	@ResponseBody
 	public HttpException createDiploma(@RequestBody final JsonNode params,
 			@RequestAttribute("role") final UserRole role) throws Exception {
-		return JsonUtils.checkJsonIntegrity(params, "name", "yearOfResult")
+		return checkJsonIntegrity(params, "name", "yearOfResult")
 				? this.diplomaBusinessController.createDiploma(params, role)
 				: new UnprocessableEntityException();
 	}
@@ -83,7 +87,7 @@ public class DiplomaRestController {
 	@ResponseBody
 	public HttpException deleteDiploma(@RequestBody final JsonNode params,
 			@RequestAttribute("role") final UserRole role) {
-		return JsonUtils.checkJsonIntegrity(params, "name", "yearOfResult")
+		return checkJsonIntegrity(params, "name", "yearOfResult")
 				? this.diplomaBusinessController.deleteDiploma(params, role)
 				: new UnprocessableEntityException();
 	}
@@ -136,7 +140,7 @@ public class DiplomaRestController {
 	@ResponseBody
 	public HttpException updateDiploma(@RequestBody final JsonNode params,
 			@RequestAttribute("role") final UserRole role) throws ParseException {
-		return JsonUtils.checkJsonIntegrity(params, "name", "yearOfResult", "oldName", "oldYearOfResult")
+		return checkJsonIntegrity(params, "name", "yearOfResult", "oldName", "oldYearOfResult")
 				? this.diplomaBusinessController.updateDiploma(params, role)
 				: new UnprocessableEntityException();
 	}

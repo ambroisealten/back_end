@@ -99,7 +99,7 @@ public class ConsultantBusinessControllerTest {
 		// setup
 		Mockito.doReturn(true).when(this.consultantBusinessController)
 				.isManagerOrCdrAdmin(ArgumentMatchers.any(UserRole.class));
-		Mockito.when(this.personEntityController.deletePerson(ArgumentMatchers.any(JsonNode.class),
+		Mockito.when(this.personEntityController.deletePersonByRole(ArgumentMatchers.any(JsonNode.class),
 				ArgumentMatchers.any(PersonRole.class)))
 				.thenReturn(this.mockedHttpException);
 		// assert

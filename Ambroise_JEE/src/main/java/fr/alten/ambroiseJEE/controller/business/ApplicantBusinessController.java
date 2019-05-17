@@ -108,7 +108,7 @@ public class ApplicantBusinessController {
 	 */
 	public HttpException deleteApplicant(final JsonNode params, final UserRole role) {
 		if (this.isManagerOrCdrAdmin(role)) {
-			return this.personEntityController.deletePerson(params, PersonRole.APPLICANT);
+			return this.personEntityController.deletePersonByRole(params, PersonRole.APPLICANT);
 		}
 		return new ForbiddenException();
 	}

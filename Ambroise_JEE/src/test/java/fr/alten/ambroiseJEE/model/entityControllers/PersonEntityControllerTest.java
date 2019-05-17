@@ -391,7 +391,7 @@ public class PersonEntityControllerTest {
 		Mockito.doThrow(this.mockedDuplicateKeyException).when(this.personRepository)
 				.save(ArgumentMatchers.any(Person.class));
 		// assert
-		Assertions.assertThat(this.personEntityController.deletePerson(jPerson, PersonRole.APPLICANT))
+		Assertions.assertThat(this.personEntityController.deletePersonByRole(jPerson, PersonRole.APPLICANT))
 				.isInstanceOf(ConflictException.class);
 		// verify
 		Mockito.verify(this.personRepository, Mockito.times(1)).save(ArgumentMatchers.any(Person.class));
@@ -414,7 +414,7 @@ public class PersonEntityControllerTest {
 		Mockito.doThrow(this.mockedDuplicateKeyException).when(this.personRepository)
 				.save(ArgumentMatchers.any(Person.class));
 		// assert
-		Assertions.assertThat(this.personEntityController.deletePerson(jPerson, PersonRole.CONSULTANT))
+		Assertions.assertThat(this.personEntityController.deletePersonByRole(jPerson, PersonRole.CONSULTANT))
 				.isInstanceOf(ConflictException.class);
 		// verify
 		Mockito.verify(this.personRepository, Mockito.times(1)).save(ArgumentMatchers.any(Person.class));
@@ -434,7 +434,7 @@ public class PersonEntityControllerTest {
 		Mockito.doThrow(new ResourceNotFoundException()).when(this.personEntityController)
 				.getPersonByMailAndType(ArgumentMatchers.anyString(), ArgumentMatchers.any(PersonRole.class));
 
-		Assertions.assertThat(this.personEntityController.deletePerson(jPerson, PersonRole.APPLICANT))
+		Assertions.assertThat(this.personEntityController.deletePersonByRole(jPerson, PersonRole.APPLICANT))
 				.isInstanceOf(ResourceNotFoundException.class);
 		// verify
 		Mockito.verify(this.personRepository, Mockito.never()).save(ArgumentMatchers.any(Person.class));
@@ -454,7 +454,7 @@ public class PersonEntityControllerTest {
 		Mockito.doThrow(new ResourceNotFoundException()).when(this.personEntityController)
 				.getPersonByMailAndType(ArgumentMatchers.anyString(), ArgumentMatchers.any(PersonRole.class));
 
-		Assertions.assertThat(this.personEntityController.deletePerson(jPerson, PersonRole.CONSULTANT))
+		Assertions.assertThat(this.personEntityController.deletePersonByRole(jPerson, PersonRole.CONSULTANT))
 				.isInstanceOf(ResourceNotFoundException.class);
 		// verify
 		Mockito.verify(this.personRepository, Mockito.never()).save(ArgumentMatchers.any(Person.class));
@@ -475,7 +475,7 @@ public class PersonEntityControllerTest {
 				.getPersonByMailAndType(ArgumentMatchers.anyString(), ArgumentMatchers.any(PersonRole.class));
 
 		// assert
-		Assertions.assertThat(this.personEntityController.deletePerson(jPerson, PersonRole.CONSULTANT))
+		Assertions.assertThat(this.personEntityController.deletePersonByRole(jPerson, PersonRole.CONSULTANT))
 				.isInstanceOf(OkException.class);
 		// verify
 		Mockito.verify(this.personRepository, Mockito.times(1)).save(ArgumentMatchers.any(Person.class));
@@ -496,7 +496,7 @@ public class PersonEntityControllerTest {
 				.getPersonByMailAndType(ArgumentMatchers.anyString(), ArgumentMatchers.any(PersonRole.class));
 
 		// assert
-		Assertions.assertThat(this.personEntityController.deletePerson(jPerson, PersonRole.CONSULTANT))
+		Assertions.assertThat(this.personEntityController.deletePersonByRole(jPerson, PersonRole.CONSULTANT))
 				.isInstanceOf(OkException.class);
 		// verify
 		Mockito.verify(this.personRepository, Mockito.times(1)).save(ArgumentMatchers.any(Person.class));

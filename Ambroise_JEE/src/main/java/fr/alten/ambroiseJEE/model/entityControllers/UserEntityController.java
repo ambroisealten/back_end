@@ -5,8 +5,6 @@ package fr.alten.ambroiseJEE.model.entityControllers;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +13,12 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import fr.alten.ambroiseJEE.model.beans.Agency;
+import fr.alten.ambroiseJEE.model.beans.SkillsSheet;
 import fr.alten.ambroiseJEE.model.beans.User;
+import fr.alten.ambroiseJEE.model.dao.SkillsSheetRepository;
 import fr.alten.ambroiseJEE.model.dao.UserRepository;
 import fr.alten.ambroiseJEE.security.UserRole;
-import fr.alten.ambroiseJEE.utils.MailCreator;
+import fr.alten.ambroiseJEE.utils.MailUtils;
 import fr.alten.ambroiseJEE.utils.RandomString;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
@@ -36,25 +36,14 @@ import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 @Service
 public class UserEntityController {
 
-	public static final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
-			Pattern.CASE_INSENSITIVE);
-
-	/**
-	 * Method to validate if the mail math with the mail pattern
-	 *
-	 * @param emailStr the string to validate
-	 * @return true if the string match with the mail pattern
-	 */
-	private static boolean validateMail(final String emailStr) {
-		final Matcher matcher = UserEntityController.VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
-		return matcher.find();
-	}
-
 	@Autowired
 	private UserRepository userRepository;
 
 	@Autowired
 	private AgencyEntityController agencyEntityController;
+
+	@Autowired
+	private SkillsSheetRepository skillsSheetRepository;
 
 	/**
 	 * Method to create an user. User role are by default chosen by application
@@ -70,7 +59,7 @@ public class UserEntityController {
 	public HttpException createUser(final JsonNode jUser) {
 		try {
 			// if the mail don't match with the mail pattern
-			if (!UserEntityController.validateMail(jUser.get("mail").textValue())) {
+			if (!validateMail(jUser.get("mail").textValue())) {
 				return new UnprocessableEntityException();
 			}
 
@@ -99,6 +88,15 @@ public class UserEntityController {
 	}
 
 	/**
+	 * @param mail
+	 * @return
+	 * @author Andy Chabalier
+	 */
+	public boolean validateMail(final String mail) {
+		return MailUtils.validateMail(mail);
+	}
+
+	/**
 	 *
 	 * @param mail the user mail to fetch
 	 * @return {@link HttpException} corresponding to the status of the request
@@ -117,6 +115,7 @@ public class UserEntityController {
 			user.setPswd("");
 			user.setRole(UserRole.DEACTIVATED);
 			user.setAgency(null);
+			updateUserMailOnSkillSheetOnCascade(mail, user.getMail());
 			this.userRepository.save(user);
 		} catch (final ResourceNotFoundException rnfe) {
 			return rnfe;
@@ -190,7 +189,7 @@ public class UserEntityController {
 			final String new_pass = RandomString.getAlphaNumericString(20);
 			user.setPswd(new_pass);
 			this.userRepository.save(user);
-			MailCreator.AdminUserResetPassword(new_pass); // TODO
+			MailUtils.AdminUserResetPassword(new_pass); // TODO
 		} catch (final ResourceNotFoundException rnfe) {
 			return rnfe;
 		} catch (final Exception e) {
@@ -211,11 +210,13 @@ public class UserEntityController {
 	 */
 	public HttpException updateUser(final JsonNode jUser) {
 		try {
-			final User user = this.userRepository.findByMailIgnoreCase(jUser.get("oldMail").textValue())
+			final String oldMail = jUser.get("oldMail").textValue();
+			final User user = this.userRepository.findByMailIgnoreCase(oldMail)
 					.orElseThrow(ResourceNotFoundException::new);
 
 			user.setForname(jUser.get("forname").textValue());
-			user.setMail(jUser.get("mail").textValue());
+			final String newMail = jUser.get("mail").textValue();
+			user.setMail(newMail);
 			user.setName(jUser.get("name").textValue());
 			user.setPswd(jUser.get("pswd").textValue());
 			UserRole newRole;
@@ -225,7 +226,9 @@ public class UserEntityController {
 			} catch (final Exception e) {
 			}
 			final Agency agency = this.agencyEntityController.getAgency(jUser.get("agency").textValue());
+
 			user.setAgency(agency.getName());
+			updateUserMailOnSkillSheetOnCascade(oldMail, newMail);
 			this.userRepository.save(user);
 		} catch (final ResourceNotFoundException rnfe) {
 			return rnfe;
@@ -233,5 +236,20 @@ public class UserEntityController {
 			return new ConflictException();
 		}
 		return new OkException();
+	}
+
+	/**
+	 * update associated skillSheet on cascade
+	 * 
+	 * @param oldMail
+	 * @param newMail
+	 * @author Andy Chabalier
+	 */
+	private void updateUserMailOnSkillSheetOnCascade(String oldMail, String newMail) {
+		List<SkillsSheet> skillSheets = this.skillsSheetRepository.findByMailVersionAuthorIgnoreCaseOrder(oldMail);
+		skillSheets.parallelStream().forEach(skillSheet -> {
+			skillSheet.setMailVersionAuthor(newMail);
+		});
+		this.skillsSheetRepository.saveAll(skillSheets);
 	}
 }

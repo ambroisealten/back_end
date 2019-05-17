@@ -107,7 +107,7 @@ public class ConsultantBusinessController {
 	 */
 	public HttpException deleteConsultant(final JsonNode params, final UserRole role) {
 		if (this.isManagerOrCdrAdmin(role)) {
-			return this.personEntityController.deletePerson(params, PersonRole.CONSULTANT);
+			return this.personEntityController.deletePersonByRole(params, PersonRole.CONSULTANT);
 		}
 		return new ForbiddenException();
 	}

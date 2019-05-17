@@ -63,7 +63,7 @@ public class SkillRestControllerTest {
 				.createSkill(ArgumentMatchers.any(JsonNode.class), ArgumentMatchers.any(UserRole.class));
 
 		// setup : all needed fields present
-		final String valid = "{" + "\"mail\":\"\"," + "\"name\":\"skill\"" + "}";
+		final String valid = "{" + "\"name\":\"skill\"" + "}";
 
 		this.spiedJsonNode = this.mapper.readTree(valid);
 		// assert all field present
