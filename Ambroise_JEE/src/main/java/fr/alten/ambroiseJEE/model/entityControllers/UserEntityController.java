@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -108,7 +109,8 @@ public class UserEntityController {
 	 */
 	public HttpException deleteUser(final String mail) {
 		try {
-			final User user = this.userRepository.findByMailIgnoreCase(mail).orElseThrow(ResourceNotFoundException::new);
+			final User user = this.userRepository.findByMailIgnoreCase(mail)
+					.orElseThrow(ResourceNotFoundException::new);
 			user.setForname("");
 			user.setMail("deactivated" + System.currentTimeMillis());
 			user.setName("");
@@ -165,7 +167,8 @@ public class UserEntityController {
 	 * @author MAQUINGHEN MAXIME
 	 */
 	public List<User> getUsers() {
-		return this.userRepository.findAll();
+		return this.userRepository.findAll().parallelStream().filter(user -> !user.getMail().contains("deactivated"))
+				.collect(Collectors.toList());
 	}
 
 	public HttpException newPasswordUser(final String token) {

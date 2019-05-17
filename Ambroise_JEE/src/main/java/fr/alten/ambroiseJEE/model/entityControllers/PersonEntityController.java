@@ -17,6 +17,11 @@ import fr.alten.ambroiseJEE.model.beans.Person;
 import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.model.dao.PersonRepository;
 import fr.alten.ambroiseJEE.utils.PersonRole;
+import fr.alten.ambroiseJEE.utils.availability.DurationType;
+import fr.alten.ambroiseJEE.utils.availability.OnDateAvailability;
+import fr.alten.ambroiseJEE.utils.availability.OnTimeAvailability;
+import fr.alten.ambroiseJEE.utils.exception.MissingFieldException;
+import fr.alten.ambroiseJEE.utils.exception.ToManyFieldsException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
@@ -64,14 +69,15 @@ public class PersonEntityController {
 	 * Method to create a Person. Person type will be defined by business
 	 * controllers ahead of this object.
 	 *
-	 * @param jPerson JsonNode with all Person parameters, except its type (name,
-	 *                mail, job, monthlyWage, startDate)
-	 * @param type    PersonEnum the type of the created Person
+	 * @param jPerson            JsonNode with all Person parameters, except its
+	 *                           type (name, mail, job, monthlyWage, startDate)
+	 * @param type               PersonEnum the type of the created Person
 	 * @param personInChargeMail TODO
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request, {@link ResourceNotFoundException} if there is a problem in the parameters given,
-	 *         {@link ConflictException} if there is a conflict in the
-	 *         database and {@link CreatedException} if the person is created
+	 *         request, {@link ResourceNotFoundException} if there is a problem in
+	 *         the parameters given, {@link ConflictException} if there is a
+	 *         conflict in the database and {@link CreatedException} if the person
+	 *         is created
 	 * @author Lucas Royackkers
 	 */
 	public HttpException createPerson(final JsonNode jPerson, final PersonRole type, String personInChargeMail) {
@@ -84,20 +90,20 @@ public class PersonEntityController {
 			final Person newPerson = new Person();
 			newPerson.setSurname(jPerson.get("surname").textValue());
 			newPerson.setName(jPerson.get("name").textValue());
-			newPerson.setMonthlyWage(Float.parseFloat(jPerson.get("monthlyWage").textValue()));
+			newPerson.setMonthlyWage(Float.parseFloat(jPerson.get("monthlyWage").asText()));
+			newPerson.setExperienceTime(Integer.parseInt(jPerson.get("experienceTime").asText()));
 			newPerson.setRole(type);
 			newPerson.setMail(jPerson.get("mail").textValue());
 
-			final User personInCharge = this.userEntityController
-					.getUserByMail(personInChargeMail);
+			final User personInCharge = this.userEntityController.getUserByMail(personInChargeMail);
 			newPerson.setPersonInChargeMail(personInCharge.getMail());
 
 			final String highestDiploma = jPerson.get("highestDiploma").textValue();
 			final String highestDiplomaYear = jPerson.get("highestDiplomaYear").textValue();
 			Diploma diploma;
 			try {
-				diploma = this.diplomaEntityController
-						.getDiplomaByNameAndYearOfResult(highestDiploma, highestDiplomaYear);
+				diploma = this.diplomaEntityController.getDiplomaByNameAndYearOfResult(highestDiploma,
+						highestDiplomaYear);
 			} catch (ResourceNotFoundException e) {
 				diploma = (Diploma) this.diplomaEntityController.createDiploma(highestDiploma, highestDiplomaYear);
 			}
@@ -114,16 +120,36 @@ public class PersonEntityController {
 			}
 			newPerson.setJob(job.getTitle());
 
-			final String employerName = jPerson.get("employer").textValue();
-			Employer employer;
-			try {
-				employer = this.employerEntityController.getEmployer(employerName);
+			if (type.equals(PersonRole.APPLICANT)) {
+				newPerson.setExperienceTime(jPerson.get("experienceTime").asInt());
+				final String employerName = jPerson.get("employer").textValue();
+				Employer employer;
+				try {
+					employer = this.employerEntityController.getEmployer(employerName);
 
-			} catch (ResourceNotFoundException e) {
-				employer = (Employer) this.employerEntityController.createEmployer(employerName);
+				} catch (ResourceNotFoundException e) {
+					employer = (Employer) this.employerEntityController.createEmployer(employerName);
+				}
+				newPerson.setEmployer(employer.getName());
+
+				if (jPerson.has("onTimeAvailability")) {
+					JsonNode jOnTimeAvailability = jPerson.get("onTimeAvailability");
+					if (this.hasOnTimeAvailabilityFields(jOnTimeAvailability)) {
+						newPerson.setOnTimeAvailability(
+								new OnTimeAvailability(jOnTimeAvailability.get("initDate").asLong(),
+										jOnTimeAvailability.get("duration").asInt(),
+										DurationType.valueOf(jOnTimeAvailability.get("durationType").textValue())));
+					}
+				} else if (jPerson.has("onDateAvailability")) {
+					JsonNode jOnDateAvailability = jPerson.get("onDateAvailability");
+					if (this.hasOnDateAvailabilityFields(jOnDateAvailability)) {
+						newPerson.setOnDateAvailability(
+								new OnDateAvailability(jOnDateAvailability.get("initDate").asLong(),
+										jOnDateAvailability.get("finalDate").asLong()));
+					}
+				}
+
 			}
-			newPerson.setEmployer(employer.getName());
-
 			newPerson.setOpinion(jPerson.get("opinion").textValue());
 
 			this.personRepository.save(newPerson);
@@ -131,6 +157,8 @@ public class PersonEntityController {
 			return rnfe;
 		} catch (final DuplicateKeyException dke) {
 			return new ConflictException();
+		} catch (final MissingFieldException | ToManyFieldsException fe) {
+			return new UnprocessableEntityException(fe);
 		}
 		return new CreatedException();
 
@@ -156,10 +184,13 @@ public class PersonEntityController {
 				person.setSurname("Deactivated");
 				person.setName("Deactivated");
 				break;
-			default:
+			case CONSULTANT:
 				person.setSurname("Demissionaire");
 				person.setName("Demissionaire");
 				break;
+			default:
+				throw new UnprocessableEntityException();
+
 			}
 			person.setMail("deactivated" + System.currentTimeMillis() + "@deactivated.com");
 			person.setEmployer(null);
@@ -273,9 +304,9 @@ public class PersonEntityController {
 	 * Method to update a Person. Person type will be defined by business
 	 * controllers ahead of this object.
 	 *
-	 * @param jPerson JsonNode containing all parameters
-	 * @param role    the role of the concerned person (if it's an applicant or a
-	 *                consultant)
+	 * @param jPerson            JsonNode containing all parameters
+	 * @param role               the role of the concerned person (if it's an
+	 *                           applicant or a consultant)
 	 * @param personInChargeMail TODO
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ResourceNotFoundException} if the resource isn't in
@@ -292,8 +323,7 @@ public class PersonEntityController {
 
 			person.setRole(role);
 
-			final User personInCharge = this.userEntityController
-					.getUserByMail(personInChargeMail);
+			final User personInCharge = this.userEntityController.getUserByMail(personInChargeMail);
 			person.setPersonInChargeMail(personInCharge.getMail());
 
 			final String highestDiploma = jPerson.get("highestDiploma").textValue();
@@ -301,8 +331,8 @@ public class PersonEntityController {
 
 			Diploma diploma;
 			try {
-				diploma = this.diplomaEntityController
-						.getDiplomaByNameAndYearOfResult(highestDiploma, highestDiplomaYear);
+				diploma = this.diplomaEntityController.getDiplomaByNameAndYearOfResult(highestDiploma,
+						highestDiplomaYear);
 			} catch (ResourceNotFoundException e) {
 				diploma = (Diploma) this.diplomaEntityController.createDiploma(highestDiploma, highestDiplomaYear);
 			}
@@ -310,25 +340,36 @@ public class PersonEntityController {
 			person.setHighestDiploma(diploma.getName());
 			person.setHighestDiplomaYear(diploma.getYearOfResult());
 
-			final String jobName = jPerson.get("job").textValue();
-			Job job;
-			try {
-				job = this.jobEntityController.getJob(jobName);
-			} catch (ResourceNotFoundException e) {
-				job = (Job) this.jobEntityController.createJob(jobName);
+			if (role.equals(PersonRole.APPLICANT)) {
+				person.setExperienceTime(jPerson.get("experienceTime").asInt());
+				final String employerName = jPerson.get("employer").textValue();
+				Employer employer;
+				try {
+					employer = this.employerEntityController.getEmployer(employerName);
+
+				} catch (ResourceNotFoundException e) {
+					employer = (Employer) this.employerEntityController.createEmployer(employerName);
+				}
+				person.setEmployer(employer.getName());
+
+				if (jPerson.has("onTimeAvailability")) {
+					JsonNode jOnTimeAvailability = jPerson.get("onTimeAvailability");
+					if (this.hasOnTimeAvailabilityFields(jOnTimeAvailability)) {
+						person.setOnTimeAvailability(
+								new OnTimeAvailability(jOnTimeAvailability.get("initDate").asLong(),
+										jOnTimeAvailability.get("duration").asInt(),
+										DurationType.valueOf(jOnTimeAvailability.get("durationType").textValue())));
+					}
+				} else if (jPerson.has("onDateAvailability")) {
+					JsonNode jOnDateAvailability = jPerson.get("onDateAvailability");
+					if (this.hasOnDateAvailabilityFields(jOnDateAvailability)) {
+						person.setOnDateAvailability(
+								new OnDateAvailability(jOnDateAvailability.get("initDate").asLong(),
+										jOnDateAvailability.get("finalDate").asLong()));
+					}
+				}
+
 			}
-			person.setJob(job.getTitle());
-
-			final String employerName = jPerson.get("employer").textValue();
-			Employer employer;
-			try {
-				employer = this.employerEntityController.getEmployer(employerName);
-
-			} catch (ResourceNotFoundException e) {
-				employer = (Employer) this.employerEntityController.createEmployer(employerName);
-			}
-
-			person.setEmployer(employer.getName());
 
 			person.setOpinion(jPerson.get("opinion").textValue());
 
@@ -337,8 +378,30 @@ public class PersonEntityController {
 			return rnfe;
 		} catch (final DuplicateKeyException dke) {
 			return new ConflictException();
+		} catch (final MissingFieldException | ToManyFieldsException fe) {
+			return new UnprocessableEntityException(fe);
 		}
 		return new OkException();
+	}
+
+	public boolean hasOnTimeAvailabilityFields(JsonNode jOnTimeAvailability) throws ToManyFieldsException, MissingFieldException {
+		if (jOnTimeAvailability.has("duration") && jOnTimeAvailability.has("durationType")) {
+			if (!jOnTimeAvailability.has("finalDate")) {
+				return true;
+			} else
+				throw new ToManyFieldsException();
+		}
+		else throw new MissingFieldException();
+	}
+
+	public boolean hasOnDateAvailabilityFields(JsonNode jOnTimeAvailability) throws ToManyFieldsException, MissingFieldException {
+		if (jOnTimeAvailability.has("finalDate")) {
+			if (!(jOnTimeAvailability.has("duration") || jOnTimeAvailability.has("durationType"))) {
+				return true;
+			} else
+				throw new ToManyFieldsException();
+		}
+		else throw new MissingFieldException();
 	}
 
 }

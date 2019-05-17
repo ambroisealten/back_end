@@ -1,9 +1,8 @@
 package fr.alten.ambroiseJEE.model.entityControllers;
 
-import java.text.ParseException;
 import java.util.List;
-import java.util.Optional;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,15 +40,22 @@ public class DiplomaEntityController {
 	 * @author Thomas Decamp
 	 */
 	public HttpException createDiploma(final JsonNode jDiploma) {
+		final String diplomaName = jDiploma.get("name").textValue();
+		final String diplomaYearOfResult = jDiploma.get("yearOfResult").textValue();
+		if (this.diplomaRepository.findByNameAndYearOfResult(diplomaName, diplomaYearOfResult).isPresent()) {
+			return new ConflictException();
+		}
+
 		final Diploma newDiploma = new Diploma();
-		newDiploma.setName(jDiploma.get("name").textValue());
-		newDiploma.setYearOfResult(jDiploma.get("yearOfResult").textValue());
+		newDiploma.setName(diplomaName);
+		newDiploma.setYearOfResult(diplomaYearOfResult);
 		try {
 			this.diplomaRepository.save(newDiploma);
 		} catch (final DuplicateKeyException dke) {
 			return new ConflictException();
 		} catch (final Exception e) {
-			e.printStackTrace();
+			LoggerFactory.getLogger(DiplomaEntityController.class).info(e.getStackTrace().toString());
+			return new InternalServerErrorException();
 		}
 		return new CreatedException();
 	}
@@ -63,17 +69,21 @@ public class DiplomaEntityController {
 	 * @author Andy Chabalier
 	 */
 	public Diploma createDiploma(final String name, final String yearOfResult) {
-			Diploma newDiploma = new Diploma();
-			newDiploma.setName(name);
-			newDiploma.setYearOfResult(yearOfResult);
-			try {
-				newDiploma = this.diplomaRepository.save(newDiploma);
-			} catch (final DuplicateKeyException dke) {
-				throw new ConflictException();
-			} catch (final Exception e) {
-				throw new InternalServerErrorException();
-			}
-			return newDiploma;
+		if (this.diplomaRepository.findByNameAndYearOfResult(name, yearOfResult).isPresent()) {
+			throw new ConflictException();
+		}
+		Diploma newDiploma = new Diploma();
+		newDiploma.setName(name);
+		newDiploma.setYearOfResult(yearOfResult);
+		try {
+			newDiploma = this.diplomaRepository.save(newDiploma);
+		} catch (final DuplicateKeyException dke) {
+			throw new ConflictException();
+		} catch (final Exception e) {
+			LoggerFactory.getLogger(DiplomaEntityController.class).info(e.getStackTrace().toString());
+			throw new InternalServerErrorException();
+		}
+		return newDiploma;
 	}
 
 	/**
@@ -122,7 +132,8 @@ public class DiplomaEntityController {
 	 * @author Lucas Royackkers
 	 */
 	public Diploma getDiplomaByNameAndYearOfResult(final String name, final String yearOfResult) {
-		return this.diplomaRepository.findByNameAndYearOfResult(name, yearOfResult).orElseThrow(ResourceNotFoundException::new);
+		return this.diplomaRepository.findByNameAndYearOfResult(name, yearOfResult)
+				.orElseThrow(ResourceNotFoundException::new);
 	}
 
 	/**
@@ -145,46 +156,25 @@ public class DiplomaEntityController {
 	 *         found and {@link CreatedException} if the diploma is updated
 	 * @author Lucas Royackkers
 	 */
-	public HttpException updateDiploma(final JsonNode jDiploma) {//} throws ParseException {
-		// try {
-		// 	final Optional<Diploma> newDiplomaOptional = this.diplomaRepository.findByNameAndYearOfResult(
-		// 			jDiploma.get("name").textValue(), jDiploma.get("yearOfResult").textValue());
-		// 	if (newDiplomaOptional.isPresent()) {
-		// 		return new ConflictException();
-		// 	}
-
-		// 	final Diploma diploma = this.diplomaRepository
-		// 			.findByNameAndYearOfResult(jDiploma.get("oldName").textValue(),
-		// 					jDiploma.get("oldYearOfResult").textValue())
-		// 			.orElseThrow(ResourceNotFoundException::new);
-
-		// 	diploma.setName(jDiploma.get("name").textValue());
-		// 	diploma.setYearOfResult(jDiploma.get("yearOfResult").textValue());
-
-		// 	this.diplomaRepository.save(diploma);
-		// } catch (final ResourceNotFoundException rnfe) {
-		// 	return rnfe;
-		// } catch (final Exception e) {
-		// 	return new ConflictException();
-		// }
-		// return new OkException();
-
-		return this.diplomaRepository.findByNameAndYearOfResult(
-			jDiploma.get("oldName").textValue(), jDiploma.get("yearOfResult").textValue())
-		// optional is present
-		.map(diploma -> {
-			diploma.setName(jDiploma.get("name").textValue());
-			try {
-				this.diplomaRepository.save(diploma);
-			} catch (final DuplicateKeyException dke) {
-				return new ConflictException();
-			} catch (final Exception e) {
-				e.printStackTrace();
-			}
-			return (HttpException) new OkException();
-		})
-		// optional isn't present
-		.orElse(new ResourceNotFoundException());
+	public HttpException updateDiploma(final JsonNode jDiploma) {
+		return this.diplomaRepository
+				.findByNameAndYearOfResult(jDiploma.get("oldName").textValue(),
+						jDiploma.get("yearOfResult").textValue())
+				// optional is present
+				.map(diploma -> {
+					diploma.setName(jDiploma.get("name").textValue());
+					try {
+						this.diplomaRepository.save(diploma);
+					} catch (final DuplicateKeyException dke) {
+						return new ConflictException();
+					} catch (final Exception e) {
+						LoggerFactory.getLogger(DiplomaEntityController.class).info(e.getStackTrace().toString());
+						return new InternalServerErrorException();
+					}
+					return (HttpException) new OkException();
+				})
+				// optional isn't present
+				.orElse(new ResourceNotFoundException());
 	}
 
 }
