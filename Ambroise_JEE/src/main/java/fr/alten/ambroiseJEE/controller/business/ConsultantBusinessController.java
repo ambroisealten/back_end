@@ -13,8 +13,10 @@ import fr.alten.ambroiseJEE.model.entityControllers.PersonEntityController;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.security.UserRoleLists;
 import fr.alten.ambroiseJEE.utils.PersonRole;
+import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
  * Consultant controller for business rules.
@@ -28,6 +30,9 @@ public class ConsultantBusinessController {
 
 	@Autowired
 	private PersonEntityController personEntityController;
+	
+	@Autowired
+	private SkillsSheetBusinessController skillsSheetBusinessController;
 
 	/**
 	 * Method to delegate consultant creation
@@ -51,6 +56,44 @@ public class ConsultantBusinessController {
 		}
 
 	}
+	
+	/**
+	 * Method to create an Consultant and a Skills Sheet (with the created Consultant
+	 * in it)
+	 * 
+	 * @param params the JsonNode containing all informations about the Person and
+	 *               the Skills Sheet
+	 * @param role   the current logged user's role
+	 * @param mail   the current logged user's mail
+	 * @return the @see {@link HttpException} corresponding to the status of the
+	 *         request ({@link ForbiddenException} if the current user hasn't the
+	 *         rights to perform this action, {@link UnprocessableEntityException}
+	 *         if there is a problem during the creation of one of the element, and
+	 *         {@link CreatedException} if the consultant and the Skills sheet are
+	 *         sucessfully created
+	 * @author Lucas Royackkers
+	 */
+	public HttpException createConsultantAndSkillsSheet(JsonNode params, UserRole role, String personInChargeMail) {
+		if (this.isManagerOrCdrAdmin(role)) {
+			final JsonNode jConsultant = params.get("person");
+			HttpException createResult = this.personEntityController.createPerson(jConsultant, PersonRole.APPLICANT,
+					personInChargeMail);
+			if (!(createResult instanceof CreatedException)) {
+				return createResult;
+			} else {
+				final JsonNode jSkillsSheet = params.get("skillsSheet");
+				HttpException createSkillsSheetResult = this.skillsSheetBusinessController
+						.createSkillsSheet(jSkillsSheet,role,personInChargeMail);
+				if (!(createSkillsSheetResult instanceof CreatedException)) {
+					this.personEntityController.deletePerson(jConsultant, PersonRole.APPLICANT);
+					return new UnprocessableEntityException();
+				} else {
+					return createSkillsSheetResult;
+				}
+			}
+		}
+		return new ForbiddenException();
+	}
 
 	/**
 	 * Method to delegate consultant deletion
@@ -72,7 +115,7 @@ public class ConsultantBusinessController {
 	/**
 	 * Try to fetch a consultant given its mail
 	 *
-	 * @param mail the applicant's mail
+	 * @param mail the consultant's mail
 	 *
 	 * @return an Optional with the corresponding consultant (or not)
 	 * @author Lucas Royackkers
