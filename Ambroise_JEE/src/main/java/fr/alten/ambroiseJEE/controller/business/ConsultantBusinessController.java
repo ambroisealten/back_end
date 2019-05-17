@@ -30,7 +30,7 @@ public class ConsultantBusinessController {
 
 	@Autowired
 	private PersonEntityController personEntityController;
-	
+
 	@Autowired
 	private SkillsSheetBusinessController skillsSheetBusinessController;
 
@@ -56,10 +56,10 @@ public class ConsultantBusinessController {
 		}
 
 	}
-	
+
 	/**
-	 * Method to create an Consultant and a Skills Sheet (with the created Consultant
-	 * in it)
+	 * Method to create an Consultant and a Skills Sheet (with the created
+	 * Consultant in it)
 	 * 
 	 * @param params the JsonNode containing all informations about the Person and
 	 *               the Skills Sheet
@@ -83,9 +83,9 @@ public class ConsultantBusinessController {
 			} else {
 				final JsonNode jSkillsSheet = params.get("skillsSheet");
 				HttpException createSkillsSheetResult = this.skillsSheetBusinessController
-						.createSkillsSheet(jSkillsSheet,role,personInChargeMail);
+						.createSkillsSheet(jSkillsSheet, role, personInChargeMail);
 				if (!(createSkillsSheetResult instanceof CreatedException)) {
-					this.personEntityController.deletePerson(jConsultant, PersonRole.APPLICANT);
+					this.personEntityController.deletePersonByRole(jConsultant, PersonRole.APPLICANT);
 					return new UnprocessableEntityException();
 				} else {
 					return createSkillsSheetResult;
