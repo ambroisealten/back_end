@@ -132,14 +132,25 @@ public class SkillsSheetEntityController {
 	 * Method to create a skills sheet for the first time
 	 *
 	 * @param jUser JsonNode with all skills sheet parameters
+	 * @param versionAuthor the mail of the author of this version of this Skills
+	 *                      Sheet
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ConflictException} if there is a conflict in the
 	 *         database and {@link CreatedException} if the skills sheet is created
 	 * @author Lucas Royackkers
 	 */
-	public HttpException createSkillsSheet(final JsonNode jSkillsSheet) {
-		return this.createSkillsSheet(jSkillsSheet, 1);
+	public HttpException createSkillsSheet(final JsonNode jSkillsSheet,final String versionAuthor) {
+		return this.createSkillsSheet(jSkillsSheet, 1,versionAuthor);
 
+	}
+
+	public HttpException createBlankSkillsSheet(final String personMail, final String mailAuthor,
+			final long versionNumber, final PersonRole status) {
+//		try {
+//			if(this.skillsSheetRepository.existsByNameIgnoreCaseAndMailPersonAttachedToIgnoreCaseAndVersionNumber(
+//					skillsSheetName, personMail, versionNumber))
+//		}
+		return null;
 	}
 
 	/**
@@ -147,6 +158,8 @@ public class SkillsSheetEntityController {
 	 *
 	 * @param jSkillsSheet  the JsonNode containing all the parameters
 	 * @param versionNumber the versionNumber of the Skills Sheet
+	 * @param versionAuthor the mail of the author of this version of this Skills
+	 *                      Sheet
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request, {@link ResourceNotFoundException} if there is no such
 	 *         resource as the one that are given, {@link ConflictException} if
@@ -154,7 +167,8 @@ public class SkillsSheetEntityController {
 	 *         the skills sheet is created
 	 * @author Lucas Royackkers
 	 */
-	private HttpException createSkillsSheet(final JsonNode jSkillsSheet, final long versionNumber) {
+	private HttpException createSkillsSheet(final JsonNode jSkillsSheet, final long versionNumber,
+			final String versionAuthor) {
 		try {
 
 			final PersonRole status = PersonRole.valueOf(jSkillsSheet.get("rolePersonAttachedTo").textValue());
@@ -198,7 +212,7 @@ public class SkillsSheetEntityController {
 				newSkillsSheet.setCvPerson(null);
 			}
 
-			newSkillsSheet.setMailVersionAuthor(jSkillsSheet.get("mailVersionAuthor").textValue());
+			newSkillsSheet.setMailVersionAuthor(versionAuthor);
 
 			newSkillsSheet.setVersionDate(String.valueOf(System.currentTimeMillis()));
 
@@ -227,10 +241,14 @@ public class SkillsSheetEntityController {
 	 */
 	public List<SkillGraduated> getAllSkills(final JsonNode jSkills) {
 		final List<SkillGraduated> allSkills = new ArrayList<SkillGraduated>();
+		final List<String> softSkillsUsed = new ArrayList<String>();
+		final List<Skill> softSkillsList = this.skillEntityController.getSoftSkills();
 
 		for (final JsonNode skillGraduated : jSkills) {
 			final String skillName = skillGraduated.get("skill").get("name").textValue();
 			Skill skill = null;
+			if (skillGraduated.get("skill").has("isSoft"))
+				softSkillsUsed.add(skillGraduated.get("skill").get("name").textValue());
 			try {
 				skill = this.skillEntityController.getSkill(skillName);
 
@@ -241,6 +259,21 @@ public class SkillsSheetEntityController {
 			final double skillGrade = skillGraduated.get("grade").asDouble();
 			if (checkGrade(skillGrade)) {
 				allSkills.add(new SkillGraduated(skill, skillGrade));
+			}
+		}
+
+		for (final Skill softSkill : softSkillsList) {
+			final String softSkillName = softSkill.getName();
+			if (!softSkillsUsed.contains(softSkillName)) {
+				Skill skill = null;
+				try {
+					skill = this.skillEntityController.getSkill(softSkillName);
+
+				} catch (final ResourceNotFoundException e) {
+					skill = this.skillEntityController.createSkill(softSkillName, null).get();
+				}
+
+				allSkills.add(new SkillGraduated(skill, 1));
 			}
 		}
 		return allSkills;
@@ -620,20 +653,21 @@ public class SkillsSheetEntityController {
 	 *
 	 * @param jSkillsSheet JsonNode with all skills sheet parameters, including its
 	 *                     name to perform an update on the database
-	 *
+	 * @param versionAuthor the mail of the author of this version of this Skills
+	 *                      Sheet
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request {@link ResourceNotFoundException} if the resource is not
 	 *         found, {@link ConflictException} if there is a conflict in the
 	 *         database and {@link OkException} if the skills sheet is updated
 	 * @author Lucas Royackkers
 	 */
-	public HttpException updateSkillsSheet(final JsonNode jSkillsSheet) {
+	public HttpException updateSkillsSheet(final JsonNode jSkillsSheet, final String versionAuthor) {
 		try {
 			// We retrieve the latest version number of the skills sheet, in order to
 			// increment it later
 			final long latestVersionNumber = jSkillsSheet.get("versionNumber").longValue();
 
-			return this.createSkillsSheet(jSkillsSheet, latestVersionNumber + 1);
+			return this.createSkillsSheet(jSkillsSheet, latestVersionNumber + 1, versionAuthor);
 		} catch (final ResourceNotFoundException rnfe) {
 			return rnfe;
 		} catch (final Exception e) {

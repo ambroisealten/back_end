@@ -78,9 +78,10 @@ public class SkillsSheetRestController {
 		((ObjectNode) params).put("mailVersionAuthor", mail);
 		return JsonUtils.checkJsonIntegrity(params, "name", "mailPersonAttachedTo", "mailVersionAuthor", "comment",
 				"rolePersonAttachedTo", "skillsList")
-						? this.skillsSheetBusinessController.createSkillsSheet(params, role)
+						? this.skillsSheetBusinessController.createSkillsSheet(params, role,mail)
 						: new UnprocessableEntityException();
 	}
+	
 
 	/**
 	 * Get a JsonNode of Skills Sheets matching the specified queries in Identity
@@ -227,7 +228,7 @@ public class SkillsSheetRestController {
 		((ObjectNode) params).put("mailVersionAuthor", mail);
 		return JsonUtils.checkJsonIntegrity(params, "name", "mailPersonAttachedTo", "mailVersionAuthor", "comment",
 				"versionNumber", "rolePersonAttachedTo", "skillsList")
-						? this.skillsSheetBusinessController.updateSkillsSheet(params, role)
+						? this.skillsSheetBusinessController.updateSkillsSheet(params, role, mail)
 						: new UnprocessableEntityException();
 	}
 

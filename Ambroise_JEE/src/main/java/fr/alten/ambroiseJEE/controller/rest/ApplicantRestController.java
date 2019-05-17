@@ -93,6 +93,28 @@ public class ApplicantRestController {
 	}
 
 	/**
+	 * Method to create an Applicant and a Skills Sheet in one way
+	 * 
+	 * @param params JsonNode containing post parameters from http request
+	 * @param mail   the current logged user's mail
+	 * @param role   the current logged user's role
+	 * @return {@link HttpException} corresponding to the status of the request
+	 *         ({@link ConflictException} if there is a conflict in the database,
+	 *         {@link UnprocessableEntityException} if the resources aren't well
+	 *         constructed and {@link CreatedException} if the person(applicant) is
+	 *         created
+	 * @author Lucas Royackkers
+	 */
+	@PostMapping(value = "/applicantAndSkillsSheet")
+	@ResponseBody
+	public HttpException createApplicantAndSkillsSheet(@RequestBody final JsonNode params,
+			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
+		return checkJsonIntegrity(params, "person", "skillsSheet")
+				? this.applicantBusinessController.createApplicantAndSkillsSheet(params, role, mail)
+				: new UnprocessableEntityException();
+	}
+
+	/**
 	 * Method to get a specific Applicant given its name
 	 *
 	 * @param applicantName the applicant's name

@@ -17,6 +17,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
+import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
  * Applicant controller for business rules.
@@ -30,6 +31,47 @@ public class ApplicantBusinessController {
 
 	@Autowired
 	private PersonEntityController personEntityController;
+
+	@Autowired
+	private SkillsSheetBusinessController skillsSheetBusinessController;
+
+	/**
+	 * Method to create an Applicant and a Skills Sheet (with the created Applicant
+	 * in it)
+	 * 
+	 * @param params the JsonNode containing all informations about the Person and
+	 *               the Skills Sheet
+	 * @param role   the current logged user's role
+	 * @param mail   the current logged user's mail
+	 * @return the @see {@link HttpException} corresponding to the status of the
+	 *         request ({@link ForbiddenException} if the current user hasn't the
+	 *         rights to perform this action, {@link UnprocessableEntityException}
+	 *         if there is a problem during the creation of one of the element, and
+	 *         {@link CreatedException} if the applicant and the Skills sheet are
+	 *         sucessfully created
+	 * @author Lucas Royackkers
+	 */
+	public HttpException createApplicantAndSkillsSheet(JsonNode params, UserRole role, String personInChargeMail) {
+		if (this.isManagerOrCdrAdmin(role)) {
+			final JsonNode jApplicant = params.get("person");
+			HttpException createResult = this.personEntityController.createPerson(jApplicant, PersonRole.APPLICANT,
+					personInChargeMail);
+			if (!(createResult instanceof CreatedException)) {
+				return createResult;
+			} else {
+				final JsonNode jSkillsSheet = params.get("skillsSheet");
+				HttpException createSkillsSheetResult = this.skillsSheetBusinessController
+						.createSkillsSheet(jSkillsSheet,role,personInChargeMail);
+				if (!(createSkillsSheetResult instanceof CreatedException)) {
+					this.personEntityController.deletePerson(jApplicant, PersonRole.APPLICANT);
+					return new UnprocessableEntityException();
+				} else {
+					return createSkillsSheetResult;
+				}
+			}
+		}
+		return new ForbiddenException();
+	}
 
 	/**
 	 * Method to delegate applicant creation
