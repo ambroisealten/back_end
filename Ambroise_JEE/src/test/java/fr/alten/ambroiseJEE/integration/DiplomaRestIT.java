@@ -233,6 +233,7 @@ public class DiplomaRestIT {
 		for (int i = 0; i < 20; i++) {
 			Diploma diplomaForGet = new Diploma();
 			diplomaForGet.setName("diploma" + i);
+			diplomaForGet.setYearOfResult("year" + i);
 			this.diplomaRepository.insert(diplomaForGet);
 			Optional<Diploma> diplomaOptional = this.diplomaRepository.findByNameAndYearOfResult("diploma" + i, "year" + i);
 			assertTrue(diplomaOptional.isPresent());
