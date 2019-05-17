@@ -209,7 +209,7 @@ public class PersonEntityController {
 	}
 
 	/**
-	 * delete associated skillSheet on cascade
+	 * update associated skillSheet on cascade
 	 * 
 	 * @param oldMail
 	 * @param newMail

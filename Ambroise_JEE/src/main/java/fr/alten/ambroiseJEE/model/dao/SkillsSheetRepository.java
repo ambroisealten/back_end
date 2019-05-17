@@ -16,9 +16,10 @@ public interface SkillsSheetRepository extends MongoRepository<SkillsSheet, Long
 	/**
 	 * Checks if a Skills Sheet with the given parameters exists
 	 * 
-	 * @param name the name of the Skills Sheet
-	 * @param mailPersonAttachedTo the mail of the person attached to the Skills Sheet
-	 * @param l the version number of the Skills Sheet
+	 * @param name                 the name of the Skills Sheet
+	 * @param mailPersonAttachedTo the mail of the person attached to the Skills
+	 *                             Sheet
+	 * @param l                    the version number of the Skills Sheet
 	 * @return true if this specific Skills Sheet exists, otherwise false
 	 * @author Lucas Royackkers
 	 */
@@ -77,4 +78,13 @@ public interface SkillsSheetRepository extends MongoRepository<SkillsSheet, Long
 	 * @author Lucas Royackkers
 	 */
 	public List<SkillsSheet> findByNameIgnoreCaseOrderByVersionNumberDesc(String skillsSheetName);
+
+	/**
+	 * Fetch skills sheets by author
+	 * 
+	 * @param mailAuthor the author mail to fetch
+	 * @return the corresponding list of skillsSheets
+	 * @author Andy Chabalier
+	 */
+	public List<SkillsSheet> findByMailVersionAuthorIgnoreCaseOrder(String mailAuthor);
 }

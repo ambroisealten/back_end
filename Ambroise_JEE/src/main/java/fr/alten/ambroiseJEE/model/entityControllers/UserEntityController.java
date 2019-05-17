@@ -13,7 +13,9 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import fr.alten.ambroiseJEE.model.beans.Agency;
+import fr.alten.ambroiseJEE.model.beans.SkillsSheet;
 import fr.alten.ambroiseJEE.model.beans.User;
+import fr.alten.ambroiseJEE.model.dao.SkillsSheetRepository;
 import fr.alten.ambroiseJEE.model.dao.UserRepository;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.MailUtils;
@@ -39,6 +41,9 @@ public class UserEntityController {
 
 	@Autowired
 	private AgencyEntityController agencyEntityController;
+
+	@Autowired
+	private SkillsSheetRepository skillsSheetRepository;
 
 	/**
 	 * Method to create an user. User role are by default chosen by application
@@ -110,6 +115,7 @@ public class UserEntityController {
 			user.setPswd("");
 			user.setRole(UserRole.DEACTIVATED);
 			user.setAgency(null);
+			updateUserMailOnSkillSheetOnCascade(mail, user.getMail());
 			this.userRepository.save(user);
 		} catch (final ResourceNotFoundException rnfe) {
 			return rnfe;
@@ -204,11 +210,13 @@ public class UserEntityController {
 	 */
 	public HttpException updateUser(final JsonNode jUser) {
 		try {
-			final User user = this.userRepository.findByMailIgnoreCase(jUser.get("oldMail").textValue())
+			final String oldMail = jUser.get("oldMail").textValue();
+			final User user = this.userRepository.findByMailIgnoreCase(oldMail)
 					.orElseThrow(ResourceNotFoundException::new);
 
 			user.setForname(jUser.get("forname").textValue());
-			user.setMail(jUser.get("mail").textValue());
+			final String newMail = jUser.get("mail").textValue();
+			user.setMail(newMail);
 			user.setName(jUser.get("name").textValue());
 			user.setPswd(jUser.get("pswd").textValue());
 			UserRole newRole;
@@ -218,7 +226,9 @@ public class UserEntityController {
 			} catch (final Exception e) {
 			}
 			final Agency agency = this.agencyEntityController.getAgency(jUser.get("agency").textValue());
+
 			user.setAgency(agency.getName());
+			updateUserMailOnSkillSheetOnCascade(oldMail, newMail);
 			this.userRepository.save(user);
 		} catch (final ResourceNotFoundException rnfe) {
 			return rnfe;
@@ -226,5 +236,20 @@ public class UserEntityController {
 			return new ConflictException();
 		}
 		return new OkException();
+	}
+
+	/**
+	 * update associated skillSheet on cascade
+	 * 
+	 * @param oldMail
+	 * @param newMail
+	 * @author Andy Chabalier
+	 */
+	private void updateUserMailOnSkillSheetOnCascade(String oldMail, String newMail) {
+		List<SkillsSheet> skillSheets = this.skillsSheetRepository.findByMailVersionAuthorIgnoreCaseOrder(oldMail);
+		skillSheets.parallelStream().forEach(skillSheet -> {
+			skillSheet.setMailVersionAuthor(newMail);
+		});
+		this.skillsSheetRepository.saveAll(skillSheets);
 	}
 }
