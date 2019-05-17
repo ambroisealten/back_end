@@ -61,9 +61,9 @@ public class ApplicantBusinessController {
 			} else {
 				final JsonNode jSkillsSheet = params.get("skillsSheet");
 				HttpException createSkillsSheetResult = this.skillsSheetBusinessController
-						.createSkillsSheet(jSkillsSheet,role,personInChargeMail);
+						.createSkillsSheet(jSkillsSheet, role, personInChargeMail);
 				if (!(createSkillsSheetResult instanceof CreatedException)) {
-					this.personEntityController.deletePerson(jApplicant, PersonRole.APPLICANT);
+					this.personEntityController.deletePersonByRole(jApplicant, PersonRole.APPLICANT);
 					return new UnprocessableEntityException();
 				} else {
 					return createSkillsSheetResult;

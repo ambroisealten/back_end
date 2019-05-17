@@ -246,7 +246,7 @@ public class UserEntityController {
 	 * @author Andy Chabalier
 	 */
 	private void updateUserMailOnSkillSheetOnCascade(String oldMail, String newMail) {
-		List<SkillsSheet> skillSheets = this.skillsSheetRepository.findByMailVersionAuthorIgnoreCaseOrder(oldMail);
+		List<SkillsSheet> skillSheets = this.skillsSheetRepository.findByMailVersionAuthorIgnoreCase(oldMail);
 		skillSheets.parallelStream().forEach(skillSheet -> {
 			skillSheet.setMailVersionAuthor(newMail);
 		});

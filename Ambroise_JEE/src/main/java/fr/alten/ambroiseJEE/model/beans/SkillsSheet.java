@@ -21,7 +21,7 @@ public class SkillsSheet implements Serializable {
 	private static final long serialVersionUID = 4878950681041229894L;
 	@Id
 	private transient ObjectId _id;
-	
+
 	private String name;
 	private String mailPersonAttachedTo;
 	private PersonRole rolePersonAttachedTo;
@@ -32,10 +32,6 @@ public class SkillsSheet implements Serializable {
 	private File cvPerson;
 	private double softSkillAverage;
 	private String comment;
-
-	public SkillsSheet() {
-		super();
-	}
 
 	public ObjectId get_id() {
 		return _id;
@@ -124,7 +120,5 @@ public class SkillsSheet implements Serializable {
 	public void setComment(String comment) {
 		this.comment = comment;
 	}
-
-	
 
 }
