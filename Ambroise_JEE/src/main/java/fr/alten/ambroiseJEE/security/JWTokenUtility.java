@@ -1,5 +1,7 @@
 package fr.alten.ambroiseJEE.security;
 
+import javax.annotation.PostConstruct;
+
 import org.jose4j.jwk.RsaJsonWebKey;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
@@ -9,6 +11,9 @@ import org.jose4j.jwt.consumer.InvalidJwtException;
 import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 import org.jose4j.lang.JoseException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
 
 /**
  * Provide utilities methods for JW Token
@@ -16,7 +21,18 @@ import org.jose4j.lang.JoseException;
  * @author Andy Chabalier
  *
  */
+@Service
 public class JWTokenUtility {
+
+	@Autowired
+	private ApplicationContext ctx;
+
+	private static ApplicationContext autowiredCtx;
+
+	@PostConstruct
+	private void init() {
+		autowiredCtx = this.ctx;
+	}
 
 	/**
 	 * Build a JW token
@@ -33,7 +49,8 @@ public class JWTokenUtility {
 		// 'subject'
 		final JwtClaims claims = new JwtClaims();
 		claims.setSubject(subject);
-		claims.setExpirationTimeMinutesInTheFuture(15);
+		claims.setExpirationTimeMinutesInTheFuture(
+				Float.parseFloat(autowiredCtx.getEnvironment().getProperty("security.token.expirationTime")));
 
 		// création de la signature
 		final JsonWebSignature jws = new JsonWebSignature();
