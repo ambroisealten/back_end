@@ -52,6 +52,9 @@ import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.JsonUtils;
 import fr.alten.ambroiseJEE.utils.PersonRole;
+import fr.alten.ambroiseJEE.utils.availability.DurationType;
+import fr.alten.ambroiseJEE.utils.availability.OnDateAvailability;
+import fr.alten.ambroiseJEE.utils.availability.OnTimeAvailability;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
@@ -469,15 +472,18 @@ public class InitBaseWebService {
 		newCandidatMichel.setJob("Développeur full stack");
 		newCandidatMichel.setHighestDiploma("EiCESI");
 		newCandidatMichel.setHighestDiplomaYear("2019");
+		newCandidatMichel.setRole(PersonRole.APPLICANT);
 		newCandidatMichel.setPersonInChargeMail("tempUserAdminManager@mail.com");
 		newCandidatMichel.setOpinion("++");
+		newCandidatMichel
+				.setOnTimeAvailability(new OnTimeAvailability(System.currentTimeMillis(), 6, DurationType.MONTH));
 
 		final JsonNode newCandidatMichelJsonNode = JsonUtils
 				.toJsonNode(this.gson.toJsonTree(newCandidatMichel).getAsJsonObject());
 		((ObjectNode) newCandidatMichelJsonNode).put("monthlyWage", "2525");
 		((ObjectNode) newCandidatMichelJsonNode).put("experienceTime", "2");
 		((ObjectNode) newCandidatMichelJsonNode).putNull("urlDocs");
-		
+
 		this.applicantBusinessController.createApplicant(newCandidatMichelJsonNode, UserRole.MANAGER_ADMIN,
 				"tempUserAdminManager@mail.com");
 
@@ -491,6 +497,7 @@ public class InitBaseWebService {
 		newCandidatPaul.setHighestDiplomaYear("2019");
 		newCandidatPaul.setRole(PersonRole.APPLICANT);
 		newCandidatPaul.setPersonInChargeMail("tempUserAdminManager@mail.com");
+		newCandidatPaul.setOnDateAvailability(new OnDateAvailability(1567296000, 1577836800));
 		newCandidatPaul.setOpinion("+");
 
 		final JsonNode newCandidatPaulJsonNode = JsonUtils
@@ -501,46 +508,45 @@ public class InitBaseWebService {
 		this.applicantBusinessController.createApplicant(newCandidatPaulJsonNode, UserRole.MANAGER_ADMIN,
 				"tempUserAdminManager@mail.com");
 
-		final Person newCandidatCyprien = new Person();
-		newCandidatCyprien.setSurname("Cyprien");
-		newCandidatCyprien.setName("Test");
-		newCandidatCyprien.setMail("cyprien.test@gmail.com");
-		newCandidatCyprien.setEmployer("ALTEN");
-		newCandidatCyprien.setJob("Chef de projet IT");
-		newCandidatCyprien.setHighestDiploma("ENSISA");
-		newCandidatCyprien.setHighestDiplomaYear("2019");
-		newCandidatCyprien.setRole(PersonRole.CONSULTANT);
-		newCandidatCyprien.setPersonInChargeMail("tempUserAdminManager@mail.com");
-		newCandidatCyprien.setOpinion("+++");
+		final Person newConsultantCyprien = new Person();
+		newConsultantCyprien.setSurname("Cyprien");
+		newConsultantCyprien.setName("Test");
+		newConsultantCyprien.setMail("cyprien.test@gmail.com");
+		newConsultantCyprien.setEmployer("ALTEN");
+		newConsultantCyprien.setJob("Chef de projet IT");
+		newConsultantCyprien.setHighestDiploma("ENSISA");
+		newConsultantCyprien.setHighestDiplomaYear("2019");
+		newConsultantCyprien.setRole(PersonRole.CONSULTANT);
+		newConsultantCyprien.setPersonInChargeMail("tempUserAdminManager@mail.com");
+		newConsultantCyprien.setOpinion("+++");
 
 		final JsonNode newCandidatCyprienJsonNode = JsonUtils
-				.toJsonNode(this.gson.toJsonTree(newCandidatCyprien).getAsJsonObject());
+				.toJsonNode(this.gson.toJsonTree(newConsultantCyprien).getAsJsonObject());
 		((ObjectNode) newCandidatCyprienJsonNode).put("monthlyWage", "4525");
 		((ObjectNode) newCandidatCyprienJsonNode).put("experienceTime", "15");
 		((ObjectNode) newCandidatCyprienJsonNode).putNull("urlDocs");
 		this.consultantBusinessController.createConsultant(newCandidatCyprienJsonNode, UserRole.MANAGER_ADMIN,
 				"tempUserAdminManager@mail.com");
 
-		final Person newCandidatJeanClaude = new Person();
-		newCandidatJeanClaude.setSurname("Jean-Claude");
-		newCandidatJeanClaude.setName("Test");
-		newCandidatJeanClaude.setMail("jc.test@gmail.com");
-		newCandidatJeanClaude.setEmployer("ALTEN");
-		newCandidatJeanClaude.setJob("DevOps");
-		newCandidatJeanClaude.setHighestDiploma("EPITECH");
-		newCandidatJeanClaude.setHighestDiplomaYear("2019");
-		newCandidatJeanClaude.setRole(PersonRole.CONSULTANT);
-		newCandidatJeanClaude.setPersonInChargeMail("tempUserAdminManager@mail.com");
-		newCandidatJeanClaude.setOpinion("+");
+		final Person newConsultantJeanClaude = new Person();
+		newConsultantJeanClaude.setSurname("Jean-Claude");
+		newConsultantJeanClaude.setName("Test");
+		newConsultantJeanClaude.setMail("jc.test@gmail.com");
+		newConsultantJeanClaude.setEmployer("ALTEN");
+		newConsultantJeanClaude.setJob("DevOps");
+		newConsultantJeanClaude.setHighestDiploma("EPITECH");
+		newConsultantJeanClaude.setHighestDiplomaYear("2019");
+		newConsultantJeanClaude.setRole(PersonRole.CONSULTANT);
+		newConsultantJeanClaude.setPersonInChargeMail("tempUserAdminManager@mail.com");
+		newConsultantJeanClaude.setOpinion("+");
 
 		final JsonNode newCandidatJeanClaudeJsonNode = JsonUtils
-				.toJsonNode(this.gson.toJsonTree(newCandidatJeanClaude).getAsJsonObject());
+				.toJsonNode(this.gson.toJsonTree(newConsultantJeanClaude).getAsJsonObject());
 		((ObjectNode) newCandidatJeanClaudeJsonNode).put("monthlyWage", "3215");
 		((ObjectNode) newCandidatJeanClaudeJsonNode).put("experienceTime", "20");
 		((ObjectNode) newCandidatJeanClaudeJsonNode).putNull("urlDocs");
 		this.consultantBusinessController.createConsultant(newCandidatJeanClaudeJsonNode, UserRole.MANAGER_ADMIN,
 				"tempUserAdminManager@mail.com");
-
 	}
 
 	/**
@@ -600,25 +606,25 @@ public class InitBaseWebService {
 		newCSharp.setIsSoft(null);
 		final JsonNode newCSharpJsonNode = JsonUtils.toJsonNode(this.gson.toJsonTree(newCSharp).getAsJsonObject());
 		this.skillBusinessController.createSkill(newCSharpJsonNode, UserRole.MANAGER_ADMIN);
-		
+
 		final Skill newJava = new Skill();
 		newJava.setName("Java");
 		newJava.setIsSoft(null);
 		final JsonNode newJavaJsonNode = JsonUtils.toJsonNode(this.gson.toJsonTree(newJava).getAsJsonObject());
 		this.skillBusinessController.createSkill(newJavaJsonNode, UserRole.MANAGER_ADMIN);
-		
+
 		final Skill newPHP = new Skill();
 		newPHP.setName("PHP");
 		newPHP.setIsSoft(null);
 		final JsonNode newPHPJsonNode = JsonUtils.toJsonNode(this.gson.toJsonTree(newPHP).getAsJsonObject());
 		this.skillBusinessController.createSkill(newPHPJsonNode, UserRole.MANAGER_ADMIN);
-		
+
 		final Skill newSQL = new Skill();
 		newSQL.setName("SQL");
 		newSQL.setIsSoft(null);
 		final JsonNode newSQLJsonNode = JsonUtils.toJsonNode(this.gson.toJsonTree(newSQL).getAsJsonObject());
 		this.skillBusinessController.createSkill(newSQLJsonNode, UserRole.MANAGER_ADMIN);
-		
+
 		final Skill newDotNET = new Skill();
 		newDotNET.setName(".NET");
 		newDotNET.setIsSoft(null);
@@ -704,7 +710,8 @@ public class InitBaseWebService {
 
 		final JsonNode newFirstJsonNode = JsonUtils.toJsonNode(this.gson.toJsonTree(newFirst).getAsJsonObject());
 		((ObjectNode) newFirstJsonNode).put("role", "consultant");
-		this.skillsSheetBusinessController.createSkillsSheet(newFirstJsonNode, UserRole.MANAGER_ADMIN,"tempUserAdminManager@mail.com");
+		this.skillsSheetBusinessController.createSkillsSheet(newFirstJsonNode, UserRole.MANAGER_ADMIN,
+				"tempUserAdminManager@mail.com");
 
 		final SkillsSheet newSecond = new SkillsSheet();
 		newSecond.setName("PTE-mmm-AAA");
@@ -751,7 +758,8 @@ public class InitBaseWebService {
 
 		final JsonNode newSecondJsonNode = JsonUtils.toJsonNode(this.gson.toJsonTree(newSecond).getAsJsonObject());
 		((ObjectNode) newSecondJsonNode).put("role", "applicant");
-		this.skillsSheetBusinessController.createSkillsSheet(newSecondJsonNode, UserRole.MANAGER_ADMIN,"tempUserAdminManager@mail.com");
+		this.skillsSheetBusinessController.createSkillsSheet(newSecondJsonNode, UserRole.MANAGER_ADMIN,
+				"tempUserAdminManager@mail.com");
 	}
 
 	/**
