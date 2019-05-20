@@ -476,7 +476,7 @@ public class InitBaseWebService {
 		newCandidatMichel.setPersonInChargeMail("tempUserAdminManager@mail.com");
 		newCandidatMichel.setOpinion("++");
 		newCandidatMichel
-				.setOnTimeAvailability(new OnTimeAvailability(System.currentTimeMillis(), 6, DurationType.MONTH));
+				.setAvailability(new OnTimeAvailability(System.currentTimeMillis(), 6, DurationType.MONTH));
 
 		final JsonNode newCandidatMichelJsonNode = JsonUtils
 				.toJsonNode(this.gson.toJsonTree(newCandidatMichel).getAsJsonObject());
@@ -497,7 +497,7 @@ public class InitBaseWebService {
 		newCandidatPaul.setHighestDiplomaYear("2019");
 		newCandidatPaul.setRole(PersonRole.APPLICANT);
 		newCandidatPaul.setPersonInChargeMail("tempUserAdminManager@mail.com");
-		newCandidatPaul.setOnDateAvailability(new OnDateAvailability(1567296000, 1577836800));
+		newCandidatPaul.setAvailability(new OnDateAvailability(1567296000, 1577836800));
 		newCandidatPaul.setOpinion("+");
 
 		final JsonNode newCandidatPaulJsonNode = JsonUtils

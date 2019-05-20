@@ -68,7 +68,7 @@ public class PersonEntityController {
 	 *         the parameters given, {@link ConflictException} if there is a
 	 *         conflict in the database and {@link CreatedException} if the person
 	 *         is created
-	 * @author Lucas Royackkers
+	 * @author Lucas Royackkers, Kylian Gehier
 	 */
 	public HttpException createPerson(final JsonNode jPerson, final PersonRole type, String personInChargeMail) {
 		try {
@@ -125,7 +125,7 @@ public class PersonEntityController {
 				if (jPerson.has("onTimeAvailability")) {
 					JsonNode jOnTimeAvailability = jPerson.get("onTimeAvailability");
 					if (this.hasOnTimeAvailabilityFields(jOnTimeAvailability)) {
-						newPerson.setOnTimeAvailability(
+						newPerson.setAvailability(
 								new OnTimeAvailability(jOnTimeAvailability.get("initDate").asLong(),
 										jOnTimeAvailability.get("duration").asInt(),
 										DurationType.valueOf(jOnTimeAvailability.get("durationType").textValue())));
@@ -133,7 +133,7 @@ public class PersonEntityController {
 				} else if (jPerson.has("onDateAvailability")) {
 					JsonNode jOnDateAvailability = jPerson.get("onDateAvailability");
 					if (this.hasOnDateAvailabilityFields(jOnDateAvailability)) {
-						newPerson.setOnDateAvailability(
+						newPerson.setAvailability(
 								new OnDateAvailability(jOnDateAvailability.get("initDate").asLong(),
 										jOnDateAvailability.get("finalDate").asLong()));
 					}
@@ -369,7 +369,7 @@ public class PersonEntityController {
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ResourceNotFoundException} if the resource isn't in
 	 *         the database and {@link OkException} if the person is updated
-	 * @author Lucas Royackkers
+	 * @author Lucas Royackkers, Kylian Gehier
 	 */
 	public HttpException updatePerson(final JsonNode jPerson, final PersonRole role, String personInChargeMail) {
 		try {
@@ -414,7 +414,7 @@ public class PersonEntityController {
 				if (jPerson.has("onTimeAvailability")) {
 					JsonNode jOnTimeAvailability = jPerson.get("onTimeAvailability");
 					if (this.hasOnTimeAvailabilityFields(jOnTimeAvailability)) {
-						person.setOnTimeAvailability(
+						person.setAvailability(
 								new OnTimeAvailability(jOnTimeAvailability.get("initDate").asLong(),
 										jOnTimeAvailability.get("duration").asInt(),
 										DurationType.valueOf(jOnTimeAvailability.get("durationType").textValue())));
@@ -422,7 +422,7 @@ public class PersonEntityController {
 				} else if (jPerson.has("onDateAvailability")) {
 					JsonNode jOnDateAvailability = jPerson.get("onDateAvailability");
 					if (this.hasOnDateAvailabilityFields(jOnDateAvailability)) {
-						person.setOnDateAvailability(
+						person.setAvailability(
 								new OnDateAvailability(jOnDateAvailability.get("initDate").asLong(),
 										jOnDateAvailability.get("finalDate").asLong()));
 					}
