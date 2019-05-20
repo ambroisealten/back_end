@@ -299,7 +299,7 @@ public class SkillsSheetEntityController {
 
 		if (skillsList.isEmpty()) {
 			skillsList = new ArrayList<String>(Constants.DEFAULT_SKILLS);
-			skillsList.replaceAll(String::toLowerCase);
+			skillsList.stream().forEach(String::toLowerCase);
 		}
 
 		for (final SkillGraduated skillGraduated : skillsSheet.getSkillsList()) {
@@ -311,7 +311,6 @@ public class SkillsSheetEntityController {
 				averageTech += skillGraduated.getGrade();
 				totalTech++;
 			}
-
 		}
 		averageSoft = totalTech + totalSoft != 0 ? (averageSoft + averageTech) / (totalTech + totalSoft) : 0.0;
 
@@ -428,14 +427,7 @@ public class SkillsSheetEntityController {
 		// If there is no parameters given (e.g. a space for identity and skills
 		// filter), returns all skills sheets
 		if (identity.length() == 1 && identity.equals(",") && skills.length() == 1 && skills.equals(",")) {
-			// if we need to sort given a specific column
-			if (!columnSorting.equals(",")) {
-				final String fieldSort = columnSorting.split(",")[0];
-				final boolean isAsc = columnSorting.split(",")[1].equals("asc");
-				return getSkillsSheetsWithFieldSorting(getSkillsSheets(), fieldSort, isAsc);
-			} else {
-				return getSkillsSheets();
-			}
+			return sortByField(columnSorting);
 		}
 
 		// Initialize variables
@@ -450,22 +442,20 @@ public class SkillsSheetEntityController {
 		final PersonSetWithFilters filteredPersons = new PersonSetWithFilters(identitiesList);
 
 		filteredPersons.addAll(allPersons);
-		filteredPersons.toString();
 
 		// Get all Skills in the filter that are in the database
-		for (final String skillFilter : skillsList) {
+		skillsList.stream().forEach(skillFilter -> {
 			final Skill filterSkill = new Skill();
 			filterSkill.setName(skillFilter);
 			filteredSkills.add(filterSkill);
-			filterSkill.toString();
-		}
+		});
 
 		final Set<SkillsSheet> result = new HashSet<SkillsSheet>();
 		final List<JsonNode> finalResult = new ArrayList<JsonNode>();
 
 		// First, filter the skills sheets given the Persons object that we get before
 		// (given their mail)
-		for (final Person person : filteredPersons) {
+		filteredPersons.parallelStream().forEach(person -> {
 			final SkillsSheet skillsSheetExample = new SkillsSheet();
 			skillsSheetExample.setMailPersonAttachedTo(person.getMail());
 
@@ -477,53 +467,70 @@ public class SkillsSheetEntityController {
 					.filter(skillSheet -> !skillSheet.getMailPersonAttachedTo().contains("deactivated"))
 					.collect(Collectors.toList());
 			result.addAll(personSkillSheet);
-		}
+		});
 
 		// Secondly, filter the skills sheets on the Skills object (the skills sheet
 		// have to match all the skills given in the filter)
-		for (final SkillsSheet skillSheet : result) {
-			boolean skillsMatch = true;
-			if (!filteredSkills.isEmpty()) {
-				for (final Skill skill : filteredSkills) {
-					skillsMatch = skillsMatch && ifSkillsInSheet(skill, skillSheet);
+		// we filter the stream If there is a total match on the skills in the skills
+		// sheet
+		result.parallelStream().filter(skillSheet -> skillsMatch(filteredSkills, skillSheet)).forEach(skillSheet -> {
+			final long latestVersionNumber = this.skillsSheetRepository
+					.findByNameIgnoreCaseAndMailPersonAttachedToIgnoreCaseOrderByVersionNumberDesc(skillSheet.getName(),
+							skillSheet.getMailPersonAttachedTo())
+					.get(0).getVersionNumber();
+			// If the skills is the latest to date, put it in the final result
+			if (skillSheet.getVersionNumber() == latestVersionNumber) {
+				final String personMail = skillSheet.getMailPersonAttachedTo();
+				// Build a JsonNode with Skills Sheet and Person objects together, if not throw
+				// an Exception
+				try {
+					final JsonNode jResult = mapper.createObjectNode();
+					((ObjectNode) jResult).set("skillsSheet", JsonUtils.toJsonNode(gson.toJson(skillSheet)));
+					final Person person = this.personEntityController.getPersonByMail(personMail);
+					((ObjectNode) jResult).set("person", JsonUtils.toJsonNode(gson.toJson(person)));
+					((ObjectNode) jResult).put("fiability",
+							getFiabilityGrade(skillSheet, person.getOpinion(), skillsList));
+					finalResult.add(jResult);
+				} catch (final IOException e) {
+					LoggerFactory.getLogger(SkillsSheetEntityController.class).error(e.getMessage());
 				}
 			}
-			// If there is a total match on the skills in the skills sheet
-			if (skillsMatch) {
-				final long latestVersionNumber = this.skillsSheetRepository
-						.findByNameIgnoreCaseAndMailPersonAttachedToIgnoreCaseOrderByVersionNumberDesc(
-								skillSheet.getName(), skillSheet.getMailPersonAttachedTo())
-						.get(0).getVersionNumber();
-				// If the skills is the latest to date, put it in the final result
-				if (skillSheet.getVersionNumber() == latestVersionNumber) {
-					final String personMail = skillSheet.getMailPersonAttachedTo();
-					// Build a JsonNode with Skills Sheet and Person objects together, if not throw
-					// an Exception
-					try {
-						final JsonNode jResult = mapper.createObjectNode();
-						((ObjectNode) jResult).set("skillsSheet", JsonUtils.toJsonNode(gson.toJson(skillSheet)));
-						final Person person = this.personEntityController.getPersonByMail(personMail);
-						((ObjectNode) jResult).set("person", JsonUtils.toJsonNode(gson.toJson(person)));
-						((ObjectNode) jResult).put("fiability",
-								getFiabilityGrade(skillSheet, person.getOpinion(), skillsList));
-						finalResult.add(jResult);
-					} catch (final IOException e) {
-						LoggerFactory.getLogger(SkillsSheetEntityController.class).error(e.getMessage());
-					}
-				}
-			}
-		}
+		});
 
-		// if we need to sort given a specific column
+		return sortByField(columnSorting).parallelStream().sorted((e1, e2) -> Double
+				.valueOf(e2.get("fiability").asDouble()).compareTo(Double.valueOf(e1.get("fiability").asDouble())))
+				.collect(Collectors.toList());
+	}
+
+	/**
+	 * @param columnSorting
+	 * @return
+	 * @author Andy Chabalier
+	 */
+	public List<JsonNode> sortByField(final String columnSorting) {
 		if (!columnSorting.equals(",")) {
-			final String columnSort = columnSorting.split(",")[0];
+			final String fieldSort = columnSorting.split(",")[0];
 			final boolean isAsc = columnSorting.split(",")[1].equals("asc");
-			return getSkillsSheetsWithFieldSorting(finalResult, columnSort, isAsc);
-		} else { // sorted by default on fiability grade
-			finalResult.sort((e1, e2) -> Double.valueOf(e2.get("fiability").asDouble())
-					.compareTo(Double.valueOf(e1.get("fiability").asDouble())));
-			return finalResult;
+			return getSkillsSheetsWithFieldSorting(getSkillsSheets(), fieldSort, isAsc);
+		} else {
+			return getSkillsSheets();
 		}
+	}
+
+	/**
+	 * @param filteredSkills
+	 * @param skillSheet
+	 * @return
+	 * @author Andy Chabalier
+	 */
+	private boolean skillsMatch(final HashSet<Skill> filteredSkills, SkillsSheet skillSheet) {
+		boolean skillsMatch = true;
+		if (!filteredSkills.isEmpty()) {
+			for (final Skill skill : filteredSkills) {
+				skillsMatch = skillsMatch && ifSkillsInSheet(skill, skillSheet);
+			}
+		}
+		return skillsMatch;
 	}
 
 	/**
@@ -539,6 +546,7 @@ public class SkillsSheetEntityController {
 		final List<SkillsSheet> skillsSheetList = this.skillsSheetRepository
 				.findByMailPersonAttachedToIgnoreCase(mailPerson);
 		for (final SkillsSheet skillsSheet : skillsSheetList) {
+//			skillsSheetList
 			final long latestVersionNumber = this.skillsSheetRepository
 					.findByNameIgnoreCaseAndMailPersonAttachedToIgnoreCaseOrderByVersionNumberDesc(
 							skillsSheet.getName(), skillsSheet.getMailPersonAttachedTo())
@@ -570,6 +578,14 @@ public class SkillsSheetEntityController {
 	 * @return a sorted list of skillsSheets
 	 * @author Camille Schnell
 	 */
+//	private List<JsonNode> getSkillsSheetsWithFieldSorting(final List<JsonNode> listToSort, final String fieldSort,
+//			final boolean isAsc) {
+//		final Stream<JsonNode> finalResult = listToSort.parallelStream());
+//		
+//		
+//		return finalResult.sorted(isAcs? Comparator.,Comparator.reverseOrder().collect(Collectors.toList());
+//	}
+
 	private List<JsonNode> getSkillsSheetsWithFieldSorting(final List<JsonNode> listToSort, final String fieldSort,
 			final boolean isAsc) {
 		final List<JsonNode> finalResult = listToSort;
