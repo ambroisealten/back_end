@@ -1,5 +1,6 @@
 package fr.alten.ambroiseJEE.model.entityControllers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.LoggerFactory;
@@ -143,7 +144,18 @@ public class DiplomaEntityController {
 	 * @author Lucas Royackkers
 	 */
 	public List<Diploma> getDiplomas() {
-		return this.diplomaRepository.findAll();
+		List<Diploma> results = this.diplomaRepository.findAll();
+		List<String> allNames = new ArrayList<String>();
+		List<Diploma> finalResults = new ArrayList<Diploma>();
+		
+		for(Diploma result : results) {
+			if(!allNames.contains(result.getName())) {
+				finalResults.add(result);
+				allNames.add(result.getName());
+			}
+		}
+		
+		return finalResults;
 	}
 
 	/**
