@@ -5,6 +5,7 @@ package fr.alten.ambroiseJEE.model.entityControllers;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -76,7 +77,8 @@ public class AgencyEntityController {
 	 */
 	public HttpException deleteAgency(final JsonNode jAgency) {
 		try {
-			final Agency agency = this.agencyRepository.findByName(jAgency.get("name").textValue()).orElseThrow(ResourceNotFoundException::new);
+			final Agency agency = this.agencyRepository.findByName(jAgency.get("name").textValue())
+					.orElseThrow(ResourceNotFoundException::new);
 			agency.setName("deactivated" + System.currentTimeMillis());
 			agency.setPlace(null);
 			this.agencyRepository.save(agency);
@@ -93,7 +95,8 @@ public class AgencyEntityController {
 	 * @author Andy Chabalier
 	 */
 	public List<Agency> getAgencies() {
-		return this.agencyRepository.findAll();
+		return this.agencyRepository.findAll().parallelStream()
+				.filter(agency -> !agency.getName().contains("deactivated")).collect(Collectors.toList());
 	}
 
 	/**
