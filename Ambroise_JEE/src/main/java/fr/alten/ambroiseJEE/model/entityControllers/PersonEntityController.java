@@ -19,6 +19,7 @@ import fr.alten.ambroiseJEE.model.dao.PersonRepository;
 import fr.alten.ambroiseJEE.model.dao.SkillsSheetRepository;
 import fr.alten.ambroiseJEE.utils.MailUtils;
 import fr.alten.ambroiseJEE.utils.PersonRole;
+import fr.alten.ambroiseJEE.utils.availability.Availability;
 import fr.alten.ambroiseJEE.utils.availability.OnDateAvailability;
 import fr.alten.ambroiseJEE.utils.availability.OnTimeAvailability;
 import fr.alten.ambroiseJEE.utils.exception.MissingFieldException;
@@ -125,15 +126,12 @@ public class PersonEntityController {
 				if (jPerson.has("availability")) {
 					JsonNode jAvailability = jPerson.get("onTimeAvailability");
 					if (this.hasOnTimeAvailabilityFields(jAvailability)) {
-						newPerson.setAvailability(
-								new OnTimeAvailability(jAvailability.get("initDate").asLong(),
-										jAvailability.get("duration").asInt(),
-										ChronoUnit.valueOf(jAvailability.get("durationType").textValue())));
-					}
-					else if (this.hasOnDateAvailabilityFields(jAvailability)) {
-						newPerson.setAvailability(
-								new OnDateAvailability(jAvailability.get("initDate").asLong(),
-										jAvailability.get("finalDate").asLong()));
+						newPerson.setAvailability(new OnTimeAvailability(jAvailability.get("initDate").asLong(),
+								jAvailability.get("duration").asInt(),
+								ChronoUnit.valueOf(jAvailability.get("durationType").textValue())));
+					} else if (this.hasOnDateAvailabilityFields(jAvailability)) {
+						newPerson.setAvailability(new OnDateAvailability(jAvailability.get("initDate").asLong(),
+								jAvailability.get("finalDate").asLong()));
 					}
 				}
 
@@ -412,15 +410,12 @@ public class PersonEntityController {
 				if (jPerson.has("availability")) {
 					JsonNode jAvailability = jPerson.get("availability");
 					if (this.hasOnTimeAvailabilityFields(jAvailability)) {
-						person.setAvailability(
-								new OnTimeAvailability(jAvailability.get("initDate").asLong(),
-										jAvailability.get("duration").asInt(),
-										ChronoUnit.valueOf(jAvailability.get("durationType").textValue())));
-					}
-					else if (this.hasOnDateAvailabilityFields(jAvailability)) {
-						person.setAvailability(
-								new OnDateAvailability(jAvailability.get("initDate").asLong(),
-										jAvailability.get("finalDate").asLong()));
+						person.setAvailability(new Availability(jAvailability.get("initDate").asLong(), 0,
+								jAvailability.get("duration").asInt(),
+								ChronoUnit.valueOf(jAvailability.get("durationType").textValue())));
+					} else if (this.hasOnDateAvailabilityFields(jAvailability)) {
+						person.setAvailability(new Availability(jAvailability.get("initDate").asLong(),
+								jAvailability.get("finalDate").asLong(), 0, ChronoUnit.FOREVER));
 					}
 				}
 
@@ -438,7 +433,6 @@ public class PersonEntityController {
 		}
 		return new OkException();
 	}
-
 	/**
 	 * 
 	 * @param jOnTimeAvailability
@@ -447,12 +441,12 @@ public class PersonEntityController {
 	 */
 	public boolean hasOnTimeAvailabilityFields(JsonNode jOnTimeAvailability)
 			throws ToManyFieldsException, MissingFieldException {
-		int a = jOnTimeAvailability.get("duration").asInt();
-		String b = jOnTimeAvailability.get("durationType").textValue();
-		boolean test = b.equals("");
-		if (a == 0 && !test) {
-			Long c = jOnTimeAvailability.get("finalDate").asLong();
-			if (c == 0) {
+		Long c = jOnTimeAvailability.get("finalDate").asLong();
+		if (c == 0) {
+			int a = jOnTimeAvailability.get("duration").asInt();
+			String b = jOnTimeAvailability.get("durationType").textValue();
+			boolean test = b.equals("");
+			if (a >= 0 && !test) {
 				return true;
 			} else
 				return false;
