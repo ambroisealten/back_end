@@ -1,5 +1,27 @@
-{"properties": [{
-  "name": "file.upload.path",
-  "type": "java.lang.String",
-  "description": "A description for 'file.upload.path'"
-}]}
+{"properties": [
+  {
+    "name": "file.upload.path",
+    "type": "java.lang.String",
+    "description": "A description for 'file.upload.path'"
+  },
+  {
+    "name": "security.token.expirationTime",
+    "type": "java.lang.String",
+    "description": "A description for 'security.token.expirationTime'"
+  },
+  {
+    "name": "security.token.rsaBitCrypted",
+    "type": "java.lang.String",
+    "description": "A description for 'security.token.rsaBitCrypted'"
+  },
+  {
+    "name": "security.token.rsaBitCrypted",
+    "type": "java.lang.String",
+    "description": "A description for 'security.token.rsaBitCrypted'"
+  },
+  {
+    "name": "security.token.expirationTime",
+    "type": "java.lang.String",
+    "description": "A description for 'security.token.expirationTime'"
+  }
+]}
