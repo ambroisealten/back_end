@@ -1,5 +1,6 @@
 package fr.alten.ambroiseJEE.model.entityControllers;
 
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,6 @@ import fr.alten.ambroiseJEE.model.dao.PersonRepository;
 import fr.alten.ambroiseJEE.model.dao.SkillsSheetRepository;
 import fr.alten.ambroiseJEE.utils.MailUtils;
 import fr.alten.ambroiseJEE.utils.PersonRole;
-import fr.alten.ambroiseJEE.utils.availability.DurationType;
 import fr.alten.ambroiseJEE.utils.availability.OnDateAvailability;
 import fr.alten.ambroiseJEE.utils.availability.OnTimeAvailability;
 import fr.alten.ambroiseJEE.utils.exception.MissingFieldException;
@@ -122,20 +122,18 @@ public class PersonEntityController {
 				}
 				newPerson.setEmployer(employer.getName());
 
-				if (jPerson.has("onTimeAvailability")) {
-					JsonNode jOnTimeAvailability = jPerson.get("onTimeAvailability");
-					if (this.hasOnTimeAvailabilityFields(jOnTimeAvailability)) {
+				if (jPerson.has("availability")) {
+					JsonNode jAvailability = jPerson.get("onTimeAvailability");
+					if (this.hasOnTimeAvailabilityFields(jAvailability)) {
 						newPerson.setAvailability(
-								new OnTimeAvailability(jOnTimeAvailability.get("initDate").asLong(),
-										jOnTimeAvailability.get("duration").asInt(),
-										DurationType.valueOf(jOnTimeAvailability.get("durationType").textValue())));
+								new OnTimeAvailability(jAvailability.get("initDate").asLong(),
+										jAvailability.get("duration").asInt(),
+										ChronoUnit.valueOf(jAvailability.get("durationType").textValue())));
 					}
-				} else if (jPerson.has("onDateAvailability")) {
-					JsonNode jOnDateAvailability = jPerson.get("onDateAvailability");
-					if (this.hasOnDateAvailabilityFields(jOnDateAvailability)) {
+					else if (this.hasOnDateAvailabilityFields(jAvailability)) {
 						newPerson.setAvailability(
-								new OnDateAvailability(jOnDateAvailability.get("initDate").asLong(),
-										jOnDateAvailability.get("finalDate").asLong()));
+								new OnDateAvailability(jAvailability.get("initDate").asLong(),
+										jAvailability.get("finalDate").asLong()));
 					}
 				}
 
@@ -411,20 +409,18 @@ public class PersonEntityController {
 				}
 				person.setEmployer(employer.getName());
 
-				if (jPerson.has("onTimeAvailability")) {
-					JsonNode jOnTimeAvailability = jPerson.get("onTimeAvailability");
-					if (this.hasOnTimeAvailabilityFields(jOnTimeAvailability)) {
+				if (jPerson.has("availability")) {
+					JsonNode jAvailability = jPerson.get("availability");
+					if (this.hasOnTimeAvailabilityFields(jAvailability)) {
 						person.setAvailability(
-								new OnTimeAvailability(jOnTimeAvailability.get("initDate").asLong(),
-										jOnTimeAvailability.get("duration").asInt(),
-										DurationType.valueOf(jOnTimeAvailability.get("durationType").textValue())));
+								new OnTimeAvailability(jAvailability.get("initDate").asLong(),
+										jAvailability.get("duration").asInt(),
+										ChronoUnit.valueOf(jAvailability.get("durationType").textValue())));
 					}
-				} else if (jPerson.has("onDateAvailability")) {
-					JsonNode jOnDateAvailability = jPerson.get("onDateAvailability");
-					if (this.hasOnDateAvailabilityFields(jOnDateAvailability)) {
+					else if (this.hasOnDateAvailabilityFields(jAvailability)) {
 						person.setAvailability(
-								new OnDateAvailability(jOnDateAvailability.get("initDate").asLong(),
-										jOnDateAvailability.get("finalDate").asLong()));
+								new OnDateAvailability(jAvailability.get("initDate").asLong(),
+										jAvailability.get("finalDate").asLong()));
 					}
 				}
 
@@ -443,26 +439,45 @@ public class PersonEntityController {
 		return new OkException();
 	}
 
+	/**
+	 * 
+	 * @param jOnTimeAvailability
+	 * @return
+	 * @author Kylian Gehier
+	 */
 	public boolean hasOnTimeAvailabilityFields(JsonNode jOnTimeAvailability)
 			throws ToManyFieldsException, MissingFieldException {
-		if (jOnTimeAvailability.has("duration") && jOnTimeAvailability.has("durationType")) {
-			if (!jOnTimeAvailability.has("finalDate")) {
+		int a = jOnTimeAvailability.get("duration").asInt();
+		String b = jOnTimeAvailability.get("durationType").textValue();
+		boolean test = b.equals("");
+		if (a == 0 && !test) {
+			Long c = jOnTimeAvailability.get("finalDate").asLong();
+			if (c == 0) {
 				return true;
 			} else
-				throw new ToManyFieldsException();
+				return false;
 		} else
-			throw new MissingFieldException();
+			return false;
 	}
 
+	/**
+	 * 
+	 * @param jOnTimeAvailability
+	 * @return
+	 * @author Kylian Gehier
+	 */
 	public boolean hasOnDateAvailabilityFields(JsonNode jOnTimeAvailability)
 			throws ToManyFieldsException, MissingFieldException {
-		if (jOnTimeAvailability.has("finalDate")) {
-			if (!(jOnTimeAvailability.has("duration") || jOnTimeAvailability.has("durationType"))) {
+		Long a = jOnTimeAvailability.get("finalDate").asLong();
+		if (a != 0) {
+			int b = jOnTimeAvailability.get("duration").asInt();
+			String c = jOnTimeAvailability.get("durationType").textValue();
+			if (b == 0 && c == "") {
 				return true;
 			} else
-				throw new ToManyFieldsException();
+				return false;
 		} else
-			throw new MissingFieldException();
+			return false;
 	}
 
 }
