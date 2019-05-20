@@ -9,14 +9,14 @@ package fr.alten.ambroiseJEE.utils.availability;
 public class OnTimeAvailability extends Availability{
 
 	private int duration;
-	private DurationType durationtype;
+	private DurationType durationType;
 	
 	public OnTimeAvailability() {}
 	
 	public OnTimeAvailability(long initDate, int duration, DurationType durationType) {
 		super(initDate);
 		this.duration = duration;
-		this.durationtype = durationType;
+		this.durationType = durationType;
 	}
 
 	public int getDuration() {
@@ -28,11 +28,11 @@ public class OnTimeAvailability extends Availability{
 	}
 
 	public DurationType getDurationtype() {
-		return durationtype;
+		return durationType;
 	}
 
 	public void setDurationtype(DurationType durationtype) {
-		this.durationtype = durationtype;
+		this.durationType = durationtype;
 	}
 
 }

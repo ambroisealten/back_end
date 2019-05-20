@@ -9,8 +9,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import fr.alten.ambroiseJEE.utils.PersonRole;
 import fr.alten.ambroiseJEE.utils.availability.Availability;
-import fr.alten.ambroiseJEE.utils.availability.OnDateAvailability;
-import fr.alten.ambroiseJEE.utils.availability.OnTimeAvailability;
 
 /**
  * Defines what a person is in our app
@@ -37,9 +35,7 @@ public class Person implements Serializable {
 	private String highestDiplomaYear;
 	private String opinion;
 	private int experienceTime;
-	//private Availability availability;
-	private OnTimeAvailability onTimeAvailability;
-	private OnDateAvailability onDateAvailability;
+	private Availability availability;
 
 	public Person() {
 		super();
@@ -150,20 +146,12 @@ public class Person implements Serializable {
 		this.experienceTime = experienceTime;
 	}
 
-	public OnTimeAvailability getOnTimeAvailability() {
-		return onTimeAvailability;
+	public Availability getAvailability() {
+		return availability;
 	}
 
-	public void setOnTimeAvailability(OnTimeAvailability onTimeAvailability) {
-		this.onTimeAvailability = onTimeAvailability;
-	}
-
-	public OnDateAvailability getOnDateAvailability() {
-		return onDateAvailability;
-	}
-
-	public void setOnDateAvailability(OnDateAvailability onDateAvailability) {
-		this.onDateAvailability = onDateAvailability;
+	public void setAvailability(Availability availability) {
+		this.availability = availability;
 	}
 
 	/**
