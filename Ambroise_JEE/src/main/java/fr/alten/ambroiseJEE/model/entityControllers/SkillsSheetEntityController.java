@@ -128,22 +128,6 @@ public class SkillsSheetEntityController {
 		return Double.valueOf(grade1).compareTo(Double.valueOf(grade2));
 	}
 
-	/**
-	 * Method to create a skills sheet for the first time
-	 *
-	 * @param jUser JsonNode with all skills sheet parameters
-	 * @param versionAuthor the mail of the author of this version of this Skills
-	 *                      Sheet
-	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link ConflictException} if there is a conflict in the
-	 *         database and {@link CreatedException} if the skills sheet is created
-	 * @author Lucas Royackkers
-	 */
-	public HttpException createSkillsSheet(final JsonNode jSkillsSheet,final String versionAuthor) {
-		return this.createSkillsSheet(jSkillsSheet, 1,versionAuthor);
-
-	}
-
 	public HttpException createBlankSkillsSheet(final String personMail, final String mailAuthor,
 			final long versionNumber, final PersonRole status) {
 //		try {
@@ -232,6 +216,22 @@ public class SkillsSheetEntityController {
 	}
 
 	/**
+	 * Method to create a skills sheet for the first time
+	 *
+	 * @param jUser         JsonNode with all skills sheet parameters
+	 * @param versionAuthor the mail of the author of this version of this Skills
+	 *                      Sheet
+	 * @return the @see {@link HttpException} corresponding to the status of the
+	 *         request ({@link ConflictException} if there is a conflict in the
+	 *         database and {@link CreatedException} if the skills sheet is created
+	 * @author Lucas Royackkers
+	 */
+	public HttpException createSkillsSheet(final JsonNode jSkillsSheet, final String versionAuthor) {
+		return this.createSkillsSheet(jSkillsSheet, 1, versionAuthor);
+
+	}
+
+	/**
 	 * Get a List of Skills object given a JsonNode containing a List of Skills
 	 * object
 	 *
@@ -247,8 +247,9 @@ public class SkillsSheetEntityController {
 		for (final JsonNode skillGraduated : jSkills) {
 			final String skillName = skillGraduated.get("skill").get("name").textValue();
 			Skill skill = null;
-			if (skillGraduated.get("skill").has("isSoft"))
+			if (skillGraduated.get("skill").has("isSoft")) {
 				softSkillsUsed.add(skillGraduated.get("skill").get("name").textValue());
+			}
 			try {
 				skill = this.skillEntityController.getSkill(skillName);
 
@@ -379,7 +380,7 @@ public class SkillsSheetEntityController {
 	 * Try to fetch all skills sheets
 	 *
 	 * @return A List with all skills sheets (might be empty) sorted by date
-	 * @author Lucas Royackkers, Camille Schnell
+	 * @author Lucas Royackkers, Camille Schnell, Andy Chabalier
 	 */
 	public List<JsonNode> getSkillsSheets() {
 		final List<SkillsSheet> allSkillsSheets = this.skillsSheetRepository.findAll().parallelStream()
@@ -389,28 +390,27 @@ public class SkillsSheetEntityController {
 		final ObjectMapper mapper = new ObjectMapper();
 		final GsonBuilder builder = new GsonBuilder();
 		final Gson gson = builder.create();
-
-		for (final SkillsSheet skillsSheet : allSkillsSheets) {
-			final long latestVersionNumber = this.skillsSheetRepository
-					.findByNameIgnoreCaseAndMailPersonAttachedToIgnoreCaseOrderByVersionNumberDesc(
-							skillsSheet.getName(), skillsSheet.getMailPersonAttachedTo())
-					.get(0).getVersionNumber();
-			if (skillsSheet.getVersionNumber() == latestVersionNumber) {
-				try {
-					final JsonNode jResult = mapper.createObjectNode();
-					((ObjectNode) jResult).set("skillsSheet", JsonUtils.toJsonNode(gson.toJson(skillsSheet)));
-					((ObjectNode) jResult).set("person", JsonUtils.toJsonNode(gson.toJson(
-							this.personEntityController.getPersonByMail(skillsSheet.getMailPersonAttachedTo()))));
-					finalResult.add(jResult);
-				} catch (final IOException e) {
-					LoggerFactory.getLogger(SkillsSheetEntityController.class).error(e.getMessage());
-				}
-			}
-
-		}
-		finalResult.sort((e1, e2) -> Double.valueOf(e2.get("skillsSheet").get("versionDate").asDouble())
-				.compareTo(Double.valueOf(e1.get("skillsSheet").get("versionDate").asDouble())));
-
+		// Create a stream in allSkillsSheets, sort it by date and for each element
+		// fetch the last skill sheet
+		allSkillsSheets.parallelStream().sorted((ss1, ss2) -> Double.compare(Double.parseDouble(ss1.getVersionDate()),
+				Double.parseDouble(ss1.getVersionDate()))).forEachOrdered(skillsSheet -> {
+					final long latestVersionNumber = this.skillsSheetRepository
+							.findByNameIgnoreCaseAndMailPersonAttachedToIgnoreCaseOrderByVersionNumberDesc(
+									skillsSheet.getName(), skillsSheet.getMailPersonAttachedTo())
+							.get(0).getVersionNumber();
+					if (skillsSheet.getVersionNumber() == latestVersionNumber) {
+						try {
+							final JsonNode jResult = mapper.createObjectNode();
+							((ObjectNode) jResult).set("skillsSheet", JsonUtils.toJsonNode(gson.toJson(skillsSheet)));
+							((ObjectNode) jResult).set("person",
+									JsonUtils.toJsonNode(gson.toJson(this.personEntityController
+											.getPersonByMail(skillsSheet.getMailPersonAttachedTo()))));
+							finalResult.add(jResult);
+						} catch (final IOException e) {
+							LoggerFactory.getLogger(SkillsSheetEntityController.class).error(e.getMessage());
+						}
+					}
+				});
 		return finalResult;
 	}
 
@@ -651,8 +651,8 @@ public class SkillsSheetEntityController {
 	 * Method to update a Skills Sheet, the update save a new version of the skills
 	 * sheet
 	 *
-	 * @param jSkillsSheet JsonNode with all skills sheet parameters, including its
-	 *                     name to perform an update on the database
+	 * @param jSkillsSheet  JsonNode with all skills sheet parameters, including its
+	 *                      name to perform an update on the database
 	 * @param versionAuthor the mail of the author of this version of this Skills
 	 *                      Sheet
 	 * @return the @see {@link HttpException} corresponding to the status of the
@@ -693,16 +693,14 @@ public class SkillsSheetEntityController {
 	public HttpException updateSkillsSheetCV(final File cv, final String name, final String mailPersonAttachedTo,
 			final long versionNumber) {
 		try {
-
-			final SkillsSheet skillsSheet = this.skillsSheetRepository
-					.findByNameIgnoreCaseAndMailPersonAttachedToIgnoreCaseAndVersionNumber(name, mailPersonAttachedTo,
-							versionNumber)
-					.orElseThrow(ResourceNotFoundException::new);
-
 			if (this.skillsSheetRepository.existsByNameIgnoreCaseAndMailPersonAttachedToIgnoreCaseAndVersionNumber(name,
 					mailPersonAttachedTo, versionNumber + 1)) {
 				return new ConflictException();
 			}
+			final SkillsSheet skillsSheet = this.skillsSheetRepository
+					.findByNameIgnoreCaseAndMailPersonAttachedToIgnoreCaseAndVersionNumber(name, mailPersonAttachedTo,
+							versionNumber)
+					.orElseThrow(ResourceNotFoundException::new);
 
 			skillsSheet.setCvPerson(cv);
 			skillsSheet.set_id(null);
