@@ -5,6 +5,7 @@ package fr.alten.ambroiseJEE.controller.rest;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -52,7 +53,6 @@ import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.JsonUtils;
 import fr.alten.ambroiseJEE.utils.PersonRole;
-import fr.alten.ambroiseJEE.utils.availability.DurationType;
 import fr.alten.ambroiseJEE.utils.availability.OnDateAvailability;
 import fr.alten.ambroiseJEE.utils.availability.OnTimeAvailability;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
@@ -476,7 +476,7 @@ public class InitBaseWebService {
 		newCandidatMichel.setPersonInChargeMail("tempUserAdminManager@mail.com");
 		newCandidatMichel.setOpinion("++");
 		newCandidatMichel
-				.setAvailability(new OnTimeAvailability(System.currentTimeMillis(), 6, DurationType.MONTH));
+				.setAvailability(new OnTimeAvailability(System.currentTimeMillis(), 6, ChronoUnit.MONTHS));
 
 		final JsonNode newCandidatMichelJsonNode = JsonUtils
 				.toJsonNode(this.gson.toJsonTree(newCandidatMichel).getAsJsonObject());

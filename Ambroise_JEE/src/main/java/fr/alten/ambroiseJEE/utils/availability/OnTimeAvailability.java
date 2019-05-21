@@ -1,5 +1,7 @@
 package fr.alten.ambroiseJEE.utils.availability;
 
+import java.time.temporal.ChronoUnit;
+
 /**
  *
  * @author Kylian Gehier
@@ -9,12 +11,10 @@ package fr.alten.ambroiseJEE.utils.availability;
 public class OnTimeAvailability extends Availability{
 
 	private int duration;
-	private DurationType durationType;
+	private ChronoUnit durationType;
 	
-	public OnTimeAvailability() {}
-	
-	public OnTimeAvailability(long initDate, int duration, DurationType durationType) {
-		super(initDate);
+	public OnTimeAvailability(long initDate, int duration, ChronoUnit durationType) {
+		super(initDate,0,duration,durationType);
 		this.duration = duration;
 		this.durationType = durationType;
 	}
@@ -27,11 +27,11 @@ public class OnTimeAvailability extends Availability{
 		this.duration = duration;
 	}
 
-	public DurationType getDurationtype() {
+	public ChronoUnit getDurationtype() {
 		return durationType;
 	}
 
-	public void setDurationtype(DurationType durationtype) {
+	public void setDurationtype(ChronoUnit durationtype) {
 		this.durationType = durationtype;
 	}
 
