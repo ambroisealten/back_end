@@ -476,6 +476,7 @@ public class InitBaseWebService {
 		newCandidatMichel.setRole(PersonRole.APPLICANT);
 		newCandidatMichel.setPersonInChargeMail("tempUserAdminManager@mail.com");
 		newCandidatMichel.setOpinion("++");
+		newCandidatMichel.setAvailability(new Availability(0,0,-1,ChronoUnit.FOREVER));
 
 		final JsonNode newCandidatMichelJsonNode = JsonUtils
 				.toJsonNode(this.gson.toJsonTree(newCandidatMichel).getAsJsonObject());
@@ -497,6 +498,7 @@ public class InitBaseWebService {
 		newCandidatPaul.setRole(PersonRole.APPLICANT);
 		newCandidatPaul.setPersonInChargeMail("tempUserAdminManager@mail.com");
 		newCandidatPaul.setOpinion("+");
+		newCandidatPaul.setAvailability(new Availability(0,0,-1,ChronoUnit.FOREVER));
 
 		final JsonNode newCandidatPaulJsonNode = JsonUtils
 				.toJsonNode(this.gson.toJsonTree(newCandidatPaul).getAsJsonObject());

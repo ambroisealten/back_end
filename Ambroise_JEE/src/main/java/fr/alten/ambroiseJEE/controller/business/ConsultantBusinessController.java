@@ -16,6 +16,7 @@ import fr.alten.ambroiseJEE.utils.PersonRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
@@ -76,7 +77,7 @@ public class ConsultantBusinessController {
 	public HttpException createConsultantAndSkillsSheet(JsonNode params, UserRole role, String personInChargeMail) {
 		if (this.isManagerOrCdrAdmin(role)) {
 			final JsonNode jConsultant = params.get("person");
-			HttpException createResult = this.personEntityController.createPerson(jConsultant, PersonRole.APPLICANT,
+			HttpException createResult = this.personEntityController.createPerson(jConsultant, PersonRole.CONSULTANT,
 					personInChargeMail);
 			if (!(createResult instanceof CreatedException)) {
 				return createResult;
@@ -85,8 +86,10 @@ public class ConsultantBusinessController {
 				HttpException createSkillsSheetResult = this.skillsSheetBusinessController
 						.createSkillsSheet(jSkillsSheet, role, personInChargeMail);
 				if (!(createSkillsSheetResult instanceof CreatedException)) {
-					this.personEntityController.deletePersonByRole(jConsultant, PersonRole.APPLICANT);
-					return new UnprocessableEntityException();
+					HttpException deleteResult = this.personEntityController.deletePersonByRole(jConsultant, PersonRole.APPLICANT);
+					if (!(createSkillsSheetResult instanceof OkException)) {
+						return deleteResult;
+					}
 				} else {
 					return createSkillsSheetResult;
 				}
