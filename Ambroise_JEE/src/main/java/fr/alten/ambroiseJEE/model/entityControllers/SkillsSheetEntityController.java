@@ -3,11 +3,9 @@ package fr.alten.ambroiseJEE.model.entityControllers;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.slf4j.LoggerFactory;
@@ -61,6 +59,16 @@ public class SkillsSheetEntityController {
 	@Autowired
 	private FileBusinessController fileBusinessController;
 
+	private final ObjectMapper mapper;
+
+	private final Gson gson;
+
+	public SkillsSheetEntityController() {
+		final GsonBuilder builder = new GsonBuilder();
+		this.gson = builder.create();
+		this.mapper = new ObjectMapper();
+	}
+
 	/**
 	 * Checks if a Skill has a grade (Double) in a good format
 	 *
@@ -97,15 +105,16 @@ public class SkillsSheetEntityController {
 	 * Compare two skill grades from two different skillsList from 2 skillsSheets,
 	 * in order to sort a skillsSheets' list
 	 *
-	 * @param elt1      JsonNode containing skillsList of first skillsSheet
-	 * @param elt2      JsonNode containing skillsList of seconde skillsSheet
-	 * @param fieldSort String name of the skill to sort on
+	 * @param skillSheet1 JsonNode containing skillsList of first skillsSheet
+	 * @param skillSheet2 JsonNode containing skillsList of seconde skillsSheet
+	 * @param fieldSort   String name of the skill to sort on
 	 * @return 0 if grades are equal, <0 if grade1 < grade 2, >0 if grade1 > grade2
 	 * @author Camille Schnell
 	 */
-	private int compareSpecificSkillGrades(final JsonNode elt1, final JsonNode elt2, final String fieldSort) {
+	private int compareSpecificSkillGrades(final JsonNode skillSheet1, final JsonNode skillSheet2,
+			final String fieldSort) {
 		// get first grade corresponding to "fieldSort" skill
-		final JsonNode skillsList1 = elt1.get("skillsSheet").get("skillsList");
+		final JsonNode skillsList1 = skillSheet1.get("skillsSheet").get("skillsList");
 		double grade1 = 0.0;
 		for (final JsonNode skill : skillsList1) {
 			if (skill.get("skill").get("name").textValue().equals(fieldSort)) {
@@ -115,7 +124,7 @@ public class SkillsSheetEntityController {
 		}
 
 		// get second grade corresponding to "fieldSort" skill
-		final JsonNode skillsList2 = elt2.get("skillsSheet").get("skillsList");
+		final JsonNode skillsList2 = skillSheet2.get("skillsSheet").get("skillsList");
 		double grade2 = 0.0;
 		for (final JsonNode skill : skillsList2) {
 			if (skill.get("skill").get("name").textValue().equals(fieldSort)) {
@@ -126,31 +135,6 @@ public class SkillsSheetEntityController {
 
 		// compare both grades
 		return Double.valueOf(grade1).compareTo(Double.valueOf(grade2));
-	}
-
-	/**
-	 * Method to create a skills sheet for the first time
-	 *
-	 * @param jUser JsonNode with all skills sheet parameters
-	 * @param versionAuthor the mail of the author of this version of this Skills
-	 *                      Sheet
-	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link ConflictException} if there is a conflict in the
-	 *         database and {@link CreatedException} if the skills sheet is created
-	 * @author Lucas Royackkers
-	 */
-	public HttpException createSkillsSheet(final JsonNode jSkillsSheet,final String versionAuthor) {
-		return this.createSkillsSheet(jSkillsSheet, 1,versionAuthor);
-
-	}
-
-	public HttpException createBlankSkillsSheet(final String personMail, final String mailAuthor,
-			final long versionNumber, final PersonRole status) {
-//		try {
-//			if(this.skillsSheetRepository.existsByNameIgnoreCaseAndMailPersonAttachedToIgnoreCaseAndVersionNumber(
-//					skillsSheetName, personMail, versionNumber))
-//		}
-		return null;
 	}
 
 	/**
@@ -232,6 +216,22 @@ public class SkillsSheetEntityController {
 	}
 
 	/**
+	 * Method to create a skills sheet for the first time
+	 *
+	 * @param jUser         JsonNode with all skills sheet parameters
+	 * @param versionAuthor the mail of the author of this version of this Skills
+	 *                      Sheet
+	 * @return the @see {@link HttpException} corresponding to the status of the
+	 *         request ({@link ConflictException} if there is a conflict in the
+	 *         database and {@link CreatedException} if the skills sheet is created
+	 * @author Lucas Royackkers
+	 */
+	public HttpException createSkillsSheet(final JsonNode jSkillsSheet, final String versionAuthor) {
+		return this.createSkillsSheet(jSkillsSheet, 1, versionAuthor);
+
+	}
+
+	/**
 	 * Get a List of Skills object given a JsonNode containing a List of Skills
 	 * object
 	 *
@@ -247,8 +247,9 @@ public class SkillsSheetEntityController {
 		for (final JsonNode skillGraduated : jSkills) {
 			final String skillName = skillGraduated.get("skill").get("name").textValue();
 			Skill skill = null;
-			if (skillGraduated.get("skill").has("isSoft"))
+			if (skillGraduated.get("skill").has("isSoft")) {
 				softSkillsUsed.add(skillGraduated.get("skill").get("name").textValue());
+			}
 			try {
 				skill = this.skillEntityController.getSkill(skillName);
 
@@ -298,7 +299,7 @@ public class SkillsSheetEntityController {
 
 		if (skillsList.isEmpty()) {
 			skillsList = new ArrayList<String>(Constants.DEFAULT_SKILLS);
-			skillsList.replaceAll(String::toLowerCase);
+			skillsList.stream().forEach(String::toLowerCase);
 		}
 
 		for (final SkillGraduated skillGraduated : skillsSheet.getSkillsList()) {
@@ -310,7 +311,6 @@ public class SkillsSheetEntityController {
 				averageTech += skillGraduated.getGrade();
 				totalTech++;
 			}
-
 		}
 		averageSoft = totalTech + totalSoft != 0 ? (averageSoft + averageTech) / (totalTech + totalSoft) : 0.0;
 
@@ -357,7 +357,6 @@ public class SkillsSheetEntityController {
 				break;
 			}
 		}
-
 		return averageSkill;
 	}
 
@@ -379,7 +378,7 @@ public class SkillsSheetEntityController {
 	 * Try to fetch all skills sheets
 	 *
 	 * @return A List with all skills sheets (might be empty) sorted by date
-	 * @author Lucas Royackkers, Camille Schnell
+	 * @author Lucas Royackkers, Camille Schnell, Andy Chabalier
 	 */
 	public List<JsonNode> getSkillsSheets() {
 		final List<SkillsSheet> allSkillsSheets = this.skillsSheetRepository.findAll().parallelStream()
@@ -389,28 +388,27 @@ public class SkillsSheetEntityController {
 		final ObjectMapper mapper = new ObjectMapper();
 		final GsonBuilder builder = new GsonBuilder();
 		final Gson gson = builder.create();
-
-		for (final SkillsSheet skillsSheet : allSkillsSheets) {
-			final long latestVersionNumber = this.skillsSheetRepository
-					.findByNameIgnoreCaseAndMailPersonAttachedToIgnoreCaseOrderByVersionNumberDesc(
-							skillsSheet.getName(), skillsSheet.getMailPersonAttachedTo())
-					.get(0).getVersionNumber();
-			if (skillsSheet.getVersionNumber() == latestVersionNumber) {
-				try {
-					final JsonNode jResult = mapper.createObjectNode();
-					((ObjectNode) jResult).set("skillsSheet", JsonUtils.toJsonNode(gson.toJson(skillsSheet)));
-					((ObjectNode) jResult).set("person", JsonUtils.toJsonNode(gson.toJson(
-							this.personEntityController.getPersonByMail(skillsSheet.getMailPersonAttachedTo()))));
-					finalResult.add(jResult);
-				} catch (final IOException e) {
-					LoggerFactory.getLogger(SkillsSheetEntityController.class).error(e.getMessage());
-				}
-			}
-
-		}
-		finalResult.sort((e1, e2) -> Double.valueOf(e2.get("skillsSheet").get("versionDate").asDouble())
-				.compareTo(Double.valueOf(e1.get("skillsSheet").get("versionDate").asDouble())));
-
+		// Create a stream in allSkillsSheets, sort it by date and for each element
+		// fetch the last skill sheet
+		allSkillsSheets.parallelStream().sorted((ss1, ss2) -> Double.compare(Double.parseDouble(ss1.getVersionDate()),
+				Double.parseDouble(ss1.getVersionDate()))).forEachOrdered(skillsSheet -> {
+					final long latestVersionNumber = this.skillsSheetRepository
+							.findByNameIgnoreCaseAndMailPersonAttachedToIgnoreCaseOrderByVersionNumberDesc(
+									skillsSheet.getName(), skillsSheet.getMailPersonAttachedTo())
+							.get(0).getVersionNumber();
+					if (skillsSheet.getVersionNumber() == latestVersionNumber) {
+						try {
+							final JsonNode jResult = mapper.createObjectNode();
+							((ObjectNode) jResult).set("skillsSheet", JsonUtils.toJsonNode(gson.toJson(skillsSheet)));
+							((ObjectNode) jResult).set("person",
+									JsonUtils.toJsonNode(gson.toJson(this.personEntityController
+											.getPersonByMail(skillsSheet.getMailPersonAttachedTo()))));
+							finalResult.add(jResult);
+						} catch (final IOException e) {
+							LoggerFactory.getLogger(SkillsSheetEntityController.class).error(e.getMessage());
+						}
+					}
+				});
 		return finalResult;
 	}
 
@@ -428,20 +426,10 @@ public class SkillsSheetEntityController {
 		// If there is no parameters given (e.g. a space for identity and skills
 		// filter), returns all skills sheets
 		if (identity.length() == 1 && identity.equals(",") && skills.length() == 1 && skills.equals(",")) {
-			// if we need to sort given a specific column
-			if (!columnSorting.equals(",")) {
-				final String fieldSort = columnSorting.split(",")[0];
-				final boolean isAsc = columnSorting.split(",")[1].equals("asc");
-				return getSkillsSheetsWithFieldSorting(getSkillsSheets(), fieldSort, isAsc);
-			} else {
-				return getSkillsSheets();
-			}
+			return getAllAndSortByField(columnSorting);
 		}
 
 		// Initialize variables
-		final GsonBuilder builder = new GsonBuilder();
-		final Gson gson = builder.create();
-		final ObjectMapper mapper = new ObjectMapper();
 		final List<String> identitiesList = Arrays.asList(identity.split(","));
 		final List<String> skillsList = Arrays.asList(skills.toLowerCase().split(","));
 		final HashSet<Skill> filteredSkills = new HashSet<Skill>();
@@ -450,80 +438,70 @@ public class SkillsSheetEntityController {
 		final PersonSetWithFilters filteredPersons = new PersonSetWithFilters(identitiesList);
 
 		filteredPersons.addAll(allPersons);
-		filteredPersons.toString();
 
 		// Get all Skills in the filter that are in the database
-		for (final String skillFilter : skillsList) {
+		skillsList.stream().forEach(skillFilter -> {
 			final Skill filterSkill = new Skill();
 			filterSkill.setName(skillFilter);
 			filteredSkills.add(filterSkill);
-			filterSkill.toString();
-		}
+		});
 
-		final Set<SkillsSheet> result = new HashSet<SkillsSheet>();
 		final List<JsonNode> finalResult = new ArrayList<JsonNode>();
 
 		// First, filter the skills sheets given the Persons object that we get before
 		// (given their mail)
-		for (final Person person : filteredPersons) {
+		filteredPersons.parallelStream().forEach(person -> {
 			final SkillsSheet skillsSheetExample = new SkillsSheet();
 			skillsSheetExample.setMailPersonAttachedTo(person.getMail());
 
 			final ExampleMatcher matcher = ExampleMatcher.matching().withIgnoreNullValues()
 					.withMatcher("mailPersonAttachedTo", GenericPropertyMatchers.exact())
 					.withIgnorePaths("versionNumber").withIgnorePaths("softSkillAverage");
-			final List<SkillsSheet> personSkillSheet = this.skillsSheetRepository
-					.findAll(Example.of(skillsSheetExample, matcher)).parallelStream()
+
+			this.skillsSheetRepository.findAll(Example.of(skillsSheetExample, matcher)).parallelStream()
 					.filter(skillSheet -> !skillSheet.getMailPersonAttachedTo().contains("deactivated"))
+					.filter(skillSheet -> skillsMatch(filteredSkills, skillSheet))
+					// Secondly, filter the skills sheets on the Skills object (the skills sheet
+					// have to match all the skills given in the filter)
+					// we filter the stream If there is a total match on the skills in the skills
+					// sheet
+					.forEach(skillSheet -> {
+						final long latestVersionNumber = this.skillsSheetRepository
+								.findByNameIgnoreCaseAndMailPersonAttachedToIgnoreCaseOrderByVersionNumberDesc(
+										skillSheet.getName(), skillSheet.getMailPersonAttachedTo())
+								.get(0).getVersionNumber();
+						// If the skills is the latest to date, put it in the final result
+						if (skillSheet.getVersionNumber() == latestVersionNumber) {
+							final String personMail = skillSheet.getMailPersonAttachedTo();
+							// Build a JsonNode with Skills Sheet and Person objects together, if not throw
+							// an Exception
+							try {
+								final JsonNode jResult = this.mapper.createObjectNode();
+								((ObjectNode) jResult).set("skillsSheet",
+										JsonUtils.toJsonNode(this.gson.toJson(skillSheet)));
+								final Person personToFetch = this.personEntityController.getPersonByMail(personMail);
+								((ObjectNode) jResult).set("person",
+										JsonUtils.toJsonNode(this.gson.toJson(personToFetch)));
+								((ObjectNode) jResult).put("fiability",
+										getFiabilityGrade(skillSheet, personToFetch.getOpinion(), skillsList));
+								finalResult.add(jResult);
+							} catch (final IOException e) {
+								LoggerFactory.getLogger(SkillsSheetEntityController.class).error(e.getMessage());
+							}
+						}
+					});
+		});
+		if (columnSorting.equals(",")) {
+			return finalResult.parallelStream().sorted((e1, e2) -> Double.valueOf(e2.get("fiability").asDouble())
+					.compareTo(Double.valueOf(e1.get("fiability").asDouble()))).collect(Collectors.toList());
+		} else {
+			final String fieldSort = columnSorting.split(",")[0];
+			// -1 is call to reverse order, 1 to keep natural order
+			final int order = columnSorting.split(",")[1].equals("asc") ? 1 : -1;
+			return getSkillsSheetsWithFieldSorting(finalResult, fieldSort, order).parallelStream()
 					.collect(Collectors.toList());
-			result.addAll(personSkillSheet);
 		}
 
-		// Secondly, filter the skills sheets on the Skills object (the skills sheet
-		// have to match all the skills given in the filter)
-		for (final SkillsSheet skillSheet : result) {
-			boolean skillsMatch = true;
-			if (!filteredSkills.isEmpty()) {
-				for (final Skill skill : filteredSkills) {
-					skillsMatch = skillsMatch && ifSkillsInSheet(skill, skillSheet);
-				}
-			}
-			// If there is a total match on the skills in the skills sheet
-			if (skillsMatch) {
-				final long latestVersionNumber = this.skillsSheetRepository
-						.findByNameIgnoreCaseAndMailPersonAttachedToIgnoreCaseOrderByVersionNumberDesc(
-								skillSheet.getName(), skillSheet.getMailPersonAttachedTo())
-						.get(0).getVersionNumber();
-				// If the skills is the latest to date, put it in the final result
-				if (skillSheet.getVersionNumber() == latestVersionNumber) {
-					final String personMail = skillSheet.getMailPersonAttachedTo();
-					// Build a JsonNode with Skills Sheet and Person objects together, if not throw
-					// an Exception
-					try {
-						final JsonNode jResult = mapper.createObjectNode();
-						((ObjectNode) jResult).set("skillsSheet", JsonUtils.toJsonNode(gson.toJson(skillSheet)));
-						final Person person = this.personEntityController.getPersonByMail(personMail);
-						((ObjectNode) jResult).set("person", JsonUtils.toJsonNode(gson.toJson(person)));
-						((ObjectNode) jResult).put("fiability",
-								getFiabilityGrade(skillSheet, person.getOpinion(), skillsList));
-						finalResult.add(jResult);
-					} catch (final IOException e) {
-						LoggerFactory.getLogger(SkillsSheetEntityController.class).error(e.getMessage());
-					}
-				}
-			}
-		}
-
-		// if we need to sort given a specific column
-		if (!columnSorting.equals(",")) {
-			final String columnSort = columnSorting.split(",")[0];
-			final boolean isAsc = columnSorting.split(",")[1].equals("asc");
-			return getSkillsSheetsWithFieldSorting(finalResult, columnSort, isAsc);
-		} else { // sorted by default on fiability grade
-			finalResult.sort((e1, e2) -> Double.valueOf(e2.get("fiability").asDouble())
-					.compareTo(Double.valueOf(e1.get("fiability").asDouble())));
-			return finalResult;
-		}
 	}
 
 	/**
@@ -566,36 +544,35 @@ public class SkillsSheetEntityController {
 	 *
 	 * @param listToSort JsonNode containing skillsSheets' list to sort
 	 * @param fieldSort  field to sort on
-	 * @param isAsc      boolean if true sort ascending, else descending
+	 * @param order      -1 is call to reverse order, 1 to keep natural order
 	 * @return a sorted list of skillsSheets
-	 * @author Camille Schnell
+	 * @author Camille Schnell, Andy Chabalier
 	 */
 	private List<JsonNode> getSkillsSheetsWithFieldSorting(final List<JsonNode> listToSort, final String fieldSort,
-			final boolean isAsc) {
-		final List<JsonNode> finalResult = listToSort;
-		if (fieldSort.equals("softskillsAverage")) { // sort on soft skill average grade
-			finalResult.sort((e1, e2) -> Double.valueOf(e1.get("skillsSheet").get("softSkillAverage").asDouble())
-					.compareTo(Double.valueOf(e2.get("skillsSheet").get("softSkillAverage").asDouble())));
-		} else if (fieldSort.equals("name") || fieldSort.equals("job") || fieldSort.equals("opinion")
-				|| fieldSort.equals("disponibility")) { // sort on specific identity field
-			if (fieldSort.equals("name")) { // compare name + surname string
-				finalResult.sort((e1,
-						e2) -> (e1.get("person").get("name").textValue() + e1.get("person").get("surname").textValue())
-								.compareToIgnoreCase(e2.get("person").get("name").textValue()
-										+ e2.get("person").get("surname").textValue()));
-			} else {
-				finalResult.sort((e1, e2) -> e1.get("person").get(fieldSort).textValue()
-						.compareToIgnoreCase(e2.get("person").get(fieldSort).textValue()));
-			}
-		} else { // sort on specific skill grade field
-			finalResult.sort((e1, e2) -> compareSpecificSkillGrades(e1, e2, fieldSort));
+			final int order) {
+		switch (fieldSort) {
+		case "softskillsAverage":
+			return listToSort.parallelStream().sorted((e1, e2) -> order * softSkillAverageComparator(e1, e2))
+					.collect(Collectors.toList());
+		case "job":
+			return listToSort.parallelStream()
+					.sorted((e1, e2) -> order * personIdentityFieldComparator(fieldSort, e1, e2))
+					.collect(Collectors.toList());
+		case "opinion":
+			return listToSort.parallelStream()
+					.sorted((e1, e2) -> order * personIdentityFieldComparator(fieldSort, e1, e2))
+					.collect(Collectors.toList());
+		case "disponibility":
+			return listToSort.parallelStream()
+					.sorted((e1, e2) -> order * personIdentityFieldComparator(fieldSort, e1, e2))
+					.collect(Collectors.toList());
+		case "name":
+			return listToSort.parallelStream().sorted((e1, e2) -> order * personNameComparator(e1, e2))
+					.collect(Collectors.toList());
+		default:
+			return listToSort.parallelStream().sorted((e1, e2) -> order * compareSpecificSkillGrades(e1, e2, fieldSort))
+					.collect(Collectors.toList());
 		}
-
-		if (!isAsc) {
-			Collections.reverse(finalResult);
-		}
-
-		return finalResult;
 	}
 
 	/**
@@ -630,6 +607,46 @@ public class SkillsSheetEntityController {
 		return false;
 	}
 
+	/**
+	 * @param fieldSort
+	 * @param e1
+	 * @param e2
+	 * @return
+	 * @author Andy Chabalier
+	 */
+	private int personIdentityFieldComparator(final String fieldSort, final JsonNode e1, final JsonNode e2) {
+		return e1.get("person").get(fieldSort).textValue()
+				.compareToIgnoreCase(e2.get("person").get(fieldSort).textValue());
+	}
+
+	/**
+	 * @param e1
+	 * @param e2
+	 * @return
+	 * @author Andy Chabalier
+	 */
+	private int personNameComparator(final JsonNode e1, final JsonNode e2) {
+		return (e1.get("person").get("name").textValue() + e1.get("person").get("surname").textValue())
+				.compareToIgnoreCase(
+						e2.get("person").get("name").textValue() + e2.get("person").get("surname").textValue());
+	}
+
+	/**
+	 * @param filteredSkills
+	 * @param skillSheet
+	 * @return
+	 * @author Andy Chabalier
+	 */
+	private boolean skillsMatch(final HashSet<Skill> filteredSkills, final SkillsSheet skillSheet) {
+		boolean skillsMatch = true;
+		if (!filteredSkills.isEmpty()) {
+			for (final Skill skill : filteredSkills) {
+				skillsMatch = skillsMatch && ifSkillsInSheet(skill, skillSheet);
+			}
+		}
+		return skillsMatch;
+	}
+
 	private double softSkillAverageCalculation(final List<SkillGraduated> softSkillList) {
 
 		double sum = 0;
@@ -648,11 +665,38 @@ public class SkillsSheetEntityController {
 	}
 
 	/**
+	 * @param e1
+	 * @param e2
+	 * @return
+	 * @author Andy Chabalier
+	 */
+	private int softSkillAverageComparator(final JsonNode e1, final JsonNode e2) {
+		return Double.valueOf(e1.get("skillsSheet").get("softSkillAverage").asDouble())
+				.compareTo(Double.valueOf(e2.get("skillsSheet").get("softSkillAverage").asDouble()));
+	}
+
+	/**
+	 * @param columnSorting
+	 * @return
+	 * @author Andy Chabalier
+	 */
+	public List<JsonNode> getAllAndSortByField(final String columnSorting) {
+		if (!columnSorting.equals(",")) {
+			final String fieldSort = columnSorting.split(",")[0];
+			// -1 is call to reverse order, 1 to keep natural order
+			final int order = columnSorting.split(",")[1].equals("asc") ? 1 : -1;
+			return getSkillsSheetsWithFieldSorting(getSkillsSheets(), fieldSort, order);
+		} else {
+			return getSkillsSheets();
+		}
+	}
+
+	/**
 	 * Method to update a Skills Sheet, the update save a new version of the skills
 	 * sheet
 	 *
-	 * @param jSkillsSheet JsonNode with all skills sheet parameters, including its
-	 *                     name to perform an update on the database
+	 * @param jSkillsSheet  JsonNode with all skills sheet parameters, including its
+	 *                      name to perform an update on the database
 	 * @param versionAuthor the mail of the author of this version of this Skills
 	 *                      Sheet
 	 * @return the @see {@link HttpException} corresponding to the status of the
@@ -693,16 +737,14 @@ public class SkillsSheetEntityController {
 	public HttpException updateSkillsSheetCV(final File cv, final String name, final String mailPersonAttachedTo,
 			final long versionNumber) {
 		try {
-
-			final SkillsSheet skillsSheet = this.skillsSheetRepository
-					.findByNameIgnoreCaseAndMailPersonAttachedToIgnoreCaseAndVersionNumber(name, mailPersonAttachedTo,
-							versionNumber)
-					.orElseThrow(ResourceNotFoundException::new);
-
 			if (this.skillsSheetRepository.existsByNameIgnoreCaseAndMailPersonAttachedToIgnoreCaseAndVersionNumber(name,
 					mailPersonAttachedTo, versionNumber + 1)) {
 				return new ConflictException();
 			}
+			final SkillsSheet skillsSheet = this.skillsSheetRepository
+					.findByNameIgnoreCaseAndMailPersonAttachedToIgnoreCaseAndVersionNumber(name, mailPersonAttachedTo,
+							versionNumber)
+					.orElseThrow(ResourceNotFoundException::new);
 
 			skillsSheet.setCvPerson(cv);
 			skillsSheet.set_id(null);

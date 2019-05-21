@@ -130,7 +130,8 @@ public class SkillEntityController {
 	 * @author Thomas Decamp
 	 */
 	public List<Skill> getSkills() {
-		return this.skillRepository.findAll();
+		return this.skillRepository.findAll().parallelStream().filter(skill -> !skill.getName().contains("deactivated"))
+				.collect(Collectors.toList());
 	}
 
 	/**
@@ -144,17 +145,19 @@ public class SkillEntityController {
 		skillExample.setIsSoft(".*");
 
 		// Create a matcher for this file Example. We want to focus only on path, then
-		// we ignore null value and dateOfCreation wich is a long value and can't be
+		// we ignore null value and dateOfCreation which is a long value and can't be
 		// null
 		final ExampleMatcher matcher = ExampleMatcher.matching().withMatcher("isSoft", GenericPropertyMatchers.regex())
 				.withIgnoreNullValues();
 
-		return this.skillRepository.findAll(Example.of(skillExample, matcher));
+		return this.skillRepository.findAll(Example.of(skillExample, matcher)).parallelStream()
+				.filter(skill -> !skill.getName().contains("deactivated")).collect(Collectors.toList());
 	}
 
 	public List<Skill> getTechSkills() {
-		List<Skill> firstList = this.skillRepository.findAll();
-		return firstList.parallelStream().filter(skill -> !skill.isSoft()).collect(Collectors.toList());
+		final List<Skill> firstList = this.skillRepository.findAll();
+		return firstList.parallelStream().filter(skill -> !skill.isSoft())
+				.filter(skill -> !skill.getName().contains("deactivated")).collect(Collectors.toList());
 	}
 
 	/**

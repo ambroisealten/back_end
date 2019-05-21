@@ -78,20 +78,21 @@ public class SkillsSheetRestController {
 		((ObjectNode) params).put("mailVersionAuthor", mail);
 		return JsonUtils.checkJsonIntegrity(params, "name", "mailPersonAttachedTo", "mailVersionAuthor", "comment",
 				"rolePersonAttachedTo", "skillsList")
-						? this.skillsSheetBusinessController.createSkillsSheet(params, role,mail)
+						? this.skillsSheetBusinessController.createSkillsSheet(params, role, mail)
 						: new UnprocessableEntityException();
 	}
-	
 
 	/**
 	 * Get a JsonNode of Skills Sheets matching the specified queries in Identity
 	 * and Skills fields
 	 *
-	 * @param identity a String containing all filters about the identity of a
-	 *                 person
-	 * @param skills   a String containing all filters about the skills contained in
-	 *                 a Skills Sheet
-	 * @param role     the current logged user's role
+	 * @param identity      a String containing all filters about the identity of a
+	 *                      person
+	 * @param skills        a String containing all filters about the skills
+	 *                      contained in a Skills Sheet
+	 * @param columnSorting a String representing the column that we need to filter
+	 *                      on, and its order (increasing or decreasing)
+	 * @param role          the current logged user's role
 	 * @return the list of all skills sheets given the filters submitted
 	 * @throws {@link ForbiddenException} if the current logged user hasn't the
 	 *         rights to perform this action

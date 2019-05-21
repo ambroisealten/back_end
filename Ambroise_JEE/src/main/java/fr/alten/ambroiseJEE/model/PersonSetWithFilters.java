@@ -39,8 +39,8 @@ public class PersonSetWithFilters implements Set<Person> {
 	}
 
 	/**
-	 * Add every element of a Collection of Person, if the element isn't contained already in the list, and if 
-	 * the element validates all the filters
+	 * Add every element of a Collection of Person, if the element isn't contained
+	 * already in the list, and if the element validates all the filters
 	 */
 	@Override
 	public boolean addAll(final Collection<? extends Person> personCollection) {
@@ -86,7 +86,7 @@ public class PersonSetWithFilters implements Set<Person> {
 			filterMatch = filterMatch && (person.getName().toLowerCase().equals(filter)
 					|| person.getSurname().toLowerCase().equals(filter)
 					|| person.getHighestDiploma().toLowerCase().equals(filter)
-					|| person.getJob().toLowerCase().equals(filter));
+					|| person.getJob().toLowerCase().equals(filter)) || person.getOpinion().equals(filter);
 		}
 		return filterMatch;
 	}
