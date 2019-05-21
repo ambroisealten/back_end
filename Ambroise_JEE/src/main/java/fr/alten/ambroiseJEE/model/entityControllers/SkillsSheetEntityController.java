@@ -433,7 +433,7 @@ public class SkillsSheetEntityController {
 		final List<String> identitiesList = Arrays.asList(identity.split(","));
 		final List<String> skillsList = Arrays.asList(skills.toLowerCase().split(","));
 		final HashSet<Skill> filteredSkills = new HashSet<Skill>();
-		final List<Person> allPersons = this.personEntityController.getAllPersons();
+		final List<Person> allPersons = this.personEntityController.getAllPersons().parallelStream().filter(person -> !person.getMail().contains("deactivated")).collect(Collectors.toList());
 
 		final PersonSetWithFilters filteredPersons = new PersonSetWithFilters(identitiesList);
 
