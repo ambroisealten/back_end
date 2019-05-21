@@ -53,6 +53,7 @@ import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.JsonUtils;
 import fr.alten.ambroiseJEE.utils.PersonRole;
+import fr.alten.ambroiseJEE.utils.availability.Availability;
 import fr.alten.ambroiseJEE.utils.availability.OnDateAvailability;
 import fr.alten.ambroiseJEE.utils.availability.OnTimeAvailability;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
@@ -475,8 +476,6 @@ public class InitBaseWebService {
 		newCandidatMichel.setRole(PersonRole.APPLICANT);
 		newCandidatMichel.setPersonInChargeMail("tempUserAdminManager@mail.com");
 		newCandidatMichel.setOpinion("++");
-		newCandidatMichel
-				.setAvailability(new OnTimeAvailability(System.currentTimeMillis(), 6, ChronoUnit.MONTHS));
 
 		final JsonNode newCandidatMichelJsonNode = JsonUtils
 				.toJsonNode(this.gson.toJsonTree(newCandidatMichel).getAsJsonObject());
@@ -497,7 +496,6 @@ public class InitBaseWebService {
 		newCandidatPaul.setHighestDiplomaYear("2019");
 		newCandidatPaul.setRole(PersonRole.APPLICANT);
 		newCandidatPaul.setPersonInChargeMail("tempUserAdminManager@mail.com");
-		newCandidatPaul.setAvailability(new OnDateAvailability(1567296000, 1577836800));
 		newCandidatPaul.setOpinion("+");
 
 		final JsonNode newCandidatPaulJsonNode = JsonUtils

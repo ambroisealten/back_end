@@ -20,8 +20,6 @@ import fr.alten.ambroiseJEE.model.dao.SkillsSheetRepository;
 import fr.alten.ambroiseJEE.utils.MailUtils;
 import fr.alten.ambroiseJEE.utils.PersonRole;
 import fr.alten.ambroiseJEE.utils.availability.Availability;
-import fr.alten.ambroiseJEE.utils.availability.OnDateAvailability;
-import fr.alten.ambroiseJEE.utils.availability.OnTimeAvailability;
 import fr.alten.ambroiseJEE.utils.exception.MissingFieldException;
 import fr.alten.ambroiseJEE.utils.exception.ToManyFieldsException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
@@ -124,15 +122,10 @@ public class PersonEntityController {
 				newPerson.setEmployer(employer.getName());
 
 				if (jPerson.has("availability")) {
-					JsonNode jAvailability = jPerson.get("onTimeAvailability");
-					if (this.hasOnTimeAvailabilityFields(jAvailability)) {
-						newPerson.setAvailability(new OnTimeAvailability(jAvailability.get("initDate").asLong(),
-								jAvailability.get("duration").asInt(),
-								ChronoUnit.valueOf(jAvailability.get("durationType").textValue())));
-					} else if (this.hasOnDateAvailabilityFields(jAvailability)) {
-						newPerson.setAvailability(new OnDateAvailability(jAvailability.get("initDate").asLong(),
-								jAvailability.get("finalDate").asLong()));
-					}
+					JsonNode jAvailability = jPerson.get("availability");
+					newPerson.setAvailability(new Availability(jAvailability.get("initDate").asLong(), jAvailability.get("finalDate").asLong(),
+							jAvailability.get("duration").asInt(),
+							ChronoUnit.valueOf(jAvailability.get("durationType").textValue())));
 				}
 
 			}
@@ -143,8 +136,6 @@ public class PersonEntityController {
 			return rnfe;
 		} catch (final DuplicateKeyException dke) {
 			return new ConflictException();
-		} catch (final MissingFieldException | ToManyFieldsException fe) {
-			return new UnprocessableEntityException(fe);
 		}
 		return new CreatedException();
 
@@ -416,6 +407,9 @@ public class PersonEntityController {
 					} else if (this.hasOnDateAvailabilityFields(jAvailability)) {
 						person.setAvailability(new Availability(jAvailability.get("initDate").asLong(),
 								jAvailability.get("finalDate").asLong(), 0, ChronoUnit.FOREVER));
+					} else {
+						person.setAvailability(new Availability(jAvailability.get("initDate").asLong(), 0,
+								jAvailability.get("duration").asInt(), ChronoUnit.FOREVER));
 					}
 				}
 
@@ -433,6 +427,7 @@ public class PersonEntityController {
 		}
 		return new OkException();
 	}
+
 	/**
 	 * 
 	 * @param jOnTimeAvailability
