@@ -122,15 +122,10 @@ public class PersonEntityController {
 				newPerson.setEmployer(employer.getName());
 
 				if (jPerson.has("availability")) {
-					JsonNode jAvailability = jPerson.get("onTimeAvailability");
-					if (this.hasOnTimeAvailabilityFields(jAvailability)) {
-						newPerson.setAvailability(new Availability(jAvailability.get("initDate").asLong(), 0,
-								jAvailability.get("duration").asInt(),
-								ChronoUnit.valueOf(jAvailability.get("durationType").textValue())));
-					} else if (this.hasOnDateAvailabilityFields(jAvailability)) {
-						newPerson.setAvailability(new Availability(jAvailability.get("initDate").asLong(),
-								jAvailability.get("finalDate").asLong(), 0, ChronoUnit.FOREVER));
-					}
+					JsonNode jAvailability = jPerson.get("availability");
+					newPerson.setAvailability(new Availability(jAvailability.get("initDate").asLong(), jAvailability.get("finalDate").asLong(),
+							jAvailability.get("duration").asInt(),
+							ChronoUnit.valueOf(jAvailability.get("durationType").textValue())));
 				}
 
 			}
@@ -141,8 +136,6 @@ public class PersonEntityController {
 			return rnfe;
 		} catch (final DuplicateKeyException dke) {
 			return new ConflictException();
-		} catch (final MissingFieldException | ToManyFieldsException fe) {
-			return new UnprocessableEntityException(fe);
 		}
 		return new CreatedException();
 
