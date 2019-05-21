@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -427,7 +426,7 @@ public class SkillsSheetEntityController {
 		// If there is no parameters given (e.g. a space for identity and skills
 		// filter), returns all skills sheets
 		if (identity.length() == 1 && identity.equals(",") && skills.length() == 1 && skills.equals(",")) {
-			return sortByField(columnSorting);
+			return getAllAndSortByField(columnSorting);
 		}
 
 		// Initialize variables
@@ -492,10 +491,17 @@ public class SkillsSheetEntityController {
 						}
 					});
 		});
-		return finalResult.parallelStream()
-				.sorted((e1, e2) -> Double.valueOf(e2.get("skillsSheet").get("fiability").asDouble())
-						.compareTo(Double.valueOf(e1.get("skillsSheet").get("fiability").asDouble())))
-				.collect(Collectors.toList());
+		if (columnSorting.equals(",")) {
+			return finalResult.parallelStream().sorted((e1, e2) -> Double.valueOf(e2.get("fiability").asDouble())
+					.compareTo(Double.valueOf(e1.get("fiability").asDouble()))).collect(Collectors.toList());
+		} else {
+			final String fieldSort = columnSorting.split(",")[0];
+			// -1 is call to reverse order, 1 to keep natural order
+			final int order = columnSorting.split(",")[1].equals("asc") ? 1 : -1;
+			return getSkillsSheetsWithFieldSorting(finalResult, fieldSort, order).parallelStream()
+					.collect(Collectors.toList());
+		}
+
 	}
 
 	/**
@@ -544,28 +550,29 @@ public class SkillsSheetEntityController {
 	 */
 	private List<JsonNode> getSkillsSheetsWithFieldSorting(final List<JsonNode> listToSort, final String fieldSort,
 			final int order) {
-		final Stream<JsonNode> finalResult = listToSort.parallelStream();
 		switch (fieldSort) {
 		case "softskillsAverage":
-			finalResult.sorted((e1, e2) -> order * softSkillAverageComparator(e1, e2));
-			break;
+			return listToSort.parallelStream().sorted((e1, e2) -> order * softSkillAverageComparator(e1, e2))
+					.collect(Collectors.toList());
 		case "job":
-			finalResult.sorted((e1, e2) -> order * personIdentityFieldComparator(fieldSort, e1, e2));
-			break;
+			return listToSort.parallelStream()
+					.sorted((e1, e2) -> order * personIdentityFieldComparator(fieldSort, e1, e2))
+					.collect(Collectors.toList());
 		case "opinion":
-			finalResult.sorted((e1, e2) -> order * personIdentityFieldComparator(fieldSort, e1, e2));
-			break;
+			return listToSort.parallelStream()
+					.sorted((e1, e2) -> order * personIdentityFieldComparator(fieldSort, e1, e2))
+					.collect(Collectors.toList());
 		case "disponibility":
-			finalResult.sorted((e1, e2) -> order * personIdentityFieldComparator(fieldSort, e1, e2));
-			break;
+			return listToSort.parallelStream()
+					.sorted((e1, e2) -> order * personIdentityFieldComparator(fieldSort, e1, e2))
+					.collect(Collectors.toList());
 		case "name":
-			finalResult.sorted((e1, e2) -> order * personNameComparator(e1, e2));
-			break;
+			return listToSort.parallelStream().sorted((e1, e2) -> order * personNameComparator(e1, e2))
+					.collect(Collectors.toList());
 		default:
-			finalResult.sorted((e1, e2) -> order * compareSpecificSkillGrades(e1, e2, fieldSort));
-			break;
+			return listToSort.parallelStream().sorted((e1, e2) -> order * compareSpecificSkillGrades(e1, e2, fieldSort))
+					.collect(Collectors.toList());
 		}
-		return finalResult.collect(Collectors.toList());
 	}
 
 	/**
@@ -673,7 +680,7 @@ public class SkillsSheetEntityController {
 	 * @return
 	 * @author Andy Chabalier
 	 */
-	public List<JsonNode> sortByField(final String columnSorting) {
+	public List<JsonNode> getAllAndSortByField(final String columnSorting) {
 		if (!columnSorting.equals(",")) {
 			final String fieldSort = columnSorting.split(",")[0];
 			// -1 is call to reverse order, 1 to keep natural order
