@@ -60,6 +60,16 @@ public class SkillsSheetEntityController {
 	@Autowired
 	private FileBusinessController fileBusinessController;
 
+	private final ObjectMapper mapper;
+
+	private final Gson gson;
+
+	public SkillsSheetEntityController() {
+		final GsonBuilder builder = new GsonBuilder();
+		this.gson = builder.create();
+		this.mapper = new ObjectMapper();
+	}
+
 	/**
 	 * Checks if a Skill has a grade (Double) in a good format
 	 *
@@ -96,15 +106,16 @@ public class SkillsSheetEntityController {
 	 * Compare two skill grades from two different skillsList from 2 skillsSheets,
 	 * in order to sort a skillsSheets' list
 	 *
-	 * @param elt1      JsonNode containing skillsList of first skillsSheet
-	 * @param elt2      JsonNode containing skillsList of seconde skillsSheet
-	 * @param fieldSort String name of the skill to sort on
+	 * @param skillSheet1 JsonNode containing skillsList of first skillsSheet
+	 * @param skillSheet2 JsonNode containing skillsList of seconde skillsSheet
+	 * @param fieldSort   String name of the skill to sort on
 	 * @return 0 if grades are equal, <0 if grade1 < grade 2, >0 if grade1 > grade2
 	 * @author Camille Schnell
 	 */
-	private int compareSpecificSkillGrades(final JsonNode elt1, final JsonNode elt2, final String fieldSort) {
+	private int compareSpecificSkillGrades(final JsonNode skillSheet1, final JsonNode skillSheet2,
+			final String fieldSort) {
 		// get first grade corresponding to "fieldSort" skill
-		final JsonNode skillsList1 = elt1.get("skillsSheet").get("skillsList");
+		final JsonNode skillsList1 = skillSheet1.get("skillsSheet").get("skillsList");
 		double grade1 = 0.0;
 		for (final JsonNode skill : skillsList1) {
 			if (skill.get("skill").get("name").textValue().equals(fieldSort)) {
@@ -114,7 +125,7 @@ public class SkillsSheetEntityController {
 		}
 
 		// get second grade corresponding to "fieldSort" skill
-		final JsonNode skillsList2 = elt2.get("skillsSheet").get("skillsList");
+		final JsonNode skillsList2 = skillSheet2.get("skillsSheet").get("skillsList");
 		double grade2 = 0.0;
 		for (final JsonNode skill : skillsList2) {
 			if (skill.get("skill").get("name").textValue().equals(fieldSort)) {
@@ -420,9 +431,6 @@ public class SkillsSheetEntityController {
 		}
 
 		// Initialize variables
-		final GsonBuilder builder = new GsonBuilder();
-		final Gson gson = builder.create();
-		final ObjectMapper mapper = new ObjectMapper();
 		final List<String> identitiesList = Arrays.asList(identity.split(","));
 		final List<String> skillsList = Arrays.asList(skills.toLowerCase().split(","));
 		final HashSet<Skill> filteredSkills = new HashSet<Skill>();
@@ -469,11 +477,12 @@ public class SkillsSheetEntityController {
 							// Build a JsonNode with Skills Sheet and Person objects together, if not throw
 							// an Exception
 							try {
-								final JsonNode jResult = mapper.createObjectNode();
+								final JsonNode jResult = this.mapper.createObjectNode();
 								((ObjectNode) jResult).set("skillsSheet",
-										JsonUtils.toJsonNode(gson.toJson(skillSheet)));
+										JsonUtils.toJsonNode(this.gson.toJson(skillSheet)));
 								final Person personToFetch = this.personEntityController.getPersonByMail(personMail);
-								((ObjectNode) jResult).set("person", JsonUtils.toJsonNode(gson.toJson(personToFetch)));
+								((ObjectNode) jResult).set("person",
+										JsonUtils.toJsonNode(this.gson.toJson(personToFetch)));
 								((ObjectNode) jResult).put("fiability",
 										getFiabilityGrade(skillSheet, personToFetch.getOpinion(), skillsList));
 								finalResult.add(jResult);
@@ -488,84 +497,6 @@ public class SkillsSheetEntityController {
 						.compareTo(Double.valueOf(e1.get("skillsSheet").get("fiability").asDouble())))
 				.collect(Collectors.toList());
 	}
-
-//	public List<JsonNode> getSkillsSheetsByIdentityAndSkills2(final String identity, final String skills,
-//			final String columnSorting) {
-//
-//		// If there is no parameters given (e.g. a space for identity and skills
-//		// filter), returns all skills sheets
-//		if (identity.length() == 1 && identity.equals(",") && skills.length() == 1 && skills.equals(",")) {
-//			return sortByField(columnSorting);
-//		}
-//
-//		// Initialize variables
-//		final GsonBuilder builder = new GsonBuilder();
-//		final Gson gson = builder.create();
-//		final ObjectMapper mapper = new ObjectMapper();
-//		final List<String> identitiesList = Arrays.asList(identity.split(","));
-//		final List<String> skillsList = Arrays.asList(skills.toLowerCase().split(","));
-//		final HashSet<Skill> filteredSkills = new HashSet<Skill>();
-//
-//		// Get all Skills in the filter that are in the database
-//		skillsList.stream().forEach(skillFilter -> {
-//			final Skill filterSkill = new Skill();
-//			filterSkill.setName(skillFilter);
-//			filteredSkills.add(filterSkill);
-//		});
-//
-//		final List<JsonNode> finalResult = new ArrayList<JsonNode>();
-//
-//		// First, filter the skills sheets given the Persons object that we get before
-//		// (given their mail)
-//		this.personEntityController.getAllPersons().parallelStream().distinct()
-//				.filter(person -> correspondAllFilter(person, identitiesList)).forEach(person -> {
-//					final SkillsSheet skillsSheetExample = new SkillsSheet();
-//					skillsSheetExample.setMailPersonAttachedTo(person.getMail());
-//
-//					final ExampleMatcher matcher = ExampleMatcher.matching().withIgnoreNullValues()
-//							.withMatcher("mailPersonAttachedTo", GenericPropertyMatchers.exact())
-//							.withIgnorePaths("versionNumber").withIgnorePaths("softSkillAverage");
-//
-//					this.skillsSheetRepository.findAll(Example.of(skillsSheetExample, matcher)).parallelStream()
-//							.filter(skillSheet -> !skillSheet.getMailPersonAttachedTo().contains("deactivated"))
-//							.filter(skillSheet -> skillsMatch(filteredSkills, skillSheet))
-//							// Secondly, filter the skills sheets on the Skills object (the skills sheet
-//							// have to match all the skills given in the filter)
-//							// we filter the stream If there is a total match on the skills in the skills
-//							// sheet
-//							.forEach(skillSheet -> {
-//								final long latestVersionNumber = this.skillsSheetRepository
-//										.findByNameIgnoreCaseAndMailPersonAttachedToIgnoreCaseOrderByVersionNumberDesc(
-//												skillSheet.getName(), skillSheet.getMailPersonAttachedTo())
-//										.get(0).getVersionNumber();
-//								// If the skills is the latest to date, put it in the final result
-//								if (skillSheet.getVersionNumber() == latestVersionNumber) {
-//									final String personMail = skillSheet.getMailPersonAttachedTo();
-//									// Build a JsonNode with Skills Sheet and Person objects together, if not throw
-//									// an Exception
-//									try {
-//										final JsonNode jResult = mapper.createObjectNode();
-//										((ObjectNode) jResult).set("skillsSheet",
-//												JsonUtils.toJsonNode(gson.toJson(skillSheet)));
-//										final Person personToFetch = this.personEntityController
-//												.getPersonByMail(personMail);
-//										((ObjectNode) jResult).set("person",
-//												JsonUtils.toJsonNode(gson.toJson(personToFetch)));
-//										((ObjectNode) jResult).put("fiability",
-//												getFiabilityGrade(skillSheet, personToFetch.getOpinion(), skillsList));
-//										finalResult.add(jResult);
-//									} catch (final IOException e) {
-//										LoggerFactory.getLogger(SkillsSheetEntityController.class)
-//												.error(e.getMessage());
-//									}
-//								}
-//							});
-//				});
-//		return finalResult.parallelStream()
-//				.sorted((e1, e2) -> Double.valueOf(e2.get("skillsSheet").get("fiability").asDouble())
-//						.compareTo(Double.valueOf(e1.get("skillsSheet").get("fiability").asDouble())))
-//				.collect(Collectors.toList());
-//	}
 
 	/**
 	 * Get a List of Skills Sheet (at the latest version) given a mail of a person
