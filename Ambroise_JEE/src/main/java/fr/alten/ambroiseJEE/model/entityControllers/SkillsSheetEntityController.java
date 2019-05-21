@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -440,7 +439,6 @@ public class SkillsSheetEntityController {
 			filteredSkills.add(filterSkill);
 		});
 
-		final Set<SkillsSheet> result = new HashSet<SkillsSheet>();
 		final List<JsonNode> finalResult = new ArrayList<JsonNode>();
 
 		// First, filter the skills sheets given the Persons object that we get before
@@ -452,46 +450,122 @@ public class SkillsSheetEntityController {
 			final ExampleMatcher matcher = ExampleMatcher.matching().withIgnoreNullValues()
 					.withMatcher("mailPersonAttachedTo", GenericPropertyMatchers.exact())
 					.withIgnorePaths("versionNumber").withIgnorePaths("softSkillAverage");
-			final List<SkillsSheet> personSkillSheet = this.skillsSheetRepository
-					.findAll(Example.of(skillsSheetExample, matcher)).parallelStream()
+
+			this.skillsSheetRepository.findAll(Example.of(skillsSheetExample, matcher)).parallelStream()
 					.filter(skillSheet -> !skillSheet.getMailPersonAttachedTo().contains("deactivated"))
-					.collect(Collectors.toList());
-			result.addAll(personSkillSheet);
+					.filter(skillSheet -> skillsMatch(filteredSkills, skillSheet))
+					// Secondly, filter the skills sheets on the Skills object (the skills sheet
+					// have to match all the skills given in the filter)
+					// we filter the stream If there is a total match on the skills in the skills
+					// sheet
+					.forEach(skillSheet -> {
+						final long latestVersionNumber = this.skillsSheetRepository
+								.findByNameIgnoreCaseAndMailPersonAttachedToIgnoreCaseOrderByVersionNumberDesc(
+										skillSheet.getName(), skillSheet.getMailPersonAttachedTo())
+								.get(0).getVersionNumber();
+						// If the skills is the latest to date, put it in the final result
+						if (skillSheet.getVersionNumber() == latestVersionNumber) {
+							final String personMail = skillSheet.getMailPersonAttachedTo();
+							// Build a JsonNode with Skills Sheet and Person objects together, if not throw
+							// an Exception
+							try {
+								final JsonNode jResult = mapper.createObjectNode();
+								((ObjectNode) jResult).set("skillsSheet",
+										JsonUtils.toJsonNode(gson.toJson(skillSheet)));
+								final Person personToFetch = this.personEntityController.getPersonByMail(personMail);
+								((ObjectNode) jResult).set("person", JsonUtils.toJsonNode(gson.toJson(personToFetch)));
+								((ObjectNode) jResult).put("fiability",
+										getFiabilityGrade(skillSheet, personToFetch.getOpinion(), skillsList));
+								finalResult.add(jResult);
+							} catch (final IOException e) {
+								LoggerFactory.getLogger(SkillsSheetEntityController.class).error(e.getMessage());
+							}
+						}
+					});
 		});
-
-		// Secondly, filter the skills sheets on the Skills object (the skills sheet
-		// have to match all the skills given in the filter)
-		// we filter the stream If there is a total match on the skills in the skills
-		// sheet
-		result.parallelStream().filter(skillSheet -> skillsMatch(filteredSkills, skillSheet)).forEach(skillSheet -> {
-			final long latestVersionNumber = this.skillsSheetRepository
-					.findByNameIgnoreCaseAndMailPersonAttachedToIgnoreCaseOrderByVersionNumberDesc(skillSheet.getName(),
-							skillSheet.getMailPersonAttachedTo())
-					.get(0).getVersionNumber();
-			// If the skills is the latest to date, put it in the final result
-			if (skillSheet.getVersionNumber() == latestVersionNumber) {
-				final String personMail = skillSheet.getMailPersonAttachedTo();
-				// Build a JsonNode with Skills Sheet and Person objects together, if not throw
-				// an Exception
-				try {
-					final JsonNode jResult = mapper.createObjectNode();
-					((ObjectNode) jResult).set("skillsSheet", JsonUtils.toJsonNode(gson.toJson(skillSheet)));
-					final Person person = this.personEntityController.getPersonByMail(personMail);
-					((ObjectNode) jResult).set("person", JsonUtils.toJsonNode(gson.toJson(person)));
-					((ObjectNode) jResult).put("fiability",
-							getFiabilityGrade(skillSheet, person.getOpinion(), skillsList));
-					finalResult.add(jResult);
-				} catch (final IOException e) {
-					LoggerFactory.getLogger(SkillsSheetEntityController.class).error(e.getMessage());
-				}
-			}
-		});
-
 		return finalResult.parallelStream()
 				.sorted((e1, e2) -> Double.valueOf(e2.get("skillsSheet").get("fiability").asDouble())
 						.compareTo(Double.valueOf(e1.get("skillsSheet").get("fiability").asDouble())))
 				.collect(Collectors.toList());
 	}
+
+//	public List<JsonNode> getSkillsSheetsByIdentityAndSkills2(final String identity, final String skills,
+//			final String columnSorting) {
+//
+//		// If there is no parameters given (e.g. a space for identity and skills
+//		// filter), returns all skills sheets
+//		if (identity.length() == 1 && identity.equals(",") && skills.length() == 1 && skills.equals(",")) {
+//			return sortByField(columnSorting);
+//		}
+//
+//		// Initialize variables
+//		final GsonBuilder builder = new GsonBuilder();
+//		final Gson gson = builder.create();
+//		final ObjectMapper mapper = new ObjectMapper();
+//		final List<String> identitiesList = Arrays.asList(identity.split(","));
+//		final List<String> skillsList = Arrays.asList(skills.toLowerCase().split(","));
+//		final HashSet<Skill> filteredSkills = new HashSet<Skill>();
+//
+//		// Get all Skills in the filter that are in the database
+//		skillsList.stream().forEach(skillFilter -> {
+//			final Skill filterSkill = new Skill();
+//			filterSkill.setName(skillFilter);
+//			filteredSkills.add(filterSkill);
+//		});
+//
+//		final List<JsonNode> finalResult = new ArrayList<JsonNode>();
+//
+//		// First, filter the skills sheets given the Persons object that we get before
+//		// (given their mail)
+//		this.personEntityController.getAllPersons().parallelStream().distinct()
+//				.filter(person -> correspondAllFilter(person, identitiesList)).forEach(person -> {
+//					final SkillsSheet skillsSheetExample = new SkillsSheet();
+//					skillsSheetExample.setMailPersonAttachedTo(person.getMail());
+//
+//					final ExampleMatcher matcher = ExampleMatcher.matching().withIgnoreNullValues()
+//							.withMatcher("mailPersonAttachedTo", GenericPropertyMatchers.exact())
+//							.withIgnorePaths("versionNumber").withIgnorePaths("softSkillAverage");
+//
+//					this.skillsSheetRepository.findAll(Example.of(skillsSheetExample, matcher)).parallelStream()
+//							.filter(skillSheet -> !skillSheet.getMailPersonAttachedTo().contains("deactivated"))
+//							.filter(skillSheet -> skillsMatch(filteredSkills, skillSheet))
+//							// Secondly, filter the skills sheets on the Skills object (the skills sheet
+//							// have to match all the skills given in the filter)
+//							// we filter the stream If there is a total match on the skills in the skills
+//							// sheet
+//							.forEach(skillSheet -> {
+//								final long latestVersionNumber = this.skillsSheetRepository
+//										.findByNameIgnoreCaseAndMailPersonAttachedToIgnoreCaseOrderByVersionNumberDesc(
+//												skillSheet.getName(), skillSheet.getMailPersonAttachedTo())
+//										.get(0).getVersionNumber();
+//								// If the skills is the latest to date, put it in the final result
+//								if (skillSheet.getVersionNumber() == latestVersionNumber) {
+//									final String personMail = skillSheet.getMailPersonAttachedTo();
+//									// Build a JsonNode with Skills Sheet and Person objects together, if not throw
+//									// an Exception
+//									try {
+//										final JsonNode jResult = mapper.createObjectNode();
+//										((ObjectNode) jResult).set("skillsSheet",
+//												JsonUtils.toJsonNode(gson.toJson(skillSheet)));
+//										final Person personToFetch = this.personEntityController
+//												.getPersonByMail(personMail);
+//										((ObjectNode) jResult).set("person",
+//												JsonUtils.toJsonNode(gson.toJson(personToFetch)));
+//										((ObjectNode) jResult).put("fiability",
+//												getFiabilityGrade(skillSheet, personToFetch.getOpinion(), skillsList));
+//										finalResult.add(jResult);
+//									} catch (final IOException e) {
+//										LoggerFactory.getLogger(SkillsSheetEntityController.class)
+//												.error(e.getMessage());
+//									}
+//								}
+//							});
+//				});
+//		return finalResult.parallelStream()
+//				.sorted((e1, e2) -> Double.valueOf(e2.get("skillsSheet").get("fiability").asDouble())
+//						.compareTo(Double.valueOf(e1.get("skillsSheet").get("fiability").asDouble())))
+//				.collect(Collectors.toList());
+//	}
 
 	/**
 	 * Get a List of Skills Sheet (at the latest version) given a mail of a person
@@ -506,7 +580,6 @@ public class SkillsSheetEntityController {
 		final List<SkillsSheet> skillsSheetList = this.skillsSheetRepository
 				.findByMailPersonAttachedToIgnoreCase(mailPerson);
 		for (final SkillsSheet skillsSheet : skillsSheetList) {
-//			skillsSheetList
 			final long latestVersionNumber = this.skillsSheetRepository
 					.findByNameIgnoreCaseAndMailPersonAttachedToIgnoreCaseOrderByVersionNumberDesc(
 							skillsSheet.getName(), skillsSheet.getMailPersonAttachedTo())
