@@ -286,9 +286,11 @@ public class SkillsSheetEntityController {
 				Skill skill = null;
 				
 				skill = this.skillEntityController.getSkill(softSkillName);
-					
-				allSkills.add(new SkillGraduated(skill, 1));
 				
+				if(skill.isSoft()) {
+					allSkills.add(new SkillGraduated(skill, 1));
+				}
+
 			}
 		}
 		return allSkills;
