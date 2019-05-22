@@ -69,7 +69,7 @@ public class PersonEntityController {
 	 *         is created
 	 * @author Lucas Royackkers, Kylian Gehier
 	 */
-	public HttpException createPerson(final JsonNode jPerson, final PersonRole type, String personInChargeMail) {
+	public HttpException createPerson(final JsonNode jPerson, final PersonRole type, final String personInChargeMail) {
 		try {
 			// if the mail don't match with the mail pattern
 			if (!validateMail(jPerson.get("mail").textValue())) {
@@ -93,8 +93,8 @@ public class PersonEntityController {
 			try {
 				diploma = this.diplomaEntityController.getDiplomaByNameAndYearOfResult(highestDiploma,
 						highestDiplomaYear);
-			} catch (ResourceNotFoundException e) {
-				diploma = (Diploma) this.diplomaEntityController.createDiploma(highestDiploma, highestDiplomaYear);
+			} catch (final ResourceNotFoundException e) {
+				diploma = this.diplomaEntityController.createDiploma(highestDiploma, highestDiplomaYear);
 			}
 
 			newPerson.setHighestDiploma(diploma.getName());
@@ -104,8 +104,8 @@ public class PersonEntityController {
 			Job job;
 			try {
 				job = this.jobEntityController.getJob(jobName);
-			} catch (ResourceNotFoundException e) {
-				job = (Job) this.jobEntityController.createJob(jobName);
+			} catch (final ResourceNotFoundException e) {
+				job = this.jobEntityController.createJob(jobName);
 			}
 			newPerson.setJob(job.getTitle());
 
@@ -116,15 +116,15 @@ public class PersonEntityController {
 				try {
 					employer = this.employerEntityController.getEmployer(employerName);
 
-				} catch (ResourceNotFoundException e) {
-					employer = (Employer) this.employerEntityController.createEmployer(employerName);
+				} catch (final ResourceNotFoundException e) {
+					employer = this.employerEntityController.createEmployer(employerName);
 				}
 				newPerson.setEmployer(employer.getName());
 
 				if (jPerson.has("availability")) {
-					JsonNode jAvailability = jPerson.get("availability");
-					newPerson.setAvailability(new Availability(jAvailability.get("initDate").asLong(), jAvailability.get("finalDate").asLong(),
-							jAvailability.get("duration").asInt(),
+					final JsonNode jAvailability = jPerson.get("availability");
+					newPerson.setAvailability(new Availability(jAvailability.get("initDate").asLong(),
+							jAvailability.get("finalDate").asLong(), jAvailability.get("duration").asInt(),
 							ChronoUnit.valueOf(jAvailability.get("durationType").textValue())));
 				}
 
@@ -142,12 +142,46 @@ public class PersonEntityController {
 	}
 
 	/**
-	 * @param jPerson
-	 * @return
-	 * @author Andy Chabalier
+	 * Method to delete a Person. Person type will be defined by business
+	 * controllers ahead of this object.
+	 *
+	 * @param jPerson contains at least the person's name
+	 * @param role    the role of person
+	 * @return the @see {@link HttpException} corresponding to the status of the
+	 *         request ({@link ResourceNotFoundException} if the resource isn't in
+	 *         the database and {@link OkException} if the person is deleted
+	 * @author Lucas Royackkers
 	 */
-	public boolean validateMail(String mail) {
-		return MailUtils.validateMail(mail);
+	public HttpException deletePerson(final String mail) {
+		try {
+			final Person person = getPersonByMail(mail);
+
+			switch (person.getRole()) {
+			case APPLICANT:
+				person.setSurname("Deactivated");
+				person.setName("Deactivated");
+				break;
+			case CONSULTANT:
+				person.setSurname("Demissionaire");
+				person.setName("Demissionaire");
+				break;
+			default:
+				throw new UnprocessableEntityException();
+			}
+			person.setMail("deactivated" + System.currentTimeMillis() + "@deactivated.com");
+			person.setEmployer(null);
+			person.setRole(PersonRole.DEMISSIONAIRE);
+			person.setMonthlyWage(0);
+			person.setJob(null);
+			person.setOpinion(null);
+			updatePersonMailOnSkillSheetOnCascade(mail, person.getMail());
+			this.personRepository.save(person);
+		} catch (final ResourceNotFoundException rnfe) {
+			return rnfe;
+		} catch (final DuplicateKeyException e) {
+			return new ConflictException();
+		}
+		return new OkException();
 	}
 
 	/**
@@ -163,8 +197,8 @@ public class PersonEntityController {
 	 */
 	public HttpException deletePersonByRole(final JsonNode jPerson, final PersonRole role) {
 		try {
-			String mail = jPerson.get("mail").textValue();
-			Person person = this.getPersonByMailAndType(mail, role);
+			final String mail = jPerson.get("mail").textValue();
+			final Person person = getPersonByMailAndType(mail, role);
 
 			switch (role) {
 			case APPLICANT:
@@ -196,61 +230,13 @@ public class PersonEntityController {
 	}
 
 	/**
-	 * update associated skillSheet on cascade
-	 * 
-	 * @param oldMail
-	 * @param newMail
-	 * @author Andy Chabalier
-	 */
-	private void updatePersonMailOnSkillSheetOnCascade(String oldMail, String newMail) {
-		List<SkillsSheet> skillSheets = this.skillsSheetRepository.findByMailPersonAttachedToIgnoreCase(oldMail);
-		skillSheets.parallelStream().forEach(skillSheet -> {
-			skillSheet.setMailPersonAttachedTo(newMail);
-		});
-		this.skillsSheetRepository.saveAll(skillSheets);
-	}
-
-	/**
-	 * Method to delete a Person. Person type will be defined by business
-	 * controllers ahead of this object.
+	 * Get a List of all Persons in the database
 	 *
-	 * @param jPerson contains at least the person's name
-	 * @param role    the role of person
-	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link ResourceNotFoundException} if the resource isn't in
-	 *         the database and {@link OkException} if the person is deleted
+	 * @return the list of all persons
 	 * @author Lucas Royackkers
 	 */
-	public HttpException deletePerson(String mail) {
-		try {
-			Person person = this.getPersonByMail(mail);
-
-			switch (person.getRole()) {
-			case APPLICANT:
-				person.setSurname("Deactivated");
-				person.setName("Deactivated");
-				break;
-			case CONSULTANT:
-				person.setSurname("Demissionaire");
-				person.setName("Demissionaire");
-				break;
-			default:
-				throw new UnprocessableEntityException();
-			}
-			person.setMail("deactivated" + System.currentTimeMillis() + "@deactivated.com");
-			person.setEmployer(null);
-			person.setRole(PersonRole.DEMISSIONAIRE);
-			person.setMonthlyWage(0);
-			person.setJob(null);
-			person.setOpinion(null);
-			updatePersonMailOnSkillSheetOnCascade(mail, person.getMail());
-			this.personRepository.save(person);
-		} catch (final ResourceNotFoundException rnfe) {
-			return rnfe;
-		} catch (final DuplicateKeyException e) {
-			return new ConflictException();
-		}
-		return new OkException();
+	public List<Person> getAllPersons() {
+		return this.personRepository.findAll();
 	}
 
 	/**
@@ -336,13 +322,48 @@ public class PersonEntityController {
 	}
 
 	/**
-	 * Get a List of all Persons in the database
-	 * 
-	 * @return the list of all persons
-	 * @author Lucas Royackkers
+	 *
+	 * @param jOnTimeAvailability
+	 * @return
+	 * @author Kylian Gehier
 	 */
-	public List<Person> getAllPersons() {
-		return this.personRepository.findAll();
+	public boolean hasOnDateAvailabilityFields(final JsonNode jOnTimeAvailability)
+			throws ToManyFieldsException, MissingFieldException {
+		final Long a = jOnTimeAvailability.get("finalDate").asLong();
+		if (a != 0) {
+			final int b = jOnTimeAvailability.get("duration").asInt();
+			final String c = jOnTimeAvailability.get("durationType").textValue();
+			if (b == 0 && c == "") {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 *
+	 * @param jOnTimeAvailability
+	 * @return
+	 * @author Kylian Gehier
+	 */
+	public boolean hasOnTimeAvailabilityFields(final JsonNode jOnTimeAvailability)
+			throws ToManyFieldsException, MissingFieldException {
+		final Long c = jOnTimeAvailability.get("finalDate").asLong();
+		if (c == 0) {
+			final int a = jOnTimeAvailability.get("duration").asInt();
+			final String b = jOnTimeAvailability.get("durationType").textValue();
+			final boolean test = b.equals("");
+			if (a >= 0 && !test) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
 	}
 
 	/**
@@ -358,10 +379,10 @@ public class PersonEntityController {
 	 *         the database and {@link OkException} if the person is updated
 	 * @author Lucas Royackkers, Kylian Gehier
 	 */
-	public HttpException updatePerson(final JsonNode jPerson, final PersonRole role, String personInChargeMail) {
+	public HttpException updatePerson(final JsonNode jPerson, final PersonRole role, final String personInChargeMail) {
 		try {
-			String oldMail = jPerson.get("mail").textValue();
-			final Person person = this.getPersonByMailAndType(oldMail, role);
+			final String oldMail = jPerson.get("mail").textValue();
+			final Person person = getPersonByMailAndType(oldMail, role);
 
 			person.setSurname(jPerson.get("surname").textValue());
 			person.setName(jPerson.get("name").textValue());
@@ -379,8 +400,8 @@ public class PersonEntityController {
 			try {
 				diploma = this.diplomaEntityController.getDiplomaByNameAndYearOfResult(highestDiploma,
 						highestDiplomaYear);
-			} catch (ResourceNotFoundException e) {
-				diploma = (Diploma) this.diplomaEntityController.createDiploma(highestDiploma, highestDiplomaYear);
+			} catch (final ResourceNotFoundException e) {
+				diploma = this.diplomaEntityController.createDiploma(highestDiploma, highestDiplomaYear);
 			}
 
 			person.setHighestDiploma(diploma.getName());
@@ -393,15 +414,15 @@ public class PersonEntityController {
 				try {
 					employer = this.employerEntityController.getEmployer(employerName);
 
-				} catch (ResourceNotFoundException e) {
-					employer = (Employer) this.employerEntityController.createEmployer(employerName);
+				} catch (final ResourceNotFoundException e) {
+					employer = this.employerEntityController.createEmployer(employerName);
 				}
 				person.setEmployer(employer.getName());
 
 				if (jPerson.has("availability")) {
-					JsonNode jAvailability = jPerson.get("availability");
-					person.setAvailability(new Availability(jAvailability.get("initDate").asLong(), jAvailability.get("finalDate").asLong(),
-							jAvailability.get("duration").asInt(),
+					final JsonNode jAvailability = jPerson.get("availability");
+					person.setAvailability(new Availability(jAvailability.get("initDate").asLong(),
+							jAvailability.get("finalDate").asLong(), jAvailability.get("duration").asInt(),
 							ChronoUnit.valueOf(jAvailability.get("durationType").textValue())));
 				}
 
@@ -419,44 +440,27 @@ public class PersonEntityController {
 	}
 
 	/**
-	 * 
-	 * @param jOnTimeAvailability
-	 * @return
-	 * @author Kylian Gehier
+	 * update associated skillSheet on cascade
+	 *
+	 * @param oldMail
+	 * @param newMail
+	 * @author Andy Chabalier
 	 */
-	public boolean hasOnTimeAvailabilityFields(JsonNode jOnTimeAvailability)
-			throws ToManyFieldsException, MissingFieldException {
-		Long c = jOnTimeAvailability.get("finalDate").asLong();
-		if (c == 0) {
-			int a = jOnTimeAvailability.get("duration").asInt();
-			String b = jOnTimeAvailability.get("durationType").textValue();
-			boolean test = b.equals("");
-			if (a >= 0 && !test) {
-				return true;
-			} else
-				return false;
-		} else
-			return false;
+	private void updatePersonMailOnSkillSheetOnCascade(final String oldMail, final String newMail) {
+		final List<SkillsSheet> skillSheets = this.skillsSheetRepository.findByMailPersonAttachedToIgnoreCase(oldMail);
+		skillSheets.parallelStream().forEach(skillSheet -> {
+			skillSheet.setMailPersonAttachedTo(newMail);
+		});
+		this.skillsSheetRepository.saveAll(skillSheets);
 	}
 
 	/**
-	 * 
-	 * @param jOnTimeAvailability
+	 * @param jPerson
 	 * @return
-	 * @author Kylian Gehier
+	 * @author Andy Chabalier
 	 */
-	public boolean hasOnDateAvailabilityFields(JsonNode jOnTimeAvailability)
-			throws ToManyFieldsException, MissingFieldException {
-		Long a = jOnTimeAvailability.get("finalDate").asLong();
-		if (a != 0) {
-			int b = jOnTimeAvailability.get("duration").asInt();
-			String c = jOnTimeAvailability.get("durationType").textValue();
-			if (b == 0 && c == "") {
-				return true;
-			} else
-				return false;
-		} else
-			return false;
+	public boolean validateMail(final String mail) {
+		return MailUtils.validateMail(mail);
 	}
 
 }

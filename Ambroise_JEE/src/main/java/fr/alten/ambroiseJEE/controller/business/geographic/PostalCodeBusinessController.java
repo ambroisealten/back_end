@@ -29,7 +29,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
  */
 @Service
 public class PostalCodeBusinessController {
-	
+
 	private final UserRoleLists roles = UserRoleLists.getInstance();
 
 	@Autowired
@@ -45,9 +45,7 @@ public class PostalCodeBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException createPostalCode(final JsonNode jPostalCode, final UserRole role) {
-		return isAdmin(role)
-				? this.postalCodeEntityController.createPostalCode(jPostalCode)
-				: new ForbiddenException();
+		return isAdmin(role) ? this.postalCodeEntityController.createPostalCode(jPostalCode) : new ForbiddenException();
 	}
 
 	/**
@@ -61,9 +59,7 @@ public class PostalCodeBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException deletePostalCode(final JsonNode params, final UserRole role) {
-		return isAdmin(role)
-				? this.postalCodeEntityController.deletePostalCode(params)
-				: new ForbiddenException();
+		return isAdmin(role) ? this.postalCodeEntityController.deletePostalCode(params) : new ForbiddenException();
 	}
 
 	/**
@@ -91,6 +87,10 @@ public class PostalCodeBusinessController {
 		throw new ForbiddenException();
 	}
 
+	public boolean isAdmin(final UserRole role) {
+		return this.roles.isAdmin(role);
+	}
+
 	/**
 	 * Method to delegate postal code update
 	 *
@@ -103,12 +103,6 @@ public class PostalCodeBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException updatePostalCode(final JsonNode jPostalCode, final UserRole role) {
-		return isAdmin(role)
-				? this.postalCodeEntityController.updatePostalCode(jPostalCode)
-				: new ForbiddenException();
-	}
-	
-	public boolean isAdmin(final UserRole role) {
-		return this.roles.isAdmin(role);
+		return isAdmin(role) ? this.postalCodeEntityController.updatePostalCode(jPostalCode) : new ForbiddenException();
 	}
 }

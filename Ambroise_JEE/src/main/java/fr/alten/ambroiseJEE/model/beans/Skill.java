@@ -40,6 +40,10 @@ public class Skill implements Serializable {
 		return this.name;
 	}
 
+	public boolean isSoft() {
+		return this.isSoft != null;
+	}
+
 	public void set_id(final ObjectId _id) {
 		this._id = _id;
 	}
@@ -50,9 +54,5 @@ public class Skill implements Serializable {
 
 	public void setName(final String name) {
 		this.name = name;
-	}
-	
-	public boolean isSoft() {
-		return this.isSoft != null;
 	}
 }

@@ -232,6 +232,22 @@ public class SkillsSheetEntityController {
 	}
 
 	/**
+	 * @param columnSorting
+	 * @return
+	 * @author Andy Chabalier
+	 */
+	public List<JsonNode> getAllAndSortByField(final String columnSorting) {
+		if (columnSorting.equals(",")) {
+			return getSkillsSheets();
+		} else {
+			final String fieldSort = columnSorting.split(",")[0];
+			// -1 is call to reverse order, 1 to keep natural order
+			final int order = columnSorting.split(",")[1].equals("asc") ? 1 : -1;
+			return getSkillsSheetsWithFieldSorting(getSkillsSheets(), fieldSort, order);
+		}
+	}
+
+	/**
 	 * Get a List of Skills object given a JsonNode containing a List of Skills
 	 * object
 	 *
@@ -674,22 +690,6 @@ public class SkillsSheetEntityController {
 	private int softSkillAverageComparator(final JsonNode e1, final JsonNode e2) {
 		return Double.valueOf(e1.get("skillsSheet").get("softSkillAverage").asDouble())
 				.compareTo(Double.valueOf(e2.get("skillsSheet").get("softSkillAverage").asDouble()));
-	}
-
-	/**
-	 * @param columnSorting
-	 * @return
-	 * @author Andy Chabalier
-	 */
-	public List<JsonNode> getAllAndSortByField(final String columnSorting) {
-		if (columnSorting.equals(",")) {
-			return getSkillsSheets();
-		} else {
-			final String fieldSort = columnSorting.split(",")[0];
-			// -1 is call to reverse order, 1 to keep natural order
-			final int order = columnSorting.split(",")[1].equals("asc") ? 1 : -1;
-			return getSkillsSheetsWithFieldSorting(getSkillsSheets(), fieldSort, order);
-		}
 	}
 
 	/**

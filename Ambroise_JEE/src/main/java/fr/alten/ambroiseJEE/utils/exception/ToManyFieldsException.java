@@ -6,12 +6,12 @@ package fr.alten.ambroiseJEE.utils.exception;
  *
  */
 
-public class ToManyFieldsException extends Exception{
+public class ToManyFieldsException extends Exception {
 
 	private static final long serialVersionUID = -8882592091801475409L;
 
 	public ToManyFieldsException() {
 		super();
 	}
-	
+
 }

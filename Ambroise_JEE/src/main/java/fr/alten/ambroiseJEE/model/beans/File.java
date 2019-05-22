@@ -33,12 +33,12 @@ public class File implements Serializable {
 		return this.dateOfCreation;
 	}
 
-	public String getExtension() {
-		return this.extension;
-	}
-
 	public String getDisplayName() {
 		return this.displayName;
+	}
+
+	public String getExtension() {
+		return this.extension;
 	}
 
 	public String getPath() {
@@ -53,12 +53,12 @@ public class File implements Serializable {
 		this.dateOfCreation = dateOfAddition;
 	}
 
-	public void setExtension(final String extension) {
-		this.extension = extension;
-	}
-
 	public void setDisplayName(final String name) {
 		this.displayName = name;
+	}
+
+	public void setExtension(final String extension) {
+		this.extension = extension;
 	}
 
 	public void setPath(final String uri) {

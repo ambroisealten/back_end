@@ -55,7 +55,7 @@ public class RegionEntityController {
 
 	/**
 	 * Method to delete a region
-	 * 
+	 *
 	 * @param jRegion JsonNode with all region parameters
 	 * @return {@link HttpException} corresponding to the status of the request
 	 *         ({@link ResourceNotFoundException} if the resource is not found and
@@ -64,7 +64,8 @@ public class RegionEntityController {
 	 */
 	public HttpException deleteRegion(final JsonNode jRegion) {
 		try {
-			final Region region = this.regionRepository.findByCode(jRegion.get("code").textValue()).orElseThrow(ResourceNotFoundException::new);
+			final Region region = this.regionRepository.findByCode(jRegion.get("code").textValue())
+					.orElseThrow(ResourceNotFoundException::new);
 			region.setNom("deactivated" + System.currentTimeMillis());
 			this.regionRepository.save(region);
 		} catch (final ResourceNotFoundException rnfe) {
@@ -102,7 +103,8 @@ public class RegionEntityController {
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ResourceNotFoundException} if the resource is not
 	 *         found, {@link ConflictException} if a duplicate unique field is
-	 *         trying to be saved by updating and {@link OkException} if the region is updated
+	 *         trying to be saved by updating and {@link OkException} if the region
+	 *         is updated
 	 * @author Andy Chabalier
 	 * @author Camille Schnell
 	 */

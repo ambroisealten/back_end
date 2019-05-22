@@ -13,13 +13,13 @@ import fr.alten.ambroiseJEE.model.beans.Job;
  */
 public interface JobRepository extends MongoRepository<Job, Long> {
 
+	Optional<Job> findBy_id(ObjectId objectId);
+
 	/**
 	 * @param name the job's title
 	 * @return An Optional with the corresponding job or not.
 	 * @author Lucas Royackkers
 	 */
 	Optional<Job> findByTitle(String title);
-
-	Optional<Job> findBy_id(ObjectId objectId);
 
 }

@@ -17,44 +17,44 @@ public /* abstract */ class Availability {
 	private int duration;
 	private ChronoUnit durationType;
 
-	public Availability(long initDate, @Nullable long finalDate, @Nullable int duration, @Nullable ChronoUnit durationType) {
+	public Availability(final long initDate, @Nullable final long finalDate, @Nullable final int duration,
+			@Nullable final ChronoUnit durationType) {
 		this.initDate = initDate;
 		this.finalDate = finalDate;
 		this.duration = duration;
 		this.durationType = durationType;
-	}
-
-
-	public long getInitDate() {
-		return initDate;
-	}
-
-	public void setInitDate(long initDate) {
-		this.initDate = initDate;
-	}
-
-	public long getFinalDate() {
-		return finalDate;
-	}
-
-	public void setFinalDate(long finalDate) {
-		this.finalDate = finalDate;
 	}
 
 	public int getDuration() {
-		return duration;
-	}
-
-	public void setDuration(int duration) {
-		this.duration = duration;
+		return this.duration;
 	}
 
 	public ChronoUnit getDurationType() {
-		return durationType;
+		return this.durationType;
 	}
 
-	public void setDurationType(ChronoUnit durationType) {
+	public long getFinalDate() {
+		return this.finalDate;
+	}
+
+	public long getInitDate() {
+		return this.initDate;
+	}
+
+	public void setDuration(final int duration) {
+		this.duration = duration;
+	}
+
+	public void setDurationType(final ChronoUnit durationType) {
 		this.durationType = durationType;
+	}
+
+	public void setFinalDate(final long finalDate) {
+		this.finalDate = finalDate;
+	}
+
+	public void setInitDate(final long initDate) {
+		this.initDate = initDate;
 	}
 
 }

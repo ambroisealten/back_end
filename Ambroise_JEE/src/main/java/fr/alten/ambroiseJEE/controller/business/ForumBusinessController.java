@@ -30,16 +30,8 @@ public class ForumBusinessController {
 
 	@Autowired
 	private ForumEntityController forumEntityController;
-	
-	private UserRoleLists roles = UserRoleLists.getInstance();
-	
-	public boolean isAdmin(UserRole role) {
-		return roles.isAdmin(role);
-	}
-	
-	public boolean isNot_ConsultantOrDeactivated(UserRole role) {
-		return roles.isNot_ConsultantOrDeactivated(role);
-	}
+
+	private final UserRoleLists roles = UserRoleLists.getInstance();
 
 	/**
 	 * Method to delegate forum creation
@@ -52,7 +44,8 @@ public class ForumBusinessController {
 	 * @author MAQUINGHEN MAXIME
 	 */
 	public HttpException createForum(final JsonNode jForum, final UserRole role) {
-		return this.isNot_ConsultantOrDeactivated(role) ? this.forumEntityController.createForum(jForum) : new ForbiddenException();
+		return isNot_ConsultantOrDeactivated(role) ? this.forumEntityController.createForum(jForum)
+				: new ForbiddenException();
 	}
 
 	/**
@@ -66,8 +59,9 @@ public class ForumBusinessController {
 	 * @author MAQUINGHEN MAXIME
 	 */
 	public HttpException deleteForum(final JsonNode params, final UserRole role) {
-		//TODO isAdmin ou isNot_ConsultantOrDeactivated : à redefinir lorsque le front sera fait
-		return this.isAdmin(role) ? this.forumEntityController.deleteForum(params) : new ForbiddenException();
+		// TODO isAdmin ou isNot_ConsultantOrDeactivated : à redefinir lorsque le front
+		// sera fait
+		return isAdmin(role) ? this.forumEntityController.deleteForum(params) : new ForbiddenException();
 	}
 
 	/**
@@ -82,7 +76,7 @@ public class ForumBusinessController {
 	 * @author MAQUINGHEN MAXIME
 	 */
 	public Forum getForum(final String name, final String date, final String place, final UserRole role) {
-		if (this.isNot_ConsultantOrDeactivated(role)) {
+		if (isNot_ConsultantOrDeactivated(role)) {
 			return this.forumEntityController.getForum(name, date, place);
 		}
 		throw new ForbiddenException();
@@ -97,10 +91,18 @@ public class ForumBusinessController {
 	 * @author MAQUINGHEN MAXIME
 	 */
 	public List<Forum> getForums(final UserRole role) {
-		if (this.isNot_ConsultantOrDeactivated(role)) {
+		if (isNot_ConsultantOrDeactivated(role)) {
 			return this.forumEntityController.getForums();
 		}
 		throw new ForbiddenException();
+	}
+
+	public boolean isAdmin(final UserRole role) {
+		return this.roles.isAdmin(role);
+	}
+
+	public boolean isNot_ConsultantOrDeactivated(final UserRole role) {
+		return this.roles.isNot_ConsultantOrDeactivated(role);
 	}
 
 	/**
@@ -113,10 +115,9 @@ public class ForumBusinessController {
 	 * @author MAQUINGHEN MAXIME
 	 */
 	public HttpException updateForum(final JsonNode params, final UserRole role) {
-		//TODO isAdmin ou isNot_ConsultantOrDeactivated : à redefinir lorsque le front sera fait
-		return this.isAdmin(role)
-				? this.forumEntityController.updateForum(params)
-				: new ForbiddenException();
+		// TODO isAdmin ou isNot_ConsultantOrDeactivated : à redefinir lorsque le front
+		// sera fait
+		return isAdmin(role) ? this.forumEntityController.updateForum(params) : new ForbiddenException();
 	}
 
 }

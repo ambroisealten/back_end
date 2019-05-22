@@ -88,15 +88,6 @@ public class UserEntityController {
 	}
 
 	/**
-	 * @param mail
-	 * @return
-	 * @author Andy Chabalier
-	 */
-	public boolean validateMail(final String mail) {
-		return MailUtils.validateMail(mail);
-	}
-
-	/**
 	 *
 	 * @param mail the user mail to fetch
 	 * @return {@link HttpException} corresponding to the status of the request
@@ -240,16 +231,25 @@ public class UserEntityController {
 
 	/**
 	 * update associated skillSheet on cascade
-	 * 
+	 *
 	 * @param oldMail
 	 * @param newMail
 	 * @author Andy Chabalier
 	 */
-	private void updateUserMailOnSkillSheetOnCascade(String oldMail, String newMail) {
-		List<SkillsSheet> skillSheets = this.skillsSheetRepository.findByMailVersionAuthorIgnoreCase(oldMail);
+	private void updateUserMailOnSkillSheetOnCascade(final String oldMail, final String newMail) {
+		final List<SkillsSheet> skillSheets = this.skillsSheetRepository.findByMailVersionAuthorIgnoreCase(oldMail);
 		skillSheets.parallelStream().forEach(skillSheet -> {
 			skillSheet.setMailVersionAuthor(newMail);
 		});
 		this.skillsSheetRepository.saveAll(skillSheets);
+	}
+
+	/**
+	 * @param mail
+	 * @return
+	 * @author Andy Chabalier
+	 */
+	public boolean validateMail(final String mail) {
+		return MailUtils.validateMail(mail);
 	}
 }

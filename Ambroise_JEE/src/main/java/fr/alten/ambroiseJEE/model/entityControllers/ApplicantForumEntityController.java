@@ -111,10 +111,10 @@ public class ApplicantForumEntityController {
 			final String highestDiplomaYear = jApplicant.get("highestDiplomaYear").textValue();
 			Diploma diploma;
 			try {
-				diploma = this.diplomaEntityController
-						.getDiplomaByNameAndYearOfResult(highestDiploma, highestDiplomaYear);
-			} catch (ResourceNotFoundException e) {
-				diploma = (Diploma) this.diplomaEntityController.createDiploma(highestDiploma, highestDiplomaYear);
+				diploma = this.diplomaEntityController.getDiplomaByNameAndYearOfResult(highestDiploma,
+						highestDiplomaYear);
+			} catch (final ResourceNotFoundException e) {
+				diploma = this.diplomaEntityController.createDiploma(highestDiploma, highestDiplomaYear);
 			}
 
 			newApplicant.setHighestDiploma(diploma.getName());
@@ -124,8 +124,8 @@ public class ApplicantForumEntityController {
 			Job job;
 			try {
 				job = this.jobEntityController.getJob(jobName);
-			} catch (ResourceNotFoundException e) {
-				job = (Job) this.jobEntityController.createJob(jobName);
+			} catch (final ResourceNotFoundException e) {
+				job = this.jobEntityController.createJob(jobName);
 			}
 			newApplicant.setJob(job.getTitle());
 
@@ -133,8 +133,8 @@ public class ApplicantForumEntityController {
 			Employer employer;
 			try {
 				employer = this.employerEntityController.getEmployer(employerName);
-			} catch (ResourceNotFoundException e) {
-				employer = (Employer) this.employerEntityController.createEmployer(employerName);
+			} catch (final ResourceNotFoundException e) {
+				employer = this.employerEntityController.createEmployer(employerName);
 			}
 
 			newApplicant.setEmployer(employer.getName());
@@ -156,7 +156,7 @@ public class ApplicantForumEntityController {
 
 				try {
 					skill = this.skillEntityController.getSkill(skillName);
-				} catch (ResourceNotFoundException e) {
+				} catch (final ResourceNotFoundException e) {
 					skill = this.skillEntityController.createSkill(skillName, null).get();
 				}
 
@@ -296,10 +296,10 @@ public class ApplicantForumEntityController {
 			final String highestDiplomaYear = jApplicant.get("highestDiplomaYear").textValue();
 			Diploma diploma;
 			try {
-				diploma = this.diplomaEntityController
-						.getDiplomaByNameAndYearOfResult(highestDiploma, highestDiplomaYear);
-			} catch (ResourceNotFoundException e) {
-				diploma = (Diploma) this.diplomaEntityController.createDiploma(highestDiploma, highestDiplomaYear);
+				diploma = this.diplomaEntityController.getDiplomaByNameAndYearOfResult(highestDiploma,
+						highestDiplomaYear);
+			} catch (final ResourceNotFoundException e) {
+				diploma = this.diplomaEntityController.createDiploma(highestDiploma, highestDiplomaYear);
 			}
 
 			applicant.setHighestDiploma(diploma.getName());
@@ -309,8 +309,8 @@ public class ApplicantForumEntityController {
 			Job job;
 			try {
 				job = this.jobEntityController.getJob(jobName);
-			} catch (ResourceNotFoundException e) {
-				job = (Job) this.jobEntityController.createJob(jobName);
+			} catch (final ResourceNotFoundException e) {
+				job = this.jobEntityController.createJob(jobName);
 			}
 			applicant.setJob(job.getTitle());
 
@@ -318,8 +318,8 @@ public class ApplicantForumEntityController {
 			Employer employer;
 			try {
 				employer = this.employerEntityController.getEmployer(employerName);
-			} catch (ResourceNotFoundException e) {
-				employer = (Employer) this.employerEntityController.createEmployer(employerName);
+			} catch (final ResourceNotFoundException e) {
+				employer = this.employerEntityController.createEmployer(employerName);
 			}
 
 			applicant.setEmployer(employer.getName());
@@ -341,7 +341,7 @@ public class ApplicantForumEntityController {
 
 				try {
 					skill = this.skillEntityController.getSkill(skillName);
-				} catch (ResourceNotFoundException e) {
+				} catch (final ResourceNotFoundException e) {
 					skill = this.skillEntityController.createSkill(skillName, null).get();
 				}
 

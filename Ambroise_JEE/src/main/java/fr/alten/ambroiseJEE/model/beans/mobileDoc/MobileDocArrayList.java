@@ -26,6 +26,32 @@ public class MobileDocArrayList implements List<MobileDoc> {
 		this.addAll(mobileDocs);
 	}
 
+	@Override
+	public void add(final int index, final MobileDoc element) {
+		this.mobileDocs.add(index, element);
+	}
+
+	@Override
+	public boolean add(final MobileDoc element) {
+		return this.mobileDocs.add(element);
+	}
+
+	@Override
+	public boolean addAll(final Collection<? extends MobileDoc> collection) {
+		return this.mobileDocs.addAll(collection);
+	}
+
+	@Override
+	public boolean addAll(final int index, final Collection<? extends MobileDoc> collection) {
+		return this.mobileDocs.addAll(index, collection);
+
+	}
+
+	@Override
+	public void clear() {
+		this.mobileDocs.clear();
+	}
+
 	/**
 	 * Compare an other MobileDocArrayList and return the comparison
 	 *
@@ -55,10 +81,20 @@ public class MobileDocArrayList implements List<MobileDoc> {
 		return result;
 	}
 
+	@Override
+	public boolean contains(final Object o) {
+		return this.mobileDocs.contains(o);
+	}
+
+	@Override
+	public boolean containsAll(final Collection<?> c) {
+		return this.mobileDocs.containsAll(c);
+	}
+
 	/**
 	 * check if this MobileDocArrayList contain the other name Could be not
 	 * optimized ( o(n) calculs)
-	 * 
+	 *
 	 * @param other the mobiledoc to compare
 	 * @return true if other have a same name as one of the first MobileDocArrayList
 	 * @author Andy Chabalier
@@ -70,47 +106,6 @@ public class MobileDocArrayList implements List<MobileDoc> {
 			}
 		}
 		return false;
-	}
-
-	@Override
-	public boolean contains(final Object o) {
-		return this.mobileDocs.contains(o);
-	}
-
-	@Override
-	public boolean retainAll(final Collection<?> c) {
-		return this.mobileDocs.retainAll(c);
-	}
-
-	@Override
-	public boolean add(final MobileDoc element) {
-		return this.mobileDocs.add(element);
-	}
-
-	@Override
-	public void add(final int index, final MobileDoc element) {
-		this.mobileDocs.add(index, element);
-	}
-
-	@Override
-	public boolean addAll(final Collection<? extends MobileDoc> collection) {
-		return this.mobileDocs.addAll(collection);
-	}
-
-	@Override
-	public boolean addAll(final int index, final Collection<? extends MobileDoc> collection) {
-		return this.mobileDocs.addAll(index, collection);
-
-	}
-
-	@Override
-	public void clear() {
-		this.mobileDocs.clear();
-	}
-
-	@Override
-	public boolean containsAll(final Collection<?> c) {
-		return this.mobileDocs.containsAll(c);
 	}
 
 	@Override
@@ -149,18 +144,23 @@ public class MobileDocArrayList implements List<MobileDoc> {
 	}
 
 	@Override
-	public boolean remove(final Object o) {
-		return this.mobileDocs.remove(o);
-	}
-
-	@Override
 	public MobileDoc remove(final int index) {
 		return this.mobileDocs.remove(index);
 	}
 
 	@Override
+	public boolean remove(final Object o) {
+		return this.mobileDocs.remove(o);
+	}
+
+	@Override
 	public boolean removeAll(final Collection<?> c) {
 		return this.mobileDocs.removeAll(c);
+	}
+
+	@Override
+	public boolean retainAll(final Collection<?> c) {
+		return this.mobileDocs.retainAll(c);
 	}
 
 	@Override

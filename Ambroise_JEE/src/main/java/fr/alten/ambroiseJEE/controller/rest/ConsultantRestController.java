@@ -35,10 +35,6 @@ import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
  */
 @Controller
 public class ConsultantRestController {
-	public boolean checkJsonIntegrity(final JsonNode params, final String... fields) {
-		return JsonUtils.checkJsonIntegrity(params, fields);
-	}
-	
 	@Autowired
 	private ConsultantBusinessController consultantBusinessController;
 
@@ -47,6 +43,10 @@ public class ConsultantRestController {
 	public ConsultantRestController() {
 		final GsonBuilder builder = new GsonBuilder();
 		this.gson = builder.create();
+	}
+
+	public boolean checkJsonIntegrity(final JsonNode params, final String... fields) {
+		return JsonUtils.checkJsonIntegrity(params, fields);
 	}
 
 	/**
@@ -59,40 +59,21 @@ public class ConsultantRestController {
 	 *         ({@link ConflictException} if the resource is not found and
 	 *         {@link CreatedException} if the person(consultant) is created
 	 * @author Lucas Royackkers
-	 * @throws ParseException 
+	 * @throws ParseException
 	 */
 	@PostMapping(value = "/consultant")
 	@ResponseBody
 	public HttpException createConsultant(@RequestBody final JsonNode params,
-			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) throws ParseException {
+			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role)
+			throws ParseException {
 		return checkJsonIntegrity(params, "mail")
 				? this.consultantBusinessController.createConsultant(params, role, mail)
 				: new UnprocessableEntityException();
 	}
 
 	/**
-	 * Method to delete a Consultant given its mail
-	 *
-	 * @param params the JsonNode containing post parameters from http request
-	 * @param mail   the current logged user's mail
-	 * @param role   the user's role
-	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link ResourceNotFoundException} if the resource is not found and
-	 *         {@link OkException} if the person(consultant) is deleted
-	 * @author Lucas Royackkers
-	 */
-	@DeleteMapping(value = "/consultant")
-	@ResponseBody
-	public HttpException deleteConsultant(@RequestBody final JsonNode params,
-			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
-		return checkJsonIntegrity(params, "mail")
-				? this.consultantBusinessController.deleteConsultant(params, role)
-				: new UnprocessableEntityException();
-	}
-	
-	/**
 	 * Method to create an Consultant and a Skills Sheet in one way
-	 * 
+	 *
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the current logged user's mail
 	 * @param role   the current logged user's role
@@ -113,8 +94,27 @@ public class ConsultantRestController {
 	}
 
 	/**
+	 * Method to delete a Consultant given its mail
+	 *
+	 * @param params the JsonNode containing post parameters from http request
+	 * @param mail   the current logged user's mail
+	 * @param role   the user's role
+	 * @return {@link HttpException} corresponding to the status of the request
+	 *         ({@link ResourceNotFoundException} if the resource is not found and
+	 *         {@link OkException} if the person(consultant) is deleted
+	 * @author Lucas Royackkers
+	 */
+	@DeleteMapping(value = "/consultant")
+	@ResponseBody
+	public HttpException deleteConsultant(@RequestBody final JsonNode params,
+			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
+		return checkJsonIntegrity(params, "mail") ? this.consultantBusinessController.deleteConsultant(params, role)
+				: new UnprocessableEntityException();
+	}
+
+	/**
 	 * Method to get a Consultant given its mail
-	 * 
+	 *
 	 * @param consultantName the consultant's name
 	 * @param mail           the current logged user's mail
 	 * @param role           the user's role

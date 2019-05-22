@@ -45,8 +45,7 @@ public class EmployerBusinessController {
 	 * @author Lucas Royackkers
 	 */
 	public HttpException createEmployer(final JsonNode params, final UserRole role) {
-		return isAdmin(role) ? this.employerEntityController.createEmployer(params) :
-			new ForbiddenException();
+		return isAdmin(role) ? this.employerEntityController.createEmployer(params) : new ForbiddenException();
 	}
 
 	/**
@@ -62,8 +61,7 @@ public class EmployerBusinessController {
 	 * @author Lucas Royackkers
 	 */
 	public HttpException deleteEmployer(final JsonNode params, final UserRole role) {
-		return isAdmin(role) ? this.employerEntityController.deleteEmployer(params) :
-			new ForbiddenException();
+		return isAdmin(role) ? this.employerEntityController.deleteEmployer(params) : new ForbiddenException();
 	}
 
 	/**
@@ -82,6 +80,14 @@ public class EmployerBusinessController {
 		throw new ForbiddenException();
 	}
 
+	public boolean isAdmin(final UserRole role) {
+		return this.roles.isAdmin(role);
+	}
+
+	public boolean isNotConsultantOrDeactivated(final UserRole role) {
+		return this.roles.isNot_ConsultantOrDeactivated(role);
+	}
+
 	/**
 	 * Method to delegate the employer update
 	 *
@@ -95,16 +101,7 @@ public class EmployerBusinessController {
 	 * @author Lucas Royackkers
 	 */
 	public HttpException updateEmployer(final JsonNode params, final UserRole role) {
-		return isAdmin(role) ? this.employerEntityController.updateEmployer(params) :
-			new ForbiddenException();
-	}
-
-	public boolean isAdmin(final UserRole role) {
-		return this.roles.isAdmin(role);
-	}
-	
-	public boolean isNotConsultantOrDeactivated(final UserRole role) {
-		return this.roles.isNot_ConsultantOrDeactivated(role);
+		return isAdmin(role) ? this.employerEntityController.updateEmployer(params) : new ForbiddenException();
 	}
 
 }

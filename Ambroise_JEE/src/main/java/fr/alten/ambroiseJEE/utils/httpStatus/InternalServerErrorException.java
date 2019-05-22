@@ -20,14 +20,14 @@ public class InternalServerErrorException extends HttpException {
 
 	private static final long serialVersionUID = 6695487880532171802L;
 	private final Logger logger = LoggerFactory.getLogger(InternalServerErrorException.class);
-	
+
 	public InternalServerErrorException() {
 		super("Internal Server Error");
 	}
-	
-	public InternalServerErrorException(Exception e) {
+
+	public InternalServerErrorException(final Exception e) {
 		super("Internal Server Error");
-		logger.error(e.getStackTrace().toString());
-		
+		this.logger.error(e.getStackTrace().toString());
+
 	}
 }

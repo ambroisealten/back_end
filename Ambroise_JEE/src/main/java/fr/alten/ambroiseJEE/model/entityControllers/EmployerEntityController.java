@@ -1,7 +1,6 @@
 package fr.alten.ambroiseJEE.model.entityControllers;
 
 import java.util.List;
-import java.util.function.Supplier;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -58,16 +57,16 @@ public class EmployerEntityController {
 	 * @author Andy Chabalier
 	 */
 	public Employer createEmployer(final String name) {
-			Employer newEmployer = new Employer();
-			newEmployer.setName(name);
-			try {
-				newEmployer = this.employerRepository.save(newEmployer);
-			} catch (final DuplicateKeyException dke) {
-				throw new ConflictException();
-			} catch (final Exception e) {
-				throw new InternalServerErrorException();
-			}
-			return newEmployer;
+		Employer newEmployer = new Employer();
+		newEmployer.setName(name);
+		try {
+			newEmployer = this.employerRepository.save(newEmployer);
+		} catch (final DuplicateKeyException dke) {
+			throw new ConflictException();
+		} catch (final Exception e) {
+			throw new InternalServerErrorException();
+		}
+		return newEmployer;
 	}
 
 	/**

@@ -56,10 +56,10 @@ public class ForumEntityController {
 			newForum.setPlace(jForum.get("place").textValue());
 
 			this.forumRepository.save(newForum);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			return new InternalServerErrorException(e);
 		}
-		
+
 		return new CreatedException();
 	}
 

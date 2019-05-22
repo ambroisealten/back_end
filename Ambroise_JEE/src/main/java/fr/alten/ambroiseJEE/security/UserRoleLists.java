@@ -65,6 +65,15 @@ public class UserRoleLists {
 	}
 
 	/**
+	 * @param role {@link UserRole} the current logged user's role
+	 * @return true if it's manager or manager admin, otherwise false
+	 * @author Andy Chabalier
+	 */
+	public boolean isManager(final UserRole role) {
+		return role.equals(UserRole.MANAGER) || role.equals(UserRole.MANAGER_ADMIN);
+	}
+
+	/**
 	 *
 	 * @param role {@link UserRole} to test if he is Cdr or Manager
 	 * @return true if Cdr or Manager, otherwise false
@@ -73,7 +82,17 @@ public class UserRoleLists {
 	public boolean isManagerOrCdr(final UserRole role) {
 		return role == UserRole.CDR || role == UserRole.MANAGER;
 	}
-	
+
+	/**
+	 *
+	 * @param role {@link UserRole} the current logged user's role
+	 * @return true if it's a CDR or a Manager (Admin or not), otherwise false
+	 * @author Lucas Royackkers
+	 */
+	public boolean isManagerOrCdrAdmin(final UserRole role) {
+		return role == UserRole.CDR_ADMIN || role == UserRole.MANAGER || role == UserRole.MANAGER_ADMIN;
+	}
+
 	/**
 	 *
 	 * @param role {@link UserRole} to test if he is Cdr or Manager or Admin
@@ -81,9 +100,9 @@ public class UserRoleLists {
 	 * @author Thomas Decamp
 	 */
 	public boolean isManagerOrCdrOrAdmin(final UserRole role) {
-		return role == UserRole.CDR || role == UserRole.MANAGER || this.isAdmin(role);
+		return role == UserRole.CDR || role == UserRole.MANAGER || isAdmin(role);
 	}
-	
+
 	/**
 	 *
 	 * @param role {@link UserRole} to test if he is Consultant or Deactivated
@@ -91,17 +110,7 @@ public class UserRoleLists {
 	 * @author Kylian Gehier
 	 */
 	public boolean isNot_ConsultantOrDeactivated(final UserRole role) {
-		return role != UserRole.DEACTIVATED && role != UserRole.CONSULTANT; 
-	}
-	
-	/**
-	 * 
-	 * @param role {@link UserRole} the current logged user's role
-	 * @return true if it's a CDR or a Manager (Admin or not), otherwise false
-	 * @author Lucas Royackkers
-	 */
-	public boolean isManagerOrCdrAdmin(final UserRole role) {
-		return role == UserRole.CDR_ADMIN || role == UserRole.MANAGER || role == UserRole.MANAGER_ADMIN;
+		return role != UserRole.DEACTIVATED && role != UserRole.CONSULTANT;
 	}
 
 }

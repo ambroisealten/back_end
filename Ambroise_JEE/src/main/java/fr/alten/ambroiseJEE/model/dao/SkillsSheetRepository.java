@@ -15,7 +15,7 @@ public interface SkillsSheetRepository extends MongoRepository<SkillsSheet, Long
 
 	/**
 	 * Checks if a Skills Sheet with the given parameters exists
-	 * 
+	 *
 	 * @param name                 the name of the Skills Sheet
 	 * @param mailPersonAttachedTo the mail of the person attached to the Skills
 	 *                             Sheet
@@ -37,6 +37,15 @@ public interface SkillsSheetRepository extends MongoRepository<SkillsSheet, Long
 	public List<SkillsSheet> findByMailPersonAttachedToIgnoreCase(String mail);
 
 	/**
+	 * Fetch skills sheets by author
+	 *
+	 * @param mailAuthor the author mail to fetch
+	 * @return the corresponding list of skillsSheets
+	 * @author Andy Chabalier
+	 */
+	public List<SkillsSheet> findByMailVersionAuthorIgnoreCase(String mailAuthor);
+
+	/**
 	 * Fetch skills sheets by name
 	 *
 	 * @param name
@@ -47,7 +56,7 @@ public interface SkillsSheetRepository extends MongoRepository<SkillsSheet, Long
 
 	/**
 	 * Get a Skills Sheet given a name, a person attached to it and a version number
-	 * 
+	 *
 	 * @param skillsSheetName the name of the skills sheet
 	 * @param personMail      the mail of the person attached to it
 	 * @param i               the number (long type) of the skills sheet
@@ -72,19 +81,10 @@ public interface SkillsSheetRepository extends MongoRepository<SkillsSheet, Long
 	/**
 	 * Get a List of Skills Sheet given a name, and with the latest in first
 	 * position
-	 * 
+	 *
 	 * @param skillsSheetName the name of the Skills Sheet
 	 * @return A List of Skills Sheets
 	 * @author Lucas Royackkers
 	 */
 	public List<SkillsSheet> findByNameIgnoreCaseOrderByVersionNumberDesc(String skillsSheetName);
-
-	/**
-	 * Fetch skills sheets by author
-	 * 
-	 * @param mailAuthor the author mail to fetch
-	 * @return the corresponding list of skillsSheets
-	 * @author Andy Chabalier
-	 */
-	public List<SkillsSheet> findByMailVersionAuthorIgnoreCase(String mailAuthor);
 }

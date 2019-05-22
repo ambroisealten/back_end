@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.model.beans;
 
@@ -30,27 +30,27 @@ public class DocumentSet implements Serializable {
 	private List<MobileDoc> mobileDocs;
 
 	public ObjectId get_id() {
-		return _id;
-	}
-
-	public void set_id(ObjectId _id) {
-		this._id = _id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
+		return this._id;
 	}
 
 	public List<MobileDoc> getMobileDocs() {
-		return mobileDocs;
+		return this.mobileDocs;
 	}
 
-	public void setMobileDocs(List<MobileDoc> mobileDoc) {
+	public String getName() {
+		return this.name;
+	}
+
+	public void set_id(final ObjectId _id) {
+		this._id = _id;
+	}
+
+	public void setMobileDocs(final List<MobileDoc> mobileDoc) {
 		this.mobileDocs = mobileDoc;
+	}
+
+	public void setName(final String name) {
+		this.name = name;
 	}
 
 }

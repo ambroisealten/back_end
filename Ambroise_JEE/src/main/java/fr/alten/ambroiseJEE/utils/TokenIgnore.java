@@ -32,24 +32,24 @@ public class TokenIgnore {
 
 	/**
 	 * Create a directory called "dev"
-	 * 
+	 *
 	 * @author Kylian Gehier
 	 */
 	public static void createDir() {
 
-		if (dirPath != null && !"".equals(dirPath.trim())) {
-			File dirFile = new File(dirPath);
+		if (TokenIgnore.dirPath != null && !"".equals(TokenIgnore.dirPath.trim())) {
+			final File dirFile = new File(TokenIgnore.dirPath);
 
 			if (!dirFile.exists()) {
-				boolean result = dirFile.mkdir();
+				final boolean result = dirFile.mkdir();
 				if (result) {
-					logger.trace("Create " + dirPath + " success. ");
-					createFile(dirFile);
+					TokenIgnore.logger.trace("Create " + TokenIgnore.dirPath + " success. ");
+					TokenIgnore.createFile(dirFile);
 				} else {
-					logger.error("Create " + dirPath + " fail. ");
+					TokenIgnore.logger.error("Create " + TokenIgnore.dirPath + " fail. ");
 				}
 			} else {
-				logger.error(dirPath + " already exist. ");
+				TokenIgnore.logger.error(TokenIgnore.dirPath + " already exist. ");
 			}
 		}
 
@@ -57,73 +57,73 @@ public class TokenIgnore {
 
 	/**
 	 * Create a file inside of the "dev" directory called "yyyMMdd.txt"
-	 * 
+	 *
 	 * @param file {@link File} containing the path of the "dev" folder
 	 * @author Kylian Gehier
 	 */
-	private static void createFile(File file) {
+	private static void createFile(final File file) {
 
-		DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-		Date date = new Date();
-		File newFile = new File(file.getAbsolutePath() + "\\" + dateFormat.format(date) + ".txt");
+		final DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+		final Date date = new Date();
+		final File newFile = new File(file.getAbsolutePath() + "\\" + dateFormat.format(date) + ".txt");
 
 		try {
-			boolean createdFile = newFile.createNewFile();
-			logger.trace((createdFile) ? "File created" : "Fail");
-		} catch (IOException e) {
+			final boolean createdFile = newFile.createNewFile();
+			TokenIgnore.logger.trace(createdFile ? "File created" : "Fail");
+		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 	}
 
 	/**
 	 * Delete the "dev" directory
-	 * 
+	 *
 	 * @author Kylian Gehier
 	 */
 	public static void deleteDir() throws FileNotFoundException {
 
-		File dir = new File(dirPath);
+		final File dir = new File(TokenIgnore.dirPath);
 		if (!dir.exists()) {
 			throw new FileNotFoundException();
 		} else {
-			deleteFile();
+			TokenIgnore.deleteFile();
 			dir.delete();
-			logger.trace("Dir deleted");
+			TokenIgnore.logger.trace("Dir deleted");
 		}
 	}
 
 	/**
 	 * Delete the file inside of the "dev" directory called "yyyMMdd.txt"
-	 * 
+	 *
 	 * @author Kylian Gehier
 	 */
 	private static void deleteFile() throws FileNotFoundException {
 
-		DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-		Date date = new Date();
+		final DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+		final Date date = new Date();
 
-		File file = new File(dirPath + "/" + dateFormat.format(date) + ".txt");
+		final File file = new File(TokenIgnore.dirPath + "/" + dateFormat.format(date) + ".txt");
 		if (!file.exists()) {
-			logger.error("Error trying to delete : " + file.getAbsolutePath() + " -> FileNotFound");
+			TokenIgnore.logger.error("Error trying to delete : " + file.getAbsolutePath() + " -> FileNotFound");
 			throw new FileNotFoundException();
 		} else {
 			file.delete();
-			logger.trace("File deleted");
+			TokenIgnore.logger.trace("File deleted");
 		}
 	}
 
 	/**
 	 * Detect the presence of the "dev" directory and the txt file inside.
-	 * 
+	 *
 	 * @return true if both are present, false otherwhise
 	 * @author Kylian Gehier
 	 */
 	public static boolean fileIsPresent() {
 
-		DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-		Date date = new Date();
+		final DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+		final Date date = new Date();
 
-		File file = new File(dirPath + "/" + dateFormat.format(date) + ".txt");
+		final File file = new File(TokenIgnore.dirPath + "/" + dateFormat.format(date) + ".txt");
 
 		return file.exists();
 
@@ -131,20 +131,25 @@ public class TokenIgnore {
 
 	/**
 	 * get the {@link User}'s mail set in the {@link TokenFilter} when its ignored
-	 * @return the {@link User}'s mail set in the {@link TokenFilter} when its ignored
+	 * 
+	 * @return the {@link User}'s mail set in the {@link TokenFilter} when its
+	 *         ignored
 	 * @author Kylian Gehier
 	 */
 	public static String getTokenIgnoreMail() {
-		return tokenIgnoreMail;
+		return TokenIgnore.tokenIgnoreMail;
 	}
 
 	/**
-	 * get the {@link User}'s {@link UserRole} set in the {@link TokenFilter} when its ignored
-	 * @return the {@link User}'s {@link UserRole} set in the {@link TokenFilter} when its ignored
+	 * get the {@link User}'s {@link UserRole} set in the {@link TokenFilter} when
+	 * its ignored
+	 * 
+	 * @return the {@link User}'s {@link UserRole} set in the {@link TokenFilter}
+	 *         when its ignored
 	 * @author Kylian Gehier
 	 */
 	public static UserRole getTokenIgnoreUserRole() {
-		return tokenIgnoreUserRole;
+		return TokenIgnore.tokenIgnoreUserRole;
 	}
 
 }

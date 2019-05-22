@@ -73,7 +73,7 @@ public class SkillBusinessController {
 	 * @author Thomas Decamp
 	 */
 	public List<Skill> getSkills(final UserRole role) {
-		if (isAdmin(role)) {
+		if (isAdmin(role) || UserRole.MANAGER.equals(role)) {
 			return this.skillEntityController.getSkills();
 		}
 		throw new ForbiddenException();
@@ -95,12 +95,12 @@ public class SkillBusinessController {
 
 	/**
 	 * Fetch all the tech skills
-	 * 
+	 *
 	 * @param role current logged user's role
 	 * @return the list of all tech skills
 	 * @author Lucas Royackkers
 	 */
-	public List<Skill> getTechSkills(UserRole role) {
+	public List<Skill> getTechSkills(final UserRole role) {
 		if (isAdmin(role) || UserRole.MANAGER.equals(role)) {
 			return this.skillEntityController.getTechSkills();
 		}

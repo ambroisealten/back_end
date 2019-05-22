@@ -60,7 +60,7 @@ public class FileBusinessControllerTest {
 
 	@Test
 	public void createDocument() {
-		Mockito.doReturn(true).when(this.fileBusinessController).haveAccess(ArgumentMatchers.any(UserRole.class));
+		Mockito.doReturn(true).when(this.fileBusinessController).appUser(ArgumentMatchers.any(UserRole.class));
 		Mockito.when(this.fileEntityController.pushDocument(ArgumentMatchers.anyString(), ArgumentMatchers.anyString()))
 				.thenReturn(new File());
 
@@ -71,7 +71,7 @@ public class FileBusinessControllerTest {
 
 	@Test(expected = ForbiddenException.class)
 	public void createDocument_with_ForbiddenError() {
-		Mockito.doReturn(false).when(this.fileBusinessController).haveAccess(ArgumentMatchers.any(UserRole.class));
+		Mockito.doReturn(false).when(this.fileBusinessController).appUser(ArgumentMatchers.any(UserRole.class));
 
 		// assert
 		this.fileBusinessController.createDocument("", "", UserRole.MANAGER_ADMIN);
@@ -117,7 +117,7 @@ public class FileBusinessControllerTest {
 
 	@Test
 	public void getDocument() {
-		Mockito.doReturn(true).when(this.fileBusinessController).haveAccess(ArgumentMatchers.any(UserRole.class));
+		Mockito.doReturn(true).when(this.fileBusinessController).appUser(ArgumentMatchers.any(UserRole.class));
 		Mockito.doReturn(true).when(this.fileBusinessController).isValid(ArgumentMatchers.anyString());
 		Mockito.doReturn(FileBusinessControllerTest.spiedFile).when(this.fileEntityController)
 				.getFile(ArgumentMatchers.any(ObjectId.class));
@@ -131,7 +131,7 @@ public class FileBusinessControllerTest {
 
 	@Test(expected = ForbiddenException.class)
 	public void getDocument_with_ForbiddenException() {
-		Mockito.doReturn(false).when(this.fileBusinessController).haveAccess(ArgumentMatchers.any(UserRole.class));
+		Mockito.doReturn(false).when(this.fileBusinessController).appUser(ArgumentMatchers.any(UserRole.class));
 
 		// assert
 		this.fileBusinessController.getDocument("", UserRole.MANAGER_ADMIN);
@@ -139,7 +139,7 @@ public class FileBusinessControllerTest {
 
 	@Test(expected = UnprocessableEntityException.class)
 	public void getDocument_with_unprocessableEntityException() {
-		Mockito.doReturn(true).when(this.fileBusinessController).haveAccess(ArgumentMatchers.any(UserRole.class));
+		Mockito.doReturn(true).when(this.fileBusinessController).appUser(ArgumentMatchers.any(UserRole.class));
 		Mockito.doReturn(false).when(this.fileBusinessController).isValid(ArgumentMatchers.anyString());
 
 		// assert

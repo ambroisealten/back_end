@@ -55,6 +55,29 @@ public class SkillsSheetRestController {
 	}
 
 	/**
+	 * Checks if a version of a specific Skills Sheet exists
+	 *
+	 * @param mailPerson    the mail of the person attached to this Skills Sheet
+	 * @param role          the current logged user's role
+	 * @param name          the name of the Skills Sheet
+	 * @param mail          the current logged user's mail
+	 * @param versionNumber the version Number of this Skills Sheet
+	 * @return true if the specific version of this Skills Sheet exists, otherwise
+	 *         false
+	 * @throws {@link ForbiddenException} if the current logged user hasn't the
+	 *         rights to perform this action
+	 * @author Lucas Royackkers
+	 */
+	@GetMapping(value = "/skillsheetVersionExists/{name}/{mail}/{versionNumber}")
+	@ResponseBody
+	public boolean checkIfSkillsSheetVersionExists(@PathVariable("mail") final String mailPerson,
+			@RequestAttribute("role") final UserRole role, @PathVariable("name") final String name,
+			@RequestAttribute("mail") final String mail, @PathVariable("versionNumber") final String versionNumber) {
+		return this.skillsSheetBusinessController.checkIfSkillsSheetVersionExists(name, mailPerson,
+				Long.parseLong(versionNumber), role);
+	}
+
+	/**
 	 * Method to create a Skills Sheet
 	 *
 	 * @param params JsonNode containing post parameters from http request
@@ -186,29 +209,6 @@ public class SkillsSheetRestController {
 	}
 
 	/**
-	 * Checks if a version of a specific Skills Sheet exists
-	 * 
-	 * @param mailPerson    the mail of the person attached to this Skills Sheet
-	 * @param role          the current logged user's role
-	 * @param name          the name of the Skills Sheet
-	 * @param mail          the current logged user's mail
-	 * @param versionNumber the version Number of this Skills Sheet
-	 * @return true if the specific version of this Skills Sheet exists, otherwise
-	 *         false
-	 * @throws {@link ForbiddenException} if the current logged user hasn't the
-	 *         rights to perform this action
-	 * @author Lucas Royackkers
-	 */
-	@GetMapping(value = "/skillsheetVersionExists/{name}/{mail}/{versionNumber}")
-	@ResponseBody
-	public boolean checkIfSkillsSheetVersionExists(@PathVariable("mail") final String mailPerson,
-			@RequestAttribute("role") final UserRole role, @PathVariable("name") final String name,
-			@RequestAttribute("mail") final String mail, @PathVariable("versionNumber") String versionNumber) {
-		return this.skillsSheetBusinessController.checkIfSkillsSheetVersionExists(name, mailPerson,
-				Long.parseLong(versionNumber), role);
-	}
-
-	/**
 	 * Method to update a Skills Sheet
 	 *
 	 * @param params JsonNode containing post parameters from http request
@@ -235,7 +235,7 @@ public class SkillsSheetRestController {
 
 	/**
 	 * Method to update a CV on a existent {@link SkillsSheet}
-	 * 
+	 *
 	 * @param file                 the CV as a File
 	 * @param name                 the name of the Skills Sheet
 	 * @param mailPersonAttachedTo the mail of the person attached to this Skills

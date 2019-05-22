@@ -65,34 +65,13 @@ public class DocumentSetEntityController {
 	}
 
 	/**
-	 * Document update on server
+	 * fetch all documentSet
 	 *
-	 * @param JDocumentSet the AppMobile Version
-	 * @return the @see {@link HttpException} corresponding to the statut of the
-	 *         request ({@link ConflictException} if there is a conflict in the
-	 *         database (that mean file already exist and then it's an upload. But
-	 *         no change to make in base and {@link OkException} if the document
-	 *         update is valid {@link RessourceNotFoundException} if the document
-	 *         don't exist on the server
+	 * @return the List of the all the document Version on the server
 	 * @author MAQUINGHEN MAXIME
 	 */
-	public HttpException updateDocumentSet(final JsonNode JDocumentSet) {
-		final DocumentSet documentSet = this.documentSetRepository.findByName(JDocumentSet.get("oldName").textValue())
-				.orElseThrow(ResourceNotFoundException::new);
-		documentSet.setName(JDocumentSet.get("name").textValue());
-		final List<MobileDoc> files = new ArrayList<MobileDoc>();
-		for (final JsonNode document : JDocumentSet.get("files")) {
-			final Integer order = Integer.valueOf(document.get("order").asInt());
-			final String name = document.get("id").textValue();
-			files.add(MobileDoc.of(name, order));
-		}
-		documentSet.setMobileDocs(files);
-		try {
-			this.documentSetRepository.save(documentSet);
-		} catch (final Exception e) {
-			return new ConflictException();
-		}
-		return new OkException();
+	public List<DocumentSet> getAllDocumentSet() {
+		return this.documentSetRepository.findAll();
 	}
 
 	/**
@@ -132,24 +111,45 @@ public class DocumentSetEntityController {
 	}
 
 	/**
-	 * fetch all documentSet
-	 * 
-	 * @return the List of the all the document Version on the server
-	 * @author MAQUINGHEN MAXIME
-	 */
-	public List<DocumentSet> getAllDocumentSet() {
-		return this.documentSetRepository.findAll();
-	}
-
-	/**
 	 * fetch a Document set
-	 * 
+	 *
 	 * @param set the set name to fetch
 	 * @return the document set or {@link RessourceNotFoundException} when the name
 	 *         doesn't exist in the database
 	 * @author Andy Chabalier
 	 */
-	public DocumentSet getSpecificDocumentSet(String set) {
+	public DocumentSet getSpecificDocumentSet(final String set) {
 		return this.documentSetRepository.findByName(set).orElseThrow(ResourceNotFoundException::new);
+	}
+
+	/**
+	 * Document update on server
+	 *
+	 * @param JDocumentSet the AppMobile Version
+	 * @return the @see {@link HttpException} corresponding to the statut of the
+	 *         request ({@link ConflictException} if there is a conflict in the
+	 *         database (that mean file already exist and then it's an upload. But
+	 *         no change to make in base and {@link OkException} if the document
+	 *         update is valid {@link RessourceNotFoundException} if the document
+	 *         don't exist on the server
+	 * @author MAQUINGHEN MAXIME
+	 */
+	public HttpException updateDocumentSet(final JsonNode JDocumentSet) {
+		final DocumentSet documentSet = this.documentSetRepository.findByName(JDocumentSet.get("oldName").textValue())
+				.orElseThrow(ResourceNotFoundException::new);
+		documentSet.setName(JDocumentSet.get("name").textValue());
+		final List<MobileDoc> files = new ArrayList<MobileDoc>();
+		for (final JsonNode document : JDocumentSet.get("files")) {
+			final Integer order = Integer.valueOf(document.get("order").asInt());
+			final String name = document.get("id").textValue();
+			files.add(MobileDoc.of(name, order));
+		}
+		documentSet.setMobileDocs(files);
+		try {
+			this.documentSetRepository.save(documentSet);
+		} catch (final Exception e) {
+			return new ConflictException();
+		}
+		return new OkException();
 	}
 }

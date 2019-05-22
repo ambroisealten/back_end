@@ -33,14 +33,6 @@ public class DiplomaBusinessController {
 
 	private final UserRoleLists roles = UserRoleLists.getInstance();
 
-	public boolean isAdmin(final UserRole role) {
-		return this.roles.isAdmin(role);
-	}
-
-	public boolean isManagerOrCdrOrAdmin(final UserRole role) {
-		return this.roles.isManagerOrCdrOrAdmin(role);
-	}
-	
 	/**
 	 * Method to delegate diploma creation
 	 *
@@ -56,7 +48,8 @@ public class DiplomaBusinessController {
 	 * @author Thomas Decamp
 	 */
 	public HttpException createDiploma(final JsonNode params, final UserRole role) {
-		return isAdmin(role) ? this.diplomaEntityController.createDiploma(params) : new ForbiddenException();
+		return isManagerOrCdrOrAdmin(role) ? this.diplomaEntityController.createDiploma(params)
+				: new ForbiddenException();
 	}
 
 	/**
@@ -105,6 +98,14 @@ public class DiplomaBusinessController {
 	public List<Diploma> getDiplomasByName(final String name, final UserRole role) {
 		return this.diplomaEntityController.getDiplomaByName(name);
 
+	}
+
+	public boolean isAdmin(final UserRole role) {
+		return this.roles.isAdmin(role);
+	}
+
+	public boolean isManagerOrCdrOrAdmin(final UserRole role) {
+		return this.roles.isManagerOrCdrOrAdmin(role);
 	}
 
 	/**

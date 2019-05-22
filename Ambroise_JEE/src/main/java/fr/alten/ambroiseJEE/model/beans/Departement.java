@@ -21,7 +21,7 @@ public class Departement extends Geographic implements Serializable {
 
 	@Id
 	private transient ObjectId _id;
-	
+
 	@Indexed(unique = true)
 	private String code;
 
@@ -32,32 +32,32 @@ public class Departement extends Geographic implements Serializable {
 		super();
 	}
 
+	public String getCode() {
+		return this.code;
+	}
+
+	public String getCodeRegion() {
+		return this.codeRegion;
+	}
+
 	@Override
 	public String getIdentifier() {
 		return getCode();
 	}
 
-	public String getCode() {
-		return code;
+	public String getNom() {
+		return this.nom;
 	}
 
-	public void setCode(String code) {
+	public void setCode(final String code) {
 		this.code = code;
 	}
 
-	public String getNom() {
-		return nom;
-	}
-
-	public void setNom(String nom) {
-		this.nom = nom;
-	}
-
-	public String getCodeRegion() {
-		return codeRegion;
-	}
-
-	public void setCodeRegion(String codeRegion) {
+	public void setCodeRegion(final String codeRegion) {
 		this.codeRegion = codeRegion;
+	}
+
+	public void setNom(final String nom) {
+		this.nom = nom;
 	}
 }

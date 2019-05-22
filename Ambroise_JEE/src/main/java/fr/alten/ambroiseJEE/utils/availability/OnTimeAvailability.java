@@ -8,30 +8,32 @@ import java.time.temporal.ChronoUnit;
  *
  */
 
-public class OnTimeAvailability extends Availability{
+public class OnTimeAvailability extends Availability {
 
 	private int duration;
 	private ChronoUnit durationType;
-	
-	public OnTimeAvailability(long initDate, int duration, ChronoUnit durationType) {
-		super(initDate,0,duration,durationType);
+
+	public OnTimeAvailability(final long initDate, final int duration, final ChronoUnit durationType) {
+		super(initDate, 0, duration, durationType);
 		this.duration = duration;
 		this.durationType = durationType;
 	}
 
+	@Override
 	public int getDuration() {
-		return duration;
-	}
-
-	public void setDuration(int duration) {
-		this.duration = duration;
+		return this.duration;
 	}
 
 	public ChronoUnit getDurationtype() {
-		return durationType;
+		return this.durationType;
 	}
 
-	public void setDurationtype(ChronoUnit durationtype) {
+	@Override
+	public void setDuration(final int duration) {
+		this.duration = duration;
+	}
+
+	public void setDurationtype(final ChronoUnit durationtype) {
 		this.durationType = durationtype;
 	}
 

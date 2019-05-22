@@ -37,7 +37,7 @@ public class ConsultantBusinessController {
 
 	/**
 	 * Method to delegate consultant creation
-	 * 
+	 *
 	 * @param role               the user's role
 	 * @param personInChargeMail TODO
 	 * @param jUser              JsonNode with all consultant(person) parameters
@@ -48,9 +48,9 @@ public class ConsultantBusinessController {
 	 * @author Lucas Royackkers
 	 * @throws ParseException
 	 */
-	public HttpException createConsultant(final JsonNode jConsultant, final UserRole role, String personInChargeMail)
-			throws ParseException {
-		if (this.isManagerOrCdrAdmin(role)) {
+	public HttpException createConsultant(final JsonNode jConsultant, final UserRole role,
+			final String personInChargeMail) throws ParseException {
+		if (isManager(role)) {
 			return this.personEntityController.createPerson(jConsultant, PersonRole.CONSULTANT, personInChargeMail);
 		} else {
 			return new ForbiddenException();
@@ -61,7 +61,7 @@ public class ConsultantBusinessController {
 	/**
 	 * Method to create an Consultant and a Skills Sheet (with the created
 	 * Consultant in it)
-	 * 
+	 *
 	 * @param params the JsonNode containing all informations about the Person and
 	 *               the Skills Sheet
 	 * @param role   the current logged user's role
@@ -74,19 +74,21 @@ public class ConsultantBusinessController {
 	 *         sucessfully created
 	 * @author Lucas Royackkers
 	 */
-	public HttpException createConsultantAndSkillsSheet(JsonNode params, UserRole role, String personInChargeMail) {
-		if (this.isManagerOrCdrAdmin(role)) {
+	public HttpException createConsultantAndSkillsSheet(final JsonNode params, final UserRole role,
+			final String personInChargeMail) {
+		if (isManager(role)) {
 			final JsonNode jConsultant = params.get("person");
-			HttpException createResult = this.personEntityController.createPerson(jConsultant, PersonRole.CONSULTANT,
-					personInChargeMail);
+			final HttpException createResult = this.personEntityController.createPerson(jConsultant,
+					PersonRole.CONSULTANT, personInChargeMail);
 			if (!(createResult instanceof CreatedException)) {
 				return createResult;
 			} else {
 				final JsonNode jSkillsSheet = params.get("skillsSheet");
-				HttpException createSkillsSheetResult = this.skillsSheetBusinessController
+				final HttpException createSkillsSheetResult = this.skillsSheetBusinessController
 						.createSkillsSheet(jSkillsSheet, role, personInChargeMail);
 				if (!(createSkillsSheetResult instanceof CreatedException)) {
-					HttpException deleteResult = this.personEntityController.deletePersonByRole(jConsultant, PersonRole.APPLICANT);
+					final HttpException deleteResult = this.personEntityController.deletePersonByRole(jConsultant,
+							PersonRole.APPLICANT);
 					if (!(createSkillsSheetResult instanceof OkException)) {
 						return deleteResult;
 					}
@@ -109,7 +111,7 @@ public class ConsultantBusinessController {
 	 * @author Lucas Royackkers
 	 */
 	public HttpException deleteConsultant(final JsonNode params, final UserRole role) {
-		if (this.isManagerOrCdrAdmin(role)) {
+		if (isManager(role)) {
 			return this.personEntityController.deletePersonByRole(params, PersonRole.CONSULTANT);
 		}
 		return new ForbiddenException();
@@ -125,7 +127,7 @@ public class ConsultantBusinessController {
 	 * @throws ForbiddenException (if the user hasn't the right to do so)
 	 */
 	public Person getConsultant(final String mail, final UserRole role) {
-		if (this.isConnected(role)) {
+		if (isConnected(role)) {
 			return this.personEntityController.getPersonByMailAndType(mail, PersonRole.CONSULTANT);
 		}
 		throw new ForbiddenException();
@@ -133,16 +135,39 @@ public class ConsultantBusinessController {
 
 	/**
 	 * Get all Consultants
-	 * 
+	 *
 	 * @param role the user's role
 	 * @return the list of all consultants
 	 * @author Lucas Royackkers
 	 */
 	public List<Person> getConsultants(final UserRole role) {
-		if (this.isConnected(role)) {
+		if (isConnected(role)) {
 			return this.personEntityController.getPersonsByRole(PersonRole.CONSULTANT);
 		}
 		throw new ForbiddenException();
+	}
+
+	/**
+	 * Method to test if the user is connected (not an consultant or a deactivated
+	 * user)
+	 *
+	 * @param role the current logged user's role
+	 * @return true if the user is connected, otherwise false
+	 * @author Lucas Royackkers
+	 */
+	public boolean isConnected(final UserRole role) {
+		return this.roles.isNot_ConsultantOrDeactivated(role);
+	}
+
+	/**
+	 * Method to test if the user is manager
+	 *
+	 * @param role {@link UserRole} the current logged user's role
+	 * @return true if it's manager or manager admin, otherwise false
+	 * @author Andy Chabalier
+	 */
+	public boolean isManager(final UserRole role) {
+		return this.roles.isManager(role);
 	}
 
 	/**
@@ -157,34 +182,11 @@ public class ConsultantBusinessController {
 	 * @author Lucas Royackkers
 	 * @throws ParseException
 	 */
-	public HttpException updateConsultant(final JsonNode params, final UserRole role, String personInChargeMail)
+	public HttpException updateConsultant(final JsonNode params, final UserRole role, final String personInChargeMail)
 			throws ParseException {
-		if (this.isManagerOrCdrAdmin(role)) {
+		if (isManager(role)) {
 			return this.personEntityController.updatePerson(params, PersonRole.CONSULTANT, personInChargeMail);
 		}
 		return new ForbiddenException();
-	}
-
-	/**
-	 * Method to test if the user is a Manager (Admin or not) or a CDR_Admin
-	 * 
-	 * @param role the current logged user's role
-	 * @return true if it's a CDR or a Manager (Admin or not), otherwise false
-	 * @author Lucas Royackkers
-	 */
-	public boolean isManagerOrCdrAdmin(final UserRole role) {
-		return this.roles.isManagerOrCdrAdmin(role);
-	}
-
-	/**
-	 * Method to test if the user is connected (not an consultant or a deactivated
-	 * user)
-	 * 
-	 * @param role the current logged user's role
-	 * @return true if the user is connected, otherwise false
-	 * @author Lucas Royackkers
-	 */
-	public boolean isConnected(final UserRole role) {
-		return this.roles.isNot_ConsultantOrDeactivated(role);
 	}
 }

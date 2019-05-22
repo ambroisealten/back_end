@@ -50,10 +50,6 @@ public class GeographicBusinessController {
 
 	private final Gson gson = new GsonBuilder().create();
 
-	public boolean isAdmin(final UserRole role) {
-		return UserRoleLists.getInstance().isAdmin(role);
-	}
-
 	/**
 	 * Create cities from a provided departement arrayList. This method will ask the
 	 * geo.api.gouv.fr API to fetch cities from each departements
@@ -193,6 +189,10 @@ public class GeographicBusinessController {
 			return Optional.empty();
 		}
 		return Optional.ofNullable(place);
+	}
+
+	public boolean isAdmin(final UserRole role) {
+		return UserRoleLists.getInstance().isAdmin(role);
 	}
 
 	/**

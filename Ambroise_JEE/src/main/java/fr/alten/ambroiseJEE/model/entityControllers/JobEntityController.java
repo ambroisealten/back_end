@@ -55,16 +55,16 @@ public class JobEntityController {
 	 * @author Andy Chabalier
 	 */
 	public Job createJob(final String title) {
-			Job newJob = new Job();
-			newJob.setTitle(title);
-			try {
-				newJob = this.jobRepository.save(newJob);
-			} catch (final DuplicateKeyException dke) {
-				throw new ConflictException();
-			} catch (final Exception e) {
-				throw new InternalServerErrorException();
-			}
-			return newJob;
+		Job newJob = new Job();
+		newJob.setTitle(title);
+		try {
+			newJob = this.jobRepository.save(newJob);
+		} catch (final DuplicateKeyException dke) {
+			throw new ConflictException();
+		} catch (final Exception e) {
+			throw new InternalServerErrorException();
+		}
+		return newJob;
 	}
 
 	/**

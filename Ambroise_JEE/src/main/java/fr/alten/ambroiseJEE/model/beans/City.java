@@ -35,11 +35,7 @@ public class City extends Geographic implements Serializable {
 	}
 
 	public ObjectId get_id() {
-		return _id;
-	}
-
-	public void set_id(ObjectId _id) {
-		this._id = _id;
+		return this._id;
 	}
 
 	public String getCode() {
@@ -65,6 +61,10 @@ public class City extends Geographic implements Serializable {
 
 	public String getNom() {
 		return this.nom;
+	}
+
+	public void set_id(final ObjectId _id) {
+		this._id = _id;
 	}
 
 	public void setCode(final String code) {

@@ -144,17 +144,17 @@ public class DiplomaEntityController {
 	 * @author Lucas Royackkers
 	 */
 	public List<Diploma> getDiplomas() {
-		List<Diploma> results = this.diplomaRepository.findAll();
-		List<String> allNames = new ArrayList<String>();
-		List<Diploma> finalResults = new ArrayList<Diploma>();
-		
-		for(Diploma result : results) {
-			if(!allNames.contains(result.getName())) {
+		final List<Diploma> results = this.diplomaRepository.findAll();
+		final List<String> allNames = new ArrayList<String>();
+		final List<Diploma> finalResults = new ArrayList<Diploma>();
+
+		for (final Diploma result : results) {
+			if (!allNames.contains(result.getName())) {
 				finalResults.add(result);
 				allNames.add(result.getName());
 			}
 		}
-		
+
 		return finalResults;
 	}
 

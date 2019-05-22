@@ -36,6 +36,14 @@ public class PersonRestController {
 		this.gson = builder.create();
 	}
 
+	@DeleteMapping(value = "/person/{mail}")
+	@ResponseBody
+	public HttpException deletePerson(@PathVariable("mail") final String personMail,
+			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
+		return MailUtils.validateMail(personMail) ? this.personBusinessController.deletePerson(personMail, role)
+				: new UnprocessableEntityException();
+	}
+
 	/**
 	 *
 	 * @param personMail the person's mail
@@ -49,14 +57,6 @@ public class PersonRestController {
 	public String getPerson(@PathVariable("mail") final String personMail, @RequestAttribute("mail") final String mail,
 			@RequestAttribute("role") final UserRole role) {
 		return this.gson.toJson(this.personBusinessController.getPerson(personMail, role));
-	}
-
-	@DeleteMapping(value = "/person/{mail}")
-	@ResponseBody
-	public HttpException deletePerson(@PathVariable("mail") final String personMail,
-			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
-		return MailUtils.validateMail(personMail) ? this.personBusinessController.deletePerson(personMail, role)
-				: new UnprocessableEntityException();
 	}
 
 }

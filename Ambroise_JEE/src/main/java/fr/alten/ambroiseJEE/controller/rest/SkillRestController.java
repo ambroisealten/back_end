@@ -35,10 +35,6 @@ import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 @Controller
 public class SkillRestController {
 
-	public boolean checkJsonIntegrity(final JsonNode params, final String... fields) {
-		return JsonUtils.checkJsonIntegrity(params, fields);
-	}
-
 	@Autowired
 	private SkillBusinessController skillBusinessController;
 
@@ -47,6 +43,10 @@ public class SkillRestController {
 	public SkillRestController() {
 		final GsonBuilder builder = new GsonBuilder();
 		this.gson = builder.create();
+	}
+
+	public boolean checkJsonIntegrity(final JsonNode params, final String... fields) {
+		return JsonUtils.checkJsonIntegrity(params, fields);
 	}
 
 	/**
@@ -128,7 +128,7 @@ public class SkillRestController {
 
 	/**
 	 * Fetch all soft skills
-	 * 
+	 *
 	 * @param mail the current logged user's mail
 	 * @param role the current logged user's role
 	 * @return a JsonNode containing all the soft skills within the database (can be
@@ -144,7 +144,7 @@ public class SkillRestController {
 
 	/**
 	 * Fetch all tech skills
-	 * 
+	 *
 	 * @param mail the current logged user's mail
 	 * @param role the current logged user's role
 	 * @return a JsonNode containing all the tech skills within the database (can be

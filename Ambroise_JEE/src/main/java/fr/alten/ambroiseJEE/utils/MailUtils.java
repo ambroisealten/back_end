@@ -12,6 +12,9 @@ import java.util.regex.Pattern;
  */
 public class MailUtils {
 
+	public static final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
+			Pattern.CASE_INSENSITIVE);
+
 	/**
 	 * TODO Envoyer le nouveau mot de passe temporaire/ et un lien pour modifier le
 	 * mot de passe directement ?
@@ -23,9 +26,6 @@ public class MailUtils {
 
 	}
 
-	public static final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
-			Pattern.CASE_INSENSITIVE);
-
 	/**
 	 * Method to validate if the mail math with the mail pattern
 	 *
@@ -34,7 +34,7 @@ public class MailUtils {
 	 * @author Andy Chabalier
 	 */
 	public static boolean validateMail(final String emailStr) {
-		final Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
+		final Matcher matcher = MailUtils.VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
 		return matcher.find();
 	}
 }

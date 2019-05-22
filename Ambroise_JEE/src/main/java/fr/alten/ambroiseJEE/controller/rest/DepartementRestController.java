@@ -34,10 +34,6 @@ import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 @Controller
 public class DepartementRestController {
 
-	public boolean checkJsonIntegrity(final JsonNode params, final String... fields) {
-		return JsonUtils.checkJsonIntegrity(params, fields);
-	}
-	
 	@Autowired
 	private DepartementBusinessController departementBusinessController;
 
@@ -46,6 +42,10 @@ public class DepartementRestController {
 	public DepartementRestController() {
 		final GsonBuilder builder = new GsonBuilder();
 		this.gson = builder.create();
+	}
+
+	public boolean checkJsonIntegrity(final JsonNode params, final String... fields) {
+		return JsonUtils.checkJsonIntegrity(params, fields);
 	}
 
 	/**
@@ -64,7 +64,8 @@ public class DepartementRestController {
 	@ResponseBody
 	public HttpException createDepartement(@RequestBody final JsonNode params,
 			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
-		return checkJsonIntegrity(params, "nom", "code", "codeRegion") ? this.departementBusinessController.createDepartement(params, role)
+		return checkJsonIntegrity(params, "nom", "code", "codeRegion")
+				? this.departementBusinessController.createDepartement(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -119,7 +120,8 @@ public class DepartementRestController {
 	@ResponseBody
 	public HttpException updateDepartement(@RequestBody final JsonNode params,
 			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
-		return checkJsonIntegrity(params, "nom", "code") ? this.departementBusinessController.updateDepartement(params, role)
+		return checkJsonIntegrity(params, "nom", "code")
+				? this.departementBusinessController.updateDepartement(params, role)
 				: new UnprocessableEntityException();
 	}
 }

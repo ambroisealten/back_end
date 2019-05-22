@@ -27,15 +27,15 @@ public class UnprocessableEntityException extends HttpException {
 				HttpStatus.UNPROCESSABLE_ENTITY.name(), "", HttpStatus.UNPROCESSABLE_ENTITY.value()) };
 		setStackTrace(newStackTrace);
 	}
-	
-	public UnprocessableEntityException(Exception e) {
+
+	public UnprocessableEntityException(final Exception e) {
 		super("Internal Server Error");
-		logger.error(e.toString());
+		this.logger.error(e.toString());
 	}
 
 	@Override
 	public String getLocalizedMessage() {
 		return "L’entité fournie avec la requête est incompréhensible ou incomplète.";
 	}
-	
+
 }

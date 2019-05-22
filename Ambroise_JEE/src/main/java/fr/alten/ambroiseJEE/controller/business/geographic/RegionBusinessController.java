@@ -29,7 +29,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
  */
 @Service
 public class RegionBusinessController {
-	
+
 	private final UserRoleLists roles = UserRoleLists.getInstance();
 
 	@Autowired
@@ -45,9 +45,7 @@ public class RegionBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException createRegion(final JsonNode jRegion, final UserRole role) {
-		return isAdmin(role)
-				? this.regionEntityController.createRegion(jRegion)
-				: new ForbiddenException();
+		return isAdmin(role) ? this.regionEntityController.createRegion(jRegion) : new ForbiddenException();
 	}
 
 	/**
@@ -61,9 +59,7 @@ public class RegionBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException deleteRegion(final JsonNode params, final UserRole role) {
-		return isAdmin(role)
-				? this.regionEntityController.deleteRegion(params)
-				: new ForbiddenException();
+		return isAdmin(role) ? this.regionEntityController.deleteRegion(params) : new ForbiddenException();
 	}
 
 	/**
@@ -91,6 +87,10 @@ public class RegionBusinessController {
 		throw new ForbiddenException();
 	}
 
+	public boolean isAdmin(final UserRole role) {
+		return this.roles.isAdmin(role);
+	}
+
 	/**
 	 * Method to delegate region update
 	 *
@@ -103,13 +103,7 @@ public class RegionBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException updateRegion(final JsonNode jRegion, final UserRole role) {
-		return isAdmin(role)
-				? this.regionEntityController.updateRegion(jRegion)
-				: new ForbiddenException();
-	}
-	
-	public boolean isAdmin(final UserRole role) {
-		return this.roles.isAdmin(role);
+		return isAdmin(role) ? this.regionEntityController.updateRegion(jRegion) : new ForbiddenException();
 	}
 
 }

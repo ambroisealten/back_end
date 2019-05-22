@@ -56,7 +56,7 @@ public class DepartementEntityController {
 
 	/**
 	 *
-	 * @param jDepartement  JsonNode with all departement parameters
+	 * @param jDepartement JsonNode with all departement parameters
 	 * @return {@link HttpException} corresponding to the status of the request
 	 *         ({@link ResourceNotFoundException} if the resource is not found and
 	 *         {@link OkException} if the departement is deactivated

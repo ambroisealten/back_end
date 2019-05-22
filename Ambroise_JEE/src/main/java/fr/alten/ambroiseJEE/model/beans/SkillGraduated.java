@@ -42,12 +42,12 @@ public class SkillGraduated {
 		return this.skill;
 	}
 
+	public boolean isSoft() {
+		return getSkill().isSoft();
+	}
+
 	public void setGrade(final double grade) {
 		this.grade = grade;
-	}
-	
-	public boolean isSoft() {
-		return this.getSkill().isSoft();
 	}
 
 }

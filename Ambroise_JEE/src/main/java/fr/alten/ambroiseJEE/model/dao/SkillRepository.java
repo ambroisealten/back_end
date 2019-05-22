@@ -15,6 +15,8 @@ import fr.alten.ambroiseJEE.model.beans.Skill;
  */
 public interface SkillRepository extends MongoRepository<Skill, Long> {
 
+	public Optional<Skill> findBy_id(String id);
+
 	/**
 	 * Fetch skill by name
 	 *
@@ -24,7 +26,5 @@ public interface SkillRepository extends MongoRepository<Skill, Long> {
 	 * @author Lucas Royackkers
 	 */
 	public Optional<Skill> findByNameIgnoreCase(String name);
-	
-	public Optional<Skill> findBy_id(String id);
 
 }

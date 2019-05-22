@@ -66,7 +66,8 @@ public class CityRestController {
 	@ResponseBody
 	public HttpException createCity(@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
 			@RequestAttribute("role") final UserRole role) {
-		return checkJsonIntegrity(params, "nom", "code", "codesPostaux", "codeRegion", "codeDepartement") ? this.cityBusinessController.createCity(params, role)
+		return checkJsonIntegrity(params, "nom", "code", "codesPostaux", "codeRegion", "codeDepartement")
+				? this.cityBusinessController.createCity(params, role)
 				: new UnprocessableEntityException();
 	}
 

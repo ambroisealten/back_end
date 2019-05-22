@@ -26,6 +26,16 @@ public class PersonBusinessController {
 	private PersonEntityController personEntityController;
 
 	/**
+	 * @return
+	 * @author Andy Chabalier
+	 * @param role the current logged user's role
+	 * @param mail the person mail to delete
+	 */
+	public HttpException deletePerson(final String mail, final UserRole role) {
+		return isAdmin(role) ? this.personEntityController.deletePerson(mail) : new ForbiddenException();
+	}
+
+	/**
 	 * Try to fetch a person given its mail
 	 *
 	 * @param mail the person's mail
@@ -35,7 +45,7 @@ public class PersonBusinessController {
 	 * @throws ForbiddenException (if the user hasn't the right to do so)
 	 */
 	public Person getPerson(final String mail, final UserRole role) {
-		if (this.isConnected(role)) {
+		if (isConnected(role)) {
 			try {
 				return this.personEntityController.getPersonByMail(mail);
 			} catch (final ResourceNotFoundException e) {
@@ -46,25 +56,26 @@ public class PersonBusinessController {
 	}
 
 	/**
+	 * Method to test if the user is admin
+	 *
+	 * @param role the current logged user's role
+	 * @return true if the user is admin, otherwise false
+	 * @author Andy Chabalier
+	 */
+	public boolean isAdmin(final UserRole role) {
+		return this.roles.isAdmin(role);
+	}
+
+	/**
 	 * Method to test if the user is connected (not an consultant or a deactivated
 	 * user)
-	 * 
+	 *
 	 * @param role the current logged user's role
 	 * @return true if the user is connected, otherwise false
 	 * @author Lucas Royackkers
 	 */
 	public boolean isConnected(final UserRole role) {
 		return this.roles.isNot_ConsultantOrDeactivated(role);
-	}
-
-	/**
-	 * @return
-	 * @author Andy Chabalier
-	 * @param role the current logged user's role
-	 * @param mail the person mail to delete
-	 */
-	public HttpException deletePerson(String mail, UserRole role) {
-		return this.roles.isAdmin(role) ? this.personEntityController.deletePerson(mail) : new ForbiddenException();
 	}
 
 }

@@ -16,17 +16,17 @@ import fr.alten.ambroiseJEE.model.beans.City;
 public interface CityRepository extends MongoRepository<City, Long> {
 
 	/**
-	 * @param name the city name
-	 * @return An Optional with the corresponding city or not.
-	 * @author Andy Chabalier
-	 */
-	Optional<City> findByNom(String name);
-	
-	/**
 	 * @param name the city code
 	 * @return An Optional with the corresponding city or not.
 	 * @author Andy Chabalier
 	 */
 	Optional<City> findByCode(String code);
+
+	/**
+	 * @param name the city name
+	 * @return An Optional with the corresponding city or not.
+	 * @author Andy Chabalier
+	 */
+	Optional<City> findByNom(String name);
 
 }

@@ -59,7 +59,7 @@ public class ConsultantBusinessControllerTest {
 	public void createConsultant_as_AdminUser() throws ParseException {
 		// setup
 		Mockito.doReturn(true).when(this.consultantBusinessController)
-				.isManagerOrCdrAdmin(ArgumentMatchers.any(UserRole.class));
+				.isManager(ArgumentMatchers.any(UserRole.class));
 		Mockito.when(this.personEntityController.createPerson(ArgumentMatchers.any(JsonNode.class),
 				ArgumentMatchers.any(PersonRole.class), ArgumentMatchers.anyString()))
 				.thenReturn(this.mockedHttpException);
@@ -79,7 +79,7 @@ public class ConsultantBusinessControllerTest {
 	public void createConsultant_as_NonAdminUserOrCdr() throws ParseException {
 		// setup
 		Mockito.doReturn(false).when(this.consultantBusinessController)
-				.isManagerOrCdrAdmin(ArgumentMatchers.any(UserRole.class));
+				.isManager(ArgumentMatchers.any(UserRole.class));
 		// assert
 		Assertions
 				.assertThat(
@@ -98,7 +98,7 @@ public class ConsultantBusinessControllerTest {
 	public void deleteConsultant_as_AdminUser() {
 		// setup
 		Mockito.doReturn(true).when(this.consultantBusinessController)
-				.isManagerOrCdrAdmin(ArgumentMatchers.any(UserRole.class));
+				.isManager(ArgumentMatchers.any(UserRole.class));
 		Mockito.when(this.personEntityController.deletePersonByRole(ArgumentMatchers.any(JsonNode.class),
 				ArgumentMatchers.any(PersonRole.class)))
 				.thenReturn(this.mockedHttpException);
@@ -118,7 +118,7 @@ public class ConsultantBusinessControllerTest {
 	public void deleteConsultant_as_NonAdminUserOrCdr() {
 		// setup
 		Mockito.doReturn(false).when(this.consultantBusinessController)
-				.isManagerOrCdrAdmin(ArgumentMatchers.any(UserRole.class));
+				.isManager(ArgumentMatchers.any(UserRole.class));
 		// assert
 		Assertions
 				.assertThat(
@@ -202,7 +202,7 @@ public class ConsultantBusinessControllerTest {
 	public void updateConsultant_as_AdminUser() throws ParseException {
 		// setup
 		Mockito.doReturn(true).when(this.consultantBusinessController)
-				.isManagerOrCdrAdmin(ArgumentMatchers.any(UserRole.class));
+				.isManager(ArgumentMatchers.any(UserRole.class));
 		Mockito.when(this.personEntityController.updatePerson(ArgumentMatchers.any(JsonNode.class),
 				ArgumentMatchers.any(PersonRole.class), ArgumentMatchers.anyString()))
 				.thenReturn(this.mockedHttpException);
@@ -223,7 +223,7 @@ public class ConsultantBusinessControllerTest {
 	public void updateConsultant_as_NonAdminUser() throws ParseException {
 		// setup
 		Mockito.doReturn(false).when(this.consultantBusinessController)
-				.isManagerOrCdrAdmin(ArgumentMatchers.any(UserRole.class));
+				.isManager(ArgumentMatchers.any(UserRole.class));
 		// assert
 		Assertions
 				.assertThat(

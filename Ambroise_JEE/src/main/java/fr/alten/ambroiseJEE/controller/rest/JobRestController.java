@@ -34,10 +34,6 @@ import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
  */
 @Controller
 public class JobRestController {
-	
-	public boolean checkJsonIntegrity(final JsonNode params, final String... fields) {
-		return JsonUtils.checkJsonIntegrity(params, fields);
-	}
 
 	@Autowired
 	private JobBusinessController jobBusinessController;
@@ -47,6 +43,10 @@ public class JobRestController {
 	public JobRestController() {
 		final GsonBuilder builder = new GsonBuilder();
 		this.gson = builder.create();
+	}
+
+	public boolean checkJsonIntegrity(final JsonNode params, final String... fields) {
+		return JsonUtils.checkJsonIntegrity(params, fields);
 	}
 
 	/**
@@ -117,7 +117,7 @@ public class JobRestController {
 	@PutMapping("/job")
 	@ResponseBody
 	public HttpException updateJob(@RequestBody final JsonNode params, @RequestAttribute("role") final UserRole role) {
-		return checkJsonIntegrity(params, "title","oldTitle") ? this.jobBusinessController.updateJob(params, role)
+		return checkJsonIntegrity(params, "title", "oldTitle") ? this.jobBusinessController.updateJob(params, role)
 				: new UnprocessableEntityException();
 	}
 }

@@ -29,8 +29,8 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 @Service
 public class CityEntityController {
 
-	private Logger logger = LoggerFactory.getLogger(CityEntityController.class);
-	
+	private final Logger logger = LoggerFactory.getLogger(CityEntityController.class);
+
 	@Autowired
 	private CityRepository cityRepository;
 
@@ -45,7 +45,7 @@ public class CityEntityController {
 	 */
 	public HttpException createCity(final JsonNode jCity) {
 
-		City newCity = new City();
+		final City newCity = new City();
 		newCity.setNom(jCity.get("nom").textValue());
 		newCity.setCode(jCity.get("code").textValue());
 		newCity.setCodeDepartement(jCity.get("codeDepartement").textValue());
@@ -57,7 +57,7 @@ public class CityEntityController {
 		} catch (final DuplicateKeyException dke) {
 			return new ConflictException();
 		} catch (final Exception e) {
-			logger.error("New kind of Exception caught in CityEntityController.createCity : "+e);
+			this.logger.error("New kind of Exception caught in CityEntityController.createCity : " + e);
 		}
 		return new CreatedException();
 	}

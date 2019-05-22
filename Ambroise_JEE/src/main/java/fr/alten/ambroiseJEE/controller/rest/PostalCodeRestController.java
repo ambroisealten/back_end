@@ -33,10 +33,6 @@ import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
  */
 @Controller
 public class PostalCodeRestController {
-	
-	public boolean checkJsonIntegrity(final JsonNode params, final String... fields) {
-		return JsonUtils.checkJsonIntegrity(params, fields);
-	}
 
 	@Autowired
 	private PostalCodeBusinessController postalCodeBusinessController;
@@ -46,6 +42,10 @@ public class PostalCodeRestController {
 	public PostalCodeRestController() {
 		final GsonBuilder builder = new GsonBuilder();
 		this.gson = builder.create();
+	}
+
+	public boolean checkJsonIntegrity(final JsonNode params, final String... fields) {
+		return JsonUtils.checkJsonIntegrity(params, fields);
 	}
 
 	/**
@@ -119,7 +119,8 @@ public class PostalCodeRestController {
 	@ResponseBody
 	public HttpException updatePostalCode(@RequestBody final JsonNode params,
 			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
-		return checkJsonIntegrity(params, "name", "oldName") ? this.postalCodeBusinessController.updatePostalCode(params, role)
+		return checkJsonIntegrity(params, "name", "oldName")
+				? this.postalCodeBusinessController.updatePostalCode(params, role)
 				: new UnprocessableEntityException();
 	}
 }

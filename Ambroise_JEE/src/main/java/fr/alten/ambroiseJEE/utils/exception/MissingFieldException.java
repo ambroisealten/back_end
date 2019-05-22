@@ -6,12 +6,12 @@ package fr.alten.ambroiseJEE.utils.exception;
  *
  */
 
-public class MissingFieldException extends Exception{
+public class MissingFieldException extends Exception {
 
 	private static final long serialVersionUID = 4617779039227854917L;
 
 	public MissingFieldException() {
 		super();
 	}
-	
+
 }

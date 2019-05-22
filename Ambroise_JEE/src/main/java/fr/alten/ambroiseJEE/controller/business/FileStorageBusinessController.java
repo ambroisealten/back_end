@@ -49,6 +49,17 @@ public class FileStorageBusinessController {
 	private Path fileStorageLocation;
 
 	/**
+	 * check if the role have access to method
+	 *
+	 * @param role role to check
+	 * @return true if granted
+	 * @author Andy Chabalier
+	 */
+	public boolean appUser(final UserRole role) {
+		return isAdmin(role) || UserRole.MANAGER.equals(role) || UserRole.CDR.equals(role);
+	}
+
+	/**
 	 * @param _id       the id of file to delete
 	 * @param path      the path of file to delete
 	 * @param extension the extension of file to delete
@@ -126,7 +137,7 @@ public class FileStorageBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public boolean isAdmin(final UserRole role) {
-		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role;
+		return UserRole.CDR_ADMIN.equals(role) || UserRole.MANAGER_ADMIN.equals(role);
 	}
 
 	/**
@@ -244,7 +255,7 @@ public class FileStorageBusinessController {
 	 */
 	public HttpException storeFile(final MultipartFile file, final String path, final String fileName,
 			final UserRole role) {
-		if (!(isAdmin(role) || UserRole.MANAGER == role)) {
+		if (!(appUser(role) || UserRole.MANAGER.equals(role))) {
 			return new ForbiddenException();
 		}
 		try {

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.alten.ambroiseJEE.controller.rest;
 
@@ -40,13 +40,25 @@ public class DocumentSetRestController {
 	private final Gson gson;
 
 	public DocumentSetRestController() {
-		GsonBuilder builder = new GsonBuilder();
+		final GsonBuilder builder = new GsonBuilder();
 		this.gson = builder.create();
 	}
 
 	/**
+	 * Check the json Integrity
+	 *
+	 * @param params ...
+	 * @param fields ...
+	 * @return the JsonIntegrity
+	 * @author MAQUINGHEN MAXIME
+	 */
+	public boolean checkJsonIntegrity(final JsonNode params, final String... fields) {
+		return JsonUtils.checkJsonIntegrity(params, fields);
+	}
+
+	/**
 	 * Document set creation on Server
-	 * 
+	 *
 	 * @param jDocumentSet the AppMobile Version
 	 * @param role         the user's role
 	 * @return the @see {@link HttpException} corresponding to the statut of the
@@ -59,16 +71,63 @@ public class DocumentSetRestController {
 	 */
 	@PostMapping("/admin/documentset")
 	@ResponseBody
-	public HttpException createDocumentSet(@RequestBody JsonNode JDocumentSet,
-			@RequestAttribute("role") UserRole role) {
+	public HttpException createDocumentSet(@RequestBody final JsonNode JDocumentSet,
+			@RequestAttribute("role") final UserRole role) {
 		return checkJsonIntegrity(JDocumentSet, "name", "files")
-				? documentSetBusinessController.createDocumentSet(JDocumentSet, role)
+				? this.documentSetBusinessController.createDocumentSet(JDocumentSet, role)
 				: new UnprocessableEntityException();
-}
+	}
+
+	/**
+	 * Fetch all changes of the document set
+	 *
+	 * @param jDocumentSet the AppMobile Version
+	 * @param role         the user's role
+	 * @return the Json demand with 3 List: additions, changes, deletions
+	 * @author MAQUINGHEN MAXIME
+	 */
+	@GetMapping("/documentset")
+	@ResponseBody
+	public String getDocumentSet(@RequestBody final JsonNode JDocumentSet,
+			@RequestAttribute("role") final UserRole role) {
+		if (!checkJsonIntegrity(JDocumentSet, "name", "files")) {
+			throw new UnprocessableEntityException();
+		} else {
+			return this.gson.toJson(this.documentSetBusinessController.getDocumentSet(JDocumentSet, role));
+		}
+	}
+
+	/**
+	 * fetch all document set for the administration page
+	 *
+	 * @param role the user's role
+	 * @return the Json ask
+	 * @author MAQUINGHEN MAXIME
+	 */
+	@GetMapping("/admin/documentset/all")
+	@ResponseBody
+	public String getDocumentSetAdmin(@RequestAttribute("role") final UserRole role) {
+		return this.gson.toJson(this.documentSetBusinessController.getAllDocumentSet(role));
+	}
+
+	/**
+	 * fetch a Document set
+	 *
+	 * @param set  the set name to fetch
+	 * @param role the current logged user's role
+	 * @return the document set or {@link RessourceNotFoundException}
+	 * @author Andy Chabalier
+	 */
+	@GetMapping("/admin/documentset")
+	@ResponseBody
+	public String getSpecificDocumentSet(@RequestParam("set") final String set,
+			@RequestAttribute("role") final UserRole role) {
+		return this.gson.toJson(this.documentSetBusinessController.getSpecificDocumentSet(set, role));
+	}
 
 	/**
 	 * Update the document Set on the server
-	 * 
+	 *
 	 * @param jDocumentSet the AppMobile Version
 	 * @param role         the user's role
 	 * @return the @see {@link HttpException} corresponding to the statut of the
@@ -81,66 +140,10 @@ public class DocumentSetRestController {
 	 */
 	@PutMapping("/admin/documentset")
 	@ResponseBody
-	public HttpException updateDocumentSet(@RequestBody JsonNode JDocumentSet,
-			@RequestAttribute("role") UserRole role) {
+	public HttpException updateDocumentSet(@RequestBody final JsonNode JDocumentSet,
+			@RequestAttribute("role") final UserRole role) {
 		return checkJsonIntegrity(JDocumentSet, "name", "oldName")
-				? documentSetBusinessController.updateDocumentSet(JDocumentSet, role)
+				? this.documentSetBusinessController.updateDocumentSet(JDocumentSet, role)
 				: new UnprocessableEntityException();
-	}
-
-	/**
-	 * Fetch all changes of the document set
-	 * 
-	 * @param jDocumentSet the AppMobile Version
-	 * @param role         the user's role
-	 * @return the Json demand with 3 List: additions, changes, deletions
-	 * @author MAQUINGHEN MAXIME
-	 */
-	@GetMapping("/documentset")
-	@ResponseBody
-	public String getDocumentSet(@RequestBody JsonNode JDocumentSet, @RequestAttribute("role") UserRole role) {
-		if (!checkJsonIntegrity(JDocumentSet, "name", "files"))
-			throw new UnprocessableEntityException();
-		else
-			return gson.toJson(documentSetBusinessController.getDocumentSet(JDocumentSet, role));
-	}
-
-	/**
-	 * fetch all document set for the administration page
-	 * 
-	 * @param role the user's role
-	 * @return the Json ask
-	 * @author MAQUINGHEN MAXIME
-	 */
-	@GetMapping("/admin/documentset/all")
-	@ResponseBody
-	public String getDocumentSetAdmin(@RequestAttribute("role") UserRole role) {
-		return gson.toJson(documentSetBusinessController.getAllDocumentSet(role));
-	}
-
-	/**
-	 * fetch a Document set
-	 * 
-	 * @param set  the set name to fetch
-	 * @param role the current logged user's role
-	 * @return the document set or {@link RessourceNotFoundException}
-	 * @author Andy Chabalier
-	 */
-	@GetMapping("/admin/documentset")
-	@ResponseBody
-	public String getSpecificDocumentSet(@RequestParam("set") String set, @RequestAttribute("role") UserRole role) {
-		return gson.toJson(documentSetBusinessController.getSpecificDocumentSet(set, role));
-	}
-
-	/**
-	 * Check the json Integrity
-	 * 
-	 * @param params ...
-	 * @param fields ...
-	 * @return the JsonIntegrity
-	 * @author MAQUINGHEN MAXIME
-	 */
-	public boolean checkJsonIntegrity(JsonNode params, String... fields) {
-		return JsonUtils.checkJsonIntegrity(params, fields);
 	}
 }

@@ -46,8 +46,7 @@ public class JobBusinessController {
 	 * @author Lucas Royackkers
 	 */
 	public HttpException createJob(final JsonNode params, final UserRole role) {
-		return isAdmin(role) ? this.jobEntityController.createJob(params) :
-			new ForbiddenException();
+		return isAdmin(role) ? this.jobEntityController.createJob(params) : new ForbiddenException();
 	}
 
 	/**
@@ -65,8 +64,7 @@ public class JobBusinessController {
 	 * @author Lucas Royackkers
 	 */
 	public HttpException deleteJob(final JsonNode params, final UserRole role) {
-		return isAdmin(role) ? this.jobEntityController.deleteJob(params) :
-			new ForbiddenException();
+		return isAdmin(role) ? this.jobEntityController.deleteJob(params) : new ForbiddenException();
 	}
 
 	/**
@@ -85,6 +83,14 @@ public class JobBusinessController {
 		throw new ForbiddenException();
 	}
 
+	public boolean isAdmin(final UserRole role) {
+		return this.roles.isAdmin(role);
+	}
+
+	public boolean isNotConsultantOrDeactivated(final UserRole role) {
+		return this.roles.isNot_ConsultantOrDeactivated(role);
+	}
+
 	/**
 	 * Method to delegate Job update
 	 *
@@ -99,16 +105,7 @@ public class JobBusinessController {
 	 * @author Lucas Royackkers
 	 */
 	public HttpException updateJob(final JsonNode params, final UserRole role) {
-		return isAdmin(role) ? this.jobEntityController.updateJob(params) :
-			new ForbiddenException();
-	}
-	
-	public boolean isAdmin(final UserRole role) {
-		return this.roles.isAdmin(role);
-	}
-	
-	public boolean isNotConsultantOrDeactivated(final UserRole role) {
-		return this.roles.isNot_ConsultantOrDeactivated(role);
+		return isAdmin(role) ? this.jobEntityController.updateJob(params) : new ForbiddenException();
 	}
 
 }

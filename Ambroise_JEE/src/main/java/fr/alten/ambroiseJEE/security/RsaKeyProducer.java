@@ -23,15 +23,7 @@ public class RsaKeyProducer {
 	// clé RSA
 	private static RsaJsonWebKey theOne;
 
-	@Autowired
-	private ApplicationContext ctx;
-
 	private static ApplicationContext autowiredCtx;
-
-	@PostConstruct
-	private void init() {
-		autowiredCtx = this.ctx;
-	}
 
 	/**
 	 * Méthode produisant une nouvelle clé si elle n'existe pas encore
@@ -42,12 +34,20 @@ public class RsaKeyProducer {
 	public static RsaJsonWebKey produce() {
 		if (RsaKeyProducer.theOne == null) {
 			try {
-				RsaKeyProducer.theOne = RsaJwkGenerator.generateJwk(
-						Integer.parseInt(autowiredCtx.getEnvironment().getProperty("security.token.rsaBitCrypted")));
+				RsaKeyProducer.theOne = RsaJwkGenerator.generateJwk(Integer.parseInt(
+						RsaKeyProducer.autowiredCtx.getEnvironment().getProperty("security.token.rsaBitCrypted")));
 			} catch (final JoseException ex) {
 				Logger.getLogger(RsaKeyProducer.class.getName()).log(Level.SEVERE, null, ex);
 			}
 		}
 		return RsaKeyProducer.theOne;
+	}
+
+	@Autowired
+	private ApplicationContext ctx;
+
+	@PostConstruct
+	private void init() {
+		RsaKeyProducer.autowiredCtx = this.ctx;
 	}
 }

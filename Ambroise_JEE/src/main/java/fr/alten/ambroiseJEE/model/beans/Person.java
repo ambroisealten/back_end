@@ -41,12 +41,36 @@ public class Person implements Serializable {
 		super();
 	}
 
+	/**
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(final Object other) {
+		if (super.equals(other)) {
+			return true;
+		} else if (!(other instanceof Person)) {
+			return false;
+		} else {
+			final Person otherPerson = (Person) other;
+			return this._id.equals(otherPerson.get_id());
+		}
+
+	}
+
 	public ObjectId get_id() {
 		return this._id;
 	}
 
+	public Availability getAvailability() {
+		return this.availability;
+	}
+
 	public String getEmployer() {
 		return this.employer;
+	}
+
+	public int getExperienceTime() {
+		return this.experienceTime;
 	}
 
 	public String getHighestDiploma() {
@@ -73,6 +97,10 @@ public class Person implements Serializable {
 		return this.name;
 	}
 
+	public String getOpinion() {
+		return this.opinion;
+	}
+
 	public String getPersonInChargeMail() {
 		return this.personInChargeMail;
 	}
@@ -85,13 +113,20 @@ public class Person implements Serializable {
 		return this.surname;
 	}
 
-
 	public void set_id(final ObjectId _id) {
 		this._id = _id;
 	}
 
+	public void setAvailability(final Availability availability) {
+		this.availability = availability;
+	}
+
 	public void setEmployer(final String employer) {
 		this.employer = employer;
+	}
+
+	public void setExperienceTime(final int experienceTime) {
+		this.experienceTime = experienceTime;
 	}
 
 	public void setHighestDiploma(final String highestDiploma) {
@@ -118,6 +153,10 @@ public class Person implements Serializable {
 		this.name = name;
 	}
 
+	public void setOpinion(final String opinion) {
+		this.opinion = opinion;
+	}
+
 	public void setPersonInChargeMail(final String personInChargeMail) {
 		this.personInChargeMail = personInChargeMail;
 	}
@@ -128,47 +167,5 @@ public class Person implements Serializable {
 
 	public void setSurname(final String surname) {
 		this.surname = surname;
-	}
-	
-	public String getOpinion() {
-		return opinion;
-	}
-
-	public void setOpinion(String opinion) {
-		this.opinion = opinion;
-	}
-
-	public int getExperienceTime() {
-		return experienceTime;
-	}
-
-	public void setExperienceTime(int experienceTime) {
-		this.experienceTime = experienceTime;
-	}
-
-	public Availability getAvailability() {
-		return availability;
-	}
-
-	public void setAvailability(Availability availability) {
-		this.availability = availability;
-	}
-
-	/**
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object other) {
-		if(super.equals(other)) {
-			return true;
-		}
-		else if(!(other instanceof Person)) {
-			return false;
-		}
-		else {
-			Person otherPerson = (Person) other;
-			return this._id.equals(otherPerson.get_id());
-		}
-		
 	}
 }

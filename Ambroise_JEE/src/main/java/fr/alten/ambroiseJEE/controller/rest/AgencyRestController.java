@@ -33,10 +33,6 @@ import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
  */
 @Controller
 public class AgencyRestController {
-	
-	public boolean checkJsonIntegrity(final JsonNode params, final String... fields) {
-		return JsonUtils.checkJsonIntegrity(params, fields);
-	}
 
 	@Autowired
 	private AgencyBusinessController agencyBusinessController;
@@ -46,6 +42,10 @@ public class AgencyRestController {
 	public AgencyRestController() {
 		final GsonBuilder builder = new GsonBuilder();
 		this.gson = builder.create();
+	}
+
+	public boolean checkJsonIntegrity(final JsonNode params, final String... fields) {
+		return JsonUtils.checkJsonIntegrity(params, fields);
 	}
 
 	/**
@@ -64,7 +64,8 @@ public class AgencyRestController {
 	@ResponseBody
 	public HttpException createAgency(@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
 			@RequestAttribute("role") final UserRole role) {
-		return checkJsonIntegrity(params, "name", "place", "placeType") ? this.agencyBusinessController.createAgency(params, role)
+		return checkJsonIntegrity(params, "name", "place", "placeType")
+				? this.agencyBusinessController.createAgency(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -119,7 +120,8 @@ public class AgencyRestController {
 	@ResponseBody
 	public HttpException updateAgency(@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
 			@RequestAttribute("role") final UserRole role) {
-		return checkJsonIntegrity(params, "oldName", "name", "place", "placeType") ? this.agencyBusinessController.updateAgency(params, role)
+		return checkJsonIntegrity(params, "oldName", "name", "place", "placeType")
+				? this.agencyBusinessController.updateAgency(params, role)
 				: new UnprocessableEntityException();
 	}
 }

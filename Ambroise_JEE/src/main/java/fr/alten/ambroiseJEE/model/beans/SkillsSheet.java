@@ -34,91 +34,91 @@ public class SkillsSheet implements Serializable {
 	private String comment;
 
 	public ObjectId get_id() {
-		return _id;
-	}
-
-	public void set_id(ObjectId _id) {
-		this._id = _id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getMailPersonAttachedTo() {
-		return mailPersonAttachedTo;
-	}
-
-	public void setMailPersonAttachedTo(String mailPersonAttachedTo) {
-		this.mailPersonAttachedTo = mailPersonAttachedTo;
-	}
-
-	public PersonRole getRolePersonAttachedTo() {
-		return rolePersonAttachedTo;
-	}
-
-	public void setRolePersonAttachedTo(PersonRole rolePersonAttachedTo) {
-		this.rolePersonAttachedTo = rolePersonAttachedTo;
-	}
-
-	public String getMailVersionAuthor() {
-		return mailVersionAuthor;
-	}
-
-	public void setMailVersionAuthor(String mailVersionAuthor) {
-		this.mailVersionAuthor = mailVersionAuthor;
-	}
-
-	public long getVersionNumber() {
-		return versionNumber;
-	}
-
-	public void setVersionNumber(long versionNumber) {
-		this.versionNumber = versionNumber;
-	}
-
-	public List<SkillGraduated> getSkillsList() {
-		return skillsList;
-	}
-
-	public void setSkillsList(List<SkillGraduated> skillsList) {
-		this.skillsList = skillsList;
-	}
-
-	public String getVersionDate() {
-		return versionDate;
-	}
-
-	public void setVersionDate(String versionDate) {
-		this.versionDate = versionDate;
-	}
-
-	public File getCvPerson() {
-		return cvPerson;
-	}
-
-	public void setCvPerson(File cvPerson) {
-		this.cvPerson = cvPerson;
-	}
-
-	public double getSoftSkillAverage() {
-		return softSkillAverage;
-	}
-
-	public void setSoftSkillAverage(double softSkillAverage) {
-		this.softSkillAverage = softSkillAverage;
+		return this._id;
 	}
 
 	public String getComment() {
-		return comment;
+		return this.comment;
 	}
 
-	public void setComment(String comment) {
+	public File getCvPerson() {
+		return this.cvPerson;
+	}
+
+	public String getMailPersonAttachedTo() {
+		return this.mailPersonAttachedTo;
+	}
+
+	public String getMailVersionAuthor() {
+		return this.mailVersionAuthor;
+	}
+
+	public String getName() {
+		return this.name;
+	}
+
+	public PersonRole getRolePersonAttachedTo() {
+		return this.rolePersonAttachedTo;
+	}
+
+	public List<SkillGraduated> getSkillsList() {
+		return this.skillsList;
+	}
+
+	public double getSoftSkillAverage() {
+		return this.softSkillAverage;
+	}
+
+	public String getVersionDate() {
+		return this.versionDate;
+	}
+
+	public long getVersionNumber() {
+		return this.versionNumber;
+	}
+
+	public void set_id(final ObjectId _id) {
+		this._id = _id;
+	}
+
+	public void setComment(final String comment) {
 		this.comment = comment;
+	}
+
+	public void setCvPerson(final File cvPerson) {
+		this.cvPerson = cvPerson;
+	}
+
+	public void setMailPersonAttachedTo(final String mailPersonAttachedTo) {
+		this.mailPersonAttachedTo = mailPersonAttachedTo;
+	}
+
+	public void setMailVersionAuthor(final String mailVersionAuthor) {
+		this.mailVersionAuthor = mailVersionAuthor;
+	}
+
+	public void setName(final String name) {
+		this.name = name;
+	}
+
+	public void setRolePersonAttachedTo(final PersonRole rolePersonAttachedTo) {
+		this.rolePersonAttachedTo = rolePersonAttachedTo;
+	}
+
+	public void setSkillsList(final List<SkillGraduated> skillsList) {
+		this.skillsList = skillsList;
+	}
+
+	public void setSoftSkillAverage(final double softSkillAverage) {
+		this.softSkillAverage = softSkillAverage;
+	}
+
+	public void setVersionDate(final String versionDate) {
+		this.versionDate = versionDate;
+	}
+
+	public void setVersionNumber(final long versionNumber) {
+		this.versionNumber = versionNumber;
 	}
 
 }

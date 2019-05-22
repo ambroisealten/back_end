@@ -36,10 +36,6 @@ import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 @Controller
 public class ApplicantRestController {
 
-	public boolean checkJsonIntegrity(final JsonNode params, final String... fields) {
-		return JsonUtils.checkJsonIntegrity(params, fields);
-	}
-
 	@Autowired
 	private ApplicantBusinessController applicantBusinessController;
 
@@ -48,6 +44,10 @@ public class ApplicantRestController {
 	public ApplicantRestController() {
 		final GsonBuilder builder = new GsonBuilder();
 		this.gson = builder.create();
+	}
+
+	public boolean checkJsonIntegrity(final JsonNode params, final String... fields) {
+		return JsonUtils.checkJsonIntegrity(params, fields);
 	}
 
 	/**
@@ -74,27 +74,8 @@ public class ApplicantRestController {
 	}
 
 	/**
-	 * Method to delete an Applicant
-	 *
-	 * @param params JsonNode containing post parameters from http request
-	 * @param mail   the current logged user's mail
-	 * @param role   the user's role
-	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link ResourceNotFoundException} if the resource is not found and
-	 *         {@link OkException} if the person(applicant) is deleted
-	 * @author Lucas Royackkers
-	 */
-	@DeleteMapping(value = "/applicant")
-	@ResponseBody
-	public HttpException deleteApplicant(@RequestBody final JsonNode params,
-			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
-		return checkJsonIntegrity(params, "mail") ? this.applicantBusinessController.deleteApplicant(params, role)
-				: new UnprocessableEntityException();
-	}
-
-	/**
 	 * Method to create an Applicant and a Skills Sheet in one way
-	 * 
+	 *
 	 * @param params JsonNode containing post parameters from http request
 	 * @param mail   the current logged user's mail
 	 * @param role   the current logged user's role
@@ -111,6 +92,25 @@ public class ApplicantRestController {
 			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
 		return checkJsonIntegrity(params, "person", "skillsSheet")
 				? this.applicantBusinessController.createApplicantAndSkillsSheet(params, role, mail)
+				: new UnprocessableEntityException();
+	}
+
+	/**
+	 * Method to delete an Applicant
+	 *
+	 * @param params JsonNode containing post parameters from http request
+	 * @param mail   the current logged user's mail
+	 * @param role   the user's role
+	 * @return {@link HttpException} corresponding to the status of the request
+	 *         ({@link ResourceNotFoundException} if the resource is not found and
+	 *         {@link OkException} if the person(applicant) is deleted
+	 * @author Lucas Royackkers
+	 */
+	@DeleteMapping(value = "/applicant")
+	@ResponseBody
+	public HttpException deleteApplicant(@RequestBody final JsonNode params,
+			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
+		return checkJsonIntegrity(params, "mail") ? this.applicantBusinessController.deleteApplicant(params, role)
 				: new UnprocessableEntityException();
 	}
 

@@ -45,8 +45,7 @@ public class DepartementBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException createDepartement(final JsonNode jDepartement, final UserRole role) {
-		return isAdmin(role)
-				? this.departementEntityController.createDepartement(jDepartement)
+		return isAdmin(role) ? this.departementEntityController.createDepartement(jDepartement)
 				: new ForbiddenException();
 	}
 
@@ -61,9 +60,7 @@ public class DepartementBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException deleteDepartement(final JsonNode params, final UserRole role) {
-		return isAdmin(role)
-				? this.departementEntityController.deleteDepartement(params)
-				: new ForbiddenException();
+		return isAdmin(role) ? this.departementEntityController.deleteDepartement(params) : new ForbiddenException();
 	}
 
 	/**
@@ -91,6 +88,10 @@ public class DepartementBusinessController {
 		throw new ForbiddenException();
 	}
 
+	public boolean isAdmin(final UserRole role) {
+		return this.roles.isAdmin(role);
+	}
+
 	/**
 	 * Method to delegate departement update
 	 *
@@ -103,13 +104,8 @@ public class DepartementBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException updateDepartement(final JsonNode jDepartement, final UserRole role) {
-		return isAdmin(role)
-				? this.departementEntityController.updateDepartement(jDepartement)
+		return isAdmin(role) ? this.departementEntityController.updateDepartement(jDepartement)
 				: new ForbiddenException();
-	}
-	
-	public boolean isAdmin(final UserRole role) {
-		return this.roles.isAdmin(role);
 	}
 
 }

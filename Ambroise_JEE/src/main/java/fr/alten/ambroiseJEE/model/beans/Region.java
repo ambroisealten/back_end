@@ -22,7 +22,7 @@ public class Region extends Geographic implements Serializable {
 
 	@Id
 	private transient ObjectId _id;
-	
+
 	@Indexed(unique = true)
 	private String code;
 
@@ -32,34 +32,24 @@ public class Region extends Geographic implements Serializable {
 		super();
 	}
 
-	
+	public String getCode() {
+		return this.code;
+	}
 
 	@Override
 	public String getIdentifier() {
 		return getCode();
 	}
 
-
-
-	public String getCode() {
-		return code;
+	public String getNom() {
+		return this.nom;
 	}
 
-
-
-	public void setCode(String code) {
+	public void setCode(final String code) {
 		this.code = code;
 	}
 
-
-
-	public String getNom() {
-		return nom;
-	}
-
-
-
-	public void setNom(String nom) {
+	public void setNom(final String nom) {
 		this.nom = nom;
 	}
 }

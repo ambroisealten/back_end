@@ -24,15 +24,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class JWTokenUtility {
 
-	@Autowired
-	private ApplicationContext ctx;
-
 	private static ApplicationContext autowiredCtx;
-
-	@PostConstruct
-	private void init() {
-		autowiredCtx = this.ctx;
-	}
 
 	/**
 	 * Build a JW token
@@ -49,8 +41,8 @@ public class JWTokenUtility {
 		// 'subject'
 		final JwtClaims claims = new JwtClaims();
 		claims.setSubject(subject);
-		claims.setExpirationTimeMinutesInTheFuture(
-				Float.parseFloat(autowiredCtx.getEnvironment().getProperty("security.token.expirationTime")));
+		claims.setExpirationTimeMinutesInTheFuture(Float
+				.parseFloat(JWTokenUtility.autowiredCtx.getEnvironment().getProperty("security.token.expirationTime")));
 
 		// création de la signature
 		final JsonWebSignature jws = new JsonWebSignature();
@@ -89,5 +81,13 @@ public class JWTokenUtility {
 		subject = (String) jwtClaims.getClaimValue("sub");
 
 		return subject;
+	}
+
+	@Autowired
+	private ApplicationContext ctx;
+
+	@PostConstruct
+	private void init() {
+		JWTokenUtility.autowiredCtx = this.ctx;
 	}
 }

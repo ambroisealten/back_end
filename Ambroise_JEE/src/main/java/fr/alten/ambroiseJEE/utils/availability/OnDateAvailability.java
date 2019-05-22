@@ -11,17 +11,19 @@ import java.time.temporal.ChronoUnit;
 public class OnDateAvailability extends Availability {
 
 	private long finalDate;
-	
-	public OnDateAvailability(long initDate, long finalDate) {
-		super(initDate,finalDate,0,ChronoUnit.FOREVER);
+
+	public OnDateAvailability(final long initDate, final long finalDate) {
+		super(initDate, finalDate, 0, ChronoUnit.FOREVER);
 		this.finalDate = finalDate;
 	}
 
+	@Override
 	public long getFinalDate() {
-		return finalDate;
+		return this.finalDate;
 	}
 
-	public void setFinalDate(long finalDate) {
+	@Override
+	public void setFinalDate(final long finalDate) {
 		this.finalDate = finalDate;
 	}
 

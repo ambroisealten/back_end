@@ -65,13 +65,13 @@ public class JsonUtils {
 		return mapper.convertValue(map, JsonNode.class);
 	}
 
-	public static JsonNode toJsonNode(Object object) throws IOException {
-		ObjectMapper mapper = new ObjectMapper();
+	public static JsonNode toJsonNode(final Object object) throws IOException {
+		final ObjectMapper mapper = new ObjectMapper();
 		return mapper.convertValue(object, JsonNode.class);
 	}
-	
-	public static JsonNode toJsonNode(String json) throws IOException{
-		ObjectMapper mapper = new ObjectMapper();
+
+	public static JsonNode toJsonNode(final String json) throws IOException {
+		final ObjectMapper mapper = new ObjectMapper();
 		return mapper.readTree(json);
 	}
 }

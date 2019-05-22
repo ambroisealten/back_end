@@ -48,15 +48,6 @@ public class SkillForumBusinessController {
 	}
 
 	/**
-	 * @param role role to check
-	 * @return true if the role is admin
-	 * @author Andy Chabalier
-	 */
-	public boolean isAdmin(final UserRole role) {
-		return this.roles.isAdmin(role);
-	}
-
-	/**
 	 *
 	 * @param params the skill name to delete
 	 * @param role   the user role
@@ -86,6 +77,15 @@ public class SkillForumBusinessController {
 			return this.skillForumEntityController.getSkillsForum();
 		}
 		throw new ForbiddenException();
+	}
+
+	/**
+	 * @param role role to check
+	 * @return true if the role is admin
+	 * @author Andy Chabalier
+	 */
+	public boolean isAdmin(final UserRole role) {
+		return this.roles.isAdmin(role);
 	}
 
 	/**

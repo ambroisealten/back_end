@@ -44,10 +44,10 @@ public class ForumRestController {
 		this.gson = builder.create();
 	}
 
-	public boolean checkJsonIntegrity(JsonNode params, String... fields) {
+	public boolean checkJsonIntegrity(final JsonNode params, final String... fields) {
 		return JsonUtils.checkJsonIntegrity(params, fields);
 	}
-	
+
 	/**
 	 * Create a new forum
 	 *
@@ -64,7 +64,7 @@ public class ForumRestController {
 	@ResponseBody
 	public HttpException createForum(@RequestBody final JsonNode params, @RequestAttribute("role") final UserRole role)
 			throws Exception {
-		return checkJsonIntegrity(params, "name","date","place")
+		return checkJsonIntegrity(params, "name", "date", "place")
 				? this.forumBusinessController.createForum(params, role)
 				: new UnprocessableEntityException();
 	}
@@ -85,7 +85,7 @@ public class ForumRestController {
 	@ResponseBody
 	public HttpException deleteForum(@RequestBody final JsonNode params, @RequestAttribute("role") final UserRole role)
 			throws Exception {
-		return checkJsonIntegrity(params, "name","date","place")
+		return checkJsonIntegrity(params, "name", "date", "place")
 				? this.forumBusinessController.deleteForum(params, role)
 				: new UnprocessableEntityException();
 	}
@@ -136,7 +136,8 @@ public class ForumRestController {
 	@ResponseBody
 	public HttpException updateForum(@RequestBody final JsonNode params, @RequestAttribute("role") final UserRole role)
 			throws Exception {
-		return checkJsonIntegrity(params, "name","date","place") ? this.forumBusinessController.updateForum(params, role)
+		return checkJsonIntegrity(params, "name", "date", "place")
+				? this.forumBusinessController.updateForum(params, role)
 				: new UnprocessableEntityException();
 	}
 }

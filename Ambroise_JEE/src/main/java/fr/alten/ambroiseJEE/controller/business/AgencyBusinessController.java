@@ -29,7 +29,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
  */
 @Service
 public class AgencyBusinessController {
-	
+
 	private final UserRoleLists roles = UserRoleLists.getInstance();
 
 	@Autowired
@@ -46,9 +46,7 @@ public class AgencyBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException createAgency(final JsonNode jAgency, final UserRole role) {
-		return isAdmin(role)
-				? this.agencyEntityController.createAgency(jAgency)
-				: new ForbiddenException();
+		return isAdmin(role) ? this.agencyEntityController.createAgency(jAgency) : new ForbiddenException();
 	}
 
 	/**
@@ -62,9 +60,7 @@ public class AgencyBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException deleteAgency(final JsonNode params, final UserRole role) {
-		return isAdmin(role)
-				? this.agencyEntityController.deleteAgency(params)
-				: new ForbiddenException();
+		return isAdmin(role) ? this.agencyEntityController.deleteAgency(params) : new ForbiddenException();
 	}
 
 	/**
@@ -75,7 +71,7 @@ public class AgencyBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public List<Agency> getAgencies(final UserRole role) {
-		if (isAdmin(role)) {
+		if (isConnected(role)) {
 			return this.agencyEntityController.getAgencies();
 		}
 		throw new ForbiddenException();
@@ -93,6 +89,14 @@ public class AgencyBusinessController {
 		return this.agencyEntityController.getAgency(name);
 	}
 
+	public boolean isAdmin(final UserRole role) {
+		return this.roles.isAdmin(role);
+	}
+
+	public boolean isConnected(final UserRole role) {
+		return this.roles.isNot_ConsultantOrDeactivated(role);
+	}
+
 	/**
 	 * Method to delegate agency update
 	 *
@@ -106,12 +110,6 @@ public class AgencyBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException updateAgency(final JsonNode jAgency, final UserRole role) {
-		return isAdmin(role)
-				? this.agencyEntityController.updateAgency(jAgency)
-				: new ForbiddenException();
-	}
-	
-	public boolean isAdmin(final UserRole role) {
-		return this.roles.isAdmin(role);
+		return isAdmin(role) ? this.agencyEntityController.updateAgency(jAgency) : new ForbiddenException();
 	}
 }
