@@ -200,6 +200,24 @@ public class SkillsSheetBusinessController {
 		return isManager(role) ? this.skillsSheetEntityController.updateSkillsSheet(jSkillsSheet, versionAuthor)
 				: new ForbiddenException();
 	}
+	
+	/**
+	 * Method to delegate get of a specific Skills Sheet
+	 * 
+	 * @param name the name of the Skills Sheet
+	 * @param personMail the mail of the person attached to the Skills Sheet
+	 * @param versionNumber the version number of the Skills Sheet
+	 * @param role the current logged user's role
+	 * @return a Skills Sheet if there is a match
+	 * @throws a {@link ForbiddenException} if the user hasn't the right to perform this action
+	 * @author Lucas Royackkers
+	 */
+	public SkillsSheet getSpecificSkillsSheet(final String name, final String personMail, final long versionNumber, final UserRole role) {
+		if(this.isManager(role)) {
+			return this.skillsSheetEntityController.getSkillsSheet(name, personMail, versionNumber);
+		}
+		throw new ForbiddenException();
+	}
 
 	/**
 	 * Method to delegate CV update in a Skills Sheet
