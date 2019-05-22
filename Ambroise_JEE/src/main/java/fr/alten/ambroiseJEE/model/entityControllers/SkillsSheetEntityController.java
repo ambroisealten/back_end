@@ -390,7 +390,7 @@ public class SkillsSheetEntityController {
 		final Gson gson = builder.create();
 		// Create a stream in allSkillsSheets, sort it by date and for each element
 		// fetch the last skill sheet
-		allSkillsSheets.parallelStream().sorted((ss1, ss2) -> Double.compare(Double.parseDouble(ss1.getVersionDate()),
+		allSkillsSheets.parallelStream().sorted((ss1, ss2) -> Double.compare(Double.parseDouble(ss2.getVersionDate()),
 				Double.parseDouble(ss1.getVersionDate()))).forEachOrdered(skillsSheet -> {
 					final long latestVersionNumber = this.skillsSheetRepository
 							.findByNameIgnoreCaseAndMailPersonAttachedToIgnoreCaseOrderByVersionNumberDesc(
@@ -433,7 +433,8 @@ public class SkillsSheetEntityController {
 		final List<String> identitiesList = Arrays.asList(identity.split(","));
 		final List<String> skillsList = Arrays.asList(skills.toLowerCase().split(","));
 		final HashSet<Skill> filteredSkills = new HashSet<Skill>();
-		final List<Person> allPersons = this.personEntityController.getAllPersons().parallelStream().filter(person -> !person.getMail().contains("deactivated")).collect(Collectors.toList());
+		final List<Person> allPersons = this.personEntityController.getAllPersons().parallelStream()
+				.filter(person -> !person.getMail().contains("deactivated")).collect(Collectors.toList());
 
 		final PersonSetWithFilters filteredPersons = new PersonSetWithFilters(identitiesList);
 
@@ -681,13 +682,13 @@ public class SkillsSheetEntityController {
 	 * @author Andy Chabalier
 	 */
 	public List<JsonNode> getAllAndSortByField(final String columnSorting) {
-		if (!columnSorting.equals(",")) {
+		if (columnSorting.equals(",")) {
+			return getSkillsSheets();
+		} else {
 			final String fieldSort = columnSorting.split(",")[0];
 			// -1 is call to reverse order, 1 to keep natural order
 			final int order = columnSorting.split(",")[1].equals("asc") ? 1 : -1;
 			return getSkillsSheetsWithFieldSorting(getSkillsSheets(), fieldSort, order);
-		} else {
-			return getSkillsSheets();
 		}
 	}
 
