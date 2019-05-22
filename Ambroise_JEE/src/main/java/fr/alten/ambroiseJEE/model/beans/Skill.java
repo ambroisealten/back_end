@@ -26,6 +26,7 @@ public class Skill implements Serializable {
 
 	public Skill() {
 		super();
+		this.isSoft = null;
 	}
 
 	public ObjectId get_id() {
