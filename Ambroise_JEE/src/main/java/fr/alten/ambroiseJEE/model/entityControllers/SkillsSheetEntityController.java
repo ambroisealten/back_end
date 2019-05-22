@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.slf4j.LoggerFactory;
@@ -205,6 +204,8 @@ public class SkillsSheetEntityController {
 			newSkillsSheet.setComment(jSkillsSheet.get("comment").textValue());
 
 			this.skillsSheetRepository.save(newSkillsSheet);
+			
+			return new CreatedException(this.gson.toJson(newSkillsSheet));
 		} catch (final ResourceNotFoundException rnfe) {
 			return rnfe;
 		} catch (final Exception e) {
@@ -212,7 +213,7 @@ public class SkillsSheetEntityController {
 
 			return new ConflictException();
 		}
-		return new CreatedException();
+		
 	}
 
 	/**
@@ -382,12 +383,14 @@ public class SkillsSheetEntityController {
 	 * @param name          the name of the skills sheet
 	 * @param personMail    the mail of the person attached to
 	 * @param versionNumber the vesion number of the skills sheet
-	 * @return a Skill Sheet if there is a match, an empty Optional if not
+	 * @return a Skill Sheet if there is a match
+	 * @throws a {@link ResourceNotFoundException} if there is no match
 	 * @author Lucas Royackkers
 	 */
-	public Optional<SkillsSheet> getSkillsSheet(final String name, final String personMail, final long versionNumber) {
-		return this.skillsSheetRepository.findByNameIgnoreCaseAndMailPersonAttachedToIgnoreCaseAndVersionNumber(name,
-				personMail, versionNumber);
+	public SkillsSheet getSkillsSheet(final String name, final String personMail, final long versionNumber) {
+		return this.skillsSheetRepository
+				.findByNameIgnoreCaseAndMailPersonAttachedToIgnoreCaseAndVersionNumber(name, personMail, versionNumber)
+				.orElseThrow(ResourceNotFoundException::new);
 	}
 
 	/**
