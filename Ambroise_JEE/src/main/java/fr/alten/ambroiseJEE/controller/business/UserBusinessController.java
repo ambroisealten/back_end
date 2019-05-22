@@ -33,6 +33,16 @@ public class UserBusinessController {
 	private UserEntityController userEntityController;
 
 	/**
+	 * @param user the user to check
+	 * @return true if the user can't connect with the standard method (consultant
+	 *         or deactivated)
+	 * @author Andy Chabalier
+	 */
+	private boolean cantBeConnected(final User user) {
+		return user.getRole().equals(UserRole.CONSULTANT) || user.getRole().equals(UserRole.DEACTIVATED);
+	}
+
+	/**
 	 * Method to determine if the provided credential are valid
 	 *
 	 * @param mail the user's mail to check
@@ -42,7 +52,7 @@ public class UserBusinessController {
 	 */
 	public Optional<String> checkIfCredentialIsValid(final String mail, final String pswd) {
 		final Optional<User> optionalUser = this.userEntityController.getUserByCredentials(mail, pswd);
-		return optionalUser.isPresent()
+		return optionalUser.isPresent() && !cantBeConnected(optionalUser.get())
 				? Optional.of(optionalUser.get().getMail() + "|" + optionalUser.get().getRole().name())
 				: Optional.empty();
 	}
