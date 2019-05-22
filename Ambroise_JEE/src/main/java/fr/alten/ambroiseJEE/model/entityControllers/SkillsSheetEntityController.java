@@ -284,14 +284,11 @@ public class SkillsSheetEntityController {
 			final String softSkillName = softSkill.getName();
 			if (!softSkillsUsed.contains(softSkillName)) {
 				Skill skill = null;
-				try {
-					skill = this.skillEntityController.getSkill(softSkillName);
-
-				} catch (final ResourceNotFoundException e) {
-					skill = this.skillEntityController.createSkill(softSkillName, null).get();
-				}
-
+				
+				skill = this.skillEntityController.getSkill(softSkillName);
+					
 				allSkills.add(new SkillGraduated(skill, 1));
+				
 			}
 		}
 		return allSkills;
