@@ -427,6 +427,15 @@ public class PersonEntityController {
 				}
 
 			}
+			
+			final String jobName = jPerson.get("job").textValue();
+			Job job;
+			try {
+				job = this.jobEntityController.getJob(jobName);
+			} catch (ResourceNotFoundException e) {
+				job = (Job) this.jobEntityController.createJob(jobName);
+			}
+			person.setJob(job.getTitle());
 
 			person.setOpinion(jPerson.get("opinion").textValue());
 			updatePersonMailOnSkillSheetOnCascade(oldMail, person.getMail());
