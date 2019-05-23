@@ -180,4 +180,13 @@ public class SkillRestController {
 		return checkJsonIntegrity(params, "name", "oldName") ? this.skillBusinessController.updateSkill(params, role)
 				: new UnprocessableEntityException();
 	}
+
+	@PutMapping(value = "/softSkillsOrder")
+	@ResponseBody
+	public HttpException updateSoftSkillsOrder(@RequestBody final JsonNode params,
+			@RequestAttribute("role") final UserRole role) throws Exception {
+		return checkJsonIntegrity(params, "name", "order")
+				? this.skillBusinessController.updateSoftSkillsOrder(params, role)
+				: new UnprocessableEntityException();
+	}
 }

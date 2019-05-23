@@ -115,7 +115,7 @@ public class SkillBusinessController {
 	 *
 	 * @param jSkill JsonNode with all skill parameters and the old name to perform
 	 *               the update even if the name is changed
-	 * @param role   user role
+	 * @param role   current logged user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ResourceNotFoundException} if the resource is not
 	 *         found and {@link CreatedException} if the skill is updated
@@ -123,5 +123,18 @@ public class SkillBusinessController {
 	 */
 	public HttpException updateSkill(final JsonNode jSkill, final UserRole role) {
 		return isAdmin(role) ? this.skillEntityController.updateSkill(jSkill) : new ForbiddenException();
+	}
+
+	/**
+	 * update the order of each soft skills
+	 * 
+	 * @param jSoftSkillsList the list of softs skills
+	 * @param role            current logged user's role
+	 * @return a list of Http Exception
+	 * @author Andy Chabalier
+	 */
+	public HttpException updateSoftSkillsOrder(JsonNode jSoftSkillsList, UserRole role) {
+		return (isAdmin(role)) ? this.skillEntityController.updateSoftSkillsOrder(jSoftSkillsList.get("softSkillsList"))
+				: new ForbiddenException();
 	}
 }
