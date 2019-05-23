@@ -638,18 +638,21 @@ public class InitBaseWebService {
 		final Skill newCycle = new Skill();
 		newCycle.setName("Cycle en V");
 		newCycle.setIsSoft("true");
+		newCycle.setOrder(1);
 		final JsonNode newCycleJsonNode = JsonUtils.toJsonNode(this.gson.toJsonTree(newCycle).getAsJsonObject());
 		this.skillBusinessController.createSkill(newCycleJsonNode, UserRole.MANAGER_ADMIN);
 
 		final Skill newProjet = new Skill();
 		newProjet.setName("Gestion de projet");
 		newProjet.setIsSoft("true");
+		newProjet.setOrder(2);
 		final JsonNode newProjetJsonNode = JsonUtils.toJsonNode(this.gson.toJsonTree(newProjet).getAsJsonObject());
 		this.skillBusinessController.createSkill(newProjetJsonNode, UserRole.MANAGER_ADMIN);
 
 		final Skill newCommunication = new Skill();
 		newCommunication.setName("Communication");
 		newCommunication.setIsSoft("true");
+		newCommunication.setOrder(3);
 		final JsonNode newCommunicationJsonNode = JsonUtils
 				.toJsonNode(this.gson.toJsonTree(newCommunication).getAsJsonObject());
 		this.skillBusinessController.createSkill(newCommunicationJsonNode, UserRole.MANAGER_ADMIN);
