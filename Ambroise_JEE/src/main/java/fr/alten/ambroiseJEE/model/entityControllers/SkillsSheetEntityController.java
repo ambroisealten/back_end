@@ -204,7 +204,7 @@ public class SkillsSheetEntityController {
 			newSkillsSheet.setComment(jSkillsSheet.get("comment").textValue());
 
 			this.skillsSheetRepository.save(newSkillsSheet);
-			
+
 			return new CreatedException(this.gson.toJson(newSkillsSheet));
 		} catch (final ResourceNotFoundException rnfe) {
 			return rnfe;
@@ -213,7 +213,7 @@ public class SkillsSheetEntityController {
 
 			return new ConflictException();
 		}
-		
+
 	}
 
 	/**
@@ -264,25 +264,25 @@ public class SkillsSheetEntityController {
 		for (final JsonNode skillGraduated : jSkills) {
 			final String skillName = skillGraduated.get("skill").get("name").textValue();
 			Skill skill = null;
-			try {				
+			try {
 				skill = this.skillEntityController.getSkill(skillName);
-				
+
 				if (skillGraduated.get("skill").has("isSoft")) {
 					softSkillsUsed.add(skillGraduated.get("skill").get("name").textValue());
 				}
 
 			} catch (final ResourceNotFoundException e) {
-				if(!skillGraduated.get("skill").has("isSoft")) {
-					skill = this.skillEntityController.createSkill(skillName, null).get();
-				}	
+				if (!skillGraduated.get("skill").has("isSoft")) {
+					skill = this.skillEntityController.createSkill(skillName).get();
+				}
 			}
 
 			final double skillGrade = skillGraduated.get("grade").asDouble();
 			if (checkGrade(skillGrade)) {
-				if(skill != null) {
+				if (skill != null) {
 					allSkills.add(new SkillGraduated(skill, skillGrade));
 				}
-				
+
 			}
 		}
 
@@ -290,10 +290,10 @@ public class SkillsSheetEntityController {
 			final String softSkillName = softSkill.getName();
 			if (!softSkillsUsed.contains(softSkillName)) {
 				Skill skill = null;
-				
+
 				skill = this.skillEntityController.getSkill(softSkillName);
-				
-				if(skill.isSoft() && skill != null) {
+
+				if (skill.isSoft() && skill != null) {
 					allSkills.add(new SkillGraduated(skill, 1));
 				}
 

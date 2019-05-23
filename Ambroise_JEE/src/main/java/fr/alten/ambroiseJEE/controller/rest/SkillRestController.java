@@ -3,6 +3,8 @@
  */
 package fr.alten.ambroiseJEE.controller.rest;
 
+import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -179,5 +181,17 @@ public class SkillRestController {
 			throws Exception {
 		return checkJsonIntegrity(params, "name", "oldName") ? this.skillBusinessController.updateSkill(params, role)
 				: new UnprocessableEntityException();
+	}
+
+	@PutMapping(value = "/softSkillsOrder")
+	@ResponseBody
+	public ArrayList<HttpException> updateSoftSkillsOrder(@RequestBody final JsonNode params,
+			@RequestAttribute("role") final UserRole role) throws Exception {
+		if(params.get("softSkillsList").isArray()) {
+			return this.skillBusinessController.updateSoftSkillsOrder(params, role);
+		}
+		ArrayList<HttpException> result = new ArrayList<HttpException>();
+		result.add(new UnprocessableEntityException());
+		return result;
 	}
 }

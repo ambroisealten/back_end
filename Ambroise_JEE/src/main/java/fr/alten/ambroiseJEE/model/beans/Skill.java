@@ -23,6 +23,7 @@ public class Skill implements Serializable {
 	private transient ObjectId _id;
 	private String name;
 	private String isSoft;
+	private int order;
 
 	public Skill() {
 		super();
@@ -41,6 +42,14 @@ public class Skill implements Serializable {
 		return this.name;
 	}
 
+	/**
+	 * @return the order
+	 * @author Andy Chabalier
+	 */
+	public int getOrder() {
+		return this.order;
+	}
+
 	public boolean isSoft() {
 		return this.isSoft != null;
 	}
@@ -55,5 +64,13 @@ public class Skill implements Serializable {
 
 	public void setName(final String name) {
 		this.name = name;
+	}
+
+	/**
+	 * @param order the order to set
+	 * @author Andy Chabalier
+	 */
+	public void setOrder(final int order) {
+		this.order = order;
 	}
 }
