@@ -185,8 +185,7 @@ public class SkillRestController {
 	@ResponseBody
 	public HttpException updateSoftSkillsOrder(@RequestBody final JsonNode params,
 			@RequestAttribute("role") final UserRole role) throws Exception {
-		return checkJsonIntegrity(params, "name", "order")
-				? this.skillBusinessController.updateSoftSkillsOrder(params, role)
+		return params.isArray() ? this.skillBusinessController.updateSoftSkillsOrder(params, role)
 				: new UnprocessableEntityException();
 	}
 }
