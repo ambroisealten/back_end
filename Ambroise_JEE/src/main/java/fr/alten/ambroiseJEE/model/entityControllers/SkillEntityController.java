@@ -21,7 +21,6 @@ import fr.alten.ambroiseJEE.model.beans.Skill;
 import fr.alten.ambroiseJEE.model.dao.SkillRepository;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
-import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.InternalServerErrorException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
@@ -149,7 +148,7 @@ public class SkillEntityController {
 		// we ignore null value and dateOfCreation which is a long value and can't be
 		// null
 		final ExampleMatcher matcher = ExampleMatcher.matching().withMatcher("isSoft", GenericPropertyMatchers.regex())
-				.withIgnoreNullValues();
+				.withIgnoreNullValues().withIgnorePaths("order");
 
 		return this.skillRepository.findAll(Example.of(skillExample, matcher)).parallelStream()
 				.filter(skill -> !skill.getName().contains("deactivated")).collect(Collectors.toList());
@@ -207,10 +206,9 @@ public class SkillEntityController {
 	 *         found and {@link OkException} if the skill is updated
 	 * @author Andy Chabalier
 	 */
-	public ForbiddenException updateSoftSkillsOrder(final JsonNode jSkills) {
+	public ArrayList<HttpException> updateSoftSkillsOrder(final JsonNode jSkills) {
 		final ArrayList<HttpException> result = new ArrayList<HttpException>();
-		final JsonNode skills = jSkills.get("softSkillsList");
-		skills.forEach(jSkill -> {
+		for (JsonNode jSkill : jSkills) {
 			try {
 				final Skill skill = this.skillRepository.findByNameIgnoreCase(jSkill.get("name").textValue())
 						.orElse(new Skill());
@@ -228,9 +226,8 @@ public class SkillEntityController {
 				result.add(new InternalServerErrorException(e));
 			}
 			result.add(new OkException());
-		});
-
-		return null;
+		}
+		return result;
 	}
 
 }

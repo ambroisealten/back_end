@@ -3,6 +3,7 @@
  */
 package fr.alten.ambroiseJEE.controller.business;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -133,8 +134,12 @@ public class SkillBusinessController {
 	 * @return a list of Http Exception
 	 * @author Andy Chabalier
 	 */
-	public HttpException updateSoftSkillsOrder(JsonNode jSoftSkillsList, UserRole role) {
-		return (isAdmin(role)) ? this.skillEntityController.updateSoftSkillsOrder(jSoftSkillsList.get("softSkillsList"))
-				: new ForbiddenException();
+	public ArrayList<HttpException> updateSoftSkillsOrder(JsonNode jSoftSkillsList, UserRole role) {
+		if(isAdmin(role)) {
+			return this.skillEntityController.updateSoftSkillsOrder(jSoftSkillsList.get("softSkillsList"));
+		}
+		ArrayList<HttpException> result = new ArrayList<HttpException>();
+		result.add(new ForbiddenException());
+		return result;
 	}
 }
