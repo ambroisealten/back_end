@@ -17,7 +17,6 @@ import fr.alten.ambroiseJEE.controller.business.UserBusinessController;
 import fr.alten.ambroiseJEE.security.JWTokenUtility;
 import fr.alten.ambroiseJEE.security.Token;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
-import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenExceptionLogin;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
@@ -55,7 +54,7 @@ public class LoginRestController {
 			final String pswd = params.get("pswd").textValue();
 
 			final String subject = this.userBusinessController.checkIfCredentialIsValid(mail, pswd)
-					.orElseThrow(ForbiddenExceptionLogin::new);
+					.orElseThrow(ForbiddenException::new);
 			// Si un sujet est present, alors l'utilisateur existe bien. On construit son
 			// token
 			final Token jsonResponse = JWTokenUtility.buildJWT(subject);
