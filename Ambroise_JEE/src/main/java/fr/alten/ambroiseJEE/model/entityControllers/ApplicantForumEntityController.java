@@ -157,7 +157,7 @@ public class ApplicantForumEntityController {
 				try {
 					skill = this.skillEntityController.getSkill(skillName);
 				} catch (final ResourceNotFoundException e) {
-					skill = this.skillEntityController.createSkill(skillName, null).get();
+					skill = this.skillEntityController.createSkill(skillName).get();
 				}
 
 				skills.add(skill.getName());
@@ -342,7 +342,7 @@ public class ApplicantForumEntityController {
 				try {
 					skill = this.skillEntityController.getSkill(skillName);
 				} catch (final ResourceNotFoundException e) {
-					skill = this.skillEntityController.createSkill(skillName, null).get();
+					skill = this.skillEntityController.createSkill(skillName).get();
 				}
 
 				skills.add(skill.getName());
