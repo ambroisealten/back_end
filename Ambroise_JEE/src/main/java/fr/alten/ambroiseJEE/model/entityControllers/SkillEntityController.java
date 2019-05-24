@@ -5,6 +5,7 @@ package fr.alten.ambroiseJEE.model.entityControllers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -53,6 +54,11 @@ public class SkillEntityController {
 		if (jSkill.hasNonNull("isSoft")) {
 			newSkill.setIsSoft(jSkill.get("isSoft").textValue());
 			newSkill.setOrder(jSkill.get("order").asInt());
+
+			Optional<Skill> testSkill = this.skillRepository.findByNameIgnoreCase(newSkill.getName());
+			if (testSkill.isPresent() && testSkill.get().isSoft()) {
+				return new ConflictException();
+			}
 		}
 		try {
 			this.skillRepository.save(newSkill);
@@ -228,6 +234,18 @@ public class SkillEntityController {
 			result.add(new OkException());
 		}
 		return result;
+	}
+
+	/**
+	 * Checks if a Soft Skill with a specific name already exists in our database
+	 * 
+	 * @param name the name of the Soft Skill
+	 * @return true if the Soft Skill exists, otherwise false
+	 * @author Lucas Royackkers
+	 */
+	public boolean checkIfSoftSkillsExists(String name) {
+		Optional<Skill> testSoft = this.skillRepository.findByNameIgnoreCase(name);
+		return (testSoft.isPresent() && testSoft.get().isSoft());
 	}
 
 }
