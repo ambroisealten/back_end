@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
@@ -72,6 +73,21 @@ public class SkillRestController {
 			throws Exception {
 		return checkJsonIntegrity(params, "name") ? this.skillBusinessController.createSkill(params, role)
 				: new UnprocessableEntityException();
+	}
+
+	/**
+	 * Method to checks if a Soft Skill exists
+	 * @param name the name of the searched Soft Skill
+	 * @param mail the current logged user's mail
+	 * @param role the current logged user's role
+	 * @return true if the specific Soft Skill exists, otherwise false
+	 * @author Lucas Royackkers
+	 */
+	@GetMapping(value = "/softSkillExists/{name}")
+	@ResponseBody
+	public boolean checkIfSoftSkillExists(@PathVariable("name") final String name,
+			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
+		return this.skillBusinessController.checkIfSoftSkillExists(name, role);
 	}
 
 	/**
@@ -187,7 +203,7 @@ public class SkillRestController {
 	@ResponseBody
 	public ArrayList<HttpException> updateSoftSkillsOrder(@RequestBody final JsonNode params,
 			@RequestAttribute("role") final UserRole role) throws Exception {
-		if(params.get("softSkillsList").isArray()) {
+		if (params.get("softSkillsList").isArray()) {
 			return this.skillBusinessController.updateSoftSkillsOrder(params, role);
 		}
 		ArrayList<HttpException> result = new ArrayList<HttpException>();

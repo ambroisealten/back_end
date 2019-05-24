@@ -60,6 +60,17 @@ public class SkillBusinessController {
 	public HttpException deleteSkill(final JsonNode jSkill, final UserRole role) {
 		return isAdmin(role) ? this.skillEntityController.deleteSkill(jSkill) : new ForbiddenException();
 	}
+	
+	/**
+	 * Method to test if the user is manager
+	 *
+	 * @param role {@link UserRole} the current logged user's role
+	 * @return true if it's manager or manager admin, otherwise false
+	 * @author Andy Chabalier
+	 */
+	public boolean isManager(final UserRole role) {
+		return this.roles.isManager(role);
+	}
 
 	public Skill getSkill(final JsonNode jSkill, final UserRole role) {
 		if (isAdmin(role)) {
@@ -141,5 +152,20 @@ public class SkillBusinessController {
 		ArrayList<HttpException> result = new ArrayList<HttpException>();
 		result.add(new ForbiddenException());
 		return result;
+	}
+
+	/**
+	 * Method to delegate the checking of a Soft Skill
+	 * 
+	 * @param name the name of the Soft Skill
+	 * @param role the current logged user's role
+	 * @return true if the specific Soft Skill exists, otherwise false
+	 * @author Lucas Royackkers
+	 */
+	public boolean checkIfSoftSkillExists(String name, UserRole role) {
+		if(isManager(role)) {
+			return this.skillEntityController.checkIfSoftSkillsExists(name);
+		}
+		throw new ForbiddenException();
 	}
 }
