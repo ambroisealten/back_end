@@ -4,6 +4,7 @@
 package fr.alten.ambroiseJEE.model.entityControllers;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -19,7 +20,10 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import fr.alten.ambroiseJEE.model.beans.Skill;
+import fr.alten.ambroiseJEE.model.beans.SkillGraduated;
+import fr.alten.ambroiseJEE.model.beans.SkillsSheet;
 import fr.alten.ambroiseJEE.model.dao.SkillRepository;
+import fr.alten.ambroiseJEE.model.dao.SkillsSheetRepository;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
@@ -37,6 +41,9 @@ public class SkillEntityController {
 
 	@Autowired
 	private SkillRepository skillRepository;
+
+	@Autowired
+	private SkillsSheetRepository skillsSheetRepository;
 
 	/**
 	 * Method to create a skill.
@@ -112,10 +119,35 @@ public class SkillEntityController {
 					skill.setIsSoft(null);
 					skill.setOrder(Integer.MIN_VALUE);
 					this.skillRepository.save(skill);
+
+					deleteSkillOnCascade(jSkill, skill);
 					return (HttpException) new OkException();
 				})
 				// optional isn't present
 				.orElse(new ResourceNotFoundException());
+	}
+
+	/**
+	 * @param jSkill
+	 * @param skill
+	 * @author Andy Chabalier
+	 */
+	public void deleteSkillOnCascade(final JsonNode jSkill, Skill skill) {
+		final String skillName = jSkill.get("name").textValue();
+		final List<SkillsSheet> skillSheets = skillsSheetRepository.findAll();
+		Iterator<SkillsSheet> it = skillSheets.iterator();
+		while (it.hasNext()) {
+			SkillsSheet skillsSheet = it.next();
+			Iterator<SkillGraduated> it2 = skillsSheet.getSkillsList().iterator();
+			List<SkillGraduated> tempList = new ArrayList<SkillGraduated>();
+			while (it2.hasNext()) {
+				SkillGraduated skillGraduated = it2.next();
+				if (!skillGraduated.getSkill().getName().equals(skillName))
+					tempList.add(skillGraduated);
+			}
+			skillsSheet.setSkillsList(tempList);
+		}
+		this.skillsSheetRepository.saveAll(skillSheets);
 	}
 
 	/**
@@ -190,6 +222,7 @@ public class SkillEntityController {
 						skill.setOrder(Integer.MIN_VALUE);
 					}
 					try {
+						// TODO Make update on cascade
 						this.skillRepository.save(skill);
 					} catch (final DuplicateKeyException dke) {
 						return new ConflictException();
@@ -214,17 +247,19 @@ public class SkillEntityController {
 	 */
 	public ArrayList<HttpException> updateSoftSkillsOrder(final JsonNode jSkills) {
 		final ArrayList<HttpException> result = new ArrayList<HttpException>();
+		List<SkillsSheet> skillSheets = skillsSheetRepository.findAll();
 		for (JsonNode jSkill : jSkills) {
 			try {
-				final Skill skill = this.skillRepository.findByNameIgnoreCase(jSkill.get("name").textValue())
-						.orElse(new Skill());
-				skill.setName(jSkill.get("name").textValue());
+				final String skillName = jSkill.get("name").textValue();
+				final Skill skill = this.skillRepository.findByNameIgnoreCase(skillName).orElse(new Skill());
+				skill.setName(skillName);
 				if (jSkill.hasNonNull("isSoft")) {
 					skill.setIsSoft(jSkill.get("isSoft").textValue());
 				} else {
 					skill.setIsSoft("isSoft");
 				}
 				skill.setOrder(jSkill.get("order").asInt());
+				updateSkillListOnCascade(skillSheets, skillName, skill);
 				this.skillRepository.save(skill);
 			} catch (final DuplicateKeyException dke) {
 				result.add(new ConflictException());
@@ -234,6 +269,23 @@ public class SkillEntityController {
 			result.add(new OkException());
 		}
 		return result;
+	}
+
+	/**
+	 * @param skillSheets
+	 * @param skillName
+	 * @param skill
+	 * @author Andy Chabalier
+	 */
+	public void updateSkillListOnCascade(List<SkillsSheet> skillSheets, final String skillName, final Skill skill) {
+		for (SkillsSheet ss : skillSheets) {
+			for (SkillGraduated skillGraduated : ss.getSkillsList()) {
+				if (skillGraduated.getSkill().getName().equals(skillName)) {
+					skillGraduated.setSkill(skill);
+				}
+			}
+		}
+		this.skillsSheetRepository.saveAll(skillSheets);
 	}
 
 	/**
