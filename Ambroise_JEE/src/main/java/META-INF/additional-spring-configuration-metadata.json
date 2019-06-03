@@ -23,5 +23,25 @@
     "name": "security.token.expirationTime",
     "type": "java.lang.String",
     "description": "A description for 'security.token.expirationTime'"
+  },
+  {
+    "name": "security.token.refresh.noExpirationTime",
+    "type": "java.lang.String",
+    "description": "A description for 'security.token.refresh.noExpirationTime'"
+  },
+  {
+    "name": "security.token.refresh.expirationTime",
+    "type": "java.lang.String",
+    "description": "A description for 'security.token.refresh.expirationTime'"
+  },
+  {
+    "name": "security.token.acess.expirationTime",
+    "type": "java.lang.String",
+    "description": "A description for 'security.token.acess.expirationTime'"
+  },
+  {
+    "name": "security.token.refresh.noExpirationTime",
+    "type": "java.lang.String",
+    "description": "A description for 'security.token.refresh.noExpirationTime'"
   }
 ]}

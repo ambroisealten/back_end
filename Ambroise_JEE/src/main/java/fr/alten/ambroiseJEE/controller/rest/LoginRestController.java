@@ -57,7 +57,7 @@ public class LoginRestController {
 					.orElseThrow(ForbiddenException::new);
 			// Si un sujet est present, alors l'utilisateur existe bien. On construit son
 			// token
-			final Token jsonResponse = JWTokenUtility.buildJWT(subject);
+			final Token jsonResponse = JWTokenUtility.buildAcessJWT(subject);
 			return this.gson.toJson(jsonResponse);
 		} catch (final NullPointerException npe) {
 			throw new UnprocessableEntityException();

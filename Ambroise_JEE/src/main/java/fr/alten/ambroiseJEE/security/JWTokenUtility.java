@@ -34,15 +34,24 @@ public class JWTokenUtility {
 	 * @author Andy Chabalier
 	 * @throws MalformedClaimException
 	 */
-	public static Token buildJWT(final String subject) throws MalformedClaimException {
+	public static Token buildAcessJWT(final String subject) throws MalformedClaimException {
+		return JWTokenUtility.buildJWT(subject, Float.parseFloat(
+				JWTokenUtility.autowiredCtx.getEnvironment().getProperty("security.token.acess.expirationTime")));
+	}
+
+	/**
+	 * @param subject
+	 * @return
+	 * @author Andy Chabalier
+	 */
+	public static Token buildJWT(final String subject, final float expirationTime) {
 		final RsaJsonWebKey rsaJsonWebKey = RsaKeyProducer.produce();
 
 		// création de la "charge utile" ou payload - la donnée Ã chiffrer, ici
 		// 'subject'
 		final JwtClaims claims = new JwtClaims();
 		claims.setSubject(subject);
-		claims.setExpirationTimeMinutesInTheFuture(Float
-				.parseFloat(JWTokenUtility.autowiredCtx.getEnvironment().getProperty("security.token.expirationTime")));
+		claims.setExpirationTimeMinutesInTheFuture(expirationTime);
 
 		// création de la signature
 		final JsonWebSignature jws = new JsonWebSignature();
@@ -58,6 +67,23 @@ public class JWTokenUtility {
 			ex.printStackTrace();
 		}
 		return new Token(jwt);
+	}
+
+	/**
+	 * Build a JW refresh token
+	 *
+	 * @param subject user data to encrypt in token
+	 * @return String generated token
+	 * @author Andy Chabalier
+	 * @throws MalformedClaimException
+	 */
+	public static Token buildRefreshJWT(final String subject, final boolean stayConnected)
+			throws MalformedClaimException {
+		final String expirationTime = stayConnected
+				? JWTokenUtility.autowiredCtx.getEnvironment().getProperty("security.token.refresh.noExpirationTime")
+				: JWTokenUtility.autowiredCtx.getEnvironment().getProperty("security.token.refresh.expirationTime");
+
+		return JWTokenUtility.buildJWT(subject, Float.parseFloat(expirationTime));
 	}
 
 	/**
