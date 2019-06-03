@@ -34,9 +34,9 @@ public class JWTokenUtility {
 	 * @author Andy Chabalier
 	 * @throws MalformedClaimException
 	 */
-	public static Token buildAcessJWT(final String subject) throws MalformedClaimException {
+	public static Token buildAccessJWT(final String subject) throws MalformedClaimException {
 		return JWTokenUtility.buildJWT(subject, Float.parseFloat(
-				JWTokenUtility.autowiredCtx.getEnvironment().getProperty("security.token.acess.expirationTime")));
+				JWTokenUtility.autowiredCtx.getEnvironment().getProperty("security.token.access.expirationTime")));
 	}
 
 	/**

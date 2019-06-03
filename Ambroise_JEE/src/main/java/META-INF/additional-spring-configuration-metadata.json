@@ -43,5 +43,15 @@
     "name": "security.token.refresh.noExpirationTime",
     "type": "java.lang.String",
     "description": "A description for 'security.token.refresh.noExpirationTime'"
+  },
+  {
+    "name": "security.token.access.expirationTime",
+    "type": "java.lang.String",
+    "description": "A description for 'security.token.access.expirationTime'"
+  },
+  {
+    "name": "security.token.access.expirationTime",
+    "type": "java.lang.String",
+    "description": "A description for 'security.token.access.expirationTime'"
   }
 ]}

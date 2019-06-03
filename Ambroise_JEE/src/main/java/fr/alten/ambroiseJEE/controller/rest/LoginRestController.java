@@ -3,6 +3,8 @@
  */
 package fr.alten.ambroiseJEE.controller.rest;
 
+import java.util.HashMap;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -52,13 +54,19 @@ public class LoginRestController {
 		try {
 			final String mail = params.get("mail").textValue();
 			final String pswd = params.get("pswd").textValue();
+			final boolean stayConnected = params.get("stayConnected").asBoolean(false);
 
 			final String subject = this.userBusinessController.checkIfCredentialIsValid(mail, pswd)
 					.orElseThrow(ForbiddenException::new);
 			// Si un sujet est present, alors l'utilisateur existe bien. On construit son
-			// token
-			final Token jsonResponse = JWTokenUtility.buildAcessJWT(subject);
-			return this.gson.toJson(jsonResponse);
+			// token d'acces aux ressources
+			final Token accessToken = JWTokenUtility.buildAccessJWT(subject);
+			// Et on construit son token de raffraichissement
+			final Token refreshToken = JWTokenUtility.buildRefreshJWT(subject, stayConnected);
+			final HashMap<String, Token> response = new HashMap<String, Token>();
+			response.put("access", accessToken);
+			response.put("refresh", refreshToken);
+			return this.gson.toJson(response);
 		} catch (final NullPointerException npe) {
 			throw new UnprocessableEntityException();
 		}
