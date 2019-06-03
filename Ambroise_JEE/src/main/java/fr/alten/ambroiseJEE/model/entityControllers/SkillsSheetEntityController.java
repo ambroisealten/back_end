@@ -265,11 +265,9 @@ public class SkillsSheetEntityController {
 			final String skillName = skillGraduated.get("skill").get("name").textValue();
 			Skill skill = null;
 			try {
-				if (!skillName.contains("deactivated")) {
-					skill = this.skillEntityController.getSkill(skillName);
-					if (skillGraduated.get("skill").has("isSoft")) {
-						softSkillsUsed.add(skillGraduated.get("skill").get("name").textValue());
-					}
+				skill = this.skillEntityController.getSkill(skillName);
+				if (skillGraduated.get("skill").has("isSoft")) {
+					softSkillsUsed.add(skillGraduated.get("skill").get("name").textValue());
 				}
 			} catch (final ResourceNotFoundException e) {
 				if (!skillGraduated.get("skill").has("isSoft")) {
@@ -288,7 +286,7 @@ public class SkillsSheetEntityController {
 
 		for (final Skill softSkill : softSkillsList) {
 			final String softSkillName = softSkill.getName();
-			if (!(softSkillsUsed.contains(softSkillName) && softSkillName.contains("deactivated"))) {
+			if (!softSkillsUsed.contains(softSkillName)) {
 				Skill skill = null;
 
 				skill = this.skillEntityController.getSkill(softSkillName);
