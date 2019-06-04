@@ -62,8 +62,7 @@ public class SkillEntityController {
 			newSkill.setIsSoft(jSkill.get("isSoft").textValue());
 			newSkill.setOrder(jSkill.get("order").asInt());
 
-			Optional<Skill> testSkill = this.skillRepository.findByNameIgnoreCase(newSkill.getName());
-			if (testSkill.isPresent() && testSkill.get().isSoft()) {
+			if (this.skillRepository.findByNameIgnoreCase(newSkill.getName()).isPresent()) {
 				return new ConflictException();
 			}
 		}
