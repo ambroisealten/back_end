@@ -266,7 +266,7 @@ public class SkillsSheetEntityController {
 			Skill skill = null;
 			try {
 				skill = this.skillEntityController.getSkill(skillName);
-				if (skill.isSoft()) {
+				if (skill.isSoft() && !skillGraduated.get("skill").has("isSoft")) {
 					skill = null;
 				}
 			} catch (final ResourceNotFoundException e) {
@@ -279,6 +279,9 @@ public class SkillsSheetEntityController {
 			if (checkGrade(skillGrade)) {
 				if (skill != null) {
 					allSkills.add(new SkillGraduated(skill, skillGrade));
+					if(skill.isSoft()) {
+						softSkillsUsed.add(skillName);
+					}
 				}
 
 			}
