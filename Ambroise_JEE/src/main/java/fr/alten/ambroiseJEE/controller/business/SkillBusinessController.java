@@ -120,7 +120,7 @@ public class SkillBusinessController {
 	}
 
 	public boolean isAdmin(final UserRole role) {
-		return this.roles.isAdmin(role);
+		return role.equals(UserRole.MANAGER_ADMIN) || role.equals(UserRole.CDR_ADMIN);
 	}
 
 	/**

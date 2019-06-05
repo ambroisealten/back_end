@@ -20,6 +20,7 @@ import com.google.gson.GsonBuilder;
 
 import fr.alten.ambroiseJEE.controller.business.UserBusinessController;
 import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.utils.JsonUtils;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
@@ -61,7 +62,7 @@ public class UserAdminRestController {
 	@ResponseBody
 	public HttpException createUser(@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
 			@RequestAttribute("role") final UserRole role) throws Exception {
-		return params.get("mail") != null ? this.userBusinessController.createUser(params, role)
+		return JsonUtils.checkJsonIntegrity(params, "mail","forname","name","") ? this.userBusinessController.createUser(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -81,7 +82,7 @@ public class UserAdminRestController {
 	@ResponseBody
 	public HttpException deleteUser(@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
 			@RequestAttribute("role") final UserRole role) throws Exception {
-		return params.get("mail") != null ? this.userBusinessController.deleteUser(params, role)
+		return JsonUtils.checkJsonIntegrity(params, "mail") ? this.userBusinessController.deleteUser(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -111,44 +112,46 @@ public class UserAdminRestController {
 	 * Change User Password (User Side). HTTP method PUT The User receive a mail
 	 * with a unique link (token)
 	 *
-	 * @param token  Unique token to request the new password
-	 * @param params TODO "pas de paramètre ?"
-	 * @param mail   the user mail
-	 * @param role   the user role
+	 * @param userMail the mail of the concerned user
+	 * @param params   the JsonNode containing all parameters
+	 * @param mail     the user mail
+	 * @param role     the user role
 	 * @return {@link HttpException} corresponding to the status of the request
 	 *         ({@link UnprocessableEntityException} if the resource is not found
 	 *         and {@link OkException} if the user is updated successfully
 	 * @throws Exception
-	 * @author MAQUINGHEN MAXIME
+	 * @author MAQUINGHEN MAXIME, Lucas Royackkers
 	 */
-	@PutMapping(value = "/admin/user/{token}")
+	@PutMapping(value = "/admin/user/newPwd/{mail}")
 	@ResponseBody
-	public HttpException newPasswordUser(@PathVariable("token") final String token, @RequestBody final JsonNode params,
-			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role)
-			throws Exception {
-		return params.get("mail") != null ? this.userBusinessController.newPasswordUser(token, params, role)
+	public HttpException newPasswordUser(@PathVariable("mail") final String userMail,
+			@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
+			@RequestAttribute("role") final UserRole role) throws Exception {
+		return JsonUtils.checkJsonIntegrity(params, "pswd")
+				? this.userBusinessController.newPasswordUser(userMail, params, role)
 				: new UnprocessableEntityException();
 	}
 
 	/**
 	 * Change a User Password (Admin side). HTTP method PUT
 	 *
-	 * @param resetPassMail the mail that needs to be changed
-	 * @param params
-	 * @param mail          the user mail
-	 * @param role          the user role
+	 * @param paramsthe JsonNode containing all parameters (the mail of the User
+	 *                  that need to reset its password)
+	 * @param mail      the user mail
+	 * @param role      the user role
 	 * @return {@link HttpException} corresponding to the status of the request
 	 *         ({@link UnprocessableEntityException} if the resource is not found
 	 *         and {@link OkException} if the user is updated successfully
 	 * @throws Exception
-	 * @author MAQUINGHEN MAXIME
+	 * @author MAQUINGHEN MAXIME, Lucas Royackkers
 	 */
-	@PutMapping(value = "/admin/user/{mail}")
+	@PutMapping(value = "/admin/user/resetPwd")
 	@ResponseBody
-	public HttpException resetUserPassword(@PathVariable("mail") final String resetPassMail,
-			@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
-			@RequestAttribute("role") final UserRole role) throws Exception {
-		return params.get("mail") != null ? this.userBusinessController.resetUserPassword(resetPassMail, params, role)
+	public HttpException resetUserPassword(@RequestBody final JsonNode params,
+			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role)
+			throws Exception {
+		return JsonUtils.checkJsonIntegrity(params, "mail")
+				? this.userBusinessController.resetUserPassword(params, role)
 				: new UnprocessableEntityException();
 	}
 
@@ -169,7 +172,7 @@ public class UserAdminRestController {
 	@ResponseBody
 	public HttpException updateUser(@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
 			@RequestAttribute("role") final UserRole role) throws Exception {
-		return params.get("mail") != null ? this.userBusinessController.updateUser(params, role)
+		return JsonUtils.checkJsonIntegrity(params, "mail") ? this.userBusinessController.updateUser(params, role)
 				: new UnprocessableEntityException();
 	}
 }

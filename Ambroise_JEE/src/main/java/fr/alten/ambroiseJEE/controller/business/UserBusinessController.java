@@ -18,6 +18,8 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.InternalServerErrorException;
+import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 
 /**
@@ -116,15 +118,42 @@ public class UserBusinessController {
 		throw new ForbiddenException();
 	}
 
-	public HttpException newPasswordUser(final String token, final JsonNode params, final UserRole role) {
+	/**
+	 * Method to delegate the set of a new password for an User
+	 * 
+	 * @param userMail the mail of the concerned User
+	 * @param params   the JsonNode containing all the parameters
+	 * @param role     the current logged user's role
+	 * @return {@link HttpException} corresponding to the status of the request,
+	 *         {@link ConflictException} if there is a duplicate in the database,
+	 *         {@link ResourceNotFoundException} if the resource can't be found,
+	 *         {@link ForbiddenException} if the user hasn't the right to perform
+	 *         this action, {@link InternalServerErrorException} if there are any
+	 *         other errors and {@link OkException} if the password of the User is
+	 *         correctly set
+	 * @author MAQUINGHEN MAXIME, Lucas Royackkers
+	 */
+	public HttpException newPasswordUser(final String userMail, final JsonNode params, final UserRole role) {
 		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role
-				? this.userEntityController.newPasswordUser(token)
+				? this.userEntityController.newPasswordUser(userMail, params)
 				: new ForbiddenException();
 	}
 
-	public HttpException resetUserPassword(final String resetPassMail, final JsonNode jUser, final UserRole role) {
+	/**
+	 * Method to delegate the reset the password of a User
+	 * 
+	 * @param jUser the JsonNode containing all the parameters
+	 * @param role  the current logged user's role
+	 * @return {@link HttpException} corresponding to the status of the request,
+	 *         {@link ResourceNotFoundException} if the resource hasn't been found,
+	 *         {@link ForbiddenException} if the user hasn't the right to perform
+	 *         this action, {@link ConflictException} if there is a duplicate in the
+	 *         database and {@link OkException} if the password is changed
+	 * @author Lucas Royackkers
+	 */
+	public HttpException resetUserPassword(final JsonNode jUser, final UserRole role) {
 		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role
-				? this.userEntityController.resetUserPassword(resetPassMail)
+				? this.userEntityController.resetUserPassword(jUser)
 				: new ForbiddenException();
 	}
 

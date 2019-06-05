@@ -3,11 +3,11 @@
 		{
 			"access": [
 				{
-					"ADMIN": "Missions Compétences Forum Administration",
-					"MANAGER_ADMIN": "Missions Compétences Forum Administration",
-					"CDR_ADMIN": "Missions Compétences Forum Administration",
-					"MANAGER": "Missions Compétences Forum",
-					"CDR": "Missions Forum"
+					"ADMIN": "Compétences Administration",
+					"MANAGER_ADMIN": "Compétences Administration",
+					"CDR_ADMIN": "Administration",
+					"MANAGER": "Compétences",
+					"CDR": ""
 				}
 			],
 			"modules": [{

@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -23,6 +24,7 @@ import fr.alten.ambroiseJEE.utils.RandomString;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.InternalServerErrorException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
@@ -161,20 +163,51 @@ public class UserEntityController {
 				.collect(Collectors.toList());
 	}
 
-	public HttpException newPasswordUser(final String token) {
-		// TODO creation de la partie de verification du token et url.
-		return null;
+	/**
+	 * Set a new Password for a corresponding User
+	 * 
+	 * @param mail   the mail of an User
+	 * @param params the JsonNode containing all parameters (only its new password)
+	 * @return {@link HttpException} corresponding to the status of the request,
+	 *         {@link ConflictException} if there is a duplicate in the database,
+	 *         {@link ResourceNotFoundException} if the resource can't be found,
+	 *         {@link InternalServerErrorException} if there are any other errors
+	 *         and {@link OkException} if the password of the User is correctly set
+	 * @author Lucas Royackkers
+	 */
+	public HttpException newPasswordUser(final String mail, final JsonNode params) {
+		final User user = this.userRepository.findByMailIgnoreCase(mail).orElseThrow(ResourceNotFoundException::new);
+		try {
+			final String new_pass = params.get("pswd").textValue();
+			user.setPswd(new_pass);
+
+			this.userRepository.save(user);
+		} catch (final DuplicateKeyException dke) {
+			return new ConflictException();
+		} catch (final ResourceNotFoundException rnfe) {
+			return rnfe;
+		} catch (final Exception e) {
+			e.printStackTrace();
+
+			return new InternalServerErrorException();
+		}
+		return new OkException();
 	}
 
 	/**
+	 * Method to reset an User password
 	 *
-	 * @param mail the mail concerned by the password changement
+	 * @param jUser the JsonNode containing all the parameters (the mail of the
+	 *              concerned User)
 	 *
-	 * @return {@link HttpException} corresponding to the status of the request and
+	 * @return {@link HttpException} corresponding to the status of the request,
+	 *         {@link ResourceNotFoundException} if the resource hasn't been found,
+	 *         {@link ConflictException} if there is a duplicate in the database and
 	 *         {@link OkException} if the password is changed
-	 * @author MAQUINGHEN MAXIME
+	 * @author MAQUINGHEN MAXIME, Lucas Royackkers
 	 */
-	public HttpException resetUserPassword(final String mail) {
+	public HttpException resetUserPassword(final JsonNode jUser) {
+		final String mail = jUser.get("mail").textValue();
 		final User user = this.userRepository.findByMailIgnoreCase(mail).orElseThrow(ResourceNotFoundException::new);
 		try {
 			final String new_pass = RandomString.getAlphaNumericString(20);
@@ -214,7 +247,8 @@ public class UserEntityController {
 			try {
 				newRole = UserRole.valueOf(jUser.get("role").textValue());
 				user.setRole(newRole);
-			} catch (final Exception e) {
+			} catch (NullPointerException | IllegalArgumentException e) {
+				return new UnprocessableEntityException();
 			}
 			final Agency agency = this.agencyEntityController.getAgency(jUser.get("agency").textValue());
 
