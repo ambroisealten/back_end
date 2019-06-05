@@ -62,7 +62,7 @@ public class UserAdminRestController {
 	@ResponseBody
 	public HttpException createUser(@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
 			@RequestAttribute("role") final UserRole role) throws Exception {
-		return JsonUtils.checkJsonIntegrity(params, "mail","forname","name","") ? this.userBusinessController.createUser(params, role)
+		return JsonUtils.checkJsonIntegrity(params, "mail","forname","name","pswd") ? this.userBusinessController.createUser(params, role)
 				: new UnprocessableEntityException();
 	}
 
