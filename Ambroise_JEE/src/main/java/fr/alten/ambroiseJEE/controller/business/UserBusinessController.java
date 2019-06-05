@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.model.entityControllers.UserEntityController;
+import fr.alten.ambroiseJEE.security.Token;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
@@ -143,6 +144,17 @@ public class UserBusinessController {
 		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role
 				? this.userEntityController.updateUser(jUser)
 				: new ForbiddenException();
+	}
+
+	/**
+	 * Delegate the saving process of refresh token
+	 * 
+	 * @param refreshToken the refresh token to save
+	 * @author Andy Chabalier
+	 * @param mail the user mail
+	 */
+	public void saveRefreshToken(String mail, Token refreshToken) {
+		userEntityController.saveRefreshToken(mail, refreshToken);
 	}
 
 }

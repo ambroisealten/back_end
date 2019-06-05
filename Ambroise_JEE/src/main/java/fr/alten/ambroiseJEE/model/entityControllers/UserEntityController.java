@@ -17,6 +17,7 @@ import fr.alten.ambroiseJEE.model.beans.SkillsSheet;
 import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.model.dao.SkillsSheetRepository;
 import fr.alten.ambroiseJEE.model.dao.UserRepository;
+import fr.alten.ambroiseJEE.security.Token;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.MailUtils;
 import fr.alten.ambroiseJEE.utils.RandomString;
@@ -251,5 +252,25 @@ public class UserEntityController {
 	 */
 	public boolean validateMail(final String mail) {
 		return MailUtils.validateMail(mail);
+	}
+
+	/**
+	 * Save the refresh token
+	 * 
+	 * @param refreshToken the refresh token to save
+	 * @author Andy Chabalier
+	 * @param mail the user mail
+	 */
+	public void saveRefreshToken(String mail, Token refreshToken) {
+		try {
+			User user = userRepository.findByMailIgnoreCase(mail).orElseThrow(ResourceNotFoundException::new);
+			user.setRefreshToken(refreshToken);
+			this.userRepository.save(user);
+		} catch (final ResourceNotFoundException rnfe) {
+			throw rnfe;
+		} catch (final Exception e) {
+			throw new ConflictException();
+		}
+
 	}
 }

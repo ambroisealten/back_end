@@ -10,6 +10,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import fr.alten.ambroiseJEE.security.Token;
 import fr.alten.ambroiseJEE.security.UserRole;
 
 /**
@@ -33,6 +34,7 @@ public class User implements Serializable {
 	private String forname;
 	private transient UserRole role;
 	private String agency;
+	private Token refreshToken;
 
 	public User() {
 		super();
@@ -62,6 +64,10 @@ public class User implements Serializable {
 		return this.pswd;
 	}
 
+	public Token getRefreshToken() {
+		return this.refreshToken;
+	}
+
 	public UserRole getRole() {
 		return this.role;
 	}
@@ -88,6 +94,10 @@ public class User implements Serializable {
 
 	public void setPswd(final String pswd) {
 		this.pswd = pswd;
+	}
+
+	public void setRefreshToken(final Token refreshToken) {
+		this.refreshToken = refreshToken;
 	}
 
 	public void setRole(final UserRole role) {

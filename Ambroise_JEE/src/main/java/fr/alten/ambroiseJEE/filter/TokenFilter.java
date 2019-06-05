@@ -25,8 +25,6 @@ public class TokenFilter implements Filter {
 
 		final HttpServletRequest httpRequest = (HttpServletRequest) request;
 
-		final String token = httpRequest.getHeader("authorization");
-
 		final String requestURI = httpRequest.getRequestURI();
 		final String method = httpRequest.getMethod();
 
@@ -37,6 +35,7 @@ public class TokenFilter implements Filter {
 		if (!(requestURI.endsWith("/login") || requestURI.endsWith("/admin/init") || requestURI.startsWith("/test")
 				|| method.equals(HttpMethod.OPTIONS.toString()))) {
 			try {
+				final String token = httpRequest.getHeader("authorization");
 				final String subject;
 				final UserRole role;
 				if (!TokenIgnore.fileIsPresent()) {
