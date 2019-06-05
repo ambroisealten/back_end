@@ -234,7 +234,6 @@ public class UserEntityController {
 			final String newMail = jUser.get("mail").textValue();
 			user.setMail(newMail);
 			user.setName(jUser.get("name").textValue());
-			user.setPswd(jUser.get("pswd").textValue());
 			UserRole newRole;
 			try {
 				newRole = UserRole.valueOf(jUser.get("role").textValue());
