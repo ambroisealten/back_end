@@ -90,6 +90,7 @@ public class UserEntityController {
 	}
 
 	/**
+	 * Delete a specific User given its mail
 	 *
 	 * @param mail the user mail to fetch
 	 * @return {@link HttpException} corresponding to the status of the request
@@ -119,17 +120,7 @@ public class UserEntityController {
 	}
 
 	/**
-	 *
-	 * @param usermail
-	 * @return
-	 * @throws {@link ResourceNotFoundException} if the resource can't be found
-	 */
-	public User getUser(final String usermail) {
-		return this.userRepository.findByMailIgnoreCase(usermail).orElseThrow(ResourceNotFoundException::new);
-	}
-
-	/**
-	 * Try to fetch an user by is credentials (mail and password)
+	 * Try to fetch an user by its credentials (mail and password)
 	 *
 	 * @param mail the user's mail to fetch
 	 * @param pswd the user's password to fetch
@@ -142,7 +133,7 @@ public class UserEntityController {
 	}
 
 	/**
-	 * Try to fetch an user by is mail
+	 * Try to fetch an user by its mail
 	 *
 	 * @param mail the user mail to fetch
 	 * @return An Optional with the corresponding user or not.
@@ -154,6 +145,7 @@ public class UserEntityController {
 	}
 
 	/**
+	 * Get all Users within the database
 	 *
 	 * @return the list of all user
 	 * @author MAQUINGHEN MAXIME

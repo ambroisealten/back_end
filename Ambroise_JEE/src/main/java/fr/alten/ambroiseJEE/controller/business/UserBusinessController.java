@@ -76,6 +76,7 @@ public class UserBusinessController {
 	}
 
 	/**
+	 * Method to delegate the deletion of an User
 	 *
 	 * @param params the user mail to delete
 	 * @param role   the user role
@@ -91,7 +92,7 @@ public class UserBusinessController {
 	}
 
 	/**
-	 * ask for fetch an user by is mail
+	 * Method to delegate the getting of a specific User by its mail
 	 *
 	 * @param mail the user mail to fetch
 	 * @return An Optional with the corresponding user or not.
@@ -106,9 +107,10 @@ public class UserBusinessController {
 	}
 
 	/**
+	 * Method to delegate getting of all Users
 	 *
 	 * @param role user role
-	 * @return the list of all User
+	 * @return the list of all Users
 	 * @author MAQUINGHEN MAXIME
 	 */
 	public List<User> getUsers(final UserRole role) {
@@ -158,6 +160,7 @@ public class UserBusinessController {
 	}
 
 	/**
+	 * Method to delegate the update of an User
 	 *
 	 * @param jUser JsonNode with all user parameters (forname, mail, name,
 	 *              password) and the oldMail to perform the update even if the mail
