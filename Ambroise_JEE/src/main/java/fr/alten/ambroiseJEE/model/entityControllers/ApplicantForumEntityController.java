@@ -170,6 +170,8 @@ public class ApplicantForumEntityController {
 			newApplicant.setDriverLicense(Boolean.getBoolean(jApplicant.get("hasPermis").textValue()));
 			final JsonNode nationality = jApplicant.get("nationality");
 			newApplicant.setNationality(Nationality.valueOf(nationality.isNull() ? "NONE" : nationality.textValue()));
+			
+			newApplicant.setCvPerson(jApplicant.has("cvPerson") ? jApplicant.get("cvPerson").textValue() : "");
 
 			this.applicantForumRepository.save(newApplicant);
 		} catch (final ResourceNotFoundException rnfe) {
@@ -216,6 +218,7 @@ public class ApplicantForumEntityController {
 			applicant.setDriverLicense(false);
 			applicant.setNationality(Nationality.NONE);
 			applicant.setOpinion(null);
+			applicant.setCvPerson(null);
 
 			this.applicantForumRepository.save(applicant);
 		} else {
@@ -363,6 +366,8 @@ public class ApplicantForumEntityController {
 			applicant.setVehicule(Boolean.getBoolean(jApplicant.get("hasVehicule").textValue()));
 			applicant.setDriverLicense(Boolean.getBoolean(jApplicant.get("hasPermis").textValue()));
 			applicant.setNationality(Nationality.valueOf(jApplicant.get("nationality").textValue()));
+			
+			applicant.setCvPerson(jApplicant.has("cvPerson") ? jApplicant.get("cvPerson").textValue() : "");
 
 			this.applicantForumRepository.save(applicant);
 		} else {

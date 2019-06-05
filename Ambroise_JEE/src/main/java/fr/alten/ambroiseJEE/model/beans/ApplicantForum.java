@@ -31,6 +31,7 @@ public class ApplicantForum extends Person {
 	private boolean vehicule;
 	private boolean driverLicense;
 	private Nationality nationality;
+	private String cvPerson;
 
 	public String getCommentary() {
 		return this.commentary;
@@ -119,5 +120,14 @@ public class ApplicantForum extends Person {
 	public void setVehicule(final boolean vehicule) {
 		this.vehicule = vehicule;
 	}
+
+	public String getCvPerson() {
+		return cvPerson;
+	}
+
+	public void setCvPerson(String cvPerson) {
+		this.cvPerson = cvPerson;
+	}
+	
 
 }

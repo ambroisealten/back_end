@@ -5,7 +5,9 @@ package fr.alten.ambroiseJEE;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -18,10 +20,15 @@ import fr.alten.ambroiseJEE.filter.LocalhostFilter;
 import fr.alten.ambroiseJEE.filter.TokenFilter;
 
 @SpringBootApplication
-public class AmbroiseJeeApplication {
+public class AmbroiseJeeApplication extends SpringBootServletInitializer {
 
 	public static void main(final String[] args) {
 		SpringApplication.run(AmbroiseJeeApplication.class, args);
+	}
+
+	@Override
+	protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
+		return builder.sources(AmbroiseJeeApplication.class);
 	}
 
 	/**

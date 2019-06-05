@@ -1,7 +1,6 @@
 package fr.alten.ambroiseJEE.utils.config;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
@@ -39,7 +38,7 @@ public class ParseConfigFile {
 		BufferedReader jsonFile = null;
 		try {
 			jsonFile = new BufferedReader(
-					new InputStreamReader(new FileInputStream("src/main/resources/modules.json"), "ISO-8859-1"));
+					new InputStreamReader(ParseConfigFile.class.getResourceAsStream("/modules.json"), "ISO-8859-1"));
 		} catch (final UnsupportedEncodingException e1) {
 			e1.printStackTrace();
 		}

@@ -9,7 +9,7 @@ package fr.alten.ambroiseJEE.model.beans;
  */
 public class SkillGraduated {
 
-	private final Skill skill;
+	private Skill skill;
 	private double grade;
 
 	public SkillGraduated(final Skill skill, final double grade) {
@@ -40,6 +40,10 @@ public class SkillGraduated {
 
 	public Skill getSkill() {
 		return this.skill;
+	}
+
+	public void setSkill(Skill skill) {
+		this.skill = skill;
 	}
 
 	public boolean isSoft() {
