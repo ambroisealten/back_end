@@ -199,6 +199,15 @@ public class SkillRestController {
 				: new UnprocessableEntityException();
 	}
 
+	/**
+	 * Method to update the order of all SoftSkills
+	 * 
+	 * @param params the JsonNode containing all the Soft Skills (with name and order)
+	 * @param role the current logged user's role
+	 * @return a list of {@link HttpException}
+	 * @throws Exception
+	 * @author Lucas Royackkers
+	 */
 	@PutMapping(value = "/softSkillsOrder")
 	@ResponseBody
 	public ArrayList<HttpException> updateSoftSkillsOrder(@RequestBody final JsonNode params,
@@ -210,4 +219,5 @@ public class SkillRestController {
 		result.add(new UnprocessableEntityException());
 		return result;
 	}
+
 }

@@ -202,7 +202,7 @@ public class UserEntityController {
 		final String mail = jUser.get("mail").textValue();
 		final User user = this.userRepository.findByMailIgnoreCase(mail).orElseThrow(ResourceNotFoundException::new);
 		try {
-			final String new_pass = RandomString.getAlphaNumericString(20);
+			final String new_pass = RandomString.getAlphaNumericString(60);
 			user.setPswd(new_pass);
 			this.userRepository.save(user);
 			MailUtils.AdminUserResetPassword(new_pass); // TODO
