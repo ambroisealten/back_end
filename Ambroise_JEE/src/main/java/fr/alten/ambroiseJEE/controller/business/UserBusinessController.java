@@ -19,6 +19,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 
 /**
@@ -155,6 +156,15 @@ public class UserBusinessController {
 	 */
 	public void saveRefreshToken(String mail, Token refreshToken) {
 		userEntityController.saveRefreshToken(mail, refreshToken);
+	}
+
+	/**
+	 * @param mail the current user logged mail
+	 * @return {@link OkException} if the user is loggedOut
+	 * @author Andy Chabalier
+	 */
+	public HttpException logout(String mail) {
+		return userEntityController.logout(mail);
 	}
 
 }

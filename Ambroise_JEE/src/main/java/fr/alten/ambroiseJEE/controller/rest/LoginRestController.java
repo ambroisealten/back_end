@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -25,6 +26,8 @@ import fr.alten.ambroiseJEE.security.JWTokenUtility;
 import fr.alten.ambroiseJEE.security.Token;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
+import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnauthorizedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
@@ -106,5 +109,18 @@ public class LoginRestController {
 		} catch (final InvalidJwtException e) {
 			throw new UnauthorizedException();
 		}
+	}
+
+	/**
+	 * logout user. HTTP Method : POST.
+	 *
+	 * @return {@link OkException} if the user is logged out
+	 * @throws Exception @see ForbiddenException if wrong identifiers
+	 */
+	@PostMapping(value = "/signout")
+	@ResponseBody
+	public HttpException signout(@RequestAttribute("mail") final String mail,
+			@RequestAttribute("role") final UserRole role) {
+		return this.userBusinessController.logout(mail);
 	}
 }

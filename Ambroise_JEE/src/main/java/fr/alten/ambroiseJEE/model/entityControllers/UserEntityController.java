@@ -271,6 +271,23 @@ public class UserEntityController {
 		} catch (final Exception e) {
 			throw new ConflictException();
 		}
+	}
 
+	/**
+	 * @param mail the current user logged mail
+	 * @return {@link OkException} if the user is loggedOut
+	 * @author Andy Chabalier
+	 */
+	public HttpException logout(String mail) {
+		try {
+			User user = userRepository.findByMailIgnoreCase(mail).orElseThrow(ResourceNotFoundException::new);
+			user.setRefreshToken(null);
+			this.userRepository.save(user);
+			return new OkException();
+		} catch (final ResourceNotFoundException rnfe) {
+			return rnfe;
+		} catch (final Exception e) {
+			return new ConflictException();
+		}
 	}
 }
