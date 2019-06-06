@@ -144,14 +144,12 @@ public class UserAdminRestController {
 	 * @throws Exception
 	 * @author MAQUINGHEN MAXIME, Lucas Royackkers
 	 */
-	@PutMapping(value = "/admin/user/resetPwd")
+	@PutMapping(value = "/admin/user/resetPwd/{mail}")
 	@ResponseBody
-	public HttpException resetUserPassword(@RequestBody final JsonNode params,
+	public HttpException resetUserPassword(@PathVariable("mail") final String userMail,
 			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role)
 			throws Exception {
-		return JsonUtils.checkJsonIntegrity(params, "mail")
-				? this.userBusinessController.resetUserPassword(params, role)
-				: new UnprocessableEntityException();
+		return this.userBusinessController.resetUserPassword(userMail, role);
 	}
 
 	/**

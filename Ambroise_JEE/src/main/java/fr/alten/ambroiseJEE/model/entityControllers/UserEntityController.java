@@ -198,9 +198,8 @@ public class UserEntityController {
 	 *         {@link OkException} if the password is changed
 	 * @author MAQUINGHEN MAXIME, Lucas Royackkers
 	 */
-	public HttpException resetUserPassword(final JsonNode jUser) {
-		final String mail = jUser.get("mail").textValue();
-		final User user = this.userRepository.findByMailIgnoreCase(mail).orElseThrow(ResourceNotFoundException::new);
+	public HttpException resetUserPassword(final String userMail) {
+		final User user = this.userRepository.findByMailIgnoreCase(userMail).orElseThrow(ResourceNotFoundException::new);
 		try {
 			final String new_pass = RandomString.getAlphaNumericString(60);
 			user.setPswd(new_pass);

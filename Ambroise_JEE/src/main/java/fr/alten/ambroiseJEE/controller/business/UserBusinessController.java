@@ -153,9 +153,9 @@ public class UserBusinessController {
 	 *         database and {@link OkException} if the password is changed
 	 * @author Lucas Royackkers
 	 */
-	public HttpException resetUserPassword(final JsonNode jUser, final UserRole role) {
+	public HttpException resetUserPassword(final String userMail, final UserRole role) {
 		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role
-				? this.userEntityController.resetUserPassword(jUser)
+				? this.userEntityController.resetUserPassword(userMail)
 				: new ForbiddenException();
 	}
 
