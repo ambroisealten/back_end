@@ -18,6 +18,8 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.InternalServerErrorException;
+import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 
 /**
@@ -37,10 +39,13 @@ public class ForumBusinessController {
 	 * Method to delegate forum creation
 	 *
 	 * @param jForum JsonNode with all user parameters (name, date, place)
-	 * @param role
+	 * @param role   the current logged user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link ConflictException} if there is a conflict in the
-	 *         database and {@link CreatedException} if the forum is created
+	 *         request ({@link ConflictException} if the resource cannot be create,
+	 *         {@link InternalServerErrorException} if there is another exception
+	 *         encountered, {@link CreatedException} if the forum is created or
+	 *         {@link ForbiddenException} if the logged user hasn't the rights to
+	 *         perform this action
 	 * @author MAQUINGHEN MAXIME
 	 */
 	public HttpException createForum(final JsonNode jForum, final UserRole role) {
@@ -52,15 +57,16 @@ public class ForumBusinessController {
 	 * Delete a forum
 	 *
 	 * @param params the forum name, date, place
-	 * @param role   the users role
+	 * @param role   the current logged user's role
 	 * @return @see {@link HttpException} corresponding to the status of the request
-	 *         ({@link ForbiddenException} if the resource is not found and
-	 *         {@link CreatedException} if the forum is deactivated
+	 *         ({@link ResourceNotFoundException} if the resource cannot be found,
+	 *         {@link InternalServerErrorException} if there is another exception
+	 *         encountered, {@link OkException} if the forum is deleted or
+	 *         {@link ForbiddenException} if the logged user hasn't the rights to
+	 *         perform this action
 	 * @author MAQUINGHEN MAXIME
 	 */
 	public HttpException deleteForum(final JsonNode params, final UserRole role) {
-		// TODO isAdmin ou isNot_ConsultantOrDeactivated : à redefinir lorsque le front
-		// sera fait
 		return isAdmin(role) ? this.forumEntityController.deleteForum(params) : new ForbiddenException();
 	}
 
@@ -70,9 +76,10 @@ public class ForumBusinessController {
 	 * @param name  the forum name
 	 * @param date  the forum date
 	 * @param place the forum place
-	 * @param role  the user role
-	 * @return An Optional with forum data or {@link ForbiddenException} for right
-	 *         problem
+	 * @param role  the current logged user's role
+	 * @return A corresponding Forum given the parameters that are given
+	 * @throws {@link ForbiddenException} if the logged user hasn't the rights to
+	 *         perform this action
 	 * @author MAQUINGHEN MAXIME
 	 */
 	public Forum getForum(final String name, final String date, final String place, final UserRole role) {
@@ -87,7 +94,9 @@ public class ForumBusinessController {
 	 * Method to delegate fetching of all forums
 	 *
 	 * @param role user role
-	 * @return the list of all Forums
+	 * @return the list of all Forums (can be empty)
+	 * @throws {@link ForbiddenException} if the logged user hasn't the rights to
+	 *         perform this action
 	 * @author MAQUINGHEN MAXIME
 	 */
 	public List<Forum> getForums(final UserRole role) {
@@ -106,17 +115,20 @@ public class ForumBusinessController {
 	}
 
 	/**
+	 * Method to delegate the update of a specific Forum
 	 *
 	 * @param params the forum name, date, place
-	 * @param role   the user role
+	 * @param role   the current logged user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link ResourceNotFoundException} if the resource is not
-	 *         found and {@link CreatedException} if the forum is updated
+	 *         request ({@link ResourceNotFoundException} if the resource cannot be
+	 *         found, {@link ConflictException} if there is a duplicate in the
+	 *         database, {@link InternalServerErrorException} if there is another
+	 *         exception encountered, {@link OkException} if the forum is updated or
+	 *         {@link ForbiddenException} if the logged user hasn't the rights to
+	 *         perform this action
 	 * @author MAQUINGHEN MAXIME
 	 */
 	public HttpException updateForum(final JsonNode params, final UserRole role) {
-		// TODO isAdmin ou isNot_ConsultantOrDeactivated : à redefinir lorsque le front
-		// sera fait
 		return isAdmin(role) ? this.forumEntityController.updateForum(params) : new ForbiddenException();
 	}
 

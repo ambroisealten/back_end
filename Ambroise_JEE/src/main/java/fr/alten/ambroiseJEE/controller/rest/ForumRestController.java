@@ -21,13 +21,18 @@ import com.google.gson.GsonBuilder;
 import fr.alten.ambroiseJEE.controller.business.ForumBusinessController;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.JsonUtils;
+import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
+import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.InternalServerErrorException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
+ * Rest Controller for Forum objects
+ * 
  * @author MAQUINGHEN MAXIME
  *
  */
@@ -53,11 +58,14 @@ public class ForumRestController {
 	 *
 	 * @param params JsonNode containing put parameters from http request : name,
 	 *               date, place
-	 * @param role   the user role
+	 * @param role   the current logged user's role
 	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link UnprocessableEntityException} if the resource is not found
-	 *         and {@link OkException} if the forum is create successfully
-	 * @throws Exception
+	 *         ({@link ConflictException} if the resource cannot be create,
+	 *         {@link InternalServerErrorException} if there is another exception
+	 *         encountered, {@link CreatedException} if the forum is created,
+	 *         {@link ForbiddenException} if the logged user hasn't the rights to
+	 *         perform this action or {@link UnprocessableEntityException} if all
+	 *         the required parameters aren't there
 	 * @author MAQUINGHEN MAXIME
 	 */
 	@PostMapping(value = "/forum")
@@ -73,12 +81,14 @@ public class ForumRestController {
 	 * Delete a forum
 	 *
 	 * @param params contain the forum name, date, place
-	 * @param role   the user role
+	 * @param role   the current logged user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link UnprocessableEntityException}) when the forum cannot
-	 *         be found ({@link ResourceNotFoundException} if the resource is not
-	 *         found and {@link CreatedException} if the forum is deleted
-	 * @throws Exception
+	 *         request ({@link ResourceNotFoundException} if the resource cannot be
+	 *         found, {@link InternalServerErrorException} if there is another
+	 *         exception encountered, {@link OkException} if the forum is deleted,
+	 *         {@link ForbiddenException} if the logged user hasn't the rights to
+	 *         perform this action or {@link UnprocessableEntityException} if all
+	 *         the required parameters aren't there
 	 * @author MAQUINGHEN MAXIME
 	 */
 	@DeleteMapping(value = "/forum")
@@ -96,8 +106,8 @@ public class ForumRestController {
 	 * @param name  the forum name
 	 * @param date  the forum data
 	 * @param place the forum place
-	 * @param role  the user role
-	 * @return the forum data
+	 * @param role  the current logged user's role
+	 * @return A JsonNode as a String, containing the specific Forum
 	 * @author MAQUINGHEN MAXIME
 	 */
 	@GetMapping(value = "/forum/{name}/{date}/{place}")
@@ -108,10 +118,10 @@ public class ForumRestController {
 	}
 
 	/**
-	 * get the list of all forums
+	 * Get the list of all forums
 	 *
-	 * @param role the user role
-	 * @return the forum list
+	 * @param role the current logged user's role
+	 * @return the forum list (can be empty)
 	 * @author MAQUINGHEN MAXIME
 	 */
 	@GetMapping(value = "/forums")
@@ -124,12 +134,15 @@ public class ForumRestController {
 	 * Update a forum
 	 *
 	 * @param params contain the forum name, date, place
-	 * @param role   the user role
+	 * @param role   the current logged user's role
 	 * @return the @see {@link HttpException} corresponding to the status of the
-	 *         request ({@link UnprocessableEntityException}) when the forum cannot
-	 *         be found ({@link ResourceNotFoundException} if the resource is not
-	 *         found and {@link CreatedException} if the forum is updated
-	 * @throws Exception
+	 *         request ({@link ResourceNotFoundException} if the resource cannot be
+	 *         found, {@link ConflictException} if there is a duplicate in the
+	 *         database, {@link InternalServerErrorException} if there is another
+	 *         exception encountered, {@link OkException} if the forum is updated,
+	 *         {@link ForbiddenException} if the logged user hasn't the rights to
+	 *         perform this action or {@link UnprocessableEntityException} if all
+	 *         the required parameters aren't there
 	 * @author MAQUINGHEN MAXIME
 	 */
 	@PutMapping(value = "/forum")

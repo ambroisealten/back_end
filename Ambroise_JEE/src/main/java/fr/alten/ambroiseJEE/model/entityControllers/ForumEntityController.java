@@ -1,5 +1,5 @@
 /**
- *
+
  */
 package fr.alten.ambroiseJEE.model.entityControllers;
 
@@ -21,6 +21,8 @@ import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 
 /**
+ * Forum Controller for entity gestion rules
+ * 
  * @author MAQUINGHEN MAXIME
  *
  */
@@ -33,10 +35,11 @@ public class ForumEntityController {
 	/**
 	 * Create a Forum
 	 *
-	 * @param jForum contain the forum name, the date and the place to create
+	 * @param jForum contain the Forum's name, date and place
 	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link ConflictException} if the resource cannot be create
-	 *         {@link CreatedException} if the forum is create
+	 *         ({@link ConflictException} if the resource cannot be create,
+	 *         {@link InternalServerErrorException} if there is another exception
+	 *         encountered or {@link CreatedException} if the forum is created
 	 * @author MAQUINGHEN MAXIME, Kylian Gehier
 	 */
 	public HttpException createForum(final JsonNode jForum) {
@@ -68,8 +71,11 @@ public class ForumEntityController {
 	 *
 	 * @param jForum contain the name, date and place of the forum to delete
 	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link ResourceNotFoundException} if the resource cannot be found
-	 *         {@link OkException} if the forum is deleted
+	 *         ({@link ResourceNotFoundException} if the resource cannot be found,
+	 *         {@link InternalServerErrorException} if there is another exception
+	 *         encountered or {@link OkException} if the forum is deleted
+	 * @throws {@link ResourceNotFoundException} if the resource isn't found on the
+	 *         first try
 	 * @author MAQUINGHEN MAXIME, Kylian Gehier
 	 */
 	public HttpException deleteForum(final JsonNode jForum) {
@@ -92,7 +98,9 @@ public class ForumEntityController {
 	 * @param name  the name of the forum
 	 * @param date  the date of the forum
 	 * @param place the place of the forum
-	 * @return an Optional forum data
+	 * @return the specific Forum
+	 * @throws a {@link ResourceNotFoundException} if there isn't such an object
+	 *           within the database
 	 * @author MAQUINGHEN MAXIME
 	 */
 	public Forum getForum(final String name, final String date, final String place) {
@@ -103,7 +111,7 @@ public class ForumEntityController {
 	/**
 	 * Fetch all forums
 	 *
-	 * @return the list of all forum
+	 * @return the list of all forum (can be empty)
 	 * @author MAQUINGHEN MAXIME
 	 */
 	public List<Forum> getForums() {
@@ -113,10 +121,15 @@ public class ForumEntityController {
 	/**
 	 * Update a forum data
 	 *
-	 * @param params contain the forum oldname, olddate and oldplace to update
+	 * @param params contain the forum old name, old date and old place to update
 	 * @return {@link HttpException} corresponding to the status of the request
-	 *         ({@link ResourceNotFoundException} if the resource cannot be found
-	 *         {@link OkException} if the forum is updated
+	 *         ({@link ResourceNotFoundException} if the resource cannot be found,
+	 *         {@link ConflictException} if there is a duplicate in the database,
+	 *         {@link InternalServerErrorException} if there is another exception
+	 *         encountered or {@link OkException} if the forum is updated
+	 * @throws {@link ResourceNotFoundException} if the resource can't be found or
+	 *         {@link ConflictException} if the resource has a duplicate in the
+	 *         database, all on the first try
 	 * @author MAQUINGHEN MAXIME, Kylian Gehier
 	 */
 	public HttpException updateForum(final JsonNode params) {
