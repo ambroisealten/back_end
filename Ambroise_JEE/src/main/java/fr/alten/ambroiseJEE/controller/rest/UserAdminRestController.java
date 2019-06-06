@@ -69,7 +69,7 @@ public class UserAdminRestController {
 	/**
 	 * Deactivate a User. HTTP method DELETE
 	 *
-	 * @param params contains the mail of the user to deactivated
+	 * @param usermail contains the mail of the user to deactivate
 	 * @param mail   the user mail
 	 * @param role   the user role
 	 * @return {@link HttpException} corresponding to the status of the request
@@ -78,12 +78,11 @@ public class UserAdminRestController {
 	 * @throws Exception
 	 * @author MAQUINGHEN MAXIME
 	 */
-	@DeleteMapping(value = "/admin/user")
+	@DeleteMapping(value = "/admin/deleteUser/{mail}")
 	@ResponseBody
-	public HttpException deleteUser(@RequestBody final JsonNode params, @RequestAttribute("mail") final String mail,
+	public HttpException deleteUser(@PathVariable("mail") final String usermail, @RequestAttribute("mail") final String mail,
 			@RequestAttribute("role") final UserRole role) throws Exception {
-		return JsonUtils.checkJsonIntegrity(params, "mail") ? this.userBusinessController.deleteUser(params, role)
-				: new UnprocessableEntityException();
+		return this.userBusinessController.deleteUser(usermail, role);
 	}
 
 	@GetMapping(value = "/admin/user/{mail}")

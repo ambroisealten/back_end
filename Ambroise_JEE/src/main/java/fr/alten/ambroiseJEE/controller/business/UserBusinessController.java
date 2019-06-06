@@ -78,16 +78,16 @@ public class UserBusinessController {
 	/**
 	 * Method to delegate the deletion of an User
 	 *
-	 * @param params the user mail to delete
+	 * @param usermail the user mail to delete
 	 * @param role   the user role
 	 * @return @see {@link HttpException} corresponding to the status of the request
 	 *         ({@link ForbiddenException} if the resource is not found and
 	 *         {@link CreatedException} if the user is updated
 	 * @author MAQUINGHEN MAXIME
 	 */
-	public HttpException deleteUser(final JsonNode params, final UserRole role) {
+	public HttpException deleteUser(final String usermail, final UserRole role) {
 		return UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role
-				? this.userEntityController.deleteUser(params.get("mail").textValue())
+				? this.userEntityController.deleteUser(usermail)
 				: new ForbiddenException();
 	}
 
