@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -24,6 +25,7 @@ import fr.alten.ambroiseJEE.utils.RandomString;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.httpStatus.InternalServerErrorException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
@@ -89,6 +91,7 @@ public class UserEntityController {
 	}
 
 	/**
+	 * Delete a specific User given its mail
 	 *
 	 * @param mail the user mail to fetch
 	 * @return {@link HttpException} corresponding to the status of the request
@@ -118,17 +121,7 @@ public class UserEntityController {
 	}
 
 	/**
-	 *
-	 * @param usermail
-	 * @return
-	 * @throws {@link ResourceNotFoundException} if the resource can't be found
-	 */
-	public User getUser(final String usermail) {
-		return this.userRepository.findByMailIgnoreCase(usermail).orElseThrow(ResourceNotFoundException::new);
-	}
-
-	/**
-	 * Try to fetch an user by is credentials (mail and password)
+	 * Try to fetch an user by its credentials (mail and password)
 	 *
 	 * @param mail the user's mail to fetch
 	 * @param pswd the user's password to fetch
@@ -141,7 +134,7 @@ public class UserEntityController {
 	}
 
 	/**
-	 * Try to fetch an user by is mail
+	 * Try to fetch an user by its mail
 	 *
 	 * @param mail the user mail to fetch
 	 * @return An Optional with the corresponding user or not.
@@ -153,6 +146,7 @@ public class UserEntityController {
 	}
 
 	/**
+	 * Get all Users within the database
 	 *
 	 * @return the list of all user
 	 * @author MAQUINGHEN MAXIME
@@ -162,23 +156,53 @@ public class UserEntityController {
 				.collect(Collectors.toList());
 	}
 
-	public HttpException newPasswordUser(final String token) {
-		// TODO creation de la partie de verification du token et url.
-		return null;
+	/**
+	 * Set a new Password for a corresponding User
+	 * 
+	 * @param mail   the mail of an User
+	 * @param params the JsonNode containing all parameters (only its new password)
+	 * @return {@link HttpException} corresponding to the status of the request,
+	 *         {@link ConflictException} if there is a duplicate in the database,
+	 *         {@link ResourceNotFoundException} if the resource can't be found,
+	 *         {@link InternalServerErrorException} if there are any other errors
+	 *         and {@link OkException} if the password of the User is correctly set
+	 * @author Lucas Royackkers
+	 */
+	public HttpException newPasswordUser(final String mail, final JsonNode params) {
+		final User user = this.userRepository.findByMailIgnoreCase(mail).orElseThrow(ResourceNotFoundException::new);
+		try {
+			final String new_pass = params.get("pswd").textValue();
+			user.setPswd(new_pass);
+
+			this.userRepository.save(user);
+		} catch (final DuplicateKeyException dke) {
+			return new ConflictException();
+		} catch (final ResourceNotFoundException rnfe) {
+			return rnfe;
+		} catch (final Exception e) {
+			e.printStackTrace();
+
+			return new InternalServerErrorException();
+		}
+		return new OkException();
 	}
 
 	/**
+	 * Method to reset an User password
 	 *
-	 * @param mail the mail concerned by the password changement
+	 * @param jUser the JsonNode containing all the parameters (the mail of the
+	 *              concerned User)
 	 *
-	 * @return {@link HttpException} corresponding to the status of the request and
+	 * @return {@link HttpException} corresponding to the status of the request,
+	 *         {@link ResourceNotFoundException} if the resource hasn't been found,
+	 *         {@link ConflictException} if there is a duplicate in the database and
 	 *         {@link OkException} if the password is changed
-	 * @author MAQUINGHEN MAXIME
+	 * @author MAQUINGHEN MAXIME, Lucas Royackkers
 	 */
-	public HttpException resetUserPassword(final String mail) {
-		final User user = this.userRepository.findByMailIgnoreCase(mail).orElseThrow(ResourceNotFoundException::new);
+	public HttpException resetUserPassword(final String userMail) {
+		final User user = this.userRepository.findByMailIgnoreCase(userMail).orElseThrow(ResourceNotFoundException::new);
 		try {
-			final String new_pass = RandomString.getAlphaNumericString(20);
+			final String new_pass = RandomString.getAlphaNumericString(60);
 			user.setPswd(new_pass);
 			this.userRepository.save(user);
 			MailUtils.AdminUserResetPassword(new_pass); // TODO
@@ -210,12 +234,12 @@ public class UserEntityController {
 			final String newMail = jUser.get("mail").textValue();
 			user.setMail(newMail);
 			user.setName(jUser.get("name").textValue());
-			user.setPswd(jUser.get("pswd").textValue());
 			UserRole newRole;
 			try {
 				newRole = UserRole.valueOf(jUser.get("role").textValue());
 				user.setRole(newRole);
-			} catch (final Exception e) {
+			} catch (NullPointerException | IllegalArgumentException e) {
+				return new UnprocessableEntityException();
 			}
 			final Agency agency = this.agencyEntityController.getAgency(jUser.get("agency").textValue());
 

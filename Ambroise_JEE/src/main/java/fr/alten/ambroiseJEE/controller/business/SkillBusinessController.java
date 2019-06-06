@@ -120,7 +120,7 @@ public class SkillBusinessController {
 	}
 
 	public boolean isAdmin(final UserRole role) {
-		return this.roles.isAdmin(role);
+		return role.equals(UserRole.MANAGER_ADMIN) || role.equals(UserRole.CDR_ADMIN);
 	}
 
 	/**
@@ -142,7 +142,7 @@ public class SkillBusinessController {
 	 * 
 	 * @param jSoftSkillsList the list of softs skills
 	 * @param role            current logged user's role
-	 * @return a list of Http Exception
+	 * @return a list of {@link HttpException}
 	 * @author Andy Chabalier
 	 */
 	public ArrayList<HttpException> updateSoftSkillsOrder(JsonNode jSoftSkillsList, UserRole role) {

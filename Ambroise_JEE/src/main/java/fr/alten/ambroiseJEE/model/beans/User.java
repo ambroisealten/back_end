@@ -32,7 +32,7 @@ public class User implements Serializable {
 	private transient String pswd;
 	private String name;
 	private String forname;
-	private transient UserRole role;
+	private UserRole role;
 	private String agency;
 	private Token refreshToken;
 
