@@ -48,8 +48,8 @@ public class ApplicantForumRestController {
 	 * Rest controller to create an forum applicant. HTTP Method : POST
 	 *
 	 * @param params JsonNode containing post parameters from http request
-	 * @param mail   the user's mail
-	 * @param role   the user's role
+	 * @param mail   the current logged user's mail
+	 * @param role   the current logged user's role
 	 * @return {@link HttpException} corresponding to the status of the request
 	 *         ({@link UnprocessableEntityException} if mail is not provided and
 	 *         {@link CreatedException} if the applicant is created
@@ -68,8 +68,8 @@ public class ApplicantForumRestController {
 	 * Rest controller to delete an forum applicant. HTTP Method : DELETE
 	 *
 	 * @param params JsonNode containing post parameters from http request
-	 * @param mail   the user's mail
-	 * @param role   the user's role
+	 * @param mail   the current logged user's mail
+	 * @param role   the current logged user's role
 	 * @return {@link HttpException} corresponding to the status of the request
 	 *         ({@link UnprocessableEntityException} if the mail is not provided and
 	 *         {@link OkException} if the person(applicant) is deleted
@@ -87,8 +87,8 @@ public class ApplicantForumRestController {
 	 * Rest controller to fetch a specific applicant. HTTP Method : GET
 	 *
 	 * @param applicantMail the applicant's name
-	 * @param mail          the user's mail
-	 * @param role          the user's role
+	 * @param mail          the current logged user's mail
+	 * @param role          the current logged user's role
 	 * @return an applicant, given its name
 	 * @author Andy Chabalier
 	 */
@@ -102,9 +102,9 @@ public class ApplicantForumRestController {
 	/**
 	 * Rest controller to fetch all forum applicants. HTTP Method : GET
 	 *
-	 * @param mail the user's mail
-	 * @param role the user's role
-	 * @return the list of all applicants
+	 * @param mail the current logged user's mail
+	 * @param role the current logged user's role
+	 * @return the list of all applicants (can be empty)
 	 * @author Andy Chabalier
 	 */
 	@GetMapping(value = "/forum/applicants")
@@ -118,8 +118,8 @@ public class ApplicantForumRestController {
 	 * Rest controller to update a forum applicant
 	 *
 	 * @param params JsonNode containing post parameters from http request
-	 * @param mail   the user's mail
-	 * @param role   the user's role
+	 * @param mail   the current logged user's mail
+	 * @param role   the current logged user's role
 	 * @return {@link HttpException} corresponding to the status of the request
 	 *         ({@link UnprocessableEntityException} if the mail is not provided and
 	 *         {@link OkException} if the applicant is updated

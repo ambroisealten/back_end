@@ -32,6 +32,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 
 /**
+ * Forum Applicant for entity gestion rules
  *
  * @author Andy Chabalier
  *
@@ -83,7 +84,10 @@ public class ApplicantForumEntityController {
 	 *                   (name, mail, job, monthlyWage, startDate)
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ConflictException} if there is a conflict in the
-	 *         database and {@link CreatedException} if the Applicant is created
+	 *         database, {@link UnprocessableEntityException} if the mail of the
+	 *         applicant isn't in a good format, {@link ResourceNotFoundException}
+	 *         if a required resource in the object can't be found and
+	 *         {@link CreatedException} if the Applicant is created
 	 * @throws Exception @see ParseException if the date submitted hasn't a good
 	 *                   format
 	 * @author Andy Chabalier
@@ -170,7 +174,7 @@ public class ApplicantForumEntityController {
 			newApplicant.setDriverLicense(Boolean.getBoolean(jApplicant.get("hasPermis").textValue()));
 			final JsonNode nationality = jApplicant.get("nationality");
 			newApplicant.setNationality(Nationality.valueOf(nationality.isNull() ? "NONE" : nationality.textValue()));
-			
+
 			newApplicant.setCvPerson(jApplicant.has("cvPerson") ? jApplicant.get("cvPerson").textValue() : "");
 
 			this.applicantForumRepository.save(newApplicant);
@@ -222,7 +226,7 @@ public class ApplicantForumEntityController {
 
 			this.applicantForumRepository.save(applicant);
 		} else {
-			throw new ResourceNotFoundException();
+			return new ResourceNotFoundException();
 		}
 		return new OkException();
 	}
@@ -254,15 +258,16 @@ public class ApplicantForumEntityController {
 
 	/**
 	 * @param mail the applicant's mail to fetch
-	 * @return the optional with the applicant fetched
+	 * @return the fetched applicant
+	 * @throws {@link ResourceNotFoundException} if the resource can't be found
 	 * @author Andy Chabalier
 	 */
-	public Optional<ApplicantForum> getApplicantByMail(final String mail) {
-		return this.applicantForumRepository.findByMail(mail);
+	public ApplicantForum getApplicantByMail(final String mail) {
+		return this.applicantForumRepository.findByMail(mail).orElseThrow(ResourceNotFoundException::new);
 	}
 
 	/**
-	 * @return the list of all applicants
+	 * @return the list of all applicants (can be empty)
 	 * @author Andy Chabalier
 	 */
 	public List<ApplicantForum> getApplicants() {
@@ -366,12 +371,12 @@ public class ApplicantForumEntityController {
 			applicant.setVehicule(Boolean.getBoolean(jApplicant.get("hasVehicule").textValue()));
 			applicant.setDriverLicense(Boolean.getBoolean(jApplicant.get("hasPermis").textValue()));
 			applicant.setNationality(Nationality.valueOf(jApplicant.get("nationality").textValue()));
-			
+
 			applicant.setCvPerson(jApplicant.has("cvPerson") ? jApplicant.get("cvPerson").textValue() : "");
 
 			this.applicantForumRepository.save(applicant);
 		} else {
-			throw new ResourceNotFoundException();
+			return new ResourceNotFoundException();
 		}
 		return new OkException();
 	}
