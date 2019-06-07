@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import fr.alten.ambroiseJEE.model.beans.ApplicantForum;
 import fr.alten.ambroiseJEE.model.entityControllers.ApplicantForumEntityController;
 import fr.alten.ambroiseJEE.security.UserRole;
+import fr.alten.ambroiseJEE.security.UserRoleLists;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
@@ -30,8 +31,11 @@ import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
  */
 @Service
 public class ApplicantForumBusinessController {
+	
 	@Autowired
 	private ApplicantForumEntityController applicantForumEntityController;
+	
+	private final UserRoleLists roles = UserRoleLists.getInstance();
 
 	/**
 	 * Method to delegate applicant creation
@@ -50,8 +54,7 @@ public class ApplicantForumBusinessController {
 	 * @throws ParseException
 	 */
 	public HttpException createApplicant(final JsonNode jApplicant, final UserRole role) throws ParseException {
-		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role
-				|| UserRole.CDR == role) {
+		if (isNot_ConsultantOrDeactivated(role)) {
 			return this.applicantForumEntityController.createApplicant(jApplicant);
 		}
 		return new ForbiddenException();
@@ -70,10 +73,22 @@ public class ApplicantForumBusinessController {
 	 * @author Andy Chabalier
 	 */
 	public HttpException deleteApplicant(final JsonNode params, final UserRole role) {
-		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role) {
+		if (isNot_ConsultantOrDeactivated(role)) {
 			return this.applicantForumEntityController.deleteApplicant(params);
 		}
 		return new ForbiddenException();
+	}
+	
+	public boolean isAdmin(final UserRole role) {
+		return this.roles.isAdmin(role);
+	}
+
+	public boolean isNot_ConsultantOrDeactivated(final UserRole role) {
+		return this.roles.isNot_ConsultantOrDeactivated(role);
+	}
+	
+	public boolean isManagerOrCdrAdmin(final UserRole role) {
+		return this.roles.isManagerOrCdrAdmin(role);
 	}
 
 	/**
@@ -86,8 +101,7 @@ public class ApplicantForumBusinessController {
 	 * @throws {@link ForbiddenException} if the logged user hasn't the rights to
 	 */
 	public ApplicantForum getApplicant(final String mail, final UserRole role) {
-		if (UserRole.CDR == role || UserRole.MANAGER == role || UserRole.MANAGER_ADMIN == role
-				|| UserRole.CDR_ADMIN == role) {
+		if (isNot_ConsultantOrDeactivated(role)) {
 			return this.applicantForumEntityController.getApplicantByMail(mail);
 		}
 		throw new ForbiddenException();
@@ -100,8 +114,7 @@ public class ApplicantForumBusinessController {
 	 * @throws {@link ForbiddenException} if the logged user hasn't the rights to
 	 */
 	public List<ApplicantForum> getApplicants(final UserRole role) {
-		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role
-				|| UserRole.CDR == role) {
+		if (isNot_ConsultantOrDeactivated(role)) {
 			return this.applicantForumEntityController.getApplicants();
 		}
 		throw new ForbiddenException();
@@ -121,7 +134,7 @@ public class ApplicantForumBusinessController {
 	 * @throws ParseException
 	 */
 	public HttpException updateApplicant(final JsonNode params, final UserRole role) throws ParseException {
-		if (UserRole.CDR_ADMIN == role || UserRole.MANAGER_ADMIN == role || UserRole.MANAGER == role) {
+		if (isNot_ConsultantOrDeactivated(role)) {
 			return this.applicantForumEntityController.updateApplicant(params);
 		}
 		return new ForbiddenException();
