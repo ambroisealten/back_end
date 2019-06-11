@@ -53,5 +53,45 @@
     "name": "security.token.access.expirationTime",
     "type": "java.lang.String",
     "description": "A description for 'security.token.access.expirationTime'"
+  },
+  {
+    "name": "security.cookie.token.refresh.noExpirationTime",
+    "type": "java.lang.String",
+    "description": "A description for 'security.cookie.token.refresh.noExpirationTime'"
+  },
+  {
+    "name": "security.cookie.token.refresh.secure",
+    "type": "java.lang.String",
+    "description": "A description for 'security.cookie.token.refresh.secure'"
+  },
+  {
+    "name": "security.cookie.token.refresh.expirationTime",
+    "type": "java.lang.String",
+    "description": "A description for 'security.cookie.token.refresh.expirationTime'"
+  },
+  {
+    "name": "security.cookie.token.refresh.httpOnly",
+    "type": "java.lang.String",
+    "description": "A description for 'security.cookie.token.refresh.httpOnly'"
+  },
+  {
+    "name": "security.cookie.token.refresh.path",
+    "type": "java.lang.String",
+    "description": "A description for 'security.cookie.token.refresh.path'"
+  },
+  {
+    "name": "security.cookie.token.refresh.httpOnly",
+    "type": "java.lang.String",
+    "description": "A description for 'security.cookie.token.refresh.httpOnly'"
+  },
+  {
+    "name": "security.cookie.token.refresh.httpOnly",
+    "type": "java.lang.String",
+    "description": "A description for 'security.cookie.token.refresh.httpOnly'"
+  },
+  {
+    "name": "security.cookie.token.refresh.httpOnly",
+    "type": "java.lang.String",
+    "description": "A description for 'security.cookie.token.refresh.httpOnly'"
   }
 ]}

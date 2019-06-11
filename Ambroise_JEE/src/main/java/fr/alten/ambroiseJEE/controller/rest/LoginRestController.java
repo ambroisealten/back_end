@@ -5,16 +5,20 @@ package fr.alten.ambroiseJEE.controller.rest;
 
 import java.util.HashMap;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.jose4j.jwt.consumer.InvalidJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.gson.Gson;
@@ -43,6 +47,9 @@ public class LoginRestController {
 	@Autowired
 	private UserBusinessController userBusinessController;
 
+	@Autowired
+	private ApplicationContext ctx;
+
 	private final Gson gson;
 
 	public LoginRestController() {
@@ -60,7 +67,8 @@ public class LoginRestController {
 	 */
 	@PostMapping(value = "/login")
 	@ResponseBody
-	public String login(@RequestBody final JsonNode params) throws Exception {
+	@ResponsePayload
+	public String login(@RequestBody final JsonNode params, HttpServletResponse httpServletResponse) throws Exception {
 		try {
 			final String mail = params.get("mail").textValue();
 			final String pswd = params.get("pswd").textValue();
@@ -77,6 +85,22 @@ public class LoginRestController {
 			final HashMap<String, Token> response = new HashMap<String, Token>();
 			response.put("access", accessToken);
 			response.put("refresh", refreshToken);
+
+			// create a cookie
+			Cookie cookie = new Cookie("refreshToken", refreshToken.getToken());
+			final String maxAge = stayConnected
+					? ctx.getEnvironment().getProperty("security.cookie.token.refresh.noExpirationTime")
+					: ctx.getEnvironment().getProperty("security.cookie.token.refresh.expirationTime");
+			cookie.setMaxAge(60 * Integer.parseInt(maxAge)); // convert maxAge to second (was mili)
+			cookie.setSecure(
+					Boolean.parseBoolean(ctx.getEnvironment().getProperty("security.cookie.token.refresh.secure")));
+			cookie.setHttpOnly(
+					Boolean.parseBoolean(ctx.getEnvironment().getProperty("security.cookie.token.refresh.httpOnly")));
+			cookie.setPath(ctx.getEnvironment().getProperty("security.cookie.token.refresh.path"));
+
+			// add cookie to response
+			httpServletResponse.addCookie(cookie);
+
 			return this.gson.toJson(response);
 		} catch (final NullPointerException npe) {
 			throw new UnprocessableEntityException();
