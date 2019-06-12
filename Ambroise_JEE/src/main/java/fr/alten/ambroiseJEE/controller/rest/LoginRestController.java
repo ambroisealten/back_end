@@ -11,6 +11,7 @@ import org.jose4j.jwt.consumer.InvalidJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
@@ -86,7 +87,7 @@ public class LoginRestController {
 			final String maxAge = stayConnected
 					? ctx.getEnvironment().getProperty("security.cookie.token.refresh.noExpirationTime")
 					: ctx.getEnvironment().getProperty("security.cookie.token.refresh.expirationTime");
-			cookie.setMaxAge(60 * Integer.parseInt(maxAge)); // convert maxAge to second (was mili)
+			cookie.setMaxAge(Integer.parseInt(maxAge)); // convert maxAge to second (was mili)
 			cookie.setSecure(
 					Boolean.parseBoolean(ctx.getEnvironment().getProperty("security.cookie.token.refresh.secure")));
 			cookie.setHttpOnly(
@@ -113,9 +114,10 @@ public class LoginRestController {
 	 */
 	@GetMapping(value = "/login")
 	@ResponseBody
-	public String refreshAcesstoken(HttpServletRequest request) throws Exception {
+	public String refreshAcesstoken(@CookieValue(value = "refreshToken") String refreshTokenCookie,
+			HttpServletRequest request) throws Exception {
 		try {
-			final String token = request.getHeader("authorization");
+			final String token = refreshTokenCookie;
 			final String[] tokenInfo = JWTokenUtility.validate(token).split("\\|");
 			String mail = tokenInfo[0];
 			UserRole role = UserRole.valueOf(tokenInfo[1]);
