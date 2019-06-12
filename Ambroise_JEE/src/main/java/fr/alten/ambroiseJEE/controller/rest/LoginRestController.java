@@ -3,8 +3,6 @@
  */
 package fr.alten.ambroiseJEE.controller.rest;
 
-import java.util.HashMap;
-
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -82,9 +80,6 @@ public class LoginRestController {
 			// Et on construit son token de rafraichissement
 			final Token refreshToken = JWTokenUtility.buildRefreshJWT(subject, stayConnected);
 			userBusinessController.saveRefreshToken(mail, refreshToken);
-			final HashMap<String, Token> response = new HashMap<String, Token>();
-			response.put("access", accessToken);
-			response.put("refresh", refreshToken);
 
 			// create a cookie
 			Cookie cookie = new Cookie("refreshToken", refreshToken.getToken());
@@ -101,7 +96,7 @@ public class LoginRestController {
 			// add cookie to response
 			httpServletResponse.addCookie(cookie);
 
-			return this.gson.toJson(response);
+			return this.gson.toJson(accessToken);
 		} catch (final NullPointerException npe) {
 			throw new UnprocessableEntityException();
 		}
