@@ -32,8 +32,8 @@ public class TokenFilter implements Filter {
 		// have to applied.
 		// If the requested method is the HTTP OPTION method, we let it go throught the
 		// filter to allow an normal HTTP communication
-		if (!(requestURI.endsWith("/login") || requestURI.endsWith("/admin/init") || requestURI.startsWith("/test")
-				|| method.equals(HttpMethod.OPTIONS.toString()))) {
+		if (!(requestURI.endsWith("/login") || requestURI.endsWith("/signout") || requestURI.endsWith("/admin/init")
+				|| requestURI.startsWith("/test") || method.equals(HttpMethod.OPTIONS.toString()))) {
 			try {
 				final String token = httpRequest.getHeader("authorization");
 				final String subject;

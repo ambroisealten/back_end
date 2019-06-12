@@ -14,7 +14,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
@@ -67,7 +66,8 @@ public class LoginRestController {
 	@PostMapping(value = "/login")
 	@ResponseBody
 	@ResponsePayload
-	public String login(@RequestBody final JsonNode params, HttpServletResponse httpServletResponse) throws Exception {
+	public String login(@RequestBody final JsonNode params, final HttpServletResponse httpServletResponse)
+			throws Exception {
 		try {
 			final String mail = params.get("mail").textValue();
 			final String pswd = params.get("pswd").textValue();
@@ -80,19 +80,19 @@ public class LoginRestController {
 			final Token accessToken = JWTokenUtility.buildAccessJWT(subject);
 			// Et on construit son token de rafraichissement
 			final Token refreshToken = JWTokenUtility.buildRefreshJWT(subject, stayConnected);
-			userBusinessController.saveRefreshToken(mail, refreshToken);
+			this.userBusinessController.saveRefreshToken(mail, refreshToken);
 
 			// create a cookie
-			Cookie cookie = new Cookie("refreshToken", refreshToken.getToken());
+			final Cookie cookie = new Cookie("refreshToken", refreshToken.getToken());
 			final String maxAge = stayConnected
-					? ctx.getEnvironment().getProperty("security.cookie.token.refresh.noExpirationTime")
-					: ctx.getEnvironment().getProperty("security.cookie.token.refresh.expirationTime");
+					? this.ctx.getEnvironment().getProperty("security.cookie.token.refresh.noExpirationTime")
+					: this.ctx.getEnvironment().getProperty("security.cookie.token.refresh.expirationTime");
 			cookie.setMaxAge(Integer.parseInt(maxAge)); // convert maxAge to second (was mili)
-			cookie.setSecure(
-					Boolean.parseBoolean(ctx.getEnvironment().getProperty("security.cookie.token.refresh.secure")));
-			cookie.setHttpOnly(
-					Boolean.parseBoolean(ctx.getEnvironment().getProperty("security.cookie.token.refresh.httpOnly")));
-			cookie.setPath(ctx.getEnvironment().getProperty("security.cookie.token.refresh.path"));
+			cookie.setSecure(Boolean
+					.parseBoolean(this.ctx.getEnvironment().getProperty("security.cookie.token.refresh.secure")));
+			cookie.setHttpOnly(Boolean
+					.parseBoolean(this.ctx.getEnvironment().getProperty("security.cookie.token.refresh.httpOnly")));
+			cookie.setPath(this.ctx.getEnvironment().getProperty("security.cookie.token.refresh.path"));
 
 			// add cookie to response
 			httpServletResponse.addCookie(cookie);
@@ -114,14 +114,14 @@ public class LoginRestController {
 	 */
 	@GetMapping(value = "/login")
 	@ResponseBody
-	public String refreshAcesstoken(@CookieValue(value = "refreshToken") String refreshTokenCookie,
-			HttpServletRequest request) throws Exception {
+	public String refreshAcesstoken(@CookieValue(value = "refreshToken") final String refreshTokenCookie,
+			final HttpServletRequest request) throws Exception {
 		try {
 			final String token = refreshTokenCookie;
 			final String[] tokenInfo = JWTokenUtility.validate(token).split("\\|");
-			String mail = tokenInfo[0];
-			UserRole role = UserRole.valueOf(tokenInfo[1]);
-			User user = this.userBusinessController.getUserByMail(mail, UserRole.MANAGER_ADMIN);
+			final String mail = tokenInfo[0];
+			final UserRole role = UserRole.valueOf(tokenInfo[1]);
+			final User user = this.userBusinessController.getUserByMail(mail, UserRole.MANAGER_ADMIN);
 			if (user.getRole().equals(role) && user.getRefreshToken().getToken().equals(token)) {
 				return this.gson.toJson(JWTokenUtility.buildAccessJWT(user.getMail() + "|" + user.getRole().name()));
 			} else {
@@ -140,8 +140,20 @@ public class LoginRestController {
 	 */
 	@PostMapping(value = "/signout")
 	@ResponseBody
-	public HttpException signout(@RequestAttribute("mail") final String mail,
-			@RequestAttribute("role") final UserRole role) {
-		return this.userBusinessController.logout(mail);
+	public HttpException signout(@CookieValue(value = "refreshToken") final String refreshTokenCookie,
+			final HttpServletRequest httpServletRequest, final HttpServletResponse httpServletResponse) {
+		try {
+			final String[] tokenInfo = JWTokenUtility.validate(refreshTokenCookie).split("\\|");
+			final String mail = tokenInfo[0];
+			for (final Cookie c : httpServletRequest.getCookies()) {
+				if (c.getName().equals("refreshToken")) {
+					c.setMaxAge(0);
+					httpServletResponse.addCookie(c);
+				}
+			}
+			return this.userBusinessController.logout(mail);
+		} catch (final InvalidJwtException e) {
+			return new UnauthorizedException();
+		}
 	}
 }
