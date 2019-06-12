@@ -131,7 +131,7 @@ public class TokenIgnore {
 
 	/**
 	 * get the {@link User}'s mail set in the {@link TokenFilter} when its ignored
-	 * 
+	 *
 	 * @return the {@link User}'s mail set in the {@link TokenFilter} when its
 	 *         ignored
 	 * @author Kylian Gehier
@@ -143,7 +143,7 @@ public class TokenIgnore {
 	/**
 	 * get the {@link User}'s {@link UserRole} set in the {@link TokenFilter} when
 	 * its ignored
-	 * 
+	 *
 	 * @return the {@link User}'s {@link UserRole} set in the {@link TokenFilter}
 	 *         when its ignored
 	 * @author Kylian Gehier
