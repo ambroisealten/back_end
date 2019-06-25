@@ -1,10 +1,12 @@
 package fr.alten.ambroiseJEE.model;
 
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import fr.alten.ambroiseJEE.model.beans.Person;
 
@@ -77,18 +79,38 @@ public class PersonSetWithFilters implements Set<Person> {
 	 * @return true if the Person validates all filters, otherwise false
 	 * @author Lucas Royackkers
 	 * @author Andy Chabalier
+	 * @author Thomas Decamp
 	 */
 	private boolean correspondAllFilter(final Person person) {
 		boolean filterMatch = true;
 		final Iterator<String> filterIterator = this.filters.iterator();
 		while (filterIterator.hasNext() && filterMatch) {
 			final String filter = filterIterator.next();
-			filterMatch = filterMatch && (person.getName().toLowerCase().equals(filter)
-					|| person.getSurname().toLowerCase().equals(filter)
-					|| person.getHighestDiploma().toLowerCase().equals(filter)
-					|| person.getJob().toLowerCase().equals(filter)) || person.getOpinion().equals(filter);
+
+			Person p = person;
+
+			p.setName(this.noAccent(p.getName()));
+			p.setSurname(this.noAccent(p.getSurname()));
+
+			filterMatch = filterMatch && (p.getName().toLowerCase().equals(filter)
+					|| p.getSurname().toLowerCase().equals(filter)
+					|| p.getHighestDiploma().toLowerCase().equals(filter)
+					|| p.getJob().toLowerCase().equals(filter)) || p.getOpinion().equals(filter);
 		}
 		return filterMatch;
+	}
+
+	/**
+	 * Remove accents
+	 *
+	 * @param String
+	 * @return String without accents 
+	 * @author Thomas Decamp
+	 */
+	private String noAccent(String s) {
+			String strTemp = Normalizer.normalize(s, Normalizer.Form.NFD);
+			Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+			return pattern.matcher(strTemp).replaceAll("");
 	}
 
 	/**
