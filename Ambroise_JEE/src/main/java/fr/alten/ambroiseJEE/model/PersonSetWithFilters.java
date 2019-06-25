@@ -89,13 +89,17 @@ public class PersonSetWithFilters implements Set<Person> {
 
 			Person p = person;
 
+			System.out.print("\n\n\n\n\n\n\n\n\n\n\n" + "FILTERMATCH : " + filterMatch + " || FILTER : " + filter + "\n\n\n\n\n\n\n");
+
+
 			p.setName(this.noAccent(p.getName()));
 			p.setSurname(this.noAccent(p.getSurname()));
 
 			filterMatch = filterMatch && (p.getName().toLowerCase().equals(filter)
 					|| p.getSurname().toLowerCase().equals(filter)
 					|| p.getHighestDiploma().toLowerCase().equals(filter)
-					|| p.getJob().toLowerCase().equals(filter)) || p.getOpinion().equals(filter);
+					|| p.getJob().toLowerCase().equals(filter)) || p.getOpinion().equals(filter)
+					|| p.getRole().toString().toLowerCase().equals(filter);
 		}
 		return filterMatch;
 	}
