@@ -388,7 +388,9 @@ public class PersonEntityController {
 			person.setName(jPerson.get("name").textValue());
 			person.setMonthlyWage(Float.parseFloat(jPerson.get("monthlyWage").asText()));
 
-			person.setRole(role);
+//			person.setRole(role);
+			System.out.print("\n oldRole " + role + " || newRole " + this.translateRole(jPerson.get("newRole").textValue()) + "\n");
+			person.setRole(this.translateRole(jPerson.get("newRole").textValue()));
 
 			final User personInCharge = this.userEntityController.getUserByMail(personInChargeMail);
 			person.setPersonInChargeMail(personInCharge.getMail());
@@ -407,7 +409,7 @@ public class PersonEntityController {
 			person.setHighestDiploma(diploma.getName());
 			person.setHighestDiplomaYear(diploma.getYearOfResult());
 
-			if (role.equals(PersonRole.APPLICANT)) {
+			if (person.getRole().equals(PersonRole.APPLICANT)) {
 				person.setExperienceTime(jPerson.get("experienceTime").asInt());
 				final String employerName = jPerson.get("employer").textValue();
 				Employer employer;
@@ -447,6 +449,22 @@ public class PersonEntityController {
 		}
 		return new OkException();
 	}
+	
+	public PersonRole translateRole(String role) {
+		switch (role) {
+			case ("DEMISSIONAIRE") :
+				System.out.print("\n TranslateRole : " + PersonRole.DEMISSIONAIRE + "\n\n\n\n");
+				return PersonRole.DEMISSIONAIRE;
+			case ("APPLICANT") :
+				System.out.print("\n TranslateRole : " + PersonRole.APPLICANT + "\n\n\n\n");
+				return PersonRole.APPLICANT;
+			case ("CONSULTANT") :
+				System.out.print("\n TranslateRole : " + PersonRole.CONSULTANT + "\n\n\n\n");
+				return PersonRole.CONSULTANT;
+		}
+		return null;
+	}
+
 
 	/**
 	 * update associated skillSheet on cascade
