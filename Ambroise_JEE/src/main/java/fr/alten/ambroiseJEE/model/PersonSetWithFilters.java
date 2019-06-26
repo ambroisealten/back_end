@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import fr.alten.ambroiseJEE.model.beans.Person;
 
@@ -21,13 +23,25 @@ public class PersonSetWithFilters implements Set<Person> {
 
 	private final List<Person> persons = new ArrayList<Person>();
 	private List<String> filters = new ArrayList<String>();
+	private List<String> statusFilters = new ArrayList<String>();
 
+	
+	
 	public PersonSetWithFilters(final List<String> filters) {
 		super();
-		this.filters = filters;
+		this.splitFilter(filters);
 		this.filters.replaceAll(String::toLowerCase);
+		this.statusFilters.replaceAll(String::toLowerCase);
 	}
 
+	public void splitFilter(final List<String> filters) {
+		
+		Map<Boolean, List<String>> myLists = filters.stream().collect(Collectors.partitioningBy(s -> s!="APPLICANT" && s!="CONSULTANT" && s!="DEMISSIONNAIRE"));
+		this.statusFilters = myLists.get(true);
+		this.filters = myLists.get(false);
+		
+	}
+	
 	/**
 	 * Add a Person if the list doesn't contains it already and if Person validates
 	 * all filters
@@ -84,13 +98,11 @@ public class PersonSetWithFilters implements Set<Person> {
 	private boolean correspondAllFilter(final Person person) {
 		boolean filterMatch = true;
 		final Iterator<String> filterIterator = this.filters.iterator();
+
 		while (filterIterator.hasNext() && filterMatch) {
 			final String filter = filterIterator.next();
 
 			Person p = person;
-
-			System.out.print("\n\n\n\n\n\n\n\n\n\n\n" + "FILTERMATCH : " + filterMatch + " || FILTER : " + filter + "\n\n\n\n\n\n\n");
-
 
 			p.setName(this.noAccent(p.getName()));
 			p.setSurname(this.noAccent(p.getSurname()));
@@ -99,7 +111,20 @@ public class PersonSetWithFilters implements Set<Person> {
 					|| p.getSurname().toLowerCase().contains(filter)
 					|| p.getHighestDiploma().toLowerCase().equals(filter)
 					|| p.getJob().toLowerCase().equals(filter)) || p.getOpinion().equals(filter);
-//					|| p.getRole().toString().toLowerCase().equals(filter);
+		}
+
+		final Iterator<String> statusFilterIterator = this.statusFilters.iterator();
+		while (statusFilterIterator.hasNext()) {
+			final String filter = statusFilterIterator.next();
+
+			Person p = person;
+
+			if (p.getRole().toString().toLowerCase().equals(filter)) {
+				filterMatch = true;
+				return filterMatch;
+			}
+			else
+				filterMatch = false;
 		}
 		return filterMatch;
 	}
