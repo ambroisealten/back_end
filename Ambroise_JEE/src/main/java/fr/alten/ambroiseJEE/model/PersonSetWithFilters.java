@@ -95,11 +95,11 @@ public class PersonSetWithFilters implements Set<Person> {
 			p.setName(this.noAccent(p.getName()));
 			p.setSurname(this.noAccent(p.getSurname()));
 
-			filterMatch = filterMatch && (p.getName().toLowerCase().equals(filter)
-					|| p.getSurname().toLowerCase().equals(filter)
+			filterMatch = filterMatch && (p.getName().toLowerCase().contains(filter)
+					|| p.getSurname().toLowerCase().contains(filter)
 					|| p.getHighestDiploma().toLowerCase().equals(filter)
-					|| p.getJob().toLowerCase().equals(filter)) || p.getOpinion().equals(filter)
-					|| p.getRole().toString().toLowerCase().equals(filter);
+					|| p.getJob().toLowerCase().equals(filter)) || p.getOpinion().equals(filter);
+//					|| p.getRole().toString().toLowerCase().equals(filter);
 		}
 		return filterMatch;
 	}

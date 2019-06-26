@@ -155,11 +155,20 @@ public class SkillsSheetEntityController {
 		try {
 
 			final PersonRole status = PersonRole.valueOf(jSkillsSheet.get("rolePersonAttachedTo").textValue());
+			System.out.print("\n\n STATUS : " + status + " || rolePerson : " + PersonRole.valueOf(jSkillsSheet.get("rolePersonAttachedTo").textValue()) + "\n");
 			final String personMail = jSkillsSheet.get("mailPersonAttachedTo").textValue();
 			final String skillsSheetName = jSkillsSheet.get("name").textValue();
 
+			List<SkillsSheet> skillsSheetList = getSkillsSheetVersion(jSkillsSheet.get("name").textValue(), jSkillsSheet.get("mailPersonAttachedTo").textValue());
+			for (SkillsSheet skillsSheet : skillsSheetList) {
+				System.out.print("\n SKillsheetRole BEFORE : " + skillsSheet.getRolePersonAttachedTo() + "\n");
+				skillsSheet.setRolePersonAttachedTo(status);
+				System.out.print("\n SKillsheetRole AFTER : " + skillsSheet.getRolePersonAttachedTo() + "\n");
+			}
+
 			if (this.skillsSheetRepository.existsByNameIgnoreCaseAndMailPersonAttachedToIgnoreCaseAndVersionNumber(
 					skillsSheetName, personMail, versionNumber)) {
+				System.out.print("\n\nCONFLICT\n\n");
 				return new ConflictException();
 			}
 			// Given the created person status
