@@ -219,8 +219,8 @@ public class SkillsheetRestIT {
 				+ "      \"skill\": {" + "        \"name\": \"skill2\"" + "      }," + "      \"grade\": \"2\""
 				+ "    }" + "  ]" + "}";
 
-		String skillsSheetWithDemissionaireRole = "{" + "  \"name\": \"skillsSheetName\","
-				+ "  \"mailPersonAttachedTo\": \"person@mail.com\"," + "  \"rolePersonAttachedTo\": \"DEMISSIONAIRE\","
+		String skillsSheetWithDemissionnaireRole = "{" + "  \"name\": \"skillsSheetName\","
+				+ "  \"mailPersonAttachedTo\": \"person@mail.com\"," + "  \"rolePersonAttachedTo\": \"DEMISSIONNAIRE\","
 				+ "  \"skillsList\": [" + "    {" + "      \"skill\": {" + "        \"name\": \"skill1\","
 				+ "        \"isSoft\": \" \"" + "      }," + "      \"grade\": \"1\"" + "    }," + "    {"
 				+ "      \"skill\": {" + "        \"name\": \"skill2\"" + "      }," + "      \"grade\": \"2\""
@@ -235,7 +235,7 @@ public class SkillsheetRestIT {
 
 
 		MvcResult result2 = this.mockMvc.perform(
-				post("/skillsheet").contentType(MediaType.APPLICATION_JSON).content(skillsSheetWithDemissionaireRole))
+				post("/skillsheet").contentType(MediaType.APPLICATION_JSON).content(skillsSheetWithDemissionnaireRole))
 				.andReturn();
 
 		assertTrue(result2.getResponse().getContentAsString().contains("ResourceNotFoundException"));
