@@ -1,4 +1,4 @@
-package fr.alten.ambroiseJEE.utils;
+package fr.alten.ambroiseJEE.utils.personRole;
 
 /**
  *

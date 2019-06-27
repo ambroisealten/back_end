@@ -27,13 +27,13 @@ import fr.alten.ambroiseJEE.model.beans.Job;
 import fr.alten.ambroiseJEE.model.beans.Person;
 import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.model.dao.PersonRepository;
-import fr.alten.ambroiseJEE.utils.PersonRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.InternalServerErrorException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
+import fr.alten.ambroiseJEE.utils.personRole.PersonRole;
 
 /**
  * 
