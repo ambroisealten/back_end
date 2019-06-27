@@ -28,6 +28,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
 import fr.alten.ambroiseJEE.utils.personRole.PersonRole;
+import fr.alten.ambroiseJEE.utils.personRole.PersonRoleTranslate;
 
 /**
  * @author Lucas Royackkers
@@ -388,9 +389,7 @@ public class PersonEntityController {
 			person.setName(jPerson.get("name").textValue());
 			person.setMonthlyWage(Float.parseFloat(jPerson.get("monthlyWage").asText()));
 
-//			person.setRole(role);
-			System.out.print("\n oldRole " + role + " || newRole " + this.translateRole(jPerson.get("newRole").textValue()) + "\n");
-			person.setRole(this.translateRole(jPerson.get("newRole").textValue()));
+			person.setRole(PersonRoleTranslate.translateRole(jPerson.get("newRole").textValue()));
 
 			final User personInCharge = this.userEntityController.getUserByMail(personInChargeMail);
 			person.setPersonInChargeMail(personInCharge.getMail());
@@ -449,22 +448,6 @@ public class PersonEntityController {
 		}
 		return new OkException();
 	}
-	
-	public PersonRole translateRole(String role) {
-		switch (role) {
-			case ("DEMISSIONNAIRE") :
-				System.out.print("\n TranslateRole : " + PersonRole.DEMISSIONNAIRE + "\n\n\n\n");
-				return PersonRole.DEMISSIONNAIRE;
-			case ("APPLICANT") :
-				System.out.print("\n TranslateRole : " + PersonRole.APPLICANT + "\n\n\n\n");
-				return PersonRole.APPLICANT;
-			case ("CONSULTANT") :
-				System.out.print("\n TranslateRole : " + PersonRole.CONSULTANT + "\n\n\n\n");
-				return PersonRole.CONSULTANT;
-		}
-		return null;
-	}
-
 
 	/**
 	 * update associated skillSheet on cascade
