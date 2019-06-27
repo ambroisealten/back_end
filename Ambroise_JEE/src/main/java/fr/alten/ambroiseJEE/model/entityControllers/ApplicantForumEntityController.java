@@ -198,7 +198,7 @@ public class ApplicantForumEntityController {
 				.findByMail(jApplicant.get("mail").textValue());
 		if (optionalApplicant.isPresent()) {
 			final ApplicantForum applicant = optionalApplicant.get();
-			applicant.setName("Demissionaire");
+			applicant.setName("Demissionnaire");
 			applicant.setSurname(null);
 			applicant.setMail("deactivated" + System.currentTimeMillis() + "@deactivated.com");
 			applicant.setEmployer(null);

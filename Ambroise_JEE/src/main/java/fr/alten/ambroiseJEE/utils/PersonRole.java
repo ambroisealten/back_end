@@ -7,5 +7,5 @@ package fr.alten.ambroiseJEE.utils;
  *
  */
 public enum PersonRole {
-	DEMISSIONAIRE, APPLICANT, CONSULTANT;
+	DEMISSIONNAIRE, APPLICANT, CONSULTANT;
 }

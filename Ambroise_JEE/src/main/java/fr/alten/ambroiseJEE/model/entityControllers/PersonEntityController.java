@@ -162,15 +162,15 @@ public class PersonEntityController {
 				person.setName("Deactivated");
 				break;
 			case CONSULTANT:
-				person.setSurname("Demissionaire");
-				person.setName("Demissionaire");
+				person.setSurname("Demissionnaire");
+				person.setName("Demissionnaire");
 				break;
 			default:
 				throw new UnprocessableEntityException();
 			}
 			person.setMail("deactivated" + System.currentTimeMillis() + "@deactivated.com");
 			person.setEmployer(null);
-			person.setRole(PersonRole.DEMISSIONAIRE);
+			person.setRole(PersonRole.DEMISSIONNAIRE);
 			person.setMonthlyWage(0);
 			person.setJob(null);
 			person.setOpinion(null);
@@ -206,8 +206,8 @@ public class PersonEntityController {
 				person.setName("Deactivated");
 				break;
 			case CONSULTANT:
-				person.setSurname("Demissionaire");
-				person.setName("Demissionaire");
+				person.setSurname("Demissionnaire");
+				person.setName("Demissionnaire");
 				break;
 			default:
 				throw new UnprocessableEntityException();
@@ -215,7 +215,7 @@ public class PersonEntityController {
 			}
 			person.setMail("deactivated" + System.currentTimeMillis() + "@deactivated.com");
 			person.setEmployer(null);
-			person.setRole(PersonRole.DEMISSIONAIRE);
+			person.setRole(PersonRole.DEMISSIONNAIRE);
 			person.setMonthlyWage(0);
 			person.setJob(null);
 			person.setOpinion(null);
@@ -452,9 +452,9 @@ public class PersonEntityController {
 	
 	public PersonRole translateRole(String role) {
 		switch (role) {
-			case ("DEMISSIONAIRE") :
-				System.out.print("\n TranslateRole : " + PersonRole.DEMISSIONAIRE + "\n\n\n\n");
-				return PersonRole.DEMISSIONAIRE;
+			case ("DEMISSIONNAIRE") :
+				System.out.print("\n TranslateRole : " + PersonRole.DEMISSIONNAIRE + "\n\n\n\n");
+				return PersonRole.DEMISSIONNAIRE;
 			case ("APPLICANT") :
 				System.out.print("\n TranslateRole : " + PersonRole.APPLICANT + "\n\n\n\n");
 				return PersonRole.APPLICANT;
