@@ -378,7 +378,7 @@ public class PersonEntityController {
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ResourceNotFoundException} if the resource isn't in
 	 *         the database and {@link OkException} if the person is updated
-	 * @author Lucas Royackkers, Kylian Gehier
+	 * @author Lucas Royackkers, Kylian Gehier, Thomas Decamp
 	 */
 	public HttpException updatePerson(final JsonNode jPerson, final PersonRole role, final String personInChargeMail) {
 		try {
@@ -389,7 +389,10 @@ public class PersonEntityController {
 			person.setName(jPerson.get("name").textValue());
 			person.setMonthlyWage(Float.parseFloat(jPerson.get("monthlyWage").asText()));
 
-			person.setRole(PersonRoleTranslate.translateRole(jPerson.get("newRole").textValue()));
+			if (jPerson.hasNonNull("newRole"))
+				person.setRole(PersonRoleTranslate.translateRole(jPerson.get("newRole").textValue()));
+			else
+				person.setRole(role);
 
 			final User personInCharge = this.userEntityController.getUserByMail(personInChargeMail);
 			person.setPersonInChargeMail(personInCharge.getMail());
