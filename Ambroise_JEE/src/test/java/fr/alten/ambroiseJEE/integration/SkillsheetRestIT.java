@@ -39,8 +39,8 @@ import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.model.dao.PersonRepository;
 import fr.alten.ambroiseJEE.model.dao.SkillsSheetRepository;
 import fr.alten.ambroiseJEE.model.dao.UserRepository;
-import fr.alten.ambroiseJEE.utils.PersonRole;
 import fr.alten.ambroiseJEE.utils.TokenIgnore;
+import fr.alten.ambroiseJEE.utils.personRole.PersonRole;
 
 /**
  *

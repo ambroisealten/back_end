@@ -18,7 +18,6 @@ import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.model.dao.PersonRepository;
 import fr.alten.ambroiseJEE.model.dao.SkillsSheetRepository;
 import fr.alten.ambroiseJEE.utils.MailUtils;
-import fr.alten.ambroiseJEE.utils.PersonRole;
 import fr.alten.ambroiseJEE.utils.availability.Availability;
 import fr.alten.ambroiseJEE.utils.exception.MissingFieldException;
 import fr.alten.ambroiseJEE.utils.exception.ToManyFieldsException;
@@ -28,6 +27,7 @@ import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
+import fr.alten.ambroiseJEE.utils.personRole.PersonRole;
 
 /**
  * @author Lucas Royackkers
