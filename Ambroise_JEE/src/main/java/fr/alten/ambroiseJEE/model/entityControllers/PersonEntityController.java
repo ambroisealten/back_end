@@ -18,7 +18,6 @@ import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.model.dao.PersonRepository;
 import fr.alten.ambroiseJEE.model.dao.SkillsSheetRepository;
 import fr.alten.ambroiseJEE.utils.MailUtils;
-import fr.alten.ambroiseJEE.utils.PersonRole;
 import fr.alten.ambroiseJEE.utils.availability.Availability;
 import fr.alten.ambroiseJEE.utils.exception.MissingFieldException;
 import fr.alten.ambroiseJEE.utils.exception.ToManyFieldsException;
@@ -28,6 +27,8 @@ import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
+import fr.alten.ambroiseJEE.utils.personRole.PersonRole;
+import fr.alten.ambroiseJEE.utils.personRole.PersonRoleTranslate;
 
 /**
  * @author Lucas Royackkers
@@ -388,9 +389,7 @@ public class PersonEntityController {
 			person.setName(jPerson.get("name").textValue());
 			person.setMonthlyWage(Float.parseFloat(jPerson.get("monthlyWage").asText()));
 
-//			person.setRole(role);
-			System.out.print("\n oldRole " + role + " || newRole " + this.translateRole(jPerson.get("newRole").textValue()) + "\n");
-			person.setRole(this.translateRole(jPerson.get("newRole").textValue()));
+			person.setRole(PersonRoleTranslate.translateRole(jPerson.get("newRole").textValue()));
 
 			final User personInCharge = this.userEntityController.getUserByMail(personInChargeMail);
 			person.setPersonInChargeMail(personInCharge.getMail());
@@ -449,22 +448,6 @@ public class PersonEntityController {
 		}
 		return new OkException();
 	}
-	
-	public PersonRole translateRole(String role) {
-		switch (role) {
-			case ("DEMISSIONNAIRE") :
-				System.out.print("\n TranslateRole : " + PersonRole.DEMISSIONNAIRE + "\n\n\n\n");
-				return PersonRole.DEMISSIONNAIRE;
-			case ("APPLICANT") :
-				System.out.print("\n TranslateRole : " + PersonRole.APPLICANT + "\n\n\n\n");
-				return PersonRole.APPLICANT;
-			case ("CONSULTANT") :
-				System.out.print("\n TranslateRole : " + PersonRole.CONSULTANT + "\n\n\n\n");
-				return PersonRole.CONSULTANT;
-		}
-		return null;
-	}
-
 
 	/**
 	 * update associated skillSheet on cascade

@@ -52,11 +52,11 @@ import fr.alten.ambroiseJEE.model.beans.SkillsSheet;
 import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.JsonUtils;
-import fr.alten.ambroiseJEE.utils.PersonRole;
 import fr.alten.ambroiseJEE.utils.availability.Availability;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
+import fr.alten.ambroiseJEE.utils.personRole.PersonRole;
 
 /**
  * Rest Controller for User Administration !!!! ONLY FOR DEVELOPPMENT !!!!

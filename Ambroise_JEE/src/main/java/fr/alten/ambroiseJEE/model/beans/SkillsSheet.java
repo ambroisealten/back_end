@@ -7,7 +7,7 @@ import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import fr.alten.ambroiseJEE.utils.PersonRole;
+import fr.alten.ambroiseJEE.utils.personRole.PersonRole;
 
 /**
  * Defines what a Skills Sheet is in our app
