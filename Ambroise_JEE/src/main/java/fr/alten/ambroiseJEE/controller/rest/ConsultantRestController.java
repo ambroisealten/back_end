@@ -165,4 +165,26 @@ public class ConsultantRestController {
 				: new UnprocessableEntityException();
 	}
 
+	/**
+	 * Method to update a Consultant
+	 *
+	 * @param params the JsonNode containing post parameters from http request
+	 * @param mail   the current logged user's mail
+	 * @param role   the user's role
+	 * @return {@link HttpException} corresponding to the status of the request
+	 *         ({@link ResoucreNotFoundException} if the resource is not found and
+	 *         {@link OkException} if the person(consultant) is updated
+	 * @author Lucas Royackkers
+	 * @throws ParseException
+	 */
+	@PutMapping(value = "/archive")
+	@ResponseBody
+	public HttpException updateArchive(@RequestBody final JsonNode params,
+			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role)
+			throws ParseException {
+		return checkJsonIntegrity(params, "mail")
+				? this.consultantBusinessController.updateArchive(params, role, mail)
+				: new UnprocessableEntityException();
+	}
+
 }
