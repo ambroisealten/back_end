@@ -1,0 +1,155 @@
+{
+	"menuItems": [
+		{
+			"access": [
+				{
+					"ADMIN": "Compétences Administration",
+					"MANAGER_ADMIN": "Compétences Administration",
+					"CDR_ADMIN": "Administration",
+					"MANAGER": "Compétences",
+					"CDR": ""
+				}
+			],
+			"modules": [{
+					"label": "Administration",
+					"routerLink": "admin",
+					"menus": [
+						{
+							"label": "Données Applicatives",
+							"submenus": []
+						},
+						{
+							"label": "Documents",
+							"submenus": []
+						},
+						{
+							"label": "Qualité de données",
+							"submenus": []
+						},
+						{
+							"label": "Utilisateur",
+							"submenus": []
+						}
+					]
+				},
+				{
+					"label": "Missions",
+					"routerLink": "mission",
+					"menus": [
+						{
+							"label": "Menu Mission 1",
+							"submenus": [
+								{
+									"label": "submenu1"
+								},
+								{
+									"label": "submenu2"
+								}
+							]
+						},
+						{
+							"label": "Menu Mission 2",
+							"submenus": [
+								{
+									"label": "submenu1"
+								},
+								{
+									"label": "submenu2"
+								}
+							]
+						},
+						{
+							"label": "Menu Mission 3",
+							"submenus": [
+								{
+									"label": "submenu1"
+								},
+								{
+									"label": "submenu2"
+								}
+							]
+						}
+					]
+				},
+				{
+					"label": "Compétences",
+					"routerLink": "competences",
+					"menus": [
+						{
+							"label": "Menu Compétences 1",
+							"submenus": [
+								{
+									"label": "submenu1"
+								},
+								{
+									"label": "submenu2"
+								}
+							]
+						},
+						{
+							"label": "Menu Compétences 2",
+							"submenus": [
+								{
+									"label": "submenu1"
+								},
+								{
+									"label": "submenu2"
+								}
+							]
+						},
+						{
+							"label": "Menu Compétences 3",
+							"submenus": [
+								{
+									"label": "submenu1"
+								},
+								{
+									"label": "submenu2"
+								}
+							]
+						}
+					]
+				},
+				{
+					"label": "Forum",
+					"routerLink": "forum",
+					"menus": [
+						{
+							"label": "Menu Forum 1",
+							"submenus": [
+								{
+									"label": "submenu1"
+								},
+								{
+									"label": "submenu2"
+								}
+							]
+						},
+						{
+							"label": "Menu Forum 2",
+							"submenus": [
+								{
+									"label": "submenu1"
+								},
+								{
+									"label": "submenu2"
+								}
+							]
+						},
+						{
+							"label": "Menu Forum 3",
+							"submenus": [
+								{
+									"label": "submenu1"
+								},
+								{
+									"label": "submenu2"
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	]
+}
