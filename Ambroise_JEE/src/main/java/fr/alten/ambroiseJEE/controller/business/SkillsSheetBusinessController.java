@@ -244,4 +244,25 @@ public class SkillsSheetBusinessController {
 
 	}
 
+	/**
+	 * Method to delegate skills sheet delete
+	 *
+	 * @param jSkillsSheet  JsonNode with all skills sheet parameters
+	 * @param role          the current logged user's role
+	 * @param versionAuthor the mail of the author of this version of this Skills
+	 *                      Sheet
+	 * @return the @see {@link HttpException} corresponding to the status of the
+	 *         request ({@link ConflictException} if there is a conflict in the
+	 *         database, {@link ForbiddenException} if the current logged user
+	 *         hasn't the rights to perform this action,
+	 *         {@link ResourceNotFoundException} if there is no such resource as the
+	 *         one that are given, and {@link CreatedException}if the skills sheet
+	 *         is updated
+	 * @author Lucas Royackkers
+	 * @throws ParseException
+	 */
+	public HttpException deleteSkillsSheet(final JsonNode jSkillsSheet, final UserRole role,
+			final String versionAuthor) {
+		return isManager(role) ? this.skillsSheetEntityController.deleteSkillsSheet(jSkillsSheet) : new ForbiddenException();
+	}
 }

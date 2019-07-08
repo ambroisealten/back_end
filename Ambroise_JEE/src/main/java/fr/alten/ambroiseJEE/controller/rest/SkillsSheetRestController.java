@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -263,4 +264,28 @@ public class SkillsSheetRestController {
 				role);
 	}
 
+	
+	/**
+	 * Method to delete a Skills Sheet
+	 *
+	 * @param params JsonNode containing post parameters from http request
+	 * @param mail   the current logged user's mail
+	 * @param role   the current logged user's role
+	 * @return {@link HttpException} corresponding to the status of the request,
+	 *         {@link UnprocessableEntityException} if we can't update the resource,
+	 *         {@link ResourceNotFoundException} if there is no such resource as the
+	 *         one that are given, {@link ForbiddenException} if the current logged
+	 *         user hasn't the rights to perform this action and
+	 *         {@link CreatedException} if the skills sheet is updated
+	 * @author Lucas Royackkers
+	 */
+	@DeleteMapping(value = "/skillsheet")
+	@ResponseBody
+	public HttpException deleteSkillsSheet(@RequestBody final JsonNode params,
+			@RequestAttribute("mail") final String mail, @RequestAttribute("role") final UserRole role) {
+		((ObjectNode) params).put("mailVersionAuthor", mail);
+		return JsonUtils.checkJsonIntegrity(params, "name")
+						? this.skillsSheetBusinessController.deleteSkillsSheet(params, role, mail)
+						: new UnprocessableEntityException();
+	}
 }

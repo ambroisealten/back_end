@@ -155,20 +155,15 @@ public class SkillsSheetEntityController {
 		try {
 
 			final PersonRole status = PersonRole.valueOf(jSkillsSheet.get("rolePersonAttachedTo").textValue());
-			System.out.print("\n\n STATUS : " + status + " || rolePerson : " + PersonRole.valueOf(jSkillsSheet.get("rolePersonAttachedTo").textValue()) + "\n");
 			final String personMail = jSkillsSheet.get("mailPersonAttachedTo").textValue();
 			final String skillsSheetName = jSkillsSheet.get("name").textValue();
 
 			List<SkillsSheet> skillsSheetList = getSkillsSheetVersion(jSkillsSheet.get("name").textValue(), jSkillsSheet.get("mailPersonAttachedTo").textValue());
-			for (SkillsSheet skillsSheet : skillsSheetList) {
-				System.out.print("\n SKillsheetRole BEFORE : " + skillsSheet.getRolePersonAttachedTo() + "\n");
+			for (SkillsSheet skillsSheet : skillsSheetList)
 				skillsSheet.setRolePersonAttachedTo(status);
-				System.out.print("\n SKillsheetRole AFTER : " + skillsSheet.getRolePersonAttachedTo() + "\n");
-			}
 
 			if (this.skillsSheetRepository.existsByNameIgnoreCaseAndMailPersonAttachedToIgnoreCaseAndVersionNumber(
 					skillsSheetName, personMail, versionNumber)) {
-				System.out.print("\n\nCONFLICT\n\n");
 				return new ConflictException();
 			}
 			// Given the created person status
@@ -785,4 +780,31 @@ public class SkillsSheetEntityController {
 		return new OkException();
 	}
 
+	
+	/**
+	 * Method to delete a Skills Sheet
+	 *
+	 * @param jSkillsSheet  JsonNode with all skills sheet parameters, including its
+	 *                      name to perform an update on the database
+	 * @param versionAuthor the mail of the author of this version of this Skills
+	 *                      Sheet
+	 * @return the @see {@link HttpException} corresponding to the status of the
+	 *         request {@link ResourceNotFoundException} if the resource is not
+	 *         found, {@link ConflictException} if there is a conflict in the
+	 *         database and {@link OkException} if the skills sheet is updated
+	 * @author Lucas Royackkers
+	 */
+	public HttpException deleteSkillsSheet(final JsonNode jSkillsSheet) {
+		try {
+			final List<SkillsSheet> deleteSkillsSheet = this.skillsSheetRepository.findByNameIgnoreCase(jSkillsSheet.get("name").textValue());
+
+			for (SkillsSheet deleteTmp : deleteSkillsSheet)
+				this.skillsSheetRepository.delete(deleteTmp);
+			return new OkException();
+		} catch (final ResourceNotFoundException rnfe) {
+			return rnfe;
+		} catch (final Exception e) {
+			return new ConflictException();
+		}
+	}
 }
