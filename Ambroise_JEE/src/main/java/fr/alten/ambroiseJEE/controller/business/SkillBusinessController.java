@@ -168,4 +168,48 @@ public class SkillBusinessController {
 		}
 		throw new ForbiddenException();
 	}
+
+
+	public List<Skill> getSynonymousList(String name, UserRole role) {
+		if(isManager(role)) {
+			return this.skillEntityController.checkIfSoftSkillsExists(name);
+		}
+		throw new ForbiddenException();
+	}
+
+	public Skill getReplaceWith(String name, UserRole role) {
+		if(isManager(role)) {
+			return this.skillEntityController.checkIfSoftSkillsExists(name);
+		}
+		throw new ForbiddenException();
+	}
+
+	public ArrayList<HttpException> updateSynonymousList(final JsonNode jSkills, UserRole role) {
+		if(isManager(role)) {
+			return this.skillEntityController.checkIfSoftSkillsExists(name);
+		}
+		throw new ForbiddenException();
+	}
+
+	public ArrayList<HttpException> updateReplaceWith(final JsonNode jSkills, UserRole role) {
+		if(isManager(role)) {
+			return this.skillEntityController.checkIfSoftSkillsExists(name);
+		}
+		throw new ForbiddenException();
+	}
+
+	public HttpException deleteSynonymous(final JsonNode jSkill, UserRole role) {
+		if(isManager(role)) {
+			return this.skillEntityController.checkIfSoftSkillsExists(name);
+		}
+		throw new ForbiddenException();
+	}
+
+	public HttpException deleteReplaceWith(final JsonNode jSkill, UserRole role){
+		if(isManager(role)) {
+			return this.skillEntityController.checkIfSoftSkillsExists(name);
+		}
+		throw new ForbiddenException();	
+	}
+
 }

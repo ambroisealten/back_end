@@ -4,6 +4,7 @@
 package fr.alten.ambroiseJEE.model.beans;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
@@ -24,6 +25,8 @@ public class Skill implements Serializable {
 	private String name;
 	private String isSoft;
 	private int order;
+	private List<Skill> synonymous;
+	private Skill replaceWith;
 
 	public Skill() {
 		super();
@@ -64,6 +67,25 @@ public class Skill implements Serializable {
 
 	public void setName(final String name) {
 		this.name = name;
+	}
+
+	/**
+	 * @author Thomas Decamp
+	 */
+	public List<Skill> getSynonymous() {
+		return synonymous;
+	}
+
+	public void setSynonymous(List<Skill> synonymous) {
+		this.synonymous = synonymous;
+	}
+
+	public Skill getReplaceWith() {
+		return replaceWith;
+	}
+
+	public void setReplaceWith(Skill replaceWith) {
+		this.replaceWith = replaceWith;
 	}
 
 	/**
