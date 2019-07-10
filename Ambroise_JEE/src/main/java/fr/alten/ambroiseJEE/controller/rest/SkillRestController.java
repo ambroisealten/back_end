@@ -262,19 +262,19 @@ public class SkillRestController {
 		return this.gson.toJson(this.skillBusinessController.updateSynonymousList(params, role));
 	}
 
-	/**
-	 * 
-	 *
-	 * @param params
-	 * @param role
-	 * @return
-	 * @author Thomas Decamp
-	 */
-	@PutMapping(value = "/skillReplaceWith")
-	@ResponseBody
-	public String updateReplaceWith(@RequestBody final JsonNode params, @RequestAttribute("role") final UserRole role) {
-		return this.gson.toJson(this.skillBusinessController.updateReplaceWith(params, role));
-	}
+	// /**
+	//  * 
+	//  *
+	//  * @param params
+	//  * @param role
+	//  * @return
+	//  * @author Thomas Decamp
+	//  */
+	// @PutMapping(value = "/skillReplaceWith")
+	// @ResponseBody
+	// public String updateReplaceWith(@RequestBody final JsonNode params, @RequestAttribute("role") final UserRole role) {
+	// 	return this.gson.toJson(this.skillBusinessController.updateReplaceWith(params, role));
+	// }
 
 	/**
 	 * 
@@ -290,17 +290,17 @@ public class SkillRestController {
 		return this.gson.toJson(this.skillBusinessController.deleteSynonymous(params, role));
 	}
 
-	/**
-	 * 
-	 *
-	 * @param params
-	 * @param role
-	 * @return
-	 * @author Thomas Decamp
-	 */
-	@DeleteMapping(value = "/skillReplaceWith")
-	@ResponseBody
-	public String deleteReplaceWith(@RequestBody final JsonNode params, @RequestAttribute("role") final UserRole role) {
-		return this.gson.toJson(this.skillBusinessController.deleteReplaceWith(params, role));
-	}
+	// /**
+	//  * 
+	//  *
+	//  * @param params
+	//  * @param role
+	//  * @return
+	//  * @author Thomas Decamp
+	//  */
+	// @DeleteMapping(value = "/skillReplaceWith")
+	// @ResponseBody
+	// public String deleteReplaceWith(@RequestBody final JsonNode params, @RequestAttribute("role") final UserRole role) {
+	// 	return this.gson.toJson(this.skillBusinessController.deleteReplaceWith(params, role));
+	// }
 }

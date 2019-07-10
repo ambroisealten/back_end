@@ -191,12 +191,12 @@ public class SkillBusinessController {
 		throw new ForbiddenException();
 	}
 
-	public ArrayList<HttpException> updateReplaceWith(final JsonNode jSkills, UserRole role) {
-		if(isAdmin(role)) {
-			return this.skillEntityController.updateReplaceWith(jSkills);
-		}
-		throw new ForbiddenException();
-	}
+	// public ArrayList<HttpException> updateReplaceWith(final JsonNode jSkills, UserRole role) {
+	// 	if(isAdmin(role)) {
+	// 		return this.skillEntityController.updateReplaceWith(jSkills);
+	// 	}
+	// 	throw new ForbiddenException();
+	// }
 
 	public HttpException deleteSynonymous(final JsonNode jSkill, UserRole role) {
 		if(isAdmin(role)) {
@@ -205,10 +205,10 @@ public class SkillBusinessController {
 		throw new ForbiddenException();
 	}
 
-	public HttpException deleteReplaceWith(final JsonNode jSkill, UserRole role){
-		if(isAdmin(role)) {
-			return this.skillEntityController.deleteReplaceWith(jSkill);
-		}
-		throw new ForbiddenException();	
-	}
+	// public HttpException deleteReplaceWith(final JsonNode jSkill, UserRole role){
+	// 	if(isAdmin(role)) {
+	// 		return this.skillEntityController.deleteReplaceWith(jSkill);
+	// 	}
+	// 	throw new ForbiddenException();	
+	// }
 }
