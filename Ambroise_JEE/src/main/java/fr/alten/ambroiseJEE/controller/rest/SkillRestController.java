@@ -220,4 +220,87 @@ public class SkillRestController {
 		return result;
 	}
 
+	/**
+	 * 
+	 *
+	 * @param params
+	 * @param role
+	 * @return
+	 * @author Thomas Decamp
+	 */
+	@GetMapping(value = "/skillsSynonymous")
+	@ResponseBody
+	public String getSkillsSynonymous(@RequestBody final JsonNode params, @RequestAttribute("role") final UserRole role) {
+		return this.gson.toJson(this.skillBusinessController.getSynonymousList(params, role));
+	}
+
+	/**
+	 * 
+	 *
+	 * @param params
+	 * @param role
+	 * @return
+	 * @author Thomas Decamp
+	 */
+	@GetMapping(value = "/skillReplaceWith")
+	@ResponseBody
+	public String getSkillReplaceWith(@RequestBody final JsonNode params, @RequestAttribute("role") final UserRole role) {
+		return this.gson.toJson(this.skillBusinessController.getReplaceWith(params, role));
+	}
+	
+	/**
+	 * 
+	 *
+	 * @param params
+	 * @param role
+	 * @return
+	 * @author Thomas Decamp
+	 */
+	@PutMapping(value = "/skillsSynonymous")
+	@ResponseBody
+	public String updateSynonymousList(@RequestBody final JsonNode params, @RequestAttribute("role") final UserRole role) {
+		return this.gson.toJson(this.skillBusinessController.updateSynonymousList(params, role));
+	}
+
+	/**
+	 * 
+	 *
+	 * @param params
+	 * @param role
+	 * @return
+	 * @author Thomas Decamp
+	 */
+	@PutMapping(value = "/skillReplaceWith")
+	@ResponseBody
+	public String updateReplaceWith(@RequestBody final JsonNode params, @RequestAttribute("role") final UserRole role) {
+		return this.gson.toJson(this.skillBusinessController.updateReplaceWith(params, role));
+	}
+
+	/**
+	 * 
+	 *
+	 * @param params
+	 * @param role
+	 * @return
+	 * @author Thomas Decamp
+	 */
+	@DeleteMapping(value = "/skillsSynonymous")
+	@ResponseBody
+	public String deleteSynonymous(@RequestBody final JsonNode params, @RequestAttribute("role") final UserRole role) {
+		return this.gson.toJson(this.skillBusinessController.deleteSynonymous(params, role));
+	}
+
+	/**
+	 * 
+	 *
+	 * @param params
+	 * @param role
+	 * @return
+	 * @author Thomas Decamp
+	 */
+	@DeleteMapping(value = "/skillReplaceWith")
+	@ResponseBody
+	public String deleteReplaceWith(@RequestBody final JsonNode params, @RequestAttribute("role") final UserRole role) {
+		return this.gson.toJson(this.skillBusinessController.deleteReplaceWith(params, role));
+	}
 }

@@ -170,46 +170,45 @@ public class SkillBusinessController {
 	}
 
 
-	public List<Skill> getSynonymousList(String name, UserRole role) {
-		if(isManager(role)) {
-			return this.skillEntityController.checkIfSoftSkillsExists(name);
+	public List<Skill> getSynonymousList(final JsonNode jSkill, UserRole role) {
+		if(isAdmin(role)) {
+			return this.skillEntityController.getSynonymousList(jSkill.get("name").textValue());
 		}
 		throw new ForbiddenException();
 	}
 
-	public Skill getReplaceWith(String name, UserRole role) {
-		if(isManager(role)) {
-			return this.skillEntityController.checkIfSoftSkillsExists(name);
+	public Skill getReplaceWith(final JsonNode jSkill, UserRole role) {
+		if(isAdmin(role)) {
+			return this.skillEntityController.getReplaceWith(jSkill.get("name").textValue());
 		}
 		throw new ForbiddenException();
 	}
 
 	public ArrayList<HttpException> updateSynonymousList(final JsonNode jSkills, UserRole role) {
-		if(isManager(role)) {
-			return this.skillEntityController.checkIfSoftSkillsExists(name);
+		if(isAdmin(role)) {
+			return this.skillEntityController.updateSynonymousList(jSkills);
 		}
 		throw new ForbiddenException();
 	}
 
 	public ArrayList<HttpException> updateReplaceWith(final JsonNode jSkills, UserRole role) {
-		if(isManager(role)) {
-			return this.skillEntityController.checkIfSoftSkillsExists(name);
+		if(isAdmin(role)) {
+			return this.skillEntityController.updateReplaceWith(jSkills);
 		}
 		throw new ForbiddenException();
 	}
 
 	public HttpException deleteSynonymous(final JsonNode jSkill, UserRole role) {
-		if(isManager(role)) {
-			return this.skillEntityController.checkIfSoftSkillsExists(name);
+		if(isAdmin(role)) {
+			return this.skillEntityController.deleteSynonymous(jSkill);
 		}
 		throw new ForbiddenException();
 	}
 
 	public HttpException deleteReplaceWith(final JsonNode jSkill, UserRole role){
-		if(isManager(role)) {
-			return this.skillEntityController.checkIfSoftSkillsExists(name);
+		if(isAdmin(role)) {
+			return this.skillEntityController.deleteReplaceWith(jSkill);
 		}
 		throw new ForbiddenException();	
 	}
-
 }
