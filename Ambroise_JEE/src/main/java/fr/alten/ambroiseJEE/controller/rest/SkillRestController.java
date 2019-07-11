@@ -259,8 +259,9 @@ public class SkillRestController {
 	 */
 	@PutMapping(value = "/skillsSynonymous")
 	@ResponseBody
-	public String updateSynonymousList(@RequestBody final JsonNode params, @RequestAttribute("role") final UserRole role) {
-		return this.gson.toJson(this.skillBusinessController.updateSynonymousList(params, role));
+	public HttpException updateSynonymousList(@RequestBody final JsonNode params, @RequestAttribute("role") final UserRole role) throws Exception {
+		return checkJsonIntegrity(params, "name") ? this.skillBusinessController.updateSynonymousList(params, role)
+				: new UnprocessableEntityException();
 	}
 
 	// /**
@@ -287,8 +288,9 @@ public class SkillRestController {
 	 */
 	@DeleteMapping(value = "/skillsSynonymous")
 	@ResponseBody
-	public String deleteSynonymous(@RequestBody final JsonNode params, @RequestAttribute("role") final UserRole role) {
-		return this.gson.toJson(this.skillBusinessController.deleteSynonymous(params, role));
+	public HttpException deleteSynonymous(@RequestBody final JsonNode params, @RequestAttribute("role") final UserRole role) throws Exception {
+		return checkJsonIntegrity(params, "name") ? this.skillBusinessController.deleteSynonymous(params, role)
+				: new UnprocessableEntityException();
 	}
 
 	// /**

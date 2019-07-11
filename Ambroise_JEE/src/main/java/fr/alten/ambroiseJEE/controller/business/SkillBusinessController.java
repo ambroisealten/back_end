@@ -184,11 +184,8 @@ public class SkillBusinessController {
 	// 	throw new ForbiddenException();
 	// }
 
-	public ArrayList<HttpException> updateSynonymousList(final JsonNode jSkills, UserRole role) {
-		if(isAdmin(role)) {
-			return this.skillEntityController.updateSynonymousList(jSkills);
-		}
-		throw new ForbiddenException();
+	public HttpException updateSynonymousList(final JsonNode jSkill, UserRole role) {
+		return isAdmin(role) ? this.skillEntityController.updateSynonymousList(jSkill) : new ForbiddenException();
 	}
 
 	// public ArrayList<HttpException> updateReplaceWith(final JsonNode jSkills, UserRole role) {
@@ -199,10 +196,7 @@ public class SkillBusinessController {
 	// }
 
 	public HttpException deleteSynonymous(final JsonNode jSkill, UserRole role) {
-		if(isAdmin(role)) {
-			return this.skillEntityController.deleteSynonymous(jSkill);
-		}
-		throw new ForbiddenException();
+		return isAdmin(role) ? this.skillEntityController.deleteSynonymous(jSkill) : new ForbiddenException();
 	}
 
 	// public HttpException deleteReplaceWith(final JsonNode jSkill, UserRole role){
