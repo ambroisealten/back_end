@@ -25,8 +25,8 @@ public class Skill implements Serializable {
 	private String name;
 	private String isSoft;
 	private int order;
-	private List<Skill> synonymous;
-	private Skill replaceWith;
+	private List<String> synonymous;
+	private String replaceWith;
 
 	public Skill() {
 		super();
@@ -72,19 +72,19 @@ public class Skill implements Serializable {
 	/**
 	 * @author Thomas Decamp
 	 */
-	public List<Skill> getSynonymous() {
+	public List<String> getSynonymous() {
 		return synonymous;
 	}
 
-	public void setSynonymous(List<Skill> synonymous) {
+	public void setSynonymous(List<String> synonymous) {
 		this.synonymous = synonymous;
 	}
 
-	public Skill getReplaceWith() {
+	public String getReplaceWith() {
 		return replaceWith;
 	}
 
-	public void setReplaceWith(Skill replaceWith) {
+	public void setReplaceWith(String replaceWith) {
 		this.replaceWith = replaceWith;
 	}
 

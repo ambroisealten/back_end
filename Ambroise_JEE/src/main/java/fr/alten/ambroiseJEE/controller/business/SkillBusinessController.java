@@ -170,19 +170,19 @@ public class SkillBusinessController {
 	}
 
 
-	public List<Skill> getSynonymousList(final JsonNode jSkill, UserRole role) {
+	public List<Skill> getSynonymousList(UserRole role) {
 		if(isAdmin(role)) {
-			return this.skillEntityController.getSynonymousList(jSkill.get("name").textValue());
+			return this.skillEntityController.getSynonymousList();
 		}
 		throw new ForbiddenException();
 	}
 
-	public Skill getReplaceWith(final JsonNode jSkill, UserRole role) {
-		if(isAdmin(role)) {
-			return this.skillEntityController.getReplaceWith(jSkill.get("name").textValue());
-		}
-		throw new ForbiddenException();
-	}
+	// public String getReplaceWith(final JsonNode jSkill, UserRole role) {
+	// 	if(isAdmin(role)) {
+	// 		return this.skillEntityController.getReplaceWith(jSkill.get("name").textValue());
+	// 	}
+	// 	throw new ForbiddenException();
+	// }
 
 	public ArrayList<HttpException> updateSynonymousList(final JsonNode jSkills, UserRole role) {
 		if(isAdmin(role)) {

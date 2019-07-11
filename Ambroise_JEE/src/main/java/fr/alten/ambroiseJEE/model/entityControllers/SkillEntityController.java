@@ -305,15 +305,16 @@ public class SkillEntityController {
 	 * @return
 	 * @author Thomas Decamp
 	 */
-	public List<Skill> getSynonymousList(String name) {
-		Optional<Skill> testSoft = this.skillRepository.findByNameIgnoreCase(name);
-		return (testSoft.get().getSynonymous());
+	public List<Skill> getSynonymousList() {
+		final List<Skill> firstList = this.skillRepository.findAll();
+		return firstList.parallelStream().filter(skill -> skill.getSynonymous() != null || skill.getReplaceWith() != null)
+				.filter(skill -> !skill.getName().contains("deactivated")).collect(Collectors.toList());
 	}
 
-	public Skill getReplaceWith(String name) {
-		Optional<Skill> testSoft = this.skillRepository.findByNameIgnoreCase(name);
-		return (testSoft.get().getReplaceWith());
-	}
+	// public String getReplaceWith(String name) {
+	// 	Optional<Skill> testSoft = this.skillRepository.findByNameIgnoreCase(name);
+	// 	return (testSoft.get().getReplaceWith());
+	// }
 
 	public ArrayList<HttpException> updateSynonymousList(final JsonNode jSkills) {
 		final ArrayList<HttpException> result = new ArrayList<HttpException>();
@@ -324,16 +325,18 @@ public class SkillEntityController {
 				final Skill skill = this.skillRepository.findByNameIgnoreCase(skillName).orElse(new Skill());
 				skill.setName(skillName);
 				if (jSkill.hasNonNull("synonymous")) {
-					final List<Skill> synonymous = skill.getSynonymous();
+					final List<String> synonymous = skill.getSynonymous();
 					skill.setReplaceWith(null);
-					synonymous.add(this.skillRepository.findByNameIgnoreCase(jSkill.get("synonymous").textValue()).orElse(new Skill()));
+					final Skill tmp = this.skillRepository.findByNameIgnoreCase(jSkill.get("synonymous").textValue()).orElse(new Skill());
+					synonymous.add(tmp.getName());
 					skill.setSynonymous(synonymous);
 					// this.skillRepository.findByNameIgnoreCase(jSkill.get("synonymous").textValue()).setReplaceWith(this.skillRepository.findByNameIgnoreCase(skill.getName()));
 				// } else {
 				// 	skill.setSynonymous("synonymous");
 				} else if (jSkill.hasNonNull("replaceWith")) {
 					skill.setSynonymous(null);
-					skill.setReplaceWith(this.skillRepository.findByNameIgnoreCase(jSkill.get("replaceWith").textValue()).orElse(new Skill()));
+					final Skill tmp = this.skillRepository.findByNameIgnoreCase(jSkill.get("synonymous").textValue()).orElse(new Skill());
+					skill.setReplaceWith(tmp.getName());
 					// } else {
 					// 	skill.setSynonymous("synonymous");
 				}

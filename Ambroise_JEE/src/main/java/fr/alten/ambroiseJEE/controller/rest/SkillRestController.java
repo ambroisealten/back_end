@@ -230,23 +230,24 @@ public class SkillRestController {
 	 */
 	@GetMapping(value = "/skillsSynonymous")
 	@ResponseBody
-	public String getSkillsSynonymous(@RequestBody final JsonNode params, @RequestAttribute("role") final UserRole role) {
-		return this.gson.toJson(this.skillBusinessController.getSynonymousList(params, role));
+	public String getSkillsSynonymous(@RequestAttribute("mail") final String mail,
+	@RequestAttribute("role") final UserRole role) {
+		return this.gson.toJson(this.skillBusinessController.getSynonymousList(role));
 	}
 
-	/**
-	 * 
-	 *
-	 * @param params
-	 * @param role
-	 * @return
-	 * @author Thomas Decamp
-	 */
-	@GetMapping(value = "/skillReplaceWith")
-	@ResponseBody
-	public String getSkillReplaceWith(@RequestBody final JsonNode params, @RequestAttribute("role") final UserRole role) {
-		return this.gson.toJson(this.skillBusinessController.getReplaceWith(params, role));
-	}
+	// /**
+	//  * 
+	//  *
+	//  * @param params
+	//  * @param role
+	//  * @return
+	//  * @author Thomas Decamp
+	//  */
+	// @GetMapping(value = "/skillReplaceWith")
+	// @ResponseBody
+	// public String getSkillReplaceWith(@RequestBody final JsonNode params, @RequestAttribute("role") final UserRole role) {
+	// 	return this.gson.toJson(this.skillBusinessController.getReplaceWith(params, role));
+	// }
 	
 	/**
 	 * 
