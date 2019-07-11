@@ -6,6 +6,7 @@ package fr.alten.ambroiseJEE.model.entityControllers;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -316,67 +317,40 @@ public class SkillEntityController {
 	// 	return (testSoft.get().getReplaceWith());
 	// }
 
-	public ArrayList<HttpException> updateSynonymousList(final JsonNode jSkills) {
-		final ArrayList<HttpException> result = new ArrayList<HttpException>();
-		List<SkillsSheet> skillSheets = skillsSheetRepository.findAll();
-		for (JsonNode jSkill : jSkills) {
-			try {
-				final String skillName = jSkill.get("name").textValue();
-				final Skill skill = this.skillRepository.findByNameIgnoreCase(skillName).orElse(new Skill());
-				skill.setName(skillName);
-				if (jSkill.hasNonNull("synonymous")) {
-					final List<String> synonymous = skill.getSynonymous();
-					skill.setReplaceWith(null);
-					final Skill tmp = this.skillRepository.findByNameIgnoreCase(jSkill.get("synonymous").textValue()).orElse(new Skill());
-					synonymous.add(tmp.getName());
-					skill.setSynonymous(synonymous);
-					// this.skillRepository.findByNameIgnoreCase(jSkill.get("synonymous").textValue()).setReplaceWith(this.skillRepository.findByNameIgnoreCase(skill.getName()));
+	public HttpException updateSynonymousList(final JsonNode jSkill) {
+		return this.skillRepository.findByNameIgnoreCase(jSkill.get("name").textValue())
+		// optional is present
+		.map(skill -> {
+			if (jSkill.hasNonNull("synonymous")) {
+				// final List<String> synonymous = skill.getSynonymous();
+				final String synonymous = jSkill.get("synonymous").textValue();
+				final List<String> synonymousList = Arrays.asList(synonymous.split("\\,"));
+				skill.setReplaceWith(null);
+				// final Skill tmp = this.skillRepository.findByNameIgnoreCase(jSkill.get("synonymous").textValue()).orElse(new Skill());
+				//synonymous.add(tmp.getName());
+				// synon
+				skill.setSynonymous(synonymousList);
+				// this.skillRepository.findByNameIgnoreCase(jSkill.get("synonymous").textValue()).setReplaceWith(this.skillRepository.findByNameIgnoreCase(skill.getName()));
+			} else if (jSkill.hasNonNull("replaceWith")) {
+				skill.setSynonymous(null);
+				final Skill tmp = this.skillRepository.findByNameIgnoreCase(jSkill.get("replaceWith").textValue()).orElse(new Skill());
+				skill.setReplaceWith(tmp.getName());
 				// } else {
 				// 	skill.setSynonymous("synonymous");
-				} else if (jSkill.hasNonNull("replaceWith")) {
-					skill.setSynonymous(null);
-					final Skill tmp = this.skillRepository.findByNameIgnoreCase(jSkill.get("synonymous").textValue()).orElse(new Skill());
-					skill.setReplaceWith(tmp.getName());
-					// } else {
-					// 	skill.setSynonymous("synonymous");
-				}
-				updateSkillListOnCascade(skillSheets, skillName, skill);
+			}
+			try {
+				// TODO Make update on cascade
 				this.skillRepository.save(skill);
 			} catch (final DuplicateKeyException dke) {
-				result.add(new ConflictException());
+				return new ConflictException();
 			} catch (final Exception e) {
-				result.add(new InternalServerErrorException(e));
+				e.printStackTrace();
 			}
-			result.add(new OkException());
-		}
-		return result;
+			return (HttpException) new OkException();
+		})
+		// optional isn't present
+		.orElse(new ResourceNotFoundException());
 	}
-
-	// public ArrayList<HttpException> updateReplaceWith(final JsonNode jSkills) {
-	// 	final ArrayList<HttpException> result = new ArrayList<HttpException>();
-	// 	List<SkillsSheet> skillSheets = skillsSheetRepository.findAll();
-	// 	for (JsonNode jSkill : jSkills) {
-	// 		try {
-	// 			final String skillName = jSkill.get("name").textValue();
-	// 			final Skill skill = this.skillRepository.findByNameIgnoreCase(skillName).orElse(new Skill());
-	// 			skill.setName(skillName);
-	// 			if (jSkill.hasNonNull("synonymous")) {
-	// 				skill.setSynonymous(null);
-	// 				skill.setReplaceWith(this.skillRepository.findByNameIgnoreCase(jSkill.get("synonymous").textValue()).orElse(new Skill()));
-	// 			// } else {
-	// 			// 	skill.setSynonymous("synonymous");
-	// 			}
-	// 			updateSkillListOnCascade(skillSheets, skillName, skill);
-	// 			this.skillRepository.save(skill);
-	// 		} catch (final DuplicateKeyException dke) {
-	// 			result.add(new ConflictException());
-	// 		} catch (final Exception e) {
-	// 			result.add(new InternalServerErrorException(e));
-	// 		}
-	// 		result.add(new OkException());
-	// 	}
-	// 	return result;
-	// }
 
 	public HttpException deleteSynonymous(final JsonNode jSkill) {
 		return this.skillRepository.findByNameIgnoreCase(jSkill.get("name").textValue())
@@ -390,17 +364,4 @@ public class SkillEntityController {
 				// optional isn't present
 				.orElse(new ResourceNotFoundException());
 	}
-
-	// public HttpException deleteReplaceWith(final JsonNode jSkill) {
-	// 	return this.skillRepository.findByNameIgnoreCase(jSkill.get("name").textValue())
-	// 			// optional is present
-	// 			.map(skill -> {
-	// 				skill.setReplaceWith(null);
-	// 				this.skillRepository.save(skill);
-	// 				return (HttpException) new OkException();
-	// 			})
-	// 			// optional isn't present
-	// 			.orElse(new ResourceNotFoundException());
-	// }
-
 }
