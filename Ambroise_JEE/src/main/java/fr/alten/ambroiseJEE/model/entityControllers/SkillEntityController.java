@@ -299,4 +299,108 @@ public class SkillEntityController {
 		return (testSoft.isPresent() && testSoft.get().isSoft());
 	}
 
+	/**
+	 *
+	 * @param name
+	 * @return
+	 * @author Thomas Decamp
+	 */
+	public List<Skill> getSynonymousList() {
+		final List<Skill> firstList = this.skillRepository.findAll();
+		return firstList.parallelStream().filter(skill -> skill.getSynonymous() != null || skill.getReplaceWith() != null)
+				.filter(skill -> !skill.getName().contains("deactivated")).collect(Collectors.toList());
+	}
+
+	// public String getReplaceWith(String name) {
+	// 	Optional<Skill> testSoft = this.skillRepository.findByNameIgnoreCase(name);
+	// 	return (testSoft.get().getReplaceWith());
+	// }
+
+	public ArrayList<HttpException> updateSynonymousList(final JsonNode jSkills) {
+		final ArrayList<HttpException> result = new ArrayList<HttpException>();
+		List<SkillsSheet> skillSheets = skillsSheetRepository.findAll();
+		for (JsonNode jSkill : jSkills) {
+			try {
+				final String skillName = jSkill.get("name").textValue();
+				final Skill skill = this.skillRepository.findByNameIgnoreCase(skillName).orElse(new Skill());
+				skill.setName(skillName);
+				if (jSkill.hasNonNull("synonymous")) {
+					final List<String> synonymous = skill.getSynonymous();
+					skill.setReplaceWith(null);
+					final Skill tmp = this.skillRepository.findByNameIgnoreCase(jSkill.get("synonymous").textValue()).orElse(new Skill());
+					synonymous.add(tmp.getName());
+					skill.setSynonymous(synonymous);
+					// this.skillRepository.findByNameIgnoreCase(jSkill.get("synonymous").textValue()).setReplaceWith(this.skillRepository.findByNameIgnoreCase(skill.getName()));
+				// } else {
+				// 	skill.setSynonymous("synonymous");
+				} else if (jSkill.hasNonNull("replaceWith")) {
+					skill.setSynonymous(null);
+					final Skill tmp = this.skillRepository.findByNameIgnoreCase(jSkill.get("synonymous").textValue()).orElse(new Skill());
+					skill.setReplaceWith(tmp.getName());
+					// } else {
+					// 	skill.setSynonymous("synonymous");
+				}
+				updateSkillListOnCascade(skillSheets, skillName, skill);
+				this.skillRepository.save(skill);
+			} catch (final DuplicateKeyException dke) {
+				result.add(new ConflictException());
+			} catch (final Exception e) {
+				result.add(new InternalServerErrorException(e));
+			}
+			result.add(new OkException());
+		}
+		return result;
+	}
+
+	// public ArrayList<HttpException> updateReplaceWith(final JsonNode jSkills) {
+	// 	final ArrayList<HttpException> result = new ArrayList<HttpException>();
+	// 	List<SkillsSheet> skillSheets = skillsSheetRepository.findAll();
+	// 	for (JsonNode jSkill : jSkills) {
+	// 		try {
+	// 			final String skillName = jSkill.get("name").textValue();
+	// 			final Skill skill = this.skillRepository.findByNameIgnoreCase(skillName).orElse(new Skill());
+	// 			skill.setName(skillName);
+	// 			if (jSkill.hasNonNull("synonymous")) {
+	// 				skill.setSynonymous(null);
+	// 				skill.setReplaceWith(this.skillRepository.findByNameIgnoreCase(jSkill.get("synonymous").textValue()).orElse(new Skill()));
+	// 			// } else {
+	// 			// 	skill.setSynonymous("synonymous");
+	// 			}
+	// 			updateSkillListOnCascade(skillSheets, skillName, skill);
+	// 			this.skillRepository.save(skill);
+	// 		} catch (final DuplicateKeyException dke) {
+	// 			result.add(new ConflictException());
+	// 		} catch (final Exception e) {
+	// 			result.add(new InternalServerErrorException(e));
+	// 		}
+	// 		result.add(new OkException());
+	// 	}
+	// 	return result;
+	// }
+
+	public HttpException deleteSynonymous(final JsonNode jSkill) {
+		return this.skillRepository.findByNameIgnoreCase(jSkill.get("name").textValue())
+				// optional is present
+				.map(skill -> {
+					skill.setSynonymous(null);
+					skill.setReplaceWith(null);
+					this.skillRepository.save(skill);
+					return (HttpException) new OkException();
+				})
+				// optional isn't present
+				.orElse(new ResourceNotFoundException());
+	}
+
+	// public HttpException deleteReplaceWith(final JsonNode jSkill) {
+	// 	return this.skillRepository.findByNameIgnoreCase(jSkill.get("name").textValue())
+	// 			// optional is present
+	// 			.map(skill -> {
+	// 				skill.setReplaceWith(null);
+	// 				this.skillRepository.save(skill);
+	// 				return (HttpException) new OkException();
+	// 			})
+	// 			// optional isn't present
+	// 			.orElse(new ResourceNotFoundException());
+	// }
+
 }
