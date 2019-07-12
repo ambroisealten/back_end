@@ -270,7 +270,14 @@ public class SkillsSheetEntityController {
 			Skill skill = null;
 
 			try {
-				skill = this.skillEntityController.getSkill(skillName);
+				if (this.skillEntityController.getSkill(skillName).getReplaceWith().isEmpty()) {
+					System.out.print("\n\nReplaceWith : " + this.skillEntityController.getSkill(skillName).getReplaceWith() + "\n");
+					skill = this.skillEntityController.getSkill(skillName);
+				} else {
+					System.out.print("\n\nReplaceWith : " + this.skillEntityController.getSkill(skillName).getReplaceWith() + "\n");		
+					skill = this.skillEntityController.getSkill(this.skillEntityController.getSkill(skillName).getReplaceWith());
+					System.out.print("\n\nName : " + skill.getName() + "\n");
+				}
 
 			} catch (final ResourceNotFoundException e) {
 				if (!skillGraduated.get("skill").has("isSoft")) {
@@ -288,7 +295,8 @@ public class SkillsSheetEntityController {
 					} else {
 						skillInserted.setOrder(0);
 					}
-					skillInserted.setName(skillName);
+					skillInserted.setName(skill.getName());
+					System.out.print("\n\nName : " + skillName + "\n");
 					allSkills.add(new SkillGraduated(skillInserted, skillGrade));
 					if (skillInserted.isSoft()) {
 						softSkillsUsed.add(skillName);
