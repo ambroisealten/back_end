@@ -308,35 +308,40 @@ public class SkillEntityController {
 	 */
 	public List<Skill> getSynonymousList() {
 		final List<Skill> firstList = this.skillRepository.findAll();
-		return firstList.parallelStream().filter(skill -> skill.getSynonymous() != null || skill.getReplaceWith() != null)
+		return firstList.parallelStream().filter(skill -> !skill.getSynonymous().isEmpty() || !skill.getReplaceWith().isEmpty())
 				.filter(skill -> !skill.getName().contains("deactivated")).collect(Collectors.toList());
 	}
-
-	// public String getReplaceWith(String name) {
-	// 	Optional<Skill> testSoft = this.skillRepository.findByNameIgnoreCase(name);
-	// 	return (testSoft.get().getReplaceWith());
-	// }
 
 	public HttpException updateSynonymousList(final JsonNode jSkill) {
 		return this.skillRepository.findByNameIgnoreCase(jSkill.get("name").textValue())
 		// optional is present
 		.map(skill -> {
 			if (jSkill.hasNonNull("synonymous")) {
-				// final List<String> synonymous = skill.getSynonymous();
 				final String synonymous = jSkill.get("synonymous").textValue();
 				final List<String> synonymousList = Arrays.asList(synonymous.split("\\,"));
-				skill.setReplaceWith(null);
-				// final Skill tmp = this.skillRepository.findByNameIgnoreCase(jSkill.get("synonymous").textValue()).orElse(new Skill());
-				//synonymous.add(tmp.getName());
-				// synon
+				skill.setReplaceWith("");
 				skill.setSynonymous(synonymousList);
-				// this.skillRepository.findByNameIgnoreCase(jSkill.get("synonymous").textValue()).setReplaceWith(this.skillRepository.findByNameIgnoreCase(skill.getName()));
+				for (final String tmpSynonymous : synonymousList) {
+					Skill tmp = this.skillRepository.findByNameIgnoreCase(tmpSynonymous).orElse(new Skill());
+					tmp.setName(tmpSynonymous);
+					tmp.setReplaceWith(skill.getName());
+					tmp.clearSynonymousList();
+					this.skillRepository.save(tmp);
+					List<SkillsSheet> skillSheets = skillsSheetRepository.findAll();
+					updateSkillListOnCascade(skillSheets, skill.getName(), tmp);
+				}
 			} else if (jSkill.hasNonNull("replaceWith")) {
-				skill.setSynonymous(null);
-				final Skill tmp = this.skillRepository.findByNameIgnoreCase(jSkill.get("replaceWith").textValue()).orElse(new Skill());
+				skill.clearSynonymousList();
+				Skill tmp = this.skillRepository.findByNameIgnoreCase(jSkill.get("replaceWith").textValue()).orElse(new Skill());
+				tmp.setName(jSkill.get("replaceWith").textValue());
+				tmp.setReplaceWith("");
 				skill.setReplaceWith(tmp.getName());
-				// } else {
-				// 	skill.setSynonymous("synonymous");
+				List<String> synonymousList = tmp.getSynonymous();
+				synonymousList.add(skill.getName());
+				tmp.setSynonymous(synonymousList);
+				this.skillRepository.save(tmp);
+				List<SkillsSheet> skillSheets = skillsSheetRepository.findAll();
+				updateSkillListOnCascade(skillSheets, skill.getName(), tmp);
 			}
 			try {
 				// TODO Make update on cascade
@@ -356,8 +361,22 @@ public class SkillEntityController {
 		return this.skillRepository.findByNameIgnoreCase(jSkill.get("name").textValue())
 				// optional is present
 				.map(skill -> {
-					skill.setSynonymous(null);
-					skill.setReplaceWith(null);
+					if (!skill.getSynonymous().isEmpty()) {
+						List<String> synonymousList = skill.getSynonymous();
+						for (final String tmpSynonymous : synonymousList) {
+							Skill tmp = this.skillRepository.findByNameIgnoreCase(tmpSynonymous).orElse(new Skill());
+							tmp.setReplaceWith("");
+							this.skillRepository.save(tmp);
+						}
+					} else if (jSkill.hasNonNull("replaceWith")) {
+						Skill tmp = this.skillRepository.findByNameIgnoreCase(skill.getReplaceWith()).orElse(new Skill());
+						List<String> synonymousList = tmp.getSynonymous();
+						synonymousList.remove(tmp.getSynonymous().indexOf(skill.getName()));
+						tmp.setSynonymous(synonymousList);
+						this.skillRepository.save(tmp);
+					}
+					skill.clearSynonymousList();
+					skill.setReplaceWith("");
 					this.skillRepository.save(skill);
 					return (HttpException) new OkException();
 				})

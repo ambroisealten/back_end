@@ -4,6 +4,7 @@
 package fr.alten.ambroiseJEE.model.beans;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bson.types.ObjectId;
@@ -25,14 +26,20 @@ public class Skill implements Serializable {
 	private String name;
 	private String isSoft;
 	private int order;
-	private List<String> synonymous;
+	private List<String> synonymous = new ArrayList<String>();
 	private String replaceWith;
 
 	public Skill() {
 		super();
 		this.isSoft = null;
+		this.replaceWith = "";
+		this.synonymous.clear();
 	}
 
+	public void clearSynonymousList() {
+		this.synonymous.clear();
+	}
+	
 	public ObjectId get_id() {
 		return this._id;
 	}
