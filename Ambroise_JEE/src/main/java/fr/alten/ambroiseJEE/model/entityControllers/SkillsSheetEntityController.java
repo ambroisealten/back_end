@@ -271,12 +271,9 @@ public class SkillsSheetEntityController {
 
 			try {
 				if (this.skillEntityController.getSkill(skillName).getReplaceWith().isEmpty()) {
-					System.out.print("\n\nReplaceWith : " + this.skillEntityController.getSkill(skillName).getReplaceWith() + "\n");
 					skill = this.skillEntityController.getSkill(skillName);
 				} else {
-					System.out.print("\n\nReplaceWith : " + this.skillEntityController.getSkill(skillName).getReplaceWith() + "\n");		
 					skill = this.skillEntityController.getSkill(this.skillEntityController.getSkill(skillName).getReplaceWith());
-					System.out.print("\n\nName : " + skill.getName() + "\n");
 				}
 
 			} catch (final ResourceNotFoundException e) {
@@ -296,7 +293,6 @@ public class SkillsSheetEntityController {
 						skillInserted.setOrder(0);
 					}
 					skillInserted.setName(skill.getName());
-					System.out.print("\n\nName : " + skillName + "\n");
 					allSkills.add(new SkillGraduated(skillInserted, skillGrade));
 					if (skillInserted.isSoft()) {
 						softSkillsUsed.add(skillName);
