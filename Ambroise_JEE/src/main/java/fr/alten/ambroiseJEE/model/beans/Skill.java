@@ -36,7 +36,7 @@ public class Skill implements Serializable {
 		this.synonymous.clear();
 	}
 
-	public void clear() {
+	public void clearSynonymousList() {
 		this.synonymous.clear();
 	}
 	

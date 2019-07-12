@@ -321,8 +321,17 @@ public class SkillEntityController {
 				final List<String> synonymousList = Arrays.asList(synonymous.split("\\,"));
 				skill.setReplaceWith("");
 				skill.setSynonymous(synonymousList);
+				for (final String tmpSynonymous : synonymousList) {
+					Skill tmp = this.skillRepository.findByNameIgnoreCase(tmpSynonymous).orElse(new Skill());
+					tmp.setName(tmpSynonymous);
+					tmp.setReplaceWith(skill.getName());
+					tmp.clearSynonymousList();
+					this.skillRepository.save(tmp);
+					List<SkillsSheet> skillSheets = skillsSheetRepository.findAll();
+					updateSkillListOnCascade(skillSheets, skill.getName(), tmp);
+				}
 			} else if (jSkill.hasNonNull("replaceWith")) {
-				skill.clear();
+				skill.clearSynonymousList();
 				Skill tmp = this.skillRepository.findByNameIgnoreCase(jSkill.get("replaceWith").textValue()).orElse(new Skill());
 				tmp.setName(jSkill.get("replaceWith").textValue());
 				tmp.setReplaceWith("");
@@ -331,6 +340,8 @@ public class SkillEntityController {
 				synonymousList.add(skill.getName());
 				tmp.setSynonymous(synonymousList);
 				this.skillRepository.save(tmp);
+				List<SkillsSheet> skillSheets = skillsSheetRepository.findAll();
+				updateSkillListOnCascade(skillSheets, skill.getName(), tmp);
 			}
 			try {
 				// TODO Make update on cascade
@@ -350,7 +361,21 @@ public class SkillEntityController {
 		return this.skillRepository.findByNameIgnoreCase(jSkill.get("name").textValue())
 				// optional is present
 				.map(skill -> {
-					skill.clear();
+					if (!skill.getSynonymous().isEmpty()) {
+						List<String> synonymousList = skill.getSynonymous();
+						for (final String tmpSynonymous : synonymousList) {
+							Skill tmp = this.skillRepository.findByNameIgnoreCase(tmpSynonymous).orElse(new Skill());
+							tmp.setReplaceWith("");
+							this.skillRepository.save(tmp);
+						}
+					} else if (jSkill.hasNonNull("replaceWith")) {
+						Skill tmp = this.skillRepository.findByNameIgnoreCase(skill.getReplaceWith()).orElse(new Skill());
+						List<String> synonymousList = tmp.getSynonymous();
+						synonymousList.remove(tmp.getSynonymous().indexOf(skill.getName()));
+						tmp.setSynonymous(synonymousList);
+						this.skillRepository.save(tmp);
+					}
+					skill.clearSynonymousList();
 					skill.setReplaceWith("");
 					this.skillRepository.save(skill);
 					return (HttpException) new OkException();
