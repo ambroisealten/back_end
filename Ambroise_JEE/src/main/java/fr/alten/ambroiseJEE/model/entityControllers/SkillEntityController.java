@@ -350,8 +350,8 @@ public class SkillEntityController {
 		return this.skillRepository.findByNameIgnoreCase(jSkill.get("name").textValue())
 				// optional is present
 				.map(skill -> {
-					skill.setSynonymous(null);
-					skill.setReplaceWith(null);
+					skill.clear();
+					skill.setReplaceWith("");
 					this.skillRepository.save(skill);
 					return (HttpException) new OkException();
 				})
