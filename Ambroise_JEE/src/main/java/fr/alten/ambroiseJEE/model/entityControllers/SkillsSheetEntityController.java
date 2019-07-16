@@ -470,7 +470,8 @@ public class SkillsSheetEntityController {
 
 		// Initialize variables
 		final List<String> identitiesList = Arrays.asList(identity.split(","));
-		final List<String> skillsList = Arrays.asList(skills.toLowerCase().split(","));
+		final List<String> skillsList = Arrays.asList(skills.split(","));
+		List<String> skillsListLowerCase = Arrays.asList();
 		final HashSet<Skill> filteredSkills = new HashSet<Skill>();
 		final List<Person> allPersons = this.personEntityController.getAllPersons().parallelStream()
 				.filter(person -> !person.getMail().contains("deactivated")).collect(Collectors.toList());
@@ -482,7 +483,15 @@ public class SkillsSheetEntityController {
 		// Get all Skills in the filter that are in the database
 		skillsList.stream().forEach(skillFilter -> {
 			final Skill filterSkill = new Skill();
-			filterSkill.setName(skillFilter);
+
+			if (this.skillEntityController.getSkillWithCase(skillFilter) == null)
+				skillFilter = skillFilter.toLowerCase();
+
+			if (this.skillEntityController.getSkillWithCase(skillFilter).getReplaceWith().isEmpty())
+				filterSkill.setName(skillFilter.toLowerCase());
+			else
+				filterSkill.setName(this.skillEntityController.getSkillWithCase(skillFilter).getReplaceWith().toLowerCase());
+				
 			filteredSkills.add(filterSkill);
 		});
 
@@ -523,7 +532,7 @@ public class SkillsSheetEntityController {
 								((ObjectNode) jResult).set("person",
 										JsonUtils.toJsonNode(this.gson.toJson(personToFetch)));
 								((ObjectNode) jResult).put("fiability",
-										getFiabilityGrade(skillSheet, personToFetch.getOpinion(), skillsList));
+										getFiabilityGrade(skillSheet, personToFetch.getOpinion(), skillsListLowerCase));
 								finalResult.add(jResult);
 							} catch (final IOException e) {
 								LoggerFactory.getLogger(SkillsSheetEntityController.class).error(e.getMessage());

@@ -162,6 +162,17 @@ public class SkillEntityController {
 	}
 
 	/**
+	 * Try to fetch a Skill by its name
+	 *
+	 * @param name the name of the Skill
+	 * @return an Optional containing the Skill (or not)
+	 * @author Thomas Decamp
+	 */
+	public Skill getSkillWithCase(final String name) {
+		return this.skillRepository.findByName(name).orElseThrow(ResourceNotFoundException::new);
+	}
+
+	/**
 	 * Method to get all Skills within the database
 	 *
 	 * @return the list of all skills
