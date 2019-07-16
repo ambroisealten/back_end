@@ -59,4 +59,18 @@ public class PersonRestController {
 		return this.gson.toJson(this.personBusinessController.getPerson(personMail, role));
 	}
 
+	/**
+	 *
+	 * @param personMail the person's mail
+	 * @param mail       the current logged user's mail
+	 * @param role       the user's role
+	 * @return persons
+	 * @author Thomas Decamp
+	 */
+	@GetMapping(value = "/persons/")
+	@ResponseBody
+	public String getPersons(@RequestAttribute("role") final UserRole role) {
+		return this.gson.toJson(this.personBusinessController.getPersons(role));
+	}
+
 }
