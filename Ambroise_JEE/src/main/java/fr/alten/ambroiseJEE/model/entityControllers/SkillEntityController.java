@@ -312,6 +312,13 @@ public class SkillEntityController {
 				.filter(skill -> !skill.getName().contains("deactivated")).collect(Collectors.toList());
 	}
 
+	/**
+	 * 
+	 *
+	 * @param jSkill
+	 * @return
+	 * @author Thomas Decamp
+	 */
 	public HttpException updateSynonymousList(final JsonNode jSkill) {
 		return this.skillRepository.findByNameIgnoreCase(jSkill.get("name").textValue())
 		// optional is present
@@ -357,24 +364,17 @@ public class SkillEntityController {
 		.orElse(new ResourceNotFoundException());
 	}
 
+	/**
+	 * 
+	 *
+	 * @param jSkill
+	 * @return
+	 * @author Thomas Decamp
+	 */
 	public HttpException deleteSynonymous(final JsonNode jSkill) {
 		return this.skillRepository.findByNameIgnoreCase(jSkill.get("name").textValue())
 				// optional is present
 				.map(skill -> {
-					if (!skill.getSynonymous().isEmpty()) {
-						List<String> synonymousList = skill.getSynonymous();
-						for (final String tmpSynonymous : synonymousList) {
-							Skill tmp = this.skillRepository.findByNameIgnoreCase(tmpSynonymous).orElse(new Skill());
-							tmp.setReplaceWith("");
-							this.skillRepository.save(tmp);
-						}
-					} else if (jSkill.hasNonNull("replaceWith")) {
-						Skill tmp = this.skillRepository.findByNameIgnoreCase(skill.getReplaceWith()).orElse(new Skill());
-						List<String> synonymousList = tmp.getSynonymous();
-						synonymousList.remove(tmp.getSynonymous().indexOf(skill.getName()));
-						tmp.setSynonymous(synonymousList);
-						this.skillRepository.save(tmp);
-					}
 					skill.clearSynonymousList();
 					skill.setReplaceWith("");
 					this.skillRepository.save(skill);

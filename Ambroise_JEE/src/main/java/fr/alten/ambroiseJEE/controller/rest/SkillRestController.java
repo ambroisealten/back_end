@@ -235,20 +235,6 @@ public class SkillRestController {
 		return this.gson.toJson(this.skillBusinessController.getSynonymousList(role));
 	}
 
-	// /**
-	//  * 
-	//  *
-	//  * @param params
-	//  * @param role
-	//  * @return
-	//  * @author Thomas Decamp
-	//  */
-	// @GetMapping(value = "/skillReplaceWith")
-	// @ResponseBody
-	// public String getSkillReplaceWith(@RequestBody final JsonNode params, @RequestAttribute("role") final UserRole role) {
-	// 	return this.gson.toJson(this.skillBusinessController.getReplaceWith(params, role));
-	// }
-	
 	/**
 	 * 
 	 *
@@ -264,20 +250,6 @@ public class SkillRestController {
 				: new UnprocessableEntityException();
 	}
 
-	// /**
-	//  * 
-	//  *
-	//  * @param params
-	//  * @param role
-	//  * @return
-	//  * @author Thomas Decamp
-	//  */
-	// @PutMapping(value = "/skillReplaceWith")
-	// @ResponseBody
-	// public String updateReplaceWith(@RequestBody final JsonNode params, @RequestAttribute("role") final UserRole role) {
-	// 	return this.gson.toJson(this.skillBusinessController.updateReplaceWith(params, role));
-	// }
-
 	/**
 	 * 
 	 *
@@ -292,18 +264,4 @@ public class SkillRestController {
 		return checkJsonIntegrity(params, "name") ? this.skillBusinessController.deleteSynonymous(params, role)
 				: new UnprocessableEntityException();
 	}
-
-	// /**
-	//  * 
-	//  *
-	//  * @param params
-	//  * @param role
-	//  * @return
-	//  * @author Thomas Decamp
-	//  */
-	// @DeleteMapping(value = "/skillReplaceWith")
-	// @ResponseBody
-	// public String deleteReplaceWith(@RequestBody final JsonNode params, @RequestAttribute("role") final UserRole role) {
-	// 	return this.gson.toJson(this.skillBusinessController.deleteReplaceWith(params, role));
-	// }
 }
