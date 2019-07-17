@@ -457,7 +457,7 @@ public class SkillsSheetEntityController {
 	 * @param identity the filters about the Person (name, surname, job, etc.)
 	 * @param skills   the filters about Skills (name)
 	 * @return a List of Skills Sheets that match the query
-	 * @author Lucas Royackkers, Camille Schnell
+	 * @author Lucas Royackkers, Camille Schnell, Thomas Decamp
 	 */
 	public List<JsonNode> getSkillsSheetsByIdentityAndSkills(final String identity, final String skills,
 			final String columnSorting) {
@@ -493,6 +493,7 @@ public class SkillsSheetEntityController {
 				filterSkill.setName(this.skillEntityController.getSkillWithCase(skillFilter).getReplaceWith().toLowerCase());
 				
 			filteredSkills.add(filterSkill);
+			skillsListLowerCase.add(filterSkill.getName());
 		});
 
 		final List<JsonNode> finalResult = new ArrayList<JsonNode>();
@@ -515,6 +516,7 @@ public class SkillsSheetEntityController {
 					// we filter the stream If there is a total match on the skills in the skills
 					// sheet
 					.forEach(skillSheet -> {
+						System.out.print("\n\n SKILLSHEET : " + skillSheet.getName() + "\n");
 						final long latestVersionNumber = this.skillsSheetRepository
 								.findByNameIgnoreCaseAndMailPersonAttachedToIgnoreCaseOrderByVersionNumberDesc(
 										skillSheet.getName(), skillSheet.getMailPersonAttachedTo())

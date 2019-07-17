@@ -5,10 +5,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import fr.alten.ambroiseJEE.model.beans.Person;
 
@@ -29,6 +27,7 @@ public class PersonSetWithFilters implements Set<Person> {
 	
 	public PersonSetWithFilters(final List<String> filters) {
 		super();
+		System.out.print("\n\nPARAMFILTER : " + filters + "\n");
 		this.splitFilter(filters);
 		this.filters.replaceAll(String::toLowerCase);
 		this.statusFilters.replaceAll(String::toLowerCase);
@@ -36,9 +35,15 @@ public class PersonSetWithFilters implements Set<Person> {
 
 	public void splitFilter(final List<String> filters) {
 		
-		Map<Boolean, List<String>> myLists = filters.stream().collect(Collectors.partitioningBy(s -> s!="APPLICANT" && s!="CONSULTANT" && s!="DEMISSIONNAIRE"));
-		this.statusFilters = myLists.get(true);
-		this.filters = myLists.get(false);
+		for (String filterTmp : filters) {
+			if (filterTmp.equals("APPLICANT") || filterTmp.equals("CONSULTANT") || filterTmp.equals("DEMISSIONNAIRE")) 
+				this.statusFilters.add(filterTmp);
+			else
+				this.filters.add(filterTmp);
+		}
+//		Map<Boolean, List<String>> mapListSplit = filters.stream().collect(Collectors.partitioningBy(s -> s=="APPLICANT" || s=="CONSULTANT" || s=="DEMISSIONNAIRE"));
+		// this.statusFilters = mapListSplit.get(true);
+		// this.filters = mapListSplit.get(false);
 		
 	}
 	
@@ -96,7 +101,10 @@ public class PersonSetWithFilters implements Set<Person> {
 	 * @author Thomas Decamp
 	 */
 	private boolean correspondAllFilter(final Person person) {
-		boolean filterMatch = true;
+		boolean filterMatch = false;
+		
+		filterMatch = this.checkStatus(person);
+		
 		final Iterator<String> filterIterator = this.filters.iterator();
 
 		while (filterIterator.hasNext() && filterMatch) {
@@ -112,7 +120,12 @@ public class PersonSetWithFilters implements Set<Person> {
 					|| p.getHighestDiploma().toLowerCase().equals(filter)
 					|| p.getJob().toLowerCase().equals(filter)) || p.getOpinion().equals(filter);
 		}
-
+		return filterMatch;
+	}
+	
+	private boolean checkStatus(final Person person) {
+		boolean filterMatch = false;
+		
 		final Iterator<String> statusFilterIterator = this.statusFilters.iterator();
 		while (statusFilterIterator.hasNext()) {
 			final String filter = statusFilterIterator.next();
