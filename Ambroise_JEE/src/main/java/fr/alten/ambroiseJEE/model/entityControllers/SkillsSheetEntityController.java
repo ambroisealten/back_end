@@ -471,7 +471,7 @@ public class SkillsSheetEntityController {
 		// Initialize variables
 		final List<String> identitiesList = Arrays.asList(identity.split(","));
 		final List<String> skillsList = Arrays.asList(skills.split(","));
-		List<String> skillsListLowerCase = Arrays.asList();
+		List<String> skillsListLowerCase = new ArrayList<String>();
 		final HashSet<Skill> filteredSkills = new HashSet<Skill>();
 		final List<Person> allPersons = this.personEntityController.getAllPersons().parallelStream()
 				.filter(person -> !person.getMail().contains("deactivated")).collect(Collectors.toList());
@@ -516,7 +516,6 @@ public class SkillsSheetEntityController {
 					// we filter the stream If there is a total match on the skills in the skills
 					// sheet
 					.forEach(skillSheet -> {
-						System.out.print("\n\n SKILLSHEET : " + skillSheet.getName() + "\n");
 						final long latestVersionNumber = this.skillsSheetRepository
 								.findByNameIgnoreCaseAndMailPersonAttachedToIgnoreCaseOrderByVersionNumberDesc(
 										skillSheet.getName(), skillSheet.getMailPersonAttachedTo())

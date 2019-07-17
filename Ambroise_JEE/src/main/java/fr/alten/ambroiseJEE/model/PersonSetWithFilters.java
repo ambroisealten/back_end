@@ -27,7 +27,6 @@ public class PersonSetWithFilters implements Set<Person> {
 	
 	public PersonSetWithFilters(final List<String> filters) {
 		super();
-		System.out.print("\n\nPARAMFILTER : " + filters + "\n");
 		this.splitFilter(filters);
 		this.filters.replaceAll(String::toLowerCase);
 		this.statusFilters.replaceAll(String::toLowerCase);
