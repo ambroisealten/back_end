@@ -110,12 +110,14 @@ public class PersonSetWithFilters implements Set<Person> {
 			final String filter = filterIterator.next();
 
 			Person p = person;
+			String completeName = this.noAccent(p.getName()) + " " + this.noAccent(p.getSurname());
 
 			p.setName(this.noAccent(p.getName()));
 			p.setSurname(this.noAccent(p.getSurname()));
 
 			filterMatch = filterMatch && (p.getName().toLowerCase().contains(filter)
 					|| p.getSurname().toLowerCase().contains(filter)
+					|| completeName.toLowerCase().contains(filter)
 					|| p.getHighestDiploma().toLowerCase().equals(filter)
 					|| p.getJob().toLowerCase().equals(filter)) || p.getOpinion().equals(filter);
 		}
