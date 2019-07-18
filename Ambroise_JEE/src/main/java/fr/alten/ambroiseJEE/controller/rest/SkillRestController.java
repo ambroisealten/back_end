@@ -220,4 +220,48 @@ public class SkillRestController {
 		return result;
 	}
 
+	/**
+	 * 
+	 *
+	 * @param params
+	 * @param role
+	 * @return
+	 * @author Thomas Decamp
+	 */
+	@GetMapping(value = "/skillsSynonymous")
+	@ResponseBody
+	public String getSkillsSynonymous(@RequestAttribute("mail") final String mail,
+	@RequestAttribute("role") final UserRole role) {
+		return this.gson.toJson(this.skillBusinessController.getSynonymousList(role));
+	}
+
+	/**
+	 * 
+	 *
+	 * @param params
+	 * @param role
+	 * @return
+	 * @author Thomas Decamp
+	 */
+	@PutMapping(value = "/skillsSynonymous")
+	@ResponseBody
+	public HttpException updateSynonymousList(@RequestBody final JsonNode params, @RequestAttribute("role") final UserRole role) throws Exception {
+		return checkJsonIntegrity(params, "name") ? this.skillBusinessController.updateSynonymousList(params, role)
+				: new UnprocessableEntityException();
+	}
+
+	/**
+	 * 
+	 *
+	 * @param params
+	 * @param role
+	 * @return
+	 * @author Thomas Decamp
+	 */
+	@DeleteMapping(value = "/skillsSynonymous")
+	@ResponseBody
+	public HttpException deleteSynonymous(@RequestBody final JsonNode params, @RequestAttribute("role") final UserRole role) throws Exception {
+		return checkJsonIntegrity(params, "name") ? this.skillBusinessController.deleteSynonymous(params, role)
+				: new UnprocessableEntityException();
+	}
 }

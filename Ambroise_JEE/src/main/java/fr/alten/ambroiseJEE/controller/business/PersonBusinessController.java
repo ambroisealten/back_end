@@ -1,5 +1,7 @@
 package fr.alten.ambroiseJEE.controller.business;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -52,6 +54,20 @@ public class PersonBusinessController {
 				return new Person();
 			}
 		}
+		throw new ForbiddenException();
+	}
+
+	/**
+	 * Try to fetch persons
+	 *
+	 * @param role the user's role
+	 * @return an Optional with the corresponding person (or not)
+	 * @author Thomas Decamp
+	 * @throws ForbiddenException (if the user hasn't the right to do so)
+	 */
+	public List<Person> getPersons(final UserRole role) {
+		if (isConnected(role))
+			return this.personEntityController.getAllPersons();
 		throw new ForbiddenException();
 	}
 

@@ -31,12 +31,12 @@ import fr.alten.ambroiseJEE.model.dao.SkillsSheetRepository;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.utils.Constants;
 import fr.alten.ambroiseJEE.utils.JsonUtils;
-import fr.alten.ambroiseJEE.utils.PersonRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.ConflictException;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
+import fr.alten.ambroiseJEE.utils.personRole.PersonRole;
 
 /**
  * Skills Sheet controller for entity gestion rules
@@ -158,6 +158,10 @@ public class SkillsSheetEntityController {
 			final String personMail = jSkillsSheet.get("mailPersonAttachedTo").textValue();
 			final String skillsSheetName = jSkillsSheet.get("name").textValue();
 
+			List<SkillsSheet> skillsSheetList = getSkillsSheetVersion(jSkillsSheet.get("name").textValue(), jSkillsSheet.get("mailPersonAttachedTo").textValue());
+			for (SkillsSheet skillsSheet : skillsSheetList)
+				skillsSheet.setRolePersonAttachedTo(status);
+
 			if (this.skillsSheetRepository.existsByNameIgnoreCaseAndMailPersonAttachedToIgnoreCaseAndVersionNumber(
 					skillsSheetName, personMail, versionNumber)) {
 				return new ConflictException();
@@ -266,7 +270,11 @@ public class SkillsSheetEntityController {
 			Skill skill = null;
 
 			try {
-				skill = this.skillEntityController.getSkill(skillName);
+				if (this.skillEntityController.getSkill(skillName).getReplaceWith().isEmpty()) {
+					skill = this.skillEntityController.getSkill(skillName);
+				} else {
+					skill = this.skillEntityController.getSkill(this.skillEntityController.getSkill(skillName).getReplaceWith());
+				}
 
 			} catch (final ResourceNotFoundException e) {
 				if (!skillGraduated.get("skill").has("isSoft")) {
@@ -284,7 +292,7 @@ public class SkillsSheetEntityController {
 					} else {
 						skillInserted.setOrder(0);
 					}
-					skillInserted.setName(skillName);
+					skillInserted.setName(skill.getName());
 					allSkills.add(new SkillGraduated(skillInserted, skillGrade));
 					if (skillInserted.isSoft()) {
 						softSkillsUsed.add(skillName);
@@ -449,7 +457,7 @@ public class SkillsSheetEntityController {
 	 * @param identity the filters about the Person (name, surname, job, etc.)
 	 * @param skills   the filters about Skills (name)
 	 * @return a List of Skills Sheets that match the query
-	 * @author Lucas Royackkers, Camille Schnell
+	 * @author Lucas Royackkers, Camille Schnell, Thomas Decamp
 	 */
 	public List<JsonNode> getSkillsSheetsByIdentityAndSkills(final String identity, final String skills,
 			final String columnSorting) {
@@ -462,7 +470,8 @@ public class SkillsSheetEntityController {
 
 		// Initialize variables
 		final List<String> identitiesList = Arrays.asList(identity.split(","));
-		final List<String> skillsList = Arrays.asList(skills.toLowerCase().split(","));
+		final List<String> skillsList = Arrays.asList(skills.split(","));
+		List<String> skillsListLowerCase = new ArrayList<String>();
 		final HashSet<Skill> filteredSkills = new HashSet<Skill>();
 		final List<Person> allPersons = this.personEntityController.getAllPersons().parallelStream()
 				.filter(person -> !person.getMail().contains("deactivated")).collect(Collectors.toList());
@@ -474,8 +483,17 @@ public class SkillsSheetEntityController {
 		// Get all Skills in the filter that are in the database
 		skillsList.stream().forEach(skillFilter -> {
 			final Skill filterSkill = new Skill();
-			filterSkill.setName(skillFilter);
+
+			if (this.skillEntityController.getSkillWithCase(skillFilter) == null)
+				skillFilter = skillFilter.toLowerCase();
+
+			if (this.skillEntityController.getSkillWithCase(skillFilter).getReplaceWith().isEmpty())
+				filterSkill.setName(skillFilter.toLowerCase());
+			else
+				filterSkill.setName(this.skillEntityController.getSkillWithCase(skillFilter).getReplaceWith().toLowerCase());
+				
 			filteredSkills.add(filterSkill);
+			skillsListLowerCase.add(filterSkill.getName());
 		});
 
 		final List<JsonNode> finalResult = new ArrayList<JsonNode>();
@@ -515,7 +533,7 @@ public class SkillsSheetEntityController {
 								((ObjectNode) jResult).set("person",
 										JsonUtils.toJsonNode(this.gson.toJson(personToFetch)));
 								((ObjectNode) jResult).put("fiability",
-										getFiabilityGrade(skillSheet, personToFetch.getOpinion(), skillsList));
+										getFiabilityGrade(skillSheet, personToFetch.getOpinion(), skillsListLowerCase));
 								finalResult.add(jResult);
 							} catch (final IOException e) {
 								LoggerFactory.getLogger(SkillsSheetEntityController.class).error(e.getMessage());
@@ -776,4 +794,31 @@ public class SkillsSheetEntityController {
 		return new OkException();
 	}
 
+	
+	/**
+	 * Method to delete a Skills Sheet
+	 *
+	 * @param jSkillsSheet  JsonNode with all skills sheet parameters, including its
+	 *                      name to perform an update on the database
+	 * @param versionAuthor the mail of the author of this version of this Skills
+	 *                      Sheet
+	 * @return the @see {@link HttpException} corresponding to the status of the
+	 *         request {@link ResourceNotFoundException} if the resource is not
+	 *         found, {@link ConflictException} if there is a conflict in the
+	 *         database and {@link OkException} if the skills sheet is updated
+	 * @author Lucas Royackkers
+	 */
+	public HttpException deleteSkillsSheet(final JsonNode jSkillsSheet) {
+		try {
+			final List<SkillsSheet> deleteSkillsSheet = this.skillsSheetRepository.findByNameIgnoreCase(jSkillsSheet.get("name").textValue());
+
+			for (SkillsSheet deleteTmp : deleteSkillsSheet)
+				this.skillsSheetRepository.delete(deleteTmp);
+			return new OkException();
+		} catch (final ResourceNotFoundException rnfe) {
+			return rnfe;
+		} catch (final Exception e) {
+			return new ConflictException();
+		}
+	}
 }

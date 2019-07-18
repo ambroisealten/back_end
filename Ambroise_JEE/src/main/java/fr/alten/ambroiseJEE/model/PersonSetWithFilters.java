@@ -1,10 +1,12 @@
 package fr.alten.ambroiseJEE.model;
 
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import fr.alten.ambroiseJEE.model.beans.Person;
 
@@ -19,13 +21,31 @@ public class PersonSetWithFilters implements Set<Person> {
 
 	private final List<Person> persons = new ArrayList<Person>();
 	private List<String> filters = new ArrayList<String>();
+	private List<String> statusFilters = new ArrayList<String>();
 
+	
+	
 	public PersonSetWithFilters(final List<String> filters) {
 		super();
-		this.filters = filters;
+		this.splitFilter(filters);
 		this.filters.replaceAll(String::toLowerCase);
+		this.statusFilters.replaceAll(String::toLowerCase);
 	}
 
+	public void splitFilter(final List<String> filters) {
+		
+		for (String filterTmp : filters) {
+			if (filterTmp.equals("APPLICANT") || filterTmp.equals("CONSULTANT") || filterTmp.equals("DEMISSIONNAIRE")) 
+				this.statusFilters.add(filterTmp);
+			else
+				this.filters.add(filterTmp);
+		}
+//		Map<Boolean, List<String>> mapListSplit = filters.stream().collect(Collectors.partitioningBy(s -> s=="APPLICANT" || s=="CONSULTANT" || s=="DEMISSIONNAIRE"));
+		// this.statusFilters = mapListSplit.get(true);
+		// this.filters = mapListSplit.get(false);
+		
+	}
+	
 	/**
 	 * Add a Person if the list doesn't contains it already and if Person validates
 	 * all filters
@@ -77,18 +97,63 @@ public class PersonSetWithFilters implements Set<Person> {
 	 * @return true if the Person validates all filters, otherwise false
 	 * @author Lucas Royackkers
 	 * @author Andy Chabalier
+	 * @author Thomas Decamp
 	 */
 	private boolean correspondAllFilter(final Person person) {
-		boolean filterMatch = true;
+		boolean filterMatch = false;
+		
+		filterMatch = this.checkStatus(person);
+		
 		final Iterator<String> filterIterator = this.filters.iterator();
+
 		while (filterIterator.hasNext() && filterMatch) {
 			final String filter = filterIterator.next();
-			filterMatch = filterMatch && (person.getName().toLowerCase().equals(filter)
-					|| person.getSurname().toLowerCase().equals(filter)
-					|| person.getHighestDiploma().toLowerCase().equals(filter)
-					|| person.getJob().toLowerCase().equals(filter)) || person.getOpinion().equals(filter);
+
+			Person p = person;
+			String completeName = this.noAccent(p.getName()) + " " + this.noAccent(p.getSurname());
+
+			p.setName(this.noAccent(p.getName()));
+			p.setSurname(this.noAccent(p.getSurname()));
+
+			filterMatch = filterMatch && (p.getName().toLowerCase().contains(filter)
+					|| p.getSurname().toLowerCase().contains(filter)
+					|| completeName.toLowerCase().contains(filter)
+					|| p.getHighestDiploma().toLowerCase().equals(filter)
+					|| p.getJob().toLowerCase().equals(filter)) || p.getOpinion().equals(filter);
 		}
 		return filterMatch;
+	}
+	
+	private boolean checkStatus(final Person person) {
+		boolean filterMatch = false;
+		
+		final Iterator<String> statusFilterIterator = this.statusFilters.iterator();
+		while (statusFilterIterator.hasNext()) {
+			final String filter = statusFilterIterator.next();
+
+			Person p = person;
+
+			if (p.getRole().toString().toLowerCase().equals(filter)) {
+				filterMatch = true;
+				return filterMatch;
+			}
+			else
+				filterMatch = false;
+		}
+		return filterMatch;
+	}
+
+	/**
+	 * Remove accents
+	 *
+	 * @param String
+	 * @return String without accents 
+	 * @author Thomas Decamp
+	 */
+	private String noAccent(String s) {
+			String strTemp = Normalizer.normalize(s, Normalizer.Form.NFD);
+			Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+			return pattern.matcher(strTemp).replaceAll("");
 	}
 
 	/**

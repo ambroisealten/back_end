@@ -18,7 +18,6 @@ import fr.alten.ambroiseJEE.model.beans.User;
 import fr.alten.ambroiseJEE.model.dao.PersonRepository;
 import fr.alten.ambroiseJEE.model.dao.SkillsSheetRepository;
 import fr.alten.ambroiseJEE.utils.MailUtils;
-import fr.alten.ambroiseJEE.utils.PersonRole;
 import fr.alten.ambroiseJEE.utils.availability.Availability;
 import fr.alten.ambroiseJEE.utils.exception.MissingFieldException;
 import fr.alten.ambroiseJEE.utils.exception.ToManyFieldsException;
@@ -28,6 +27,8 @@ import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ResourceNotFoundException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
+import fr.alten.ambroiseJEE.utils.personRole.PersonRole;
+import fr.alten.ambroiseJEE.utils.personRole.PersonRoleTranslate;
 
 /**
  * @author Lucas Royackkers
@@ -162,15 +163,15 @@ public class PersonEntityController {
 				person.setName("Deactivated");
 				break;
 			case CONSULTANT:
-				person.setSurname("Demissionaire");
-				person.setName("Demissionaire");
+				person.setSurname("Demissionnaire");
+				person.setName("Demissionnaire");
 				break;
 			default:
 				throw new UnprocessableEntityException();
 			}
 			person.setMail("deactivated" + System.currentTimeMillis() + "@deactivated.com");
 			person.setEmployer(null);
-			person.setRole(PersonRole.DEMISSIONAIRE);
+			person.setRole(PersonRole.DEMISSIONNAIRE);
 			person.setMonthlyWage(0);
 			person.setJob(null);
 			person.setOpinion(null);
@@ -206,8 +207,8 @@ public class PersonEntityController {
 				person.setName("Deactivated");
 				break;
 			case CONSULTANT:
-				person.setSurname("Demissionaire");
-				person.setName("Demissionaire");
+				person.setSurname("Demissionnaire");
+				person.setName("Demissionnaire");
 				break;
 			default:
 				throw new UnprocessableEntityException();
@@ -215,7 +216,7 @@ public class PersonEntityController {
 			}
 			person.setMail("deactivated" + System.currentTimeMillis() + "@deactivated.com");
 			person.setEmployer(null);
-			person.setRole(PersonRole.DEMISSIONAIRE);
+			person.setRole(PersonRole.DEMISSIONNAIRE);
 			person.setMonthlyWage(0);
 			person.setJob(null);
 			person.setOpinion(null);
@@ -377,7 +378,7 @@ public class PersonEntityController {
 	 * @return the @see {@link HttpException} corresponding to the status of the
 	 *         request ({@link ResourceNotFoundException} if the resource isn't in
 	 *         the database and {@link OkException} if the person is updated
-	 * @author Lucas Royackkers, Kylian Gehier
+	 * @author Lucas Royackkers, Kylian Gehier, Thomas Decamp
 	 */
 	public HttpException updatePerson(final JsonNode jPerson, final PersonRole role, final String personInChargeMail) {
 		try {
@@ -388,7 +389,10 @@ public class PersonEntityController {
 			person.setName(jPerson.get("name").textValue());
 			person.setMonthlyWage(Float.parseFloat(jPerson.get("monthlyWage").asText()));
 
-			person.setRole(role);
+			if (jPerson.hasNonNull("newRole"))
+				person.setRole(PersonRoleTranslate.translateRole(jPerson.get("newRole").textValue()));
+			else
+				person.setRole(role);
 
 			final User personInCharge = this.userEntityController.getUserByMail(personInChargeMail);
 			person.setPersonInChargeMail(personInCharge.getMail());
@@ -407,7 +411,7 @@ public class PersonEntityController {
 			person.setHighestDiploma(diploma.getName());
 			person.setHighestDiplomaYear(diploma.getYearOfResult());
 
-			if (role.equals(PersonRole.APPLICANT)) {
+			if (person.getRole().equals(PersonRole.APPLICANT)) {
 				person.setExperienceTime(jPerson.get("experienceTime").asInt());
 				final String employerName = jPerson.get("employer").textValue();
 				Employer employer;

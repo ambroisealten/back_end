@@ -168,4 +168,20 @@ public class SkillBusinessController {
 		}
 		throw new ForbiddenException();
 	}
+
+
+	public List<Skill> getSynonymousList(UserRole role) {
+		if(isAdmin(role)) {
+			return this.skillEntityController.getSynonymousList();
+		}
+		throw new ForbiddenException();
+	}
+
+	public HttpException updateSynonymousList(final JsonNode jSkill, UserRole role) {
+		return isAdmin(role) ? this.skillEntityController.updateSynonymousList(jSkill) : new ForbiddenException();
+	}
+
+	public HttpException deleteSynonymous(final JsonNode jSkill, UserRole role) {
+		return isAdmin(role) ? this.skillEntityController.deleteSynonymous(jSkill) : new ForbiddenException();
+	}
 }

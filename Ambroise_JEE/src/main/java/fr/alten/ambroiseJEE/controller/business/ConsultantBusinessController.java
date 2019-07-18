@@ -12,12 +12,12 @@ import fr.alten.ambroiseJEE.model.beans.Person;
 import fr.alten.ambroiseJEE.model.entityControllers.PersonEntityController;
 import fr.alten.ambroiseJEE.security.UserRole;
 import fr.alten.ambroiseJEE.security.UserRoleLists;
-import fr.alten.ambroiseJEE.utils.PersonRole;
 import fr.alten.ambroiseJEE.utils.httpStatus.CreatedException;
 import fr.alten.ambroiseJEE.utils.httpStatus.ForbiddenException;
 import fr.alten.ambroiseJEE.utils.httpStatus.HttpException;
 import fr.alten.ambroiseJEE.utils.httpStatus.OkException;
 import fr.alten.ambroiseJEE.utils.httpStatus.UnprocessableEntityException;
+import fr.alten.ambroiseJEE.utils.personRole.PersonRole;
 
 /**
  * Consultant controller for business rules.
@@ -186,6 +186,26 @@ public class ConsultantBusinessController {
 			throws ParseException {
 		if (isManager(role)) {
 			return this.personEntityController.updatePerson(params, PersonRole.CONSULTANT, personInChargeMail);
+		}
+		return new ForbiddenException();
+	}
+
+	/**
+	 * Method to delegate consultant update
+	 *
+	 * @param params             JsonNode with all parameters
+	 * @param role               the user's role
+	 * @param personInChargeMail TODO
+	 * @return the @see {@link HttpException} corresponding to the status of the
+	 *         request ({@link ForbiddenException} if the current user hasn't the
+	 *         rights to perform this action
+	 * @author Lucas Royackkers
+	 * @throws ParseException
+	 */
+	public HttpException updateArchive(final JsonNode params, final UserRole role, final String personInChargeMail)
+			throws ParseException {
+		if (isManager(role)) {
+			return this.personEntityController.updatePerson(params, PersonRole.DEMISSIONNAIRE, personInChargeMail);
 		}
 		return new ForbiddenException();
 	}
