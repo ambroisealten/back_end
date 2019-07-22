@@ -333,9 +333,6 @@ public class SkillEntityController {
 	public HttpException updateSynonymousList(final JsonNode jSkill) {
 		Skill skill = this.skillRepository.findByName(jSkill.get("name").textValue()).orElse(new Skill());
 		skill.setName(jSkill.get("name").textValue());
-		// return this.skillRepository.findByNameIgnoreCase(jSkill.get("name").textValue())
-		// optional is present
-		// .map(skill -> {
 		if (jSkill.hasNonNull("synonymous")) {
 			final String synonymous = jSkill.get("synonymous").textValue();
 			final List<String> synonymousList = Arrays.asList(synonymous.split("\\,"));
@@ -372,9 +369,6 @@ public class SkillEntityController {
 			e.printStackTrace();
 		}
 		return (HttpException) new OkException();
-		// })
-		// // optional isn't present
-		// .orElse(new ResourceNotFoundException());
 	}
 
 	/**
@@ -385,7 +379,7 @@ public class SkillEntityController {
 	 * @author Thomas Decamp
 	 */
 	public HttpException deleteSynonymous(final JsonNode jSkill) {
-		return this.skillRepository.findByNameIgnoreCase(jSkill.get("name").textValue())
+		return this.skillRepository.findByName(jSkill.get("name").textValue())
 				// optional is present
 				.map(skill -> {
 					skill.clearSynonymousList();
